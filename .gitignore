@@ -1,0 +1,7 @@
+build/
+.idea/workspace.xml
+*.bin
+*.class
+*.jar
+*.lock
+*.swp
