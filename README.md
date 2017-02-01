@@ -1,5 +1,7 @@
 #CS3733 Team Alpha Project
 
+[![Build Status](https://travis-ci.org/CS3733-TeamAlpha/Project.svg?branch=develop)](https://travis-ci.org/CS3733-TeamAlpha/Project)
+
 This project contains code for Team Alpha's pathfinding project, a project to create a 
 simple pathfinding application for public buildings. Project files for an IntelliJ
 IDEA project have been uploaded, please use those and don't forget to add obvious
