@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HospitalPathfinder.iml" filepath="$PROJECT_DIR$/HospitalPathfinder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HospitalProject.iml" filepath="$PROJECT_DIR$/.idea/modules/HospitalProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HospitalProject_main.iml" filepath="$PROJECT_DIR$/.idea/modules/HospitalProject_main.iml" group="HospitalProject" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HospitalProject_test.iml" filepath="$PROJECT_DIR$/.idea/modules/HospitalProject_test.iml" group="HospitalProject" />
     </modules>
   </component>
 </project>
