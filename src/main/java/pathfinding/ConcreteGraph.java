@@ -64,6 +64,7 @@ public class ConcreteGraph implements Graph {
 			path.add(curNode.node);
 			curNode = curNode.parent;
 		}
+		path.add(start);
 		return path;
 	}
 

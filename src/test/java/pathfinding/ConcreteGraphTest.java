@@ -49,11 +49,12 @@ public class ConcreteGraphTest {
                     gridNodes[i][j].addNeighbor(gridNodes[i][j+1]);
             }
         }
+
         Graph graph = new ConcreteGraph();
 
         //Straight shot pathing test
         assertNotNull(graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]));
-        assertEquals(straightNodes.length - 1, graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]).size());
+        assertEquals(straightNodes.length, graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]).size());
 
         //Grid pathing test
         assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[0][99]));
