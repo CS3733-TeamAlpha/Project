@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.PriorityQueue;
 
 public class ConcreteGraph implements Graph {
+
 	/**
 	 * Find a path between start and end using
 	 * @param start Node to start pathing from.
@@ -33,6 +34,9 @@ public class ConcreteGraph implements Graph {
 			//Explore curNode's children
 			for (Node expTempNode : curNode.node.getNeighbors())
 			{
+				if (closedList.contains(expTempNode))
+					continue; //Don't explore nodes that have already been explored
+
 				//Check to see if we've found the end node yet
 				if (expTempNode == end)
 				{
@@ -42,13 +46,10 @@ public class ConcreteGraph implements Graph {
 					break;
 				}
 
-				ASTNode expNode = new ASTNode(expTempNode, curNode.g + 1);
-				expNode.f = expNode.g + expTempNode.distance(curNode.node); //Compute f value using g and h
+				ASTNode expNode = new ASTNode(expTempNode, curNode.g + 1.0);
+				expNode.f = expNode.g + expTempNode.distance(end); //Compute f value using g and h
 				expNode.parent = curNode;
-
-				//Add the newly explored node to the open list iff it's not on the closed list
-				if (!closedList.contains(expNode.node))
-					openList.add(expNode);
+				openList.add(expNode);
 			}
 			closedList.add(curNode.node);
 		}
@@ -71,11 +72,11 @@ public class ConcreteGraph implements Graph {
 	//This is the only class I bothered to fully implement, for now. Isn't it cute though?
 	private static class ASTNode implements Comparable<ASTNode> {
 		double f;
-		int g;
+		double g;
 		ASTNode parent;
 		Node node;
 
-		ASTNode(Node newNode, int newG) {
+		ASTNode(Node newNode, double newG) {
 			f = 0;
 			g = newG;
 			node = newNode;
@@ -85,9 +86,9 @@ public class ConcreteGraph implements Graph {
 			//Inverted ordering to trick PriorityQueue into thinking that lower valued nodes should be at the top of
 			//the queue
 			if (f < node.f)
-				return 1;
-			if (f > node.f)
 				return -1;
+			if (f > node.f)
+				return 1;
 			return 0;
 		}
 	}

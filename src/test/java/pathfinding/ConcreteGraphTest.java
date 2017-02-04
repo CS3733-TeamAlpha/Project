@@ -1,26 +1,21 @@
 package pathfinding;
 
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.ArrayList;
 
 public class ConcreteGraphTest {
-    public void setUp() throws Exception {
-
-    }
 
     @Test
     public void findPath() throws Exception {
         ConcreteNode[] straightNodes = new ConcreteNode[5];
-        ConcreteNode[][] gridNodes = new ConcreteNode[100][100];
+        ConcreteNode[][] gridNodes = new ConcreteNode[5][5];
 
         //Ugh... init
         for (int i = 0; i < straightNodes.length; i++)
             straightNodes[i] = new ConcreteNode();
 
-        for (int i = 0; i < 100; i++)
-            for (int j = 0; j < 100; j++)
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
                 gridNodes[i][j] = new ConcreteNode();
 
         //Create a simple straightshot array of nodes to idiot-test the pathfinding
@@ -33,19 +28,19 @@ public class ConcreteGraphTest {
         }
 
         //Create a more complicated grid of nodes to check for actual pathfinding ability where many choices exist
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < 100; j++)
+            for (int j = 0; j < 5; j++)
             {
             	gridNodes[i][j].setX(i);
             	gridNodes[i][j].setY(j);
                 if (i > 0)
                     gridNodes[i][j].addNeighbor(gridNodes[i-1][j]);
-                if (i < 99)
+                if (i < 4)
                     gridNodes[i][j].addNeighbor(gridNodes[i+1][j]);
                 if (j > 0)
                     gridNodes[i][j].addNeighbor(gridNodes[i][j-1]);
-                if (j < 99)
+                if (j < 4)
                     gridNodes[i][j].addNeighbor(gridNodes[i][j+1]);
             }
         }
@@ -57,10 +52,10 @@ public class ConcreteGraphTest {
         assertEquals(straightNodes.length, graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]).size());
 
         //Grid pathing test
-        assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[0][99]));
-       	assertEquals(100, graph.findPath(gridNodes[0][0], gridNodes[99][99]).size());
-        assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[99][99]));
-        assertTrue(graph.findPath(gridNodes[0][0], gridNodes[99][99]).size() > 100);
+        assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[4][4]));
+       	assertEquals(5, graph.findPath(gridNodes[0][0], gridNodes[0][4]).size());
+        assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[4][4]));
+        assertTrue(graph.findPath(gridNodes[0][0], gridNodes[4][4]).size() > 5);
 
         //Edge cases
         assertNull(graph.findPath(null, null));
