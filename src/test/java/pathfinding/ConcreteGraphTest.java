@@ -6,13 +6,14 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 
 public class ConcreteGraphTest {
-    Node[] straightNodes;
-    Node[][] gridNodes;
-
-    @Before
     public void setUp() throws Exception {
-        straightNodes = new ConcreteNode[25];
-        gridNodes = new ConcreteNode[100][100];
+
+    }
+
+    @Test
+    public void findPath() throws Exception {
+        ConcreteNode[] straightNodes = new ConcreteNode[25];
+        ConcreteNode[][] gridNodes = new ConcreteNode[100][100];
 
         //Ugh... init
         for (int i = 0; i < 25; i++)
@@ -25,7 +26,6 @@ public class ConcreteGraphTest {
         //Create a simple straightshot array of nodes to idiot-test the pathfinding
         for (int i = 0; i < straightNodes.length; i++)
         {
-            straightNodes[i] = new ConcreteNode();
             if (i > 0)
                 straightNodes[i].addNeighbor(straightNodes[i-1]);
             if (i < 24)
@@ -47,10 +47,6 @@ public class ConcreteGraphTest {
                     gridNodes[i][j].addNeighbor(gridNodes[i][j+1]);
             }
         }
-    }
-
-    @Test
-    public void findPath() throws Exception {
         Graph graph = new ConcreteGraph();
 
         //Straight shot pathing test

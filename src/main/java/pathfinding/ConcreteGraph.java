@@ -5,17 +5,20 @@ import java.util.Collection;
 import java.util.PriorityQueue;
 
 public class ConcreteGraph implements Graph {
-	private PriorityQueue<ASTNode> openList;
-
-	public ConcreteGraph() {
-		openList = new PriorityQueue<ASTNode>();
-	}
-
+	/**
+	 * Find a path between start and end using
+	 * @param start Node to start pathing from.
+	 * @param end Node to attempt to path to.
+	 * @return Collection of nodes (specifically an ArrayList) forming path, null upon error or no path found.
+	 */
 	public Collection<Node> findPath(Node start, Node end) {
 		//Init: add the first node to the open list
 		ASTNode astStart = new ASTNode(start, 0);
 		ASTNode astEnd = new ASTNode(end, -1);
 		astStart.f = start.distance(end);
+
+		PriorityQueue<ASTNode> openList = new PriorityQueue<ASTNode>();
+		ArrayList<ASTNode> closedList = new ArrayList<ASTNode>();
 		openList.add(astStart);
 
 		boolean complete = false;
@@ -40,13 +43,12 @@ public class ConcreteGraph implements Graph {
 				expNode.f = expNode.g + expTempNode.distance(curNode.node); //Compute f value using g and h
 				expNode.parent = curNode;
 
-				//Add the newly explored node to the open list. Don't bother checking for dupes, it won't matter because
-				//we're using a priority queue for openList.
-				openList.add(expNode);
+				//Add the newly explored node to the open list iff it's not on the closed list
+				if (!closedList.contains(expNode))
+					openList.add(expNode);
 			}
+			closedList.add(curNode);
 		}
-
-		openList.clear(); //Clean up so this whole algorithm stays stateless
 
 		if (!complete)
 			return null;
