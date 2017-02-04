@@ -12,13 +12,16 @@ public class ConcreteGraph implements Graph {
 	 * @return Collection of nodes (specifically an ArrayList) forming path, null upon error or no path found.
 	 */
 	public Collection<Node> findPath(Node start, Node end) {
+		if (start == null || end == null)
+			return null; //idiot check
+
 		//Init: add the first node to the open list
 		ASTNode astStart = new ASTNode(start, 0);
 		ASTNode astEnd = new ASTNode(end, -1);
 		astStart.f = start.distance(end);
 
 		PriorityQueue<ASTNode> openList = new PriorityQueue<ASTNode>();
-		ArrayList<ASTNode> closedList = new ArrayList<ASTNode>();
+		ArrayList<Node> closedList = new ArrayList<Node>();
 		openList.add(astStart);
 
 		boolean complete = false;
@@ -44,10 +47,10 @@ public class ConcreteGraph implements Graph {
 				expNode.parent = curNode;
 
 				//Add the newly explored node to the open list iff it's not on the closed list
-				if (!closedList.contains(expNode))
+				if (!closedList.contains(expNode.node))
 					openList.add(expNode);
 			}
-			closedList.add(curNode);
+			closedList.add(curNode.node);
 		}
 
 		if (!complete)

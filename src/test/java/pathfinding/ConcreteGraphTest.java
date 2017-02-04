@@ -12,11 +12,11 @@ public class ConcreteGraphTest {
 
     @Test
     public void findPath() throws Exception {
-        ConcreteNode[] straightNodes = new ConcreteNode[25];
+        ConcreteNode[] straightNodes = new ConcreteNode[5];
         ConcreteNode[][] gridNodes = new ConcreteNode[100][100];
 
         //Ugh... init
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < straightNodes.length; i++)
             straightNodes[i] = new ConcreteNode();
 
         for (int i = 0; i < 100; i++)
@@ -28,7 +28,7 @@ public class ConcreteGraphTest {
         {
             if (i > 0)
                 straightNodes[i].addNeighbor(straightNodes[i-1]);
-            if (i < 24)
+            if (i < straightNodes.length - 1)
                 straightNodes[i].addNeighbor(straightNodes[i+1]);
         }
 
@@ -37,6 +37,8 @@ public class ConcreteGraphTest {
         {
             for (int j = 0; j < 100; j++)
             {
+            	gridNodes[i][j].setX(i);
+            	gridNodes[i][j].setY(j);
                 if (i > 0)
                     gridNodes[i][j].addNeighbor(gridNodes[i-1][j]);
                 if (i < 99)
@@ -50,12 +52,12 @@ public class ConcreteGraphTest {
         Graph graph = new ConcreteGraph();
 
         //Straight shot pathing test
-        assertNotNull(graph.findPath(straightNodes[0], straightNodes[24]));
-        assertEquals(24, graph.findPath(straightNodes[0], straightNodes[24]).size());
+        assertNotNull(graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]));
+        assertEquals(straightNodes.length - 1, graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]).size());
 
         //Grid pathing test
         assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[0][99]));
-        assertEquals(100, graph.findPath(gridNodes[0][0], gridNodes[99][99]).size());
+       	assertEquals(100, graph.findPath(gridNodes[0][0], gridNodes[99][99]).size());
         assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[99][99]));
         assertTrue(graph.findPath(gridNodes[0][0], gridNodes[99][99]).size() > 100);
 
