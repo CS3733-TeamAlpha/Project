@@ -5,3 +5,4 @@ build/
 *.jar
 *.lock
 *.swp
+.gradle/2.13/
