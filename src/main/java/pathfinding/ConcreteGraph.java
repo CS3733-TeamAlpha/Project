@@ -21,6 +21,7 @@ public class ConcreteGraph implements Graph
 	{
 		public float f;
 		public float g;
+		public Node parent;
 		public Node node;
 
 		public ASTNode()
@@ -32,10 +33,12 @@ public class ConcreteGraph implements Graph
 
 		public int compareTo(ASTNode node)
 		{
-			if (f + g < node.f + node.g)
-				return -1;
-			if (f + g > node.f + node.g)
+			//Inverted ordering to trick PriorityQueue into thinking that lower valued nodes should be at the top of
+			//the queue
+			if (f < node.f)
 				return 1;
+			if (f> node.f)
+				return -1;
 			return 0;
 		}
 	}
