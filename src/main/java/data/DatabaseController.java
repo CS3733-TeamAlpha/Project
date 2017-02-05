@@ -472,4 +472,53 @@ public class DatabaseController {
 		}
 	}
 
+	/*
+	 * modify a provider's entry in the table
+	 * TODO: Probably should break this down to modify a single field at a time
+	 * TODO: Fix return type?
+	 */
+	public static void modifyProvider(int ID, String fname, String lname){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.executeUpdate("UPDATE Provider" +
+					"SET ProviderID = " + ID + ", " +
+					"FirstName = " + fname + ", " +
+					"LastName = " + lname + ", " +
+					"WHERE ProviderID = " + ID +
+					"");
+			stmt.close();
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+
+	/*
+ 	* modify a location's entry in the table
+ 	* TODO: Probably should break this down to modify a single field at a time
+ 	* TODO: Fix return type?
+ 	*/
+	public static void modifyLocation(int ID, String name, String type, int x, int y, int floor)
+	{
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.executeUpdate("UPDATE Provider" +
+					"SET LocationID = " + ID + ", " +
+					"LocationName = " + name + ", " +
+					"LocationType = " + type + ", " +
+					"XCoord = " + x + ", " +
+					"YCoord = " + y + ", " +
+					"FloorID = " + floor + ", " +
+					"WHERE LocationID = " + ID +
+					"");
+			stmt.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 }
