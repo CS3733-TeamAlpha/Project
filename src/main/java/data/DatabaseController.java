@@ -26,9 +26,6 @@ public class DatabaseController {
 	public static void main(String[] args) {
 		createConnection();
 
-		//TODO: GET RID OF THESE DROPTABLES, ONLY IN FOR TESTING
-		droptablesForShittyTesting();
-
 		//initialize tables
 		initializeProviderTable();
 		initializeFloorTable();
@@ -36,93 +33,66 @@ public class DatabaseController {
 		initializeOfficeTable();
 		initializeNeighborTable();
 
-		//test insertions
-		insertFloor(1, "testbuilding", 1);
-		insertLocation(11, "testloc", "Room", 0, 0, 1);
-		insertLocation(12, "anotherloc", "Room", 1, 1, 1);
-		insertProvider(01, "John", "Doe");
-		insertOffice(01, 11);
-		insertNeighbor(11, 12);
-		//TODO: Make neighbor insertion go both ways? could there be benefit to preserving to/from?
-		insertNeighbor(12, 11);
-
-		//test get data
-		getLocationByID(11);
-		getLocationByID(12);
-		getProviderByID(01);
-		getNeighbors(11);
-		getProviderLocations(01);
-		getProvidersAtLocation(11);
-		getProvidersAtLocation(12); //shouldn't have anything
-		getFloorInfo(1);
-
-		modifyFloor(1, "changef1", 2);
-		getFloorInfo(1);
-		modifyLocation(11, "asdf", "rm", 0, 0, 1);
-		getLocationByID(11);
-		modifyProvider(01, "sola", "shirai");
-		getProviderByID(01);
-
 		shutdown();
 	}
 
-	public static void droptablesForShittyTesting(){
-
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Provider");
-			System.out.println("Provider table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Location");
-			System.out.println("Location table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Office");
-			System.out.println("Office table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Neighbor");
-			System.out.println("Neighbor table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Floor");
-			System.out.println("Floor table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}	}
+//	public static void droptablesForShittyTesting(){
+//
+//		try
+//		{
+//			stmt = connection.createStatement();
+//			// Drop the UnpaidOrder table.
+//			stmt.execute("DROP TABLE Provider");
+//			System.out.println("Provider table dropped.");
+//		} catch (SQLException ex)
+//		{
+//			// No need to report an error.
+//			// The table simply did not exist.
+//		}
+//		try
+//		{
+//			stmt = connection.createStatement();
+//			// Drop the UnpaidOrder table.
+//			stmt.execute("DROP TABLE Location");
+//			System.out.println("Location table dropped.");
+//		} catch (SQLException ex)
+//		{
+//			// No need to report an error.
+//			// The table simply did not exist.
+//		}
+//		try
+//		{
+//			stmt = connection.createStatement();
+//			// Drop the UnpaidOrder table.
+//			stmt.execute("DROP TABLE Office");
+//			System.out.println("Office table dropped.");
+//		} catch (SQLException ex)
+//		{
+//			// No need to report an error.
+//			// The table simply did not exist.
+//		}
+//		try
+//		{
+//			stmt = connection.createStatement();
+//			// Drop the UnpaidOrder table.
+//			stmt.execute("DROP TABLE Neighbor");
+//			System.out.println("Neighbor table dropped.");
+//		} catch (SQLException ex)
+//		{
+//			// No need to report an error.
+//			// The table simply did not exist.
+//		}
+//		try
+//		{
+//			stmt = connection.createStatement();
+//			// Drop the UnpaidOrder table.
+//			stmt.execute("DROP TABLE Floor");
+//			System.out.println("Floor table dropped.");
+//		} catch (SQLException ex)
+//		{
+//			// No need to report an error.
+//			// The table simply did not exist.
+//		}	}
 
 	//examples of commands to create tables and attributes, etc.
 	//public static final String CREATE_ITEMS_DB = "CREATE TABLE items (item_id INTEGER NOT NULL, item_name VARCHAR(20) NOT NULL, item_price REAL NOT NULL, multiplicity_shop INTEGER NOT NULL, multiplicity_store INTEGER NOT NULL)";
