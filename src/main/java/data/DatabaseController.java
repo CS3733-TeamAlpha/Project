@@ -3,6 +3,7 @@ package data;
 import java.sql.*;
 import java.util.ArrayList;
 
+import pathfinding.Node;
 import pathfinding.ConcreteNode;
 
 import static java.sql.DriverManager.println;
@@ -179,8 +180,12 @@ public class DatabaseController {
 			System.out.println("Provider table initialized");
 			stmt.close();
 		}
-		catch (SQLException e){
-			e.printStackTrace();
+		catch (SQLException sqlExcept){
+			if(!sqlExcept.getSQLState().equals("X0Y32")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Provider table already exists");
+			}
 		}
 	}
 
@@ -193,15 +198,19 @@ public class DatabaseController {
 					"LocationID INT NOT NULL PRIMARY KEY, " +
 					"LocationName VARCHAR(30), " +
 					"LocationType VARCHAR(10), " +
-					"XCoord INT, " +
-					"YCoord INT, " +
+					"XCoord DOUBLE, " +
+					"YCoord DOUBLE, " +
 					"FloorID INT REFERENCES Floor(FloorID)" +
 					")");
 			System.out.println("Location table initialized");
 			stmt.close();
 		}
-		catch (SQLException e){
-			e.printStackTrace();
+		catch (SQLException sqlExcept){
+			if(!sqlExcept.getSQLState().equals("X0Y32")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Location table already exists");
+			}
 		}
 	}
 
@@ -217,8 +226,12 @@ public class DatabaseController {
 			System.out.println("Office table initialized");
 			stmt.close();
 		}
-		catch (SQLException e){
-			e.printStackTrace();
+		catch (SQLException sqlExcept){
+			if(!sqlExcept.getSQLState().equals("X0Y32")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Office table already exists");
+			}
 		}
 	}
 
@@ -233,8 +246,12 @@ public class DatabaseController {
 			System.out.println("Neighbor table initialized");
 			stmt.close();
 		}
-		catch (SQLException e){
-			e.printStackTrace();
+		catch (SQLException sqlExcept){
+			if(!sqlExcept.getSQLState().equals("X0Y32")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Neighbor table already exists");
+			}
 		}
 	}
 
@@ -248,10 +265,18 @@ public class DatabaseController {
 					"FloorLevel INT NOT NULL" +
 					")");
 			System.out.println("Floor table initialized");
+			//TODO:
+			insertFloor(1, "", 1);
+			insertFloor(2, "", 2);
+			insertFloor(3, "", 3); //default floor first iteration
 			stmt.close();
 		}
-		catch (SQLException e){
-			e.printStackTrace();
+		catch (SQLException sqlExcept){
+			if(!sqlExcept.getSQLState().equals("X0Y32")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Floor table already exists");
+			}
 		}
 	}
 
@@ -280,13 +305,14 @@ public class DatabaseController {
 				LocType = results.getString(3);
 				XCoord = results.getInt(4);
 				YCoord = results.getInt(5);
+				//TODO: utilize floor info, for future iterations
 				int Floor = results.getInt(6);
 				System.out.println(LocID + "\t\t" + LocName + "\t\t" + LocType + "\t\t" + XCoord + YCoord + "\t\t" + Floor);
 			}
 			ArrayList<String> data = new ArrayList<>();
 			data.add(LocName);
 			data.add(LocType);
-			ConcreteNode node = new ConcreteNode(data, XCoord, YCoord); //Return new node using location's information
+			ConcreteNode node = new ConcreteNode(id, data, XCoord, YCoord); //Return new node using location's information
 			results.close();
 			stmt.close();
 
@@ -386,10 +412,11 @@ public class DatabaseController {
 	 * Get neighbors of a specific node
 	 * TODO: Fix return type instead of just printing
 	 */
-	public static void getNeighbors(int id){
+	public static ArrayList<Node> getNeighbors(int id){
 		try
 		{
 			stmt = connection.createStatement();
+			ArrayList<Node> neighbors = new ArrayList<Node>();
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Neighbor " +
 					"WHERE FromID = " + id + "");
@@ -398,13 +425,16 @@ public class DatabaseController {
 			while(results.next())
 			{
 				int ToID = results.getInt(2);
+				neighbors.add(getLocationByID(ToID));
 				System.out.println(ToID + ", ");
 			}
 			results.close();
 			stmt.close();
+			return neighbors;
 		}
 		catch (SQLException e){
 			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -443,14 +473,32 @@ public class DatabaseController {
 		}
 		catch (SQLException sqlExcept)
 		{
-			sqlExcept.printStackTrace();
+			if(!sqlExcept.getSQLState().equals("23505")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("ProviderID already exists");
+
+			}
 		}
+	}
+
+	/*
+	 * insert new location from a concrete node
+	 */
+	public static void insertLocation(ConcreteNode newNode){
+		int id = newNode.getID();
+		String name = newNode.getData().get(0);
+		String type = newNode.getData().get(1);
+		double x = newNode.getX();
+		double y = newNode.getY();
+		int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
+		insertLocation(id, name, type, x, y, floor);
 	}
 
 	/*
 	 * insert new location
 	 */
-	public static void insertLocation (int locID, String name, String type, int x, int y, int floor) {
+	public static void insertLocation (int locID, String name, String type, double x, double y, int floor) {
 		try
 		{
 			stmt = connection.createStatement();
@@ -460,8 +508,19 @@ public class DatabaseController {
 		}
 		catch (SQLException sqlExcept)
 		{
-			sqlExcept.printStackTrace();
+			if(!sqlExcept.getSQLState().equals("23505")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("LocationID already exists");
+			}
 		}
+	}
+
+	/*
+	 * insert new neighbor from ConcreteNodes
+	 */
+	public static void insertNeighbor(ConcreteNode node1, ConcreteNode node2){
+		insertNeighbor(node1.getID(), node2.getID());
 	}
 
 	/*
@@ -477,7 +536,11 @@ public class DatabaseController {
 		}
 		catch (SQLException sqlExcept)
 		{
-			sqlExcept.printStackTrace();
+			if(!sqlExcept.getSQLState().equals("23505")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Neighbor relation already exists");
+			}
 		}
 	}
 
@@ -494,7 +557,11 @@ public class DatabaseController {
 		}
 		catch (SQLException sqlExcept)
 		{
-			sqlExcept.printStackTrace();
+			if(!sqlExcept.getSQLState().equals("23505")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("Office relation already exists");
+			}
 		}
 	}
 
@@ -511,7 +578,11 @@ public class DatabaseController {
 		}
 		catch (SQLException sqlExcept)
 		{
-			sqlExcept.printStackTrace();
+			if(!sqlExcept.getSQLState().equals("23505")){
+				sqlExcept.printStackTrace();
+			} else {
+				System.out.println("FloorID already exists");
+			}
 		}
 	}
 
@@ -708,13 +779,25 @@ public class DatabaseController {
 		}
 	}
 
+	/*
+ 	* modify a location's entry in the table from a ConcreteNode
+ 	*/
+	public static void modifyLocation(ConcreteNode modNode) {
+		int id = modNode.getID();
+		String name = modNode.getData().get(0);
+		String type = modNode.getData().get(1);
+		double x = modNode.getX();
+		double y = modNode.getY();
+		int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
+		modifyLocation(id, name, type, x, y, floor);
+	}
 
 	/*
  	* modify a location's entry in the table
  	* TODO: Probably should break this down to modify a single field at a time
  	* TODO: Fix return type?
  	*/
-	public static void modifyLocation(int ID, String name, String type, int x, int y, int floor)
+	public static void modifyLocation(int ID, String name, String type, double x, double y, int floor)
 	{
 		try
 		{
