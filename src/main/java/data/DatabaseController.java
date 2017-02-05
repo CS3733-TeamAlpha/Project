@@ -3,11 +3,7 @@
  */
 package data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import static java.sql.DriverManager.println;
 
@@ -27,8 +23,12 @@ public class DatabaseController {
 
 	public static void main(String[] args) {
 		createConnection();
-		insertInfo(1, "Amil", "Shah");
-		printResults();
+		//insertInfo(1, "Amil", "Shah");
+		initializeProviderTable();
+		initializeLocationTable();
+		initializeOfficeTable();
+		initializeNeighborTable();
+		//printResults();
 		shutdown();
 	}
 
@@ -55,7 +55,7 @@ public class DatabaseController {
 	}
 
 	//prints the results for the DB
-	public static void printResults() {
+	/*public static void printResults() {
 		try
 		{
 			stmt = connection.createStatement();
@@ -74,7 +74,7 @@ public class DatabaseController {
 		{
 			sqlExcept.printStackTrace();
 		}
-	}
+	}*/
 
 	//shuts down the statement
 	private static void shutdown()
@@ -98,7 +98,7 @@ public class DatabaseController {
 
 	}
 
-	public static void insertInfo (int provID, String fname, String lname) {
+	/*public static void insertInfo (int provID, String fname, String lname) {
 		try
 		{
 			stmt = connection.createStatement();
@@ -114,7 +114,7 @@ public class DatabaseController {
 		{
 			sqlExcept.printStackTrace();
 		}
-	}
+	}*/
 
 	public static void initializeProviderTable(){
 		try
@@ -168,7 +168,7 @@ public class DatabaseController {
 		}
 	}
 
-	public static void initializeNeightborTable(){
+	public static void initializeNeighborTable(){
 		try
 		{
 			stmt = connection.createStatement();
@@ -187,7 +187,7 @@ public class DatabaseController {
 	 * Get a single location by LocationID
 	 * TODO: Fix return type instead of just printing
 	 */
-	public static void getLocationByID(String id){
+	public static void getLocationByID(int id){
 		try
 		{
 			stmt = connection.createStatement();
@@ -217,12 +217,40 @@ public class DatabaseController {
 	 * Get a single provider by ProviderID
  	* TODO: Fix return type instead of just printing
  	*/
-	public static void getProviderByID(String id){
+	public static void getProviderByID(int id){
 		try
 		{
 			stmt = connection.createStatement();
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Provider" +
+					"WHERE ProviderID = " + id + "");
+			//TODO: convert result into something, or return relevant strings
+			System.out.println("ProviderID: " + id);
+			while(results.next())
+			{
+				int LocID = results.getInt(2);
+				System.out.println(LocID + ", ");
+			}
+			results.close();
+			stmt.close();
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * Get locations a provider is associated with from the office table
+	 * Use ProviderID
+	 * TODO: Fix return type instead of just printing
+	 * TODO: Rename office table?
+	 */
+	public static void getProviderLocations(int id){
+		try
+		{
+			stmt = connection.createStatement();
+
+			ResultSet results = stmt.executeQuery("SELECT * FROM Office" +
 					"WHERE ProviderID = " + id + "");
 			//TODO: convert result into a provider, or return relevant strings
 			while(results.next())
@@ -231,6 +259,32 @@ public class DatabaseController {
 				String FName = results.getString(2);
 				String LName = results.getString(3);
 				System.out.println(ProvID + "\t\t" + FName + "\t\t" + LName);
+			}
+			results.close();
+			stmt.close();
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * Get neightbors of a specific node
+	 * TODO: Fix return type instead of just printing
+	 */
+	public static void getNeighbors(int id){
+		try
+		{
+			stmt = connection.createStatement();
+
+			ResultSet results = stmt.executeQuery("SELECT * FROM Neighbor" +
+					"WHERE FromID = " + id + "");
+			//TODO: convert result into something, or return relevant strings
+			System.out.println("LocationID " + id + " connects to " );
+			while(results.next())
+			{
+				int ToID = results.getInt(2);
+				System.out.println(ToID + ", ");
 			}
 			results.close();
 			stmt.close();
