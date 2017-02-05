@@ -9,6 +9,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import data.*;
 import pathfinding.*;
@@ -18,6 +19,8 @@ public class MapController
 	private DataFile datafile;
 	private NodeRepository database;
 	private Graph graph;
+
+	private boolean roomInfoShown;
 
 	@FXML
 	private SplitPane roomviewSplit;
@@ -29,17 +32,27 @@ public class MapController
 	private Button searchButton;
 	@FXML
 	private Button directoryButton;
+	@FXML
+	private VBox roomInfo;
 
 
 	public MapController(){}
 
 	public void initialize(){
-		roomviewSplit.setDividerPositions(1);
+		hideRoomInfo();
 	}
 
 	public void showRoomInfo(MouseEvent e){
-		roomviewSplit.setDividerPositions(.75);
-		System.out.println("Clicked");
+		if(!roomInfoShown){
+			roomviewSplit.getItems().add(1, roomInfo);
+			roomviewSplit.setDividerPositions(.75);
+			roomInfoShown = true;
+		}
+	}
+
+	public void hideRoomInfo(){
+		roomviewSplit.getItems().remove(roomInfo);
+		roomInfoShown = false;
 	}
 
 
