@@ -16,6 +16,14 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<Node>();
 	}
 
+	public ConcreteNode (ArrayList<String> newData, double newX, double newY)
+	{
+		data = newData;
+		neighbors = new ArrayList<Node>();
+		x = newX;
+		y = newY;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

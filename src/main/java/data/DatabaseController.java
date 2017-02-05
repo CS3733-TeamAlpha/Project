@@ -1,6 +1,9 @@
 package data;
 
 import java.sql.*;
+import java.util.ArrayList;
+
+import pathfinding.ConcreteNode;
 
 import static java.sql.DriverManager.println;
 
@@ -256,7 +259,7 @@ public class DatabaseController {
 	 * Get a single location by LocationID
 	 * TODO: Fix return type instead of just printing
 	 */
-	public static void getLocationByID(int id){
+	public static ConcreteNode getLocationByID(int id){
 		try
 		{
 			stmt = connection.createStatement();
@@ -264,21 +267,35 @@ public class DatabaseController {
 			ResultSet results = stmt.executeQuery("SELECT * FROM Location " +
 					"WHERE LocationID = " + id + "");
 			//TODO: convert result into a location, or return relevant strings
+
+			String LocName = " ";
+			String LocType = " ";
+			int XCoord = -1;
+			int YCoord = -1;
+
 			while(results.next())
 			{
 				int LocID = results.getInt(1);
-				String LocName = results.getString(2);
-				String LocType = results.getString(3);
-				int XCoord = results.getInt(4);
-				int YCoord = results.getInt(5);
+				LocName = results.getString(2);
+				LocType = results.getString(3);
+				XCoord = results.getInt(4);
+				YCoord = results.getInt(5);
 				int Floor = results.getInt(6);
 				System.out.println(LocID + "\t\t" + LocName + "\t\t" + LocType + "\t\t" + XCoord + YCoord + "\t\t" + Floor);
 			}
+			ArrayList<String> data = new ArrayList<>();
+			data.add(LocName);
+			data.add(LocType);
+			ConcreteNode node = new ConcreteNode(data, XCoord, YCoord); //Return new node using location's information
 			results.close();
 			stmt.close();
+
+			return node;
 		}
-		catch (SQLException e){
+		catch (SQLException e)
+		{
 			e.printStackTrace();
+			return null;
 		}
 	}
 
