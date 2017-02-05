@@ -16,25 +16,35 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<Node>();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean containsData(String data)
 	{
 		return this.data.contains(data);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void addData(Collection<String> newData)
 	{
 		data.addAll(newData);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public double distance(Node node)
 	{
-		//TODO: Writes units tests... just because.
 		return Math.sqrt(Math.pow(x - node.getX(), 2) + Math.pow(y - node.getY(), 2));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public double distance(double nodeX, double nodeY)
 	{
-		//TODO: Write unit tests
 		return Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
 	}
 

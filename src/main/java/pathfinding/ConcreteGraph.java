@@ -7,10 +7,8 @@ import java.util.PriorityQueue;
 public class ConcreteGraph implements Graph {
 
 	/**
-	 * Find a path between start and end using
-	 * @param start Node to start pathing from.
-	 * @param end Node to attempt to path to.
-	 * @return Collection of nodes (specifically an ArrayList) forming path, null upon error or no path found.
+	 * {@inheritDoc}
+	 * @implNote This implementation returns an ArrayList.
 	 */
 	public Collection<Node> findPath(Node start, Node end) {
 		if (start == null || end == null)
