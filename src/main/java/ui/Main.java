@@ -13,7 +13,7 @@ public class Main extends Application
 {
 	@Override
 	public void start(Stage primaryStage) throws Exception{
-		Parent root = FXMLLoader.load(getClass().getResource("Map.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/fxml/Map.fxml"));
 		primaryStage.setTitle("Faulkner Hospital Map");
 		primaryStage.setScene(new Scene(root, 1280, 720));
 		primaryStage.show();
