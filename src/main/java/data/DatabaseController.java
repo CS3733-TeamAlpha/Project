@@ -318,4 +318,158 @@ public class DatabaseController {
 		}
 	}
 
+	/*
+	 * delete a single provider
+ 	 */
+	public static void removeProvider(int provID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + providerTable +
+					" WHERE ProviderID = " + provID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+	 * delete a single location
+ 	 */
+	public static void removeLocation(int locID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + locationTable +
+					" WHERE LocationID = " + locID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+	 * delete a single office relationship
+	 */
+	public static void removeOffice(int provID, int locID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + officeTable +
+					" WHERE ProviderID = " + provID + " AND LocationID = " + locID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+	 * delete all office relationships for a provider
+	 */
+	public static void removeOfficeByProvider(int provID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + officeTable +
+					" WHERE ProviderID = " + provID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+ 	* delete all office relationships for a location
+ 	*/
+	public static void removeOfficeByLocation(int locID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + officeTable +
+					" WHERE LocationID = " + locID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+ 	* delete a single neighbor relationship
+  	*/
+	public static void removeNeightbor(int fromID, int toID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + neighborTable +
+					" WHERE FromID = " + fromID + " AND ToID = " + toID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+ 	* delete all neighbor relationships from a certain ID
+  	*/
+	public static void removeNeighborsFromID(int fromID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + neighborTable +
+					" WHERE FromID = " + fromID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+ 	* delete all neighbor relationships to a certain ID
+ 	 */
+	public static void removeNeighborsToID(int toID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + neighborTable +
+					" WHERE ToID = " + toID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+ 	* delete all neighbor relationships referencing a certain ID.
+ 	* Maybe unnecessary? TODO: Look into whether necessary or not
+  	*/
+	public static void removeAllNeighborsByID(int ID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("DELETE FROM " + neighborTable +
+					" WHERE FromID = " + ID + "OR ToID = " + ID + "");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
 }
