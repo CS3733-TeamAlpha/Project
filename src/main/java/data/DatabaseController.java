@@ -17,16 +17,86 @@ public class DatabaseController {
 	private static Statement stmt = null;
 
 
-
+	//TODO: Remove main and properly initialize connections/tabes from elsewhere
 	public static void main(String[] args) {
 		createConnection();
-		//insertInfo(1, "Amil", "Shah");
+
+		//TODO: GET RID OF THESE DROPTABLES, ONLY IN FOR TESTING
+		droptablesForShittyTesting();
+
+		//initialize tables
 		initializeProviderTable();
 		initializeLocationTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
-		//printResults();
+
+		//test insertions
+		insertLocation(11, "testloc", "Room", 0, 0, 1);
+		insertLocation(12, "anotherloc", "Room", 1, 1, 1);
+		insertProvider(01, "John", "Doe");
+		insertOffice(01, 11);
+		insertNeighbor(11, 12);
+		//TODO: Make neighbor insertion go both ways? could there be benefit to preserving to/from?
+		insertNeighbor(12, 11);
+
+		//test get data
+		getLocationByID(11);
+		getLocationByID(12);
+		getProviderByID(01);
+		getNeighbors(11);
+		getProviderLocations(01);
+		getProvidersAtLocation(11);
+		getProvidersAtLocation(12); //shouldn't have anything
+
 		shutdown();
+	}
+
+	public static void droptablesForShittyTesting(){
+
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Provider");
+			System.out.println("Provider table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Location");
+			System.out.println("Location table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Office");
+			System.out.println("Office table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Neighbor");
+			System.out.println("Neighbor table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
 	}
 
 	//examples of commands to create tables and attributes, etc.
@@ -77,11 +147,12 @@ public class DatabaseController {
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE Provider(" +
+			stmt.execute("CREATE TABLE Provider(" +
 					"ProviderID INT NOT NULL PRIMARY KEY, " +
 					"FirstName VARCHAR(20), " +
 					"LastName VARCHAR(20) " +
 					")");
+			System.out.println("Provider table initialized");
 			stmt.close();
 		}
 		catch (SQLException e){
@@ -95,7 +166,7 @@ public class DatabaseController {
 			//TODO: Location type is ok as a string? or change?
 			//TODO: FLoorID reference foreign key
 			stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE Location(" +
+			stmt.execute("CREATE TABLE Location(" +
 					"LocationID INT NOT NULL PRIMARY KEY, " +
 					"LocationName VARCHAR(30), " +
 					"LocationType VARCHAR(10), " +
@@ -103,6 +174,7 @@ public class DatabaseController {
 					"YCoord INT, " +
 					"FloorID INT" +
 					")");
+			System.out.println("Location table initialized");
 			stmt.close();
 		}
 		catch (SQLException e){
@@ -114,10 +186,12 @@ public class DatabaseController {
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE Office(" +
+			stmt.execute("CREATE TABLE Office(" +
 					"ProviderID INT NOT NULL REFERENCES Provider(ProviderID), " +
 					"LocationID INT REFERENCES Location(LocationID)" +
 					")");
+
+			System.out.println("Office table initialized");
 			stmt.close();
 		}
 		catch (SQLException e){
@@ -129,10 +203,11 @@ public class DatabaseController {
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE Neighbor(" +
+			stmt.execute("CREATE TABLE Neighbor(" +
 					"FromID INT NOT NULL REFERENCES Location(LocationID), " +
 					"ToID INT REFERENCES Location(LocationID) " +
 					")");
+			System.out.println("Neighbor table initialized");
 			stmt.close();
 		}
 		catch (SQLException e){
@@ -149,7 +224,7 @@ public class DatabaseController {
 		{
 			stmt = connection.createStatement();
 
-			ResultSet results = stmt.executeQuery("SELECT * FROM Location" +
+			ResultSet results = stmt.executeQuery("SELECT * FROM Location " +
 					"WHERE LocationID = " + id + "");
 			//TODO: convert result into a location, or return relevant strings
 			while(results.next())
@@ -179,14 +254,43 @@ public class DatabaseController {
 		{
 			stmt = connection.createStatement();
 
-			ResultSet results = stmt.executeQuery("SELECT * FROM Provider" +
+			ResultSet results = stmt.executeQuery("SELECT * FROM Provider " +
 					"WHERE ProviderID = " + id + "");
 			//TODO: convert result into something, or return relevant strings
 			System.out.println("ProviderID: " + id);
 			while(results.next())
 			{
-				int LocID = results.getInt(2);
-				System.out.println(LocID + ", ");
+				String fname = results.getString(2);
+				String lname = results.getString(3);
+				System.out.println(fname + ", "+ lname);
+			}
+			results.close();
+			stmt.close();
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * Get providers at a specific location
+	 * Use LocationID
+	 * TODO: Fix return type instead of just printing
+	 * TODO: Rename office table?
+	 */
+	public static void getProvidersAtLocation(int id){
+		try
+		{
+			stmt = connection.createStatement();
+
+			ResultSet results = stmt.executeQuery("SELECT * FROM Office " +
+					"WHERE LocationID = " + id + "");
+			//TODO: convert result into a provider, or return relevant strings
+			System.out.println("Location " + id + " has providerIDs ");
+			while(results.next())
+			{
+				int ProvID = results.getInt(1);
+				System.out.println(ProvID + ", ");
 			}
 			results.close();
 			stmt.close();
@@ -207,15 +311,14 @@ public class DatabaseController {
 		{
 			stmt = connection.createStatement();
 
-			ResultSet results = stmt.executeQuery("SELECT * FROM Office" +
+			ResultSet results = stmt.executeQuery("SELECT * FROM Office " +
 					"WHERE ProviderID = " + id + "");
 			//TODO: convert result into a provider, or return relevant strings
+			System.out.println("Location: " + id + " is at ");
 			while(results.next())
 			{
-				int ProvID = results.getInt(1);
-				String FName = results.getString(2);
-				String LName = results.getString(3);
-				System.out.println(ProvID + "\t\t" + FName + "\t\t" + LName);
+				int locID = results.getInt(2);
+				System.out.println(locID + ", ");
 			}
 			results.close();
 			stmt.close();
@@ -226,7 +329,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * Get neightbors of a specific node
+	 * Get neighbors of a specific node
 	 * TODO: Fix return type instead of just printing
 	 */
 	public static void getNeighbors(int id){
@@ -234,7 +337,7 @@ public class DatabaseController {
 		{
 			stmt = connection.createStatement();
 
-			ResultSet results = stmt.executeQuery("SELECT * FROM Neighbor" +
+			ResultSet results = stmt.executeQuery("SELECT * FROM Neighbor " +
 					"WHERE FromID = " + id + "");
 			//TODO: convert result into something, or return relevant strings
 			System.out.println("LocationID " + id + " connects to " );
@@ -287,7 +390,7 @@ public class DatabaseController {
 	/*
 	 * insert new location neighbor
 	 */
-	public static void insertNeightbor(int fromid, int toid){
+	public static void insertNeighbor(int fromid, int toid){
 		try
 		{
 			stmt = connection.createStatement();
@@ -406,7 +509,7 @@ public class DatabaseController {
 	/*
  	* delete a single neighbor relationship
   	*/
-	public static void removeNeightbor(int fromID, int toID){
+	public static void removeNeighbor(int fromID, int toID){
 		try
 		{
 			stmt = connection.createStatement();
@@ -481,7 +584,7 @@ public class DatabaseController {
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.executeUpdate("UPDATE Provider" +
+			stmt.executeUpdate("UPDATE Provider " +
 					"SET ProviderID = " + ID + ", " +
 					"FirstName = " + fname + ", " +
 					"LastName = " + lname + ", " +
@@ -505,7 +608,7 @@ public class DatabaseController {
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.executeUpdate("UPDATE Provider" +
+			stmt.executeUpdate("UPDATE Provider " +
 					"SET LocationID = " + ID + ", " +
 					"LocationName = " + name + ", " +
 					"LocationType = " + type + ", " +
