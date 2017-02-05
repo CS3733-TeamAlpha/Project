@@ -1,5 +1,6 @@
 package pathfinding;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface Node
@@ -36,8 +37,10 @@ public interface Node
 	Collection<Node> getNeighbors();
 	void addNeighbors(Collection<Node> newNeighbors);
 	void addNeighbor(Node newNeighbor);
+	int getID();
 	double getX();
 	double getY();
 	void setX(double newX);
 	void setY(double newY);
+	ArrayList<String> getData();
 }

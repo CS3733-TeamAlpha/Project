@@ -5,10 +5,11 @@ import java.util.ArrayList;
 
 public class ConcreteNode implements Node
 {
-	private ArrayList<String> data;
+	private ArrayList<String> data; // name, type
 	private ArrayList<Node> neighbors;
 	private double x;
 	private double y;
+	private int nodeID; //unique
 
 	public ConcreteNode()
 	{
@@ -16,8 +17,9 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<Node>();
 	}
 
-	public ConcreteNode (ArrayList<String> newData, double newX, double newY)
+	public ConcreteNode (int ID, ArrayList<String> newData, double newX, double newY)
 	{
+		nodeID = ID;
 		data = newData;
 		neighbors = new ArrayList<Node>();
 		x = newX;
@@ -71,6 +73,10 @@ public class ConcreteNode implements Node
 	{
 		neighbors.add(newNeighbor);
 	}
+
+	public int getID(){ return nodeID; }
+
+	public ArrayList<String> getData(){ return data; }
 
 	public double getX()
 	{
