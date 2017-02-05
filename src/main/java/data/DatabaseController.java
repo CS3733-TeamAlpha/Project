@@ -1,6 +1,3 @@
-/**
- * Created by DrewGelinas on 2/4/17.
- */
 package data;
 
 import java.sql.*;
@@ -54,28 +51,6 @@ public class DatabaseController {
 		}
 	}
 
-	//prints the results for the DB
-	/*public static void printResults() {
-		try
-		{
-			stmt = connection.createStatement();
-			ResultSet results = stmt.executeQuery("select * from " + tableName);
-			while(results.next())
-			{
-				int ProvID = results.getInt(1);
-				String FName = results.getString(2);
-				String LName = results.getString(3);
-				System.out.println(ProvID + "\t\t" + FName + "\t\t" + LName);
-			}
-			results.close();
-			stmt.close();
-		}
-		catch (SQLException sqlExcept)
-		{
-			sqlExcept.printStackTrace();
-		}
-	}*/
-
 	//shuts down the statement
 	private static void shutdown()
 	{
@@ -97,24 +72,6 @@ public class DatabaseController {
 		}
 
 	}
-
-	/*public static void insertInfo (int provID, String fname, String lname) {
-		try
-		{
-			stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE Provider(" +
-					"ProviderID INT NOT NULL PRIMARY KEY, " +
-					"FirstName VARCHAR(20), " +
-					"LastName VARCHAR(20) " +
-					")");
-			stmt.execute("insert into " + tableName + " values (" + provID + ", '" + fname + "', '" + lname + "')");
-			stmt.close();
-		}
-		catch (SQLException sqlExcept)
-		{
-			sqlExcept.printStackTrace();
-		}
-	}*/
 
 	public static void initializeProviderTable(){
 		try
@@ -291,6 +248,73 @@ public class DatabaseController {
 		}
 		catch (SQLException e){
 			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * insert new provider
+	 */
+	public static void insertProvider (int provID, String fname, String lname) {
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("insert into " + providerTable + " values (" + provID + ", '" + fname + "', '" + lname + "')");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+	 * insert new location
+	 */
+	public static void insertLocation (int locID, String name, String type, int x, int y, int floor) {
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("insert into " + locationTable +
+					" values (" + locID + ", '" + name + "', '" + type + "', " + x + ", " + y + ", " + floor + ")");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+	 * insert new location neighbor
+	 */
+	public static void insertNeightbor(int fromid, int toid){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("insert into " + neighborTable +
+					" values (" + fromid + ", " + toid + ")");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+	}
+
+	/*
+	 * insert new provider office
+	 */
+	public static void insertOffice(int provID, int locID){
+		try
+		{
+			stmt = connection.createStatement();
+			stmt.execute("insert into " + officeTable +
+					" values (" + provID + ", " + locID + ")");
+			stmt.close();
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
 		}
 	}
 
