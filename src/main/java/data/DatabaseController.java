@@ -364,13 +364,15 @@ public class DatabaseController {
 			int YCoord = -1;
 			Floor flr = null;
 
-			while(results.next())
+			if(results.next())
 			{
 				NodeName = results.getString(2);
 				NodeType = results.getString(3);
 				XCoord = results.getInt(4);
 				YCoord = results.getInt(5);
 				flr = getFloorByID(results.getInt(6));
+			} else {
+				return null;
 			}
 			ArrayList<String> data = new ArrayList<>();
 			data.add(NodeName);
@@ -469,10 +471,13 @@ public class DatabaseController {
 					"WHERE ProviderID = " + id + "");
 			String fname = "";
 			String lname = "";
-			while(results.next())
+
+			if(results.next())
 			{
 				fname = results.getString(2);
 				lname = results.getString(3);
+			} else {
+				return null;
 			}
 			results.close();
 			stmt.close();
@@ -603,10 +608,13 @@ public class DatabaseController {
 					"WHERE FloorID = " + id + "");
 			String bld = "";
 			int lvl = 0;
-			while(results.next())
+
+			if(results.next())
 			{
 				bld = results.getString(2);
 				lvl = results.getInt(3);
+			} else {
+				return null;
 			}
 			results.close();
 			stmt.close();
