@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.DirectoryController">
+   <children>
+      <ToolBar prefHeight="40.0" prefWidth="600.0">
+        <items>
+            <TextField fx:id="searchField" />
+          <Button mnemonicParsing="false" text="Search" translateX="-5.0" />
+            <Button mnemonicParsing="false" onAction="#showMap" text="Map" translateX="30.0" />
+        </items>
+      </ToolBar>
+      <TableView layoutY="39.0" prefHeight="361.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="nameColumn" prefWidth="75.0" text="C1" />
+          <TableColumn prefWidth="75.0" text="C2" />
+        </columns>
+      </TableView>
+   </children>
+</Pane>

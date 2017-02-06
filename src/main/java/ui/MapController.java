@@ -4,15 +4,15 @@ package ui;/**
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import data.*;
 import pathfinding.*;
+
+import java.io.IOException;
 
 public class MapController
 {
@@ -21,6 +21,7 @@ public class MapController
 	private Graph graph;
 
 	private boolean roomInfoShown;
+	private Stage stage;
 
 	@FXML
 	private SplitPane roomviewSplit;
@@ -34,6 +35,10 @@ public class MapController
 	private Button directoryButton;
 	@FXML
 	private VBox roomInfo;
+	@FXML
+	private Label roomName;
+	@FXML
+	private Label roomDescription;
 
 
 	public MapController(){}
@@ -48,11 +53,16 @@ public class MapController
 			roomviewSplit.setDividerPositions(.75);
 			roomInfoShown = true;
 		}
+		roomName.setText(""+e.getX()+", "+e.getY());
 	}
 
 	public void hideRoomInfo(){
 		roomviewSplit.getItems().remove(roomInfo);
 		roomInfoShown = false;
+	}
+
+	public void showDirectory(){
+		Main.loadFXML("/fxml/Directory.fxml");
 	}
 
 
