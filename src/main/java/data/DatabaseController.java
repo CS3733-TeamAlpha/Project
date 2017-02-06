@@ -120,7 +120,7 @@ public class DatabaseController {
 	}
 
 	//shuts down the statement
-	private static void shutdown()
+	protected static void shutdown()
 	{
 		try
 		{
@@ -493,11 +493,25 @@ public class DatabaseController {
 	}
 
 	/*
+	 * Get a single provider by id
+	 * @param id ProviderID
+	 */
+	public static Provider getProviderByID(int id){
+		for(Provider p: providerList){
+			if(p.getID() == id){
+				return p;
+			}
+		}
+		//TODO: handle when no provider matches
+		return null;
+	}
+
+	/*
 	 * get providers by name. expect possibility of duplicates since no uniqueness constraints
 	 * @param f FirstName of provider
 	 * @param l LastName of provider
 	 */
-	public static Collection<Provider> getProviderByFullName(String f, String l){
+	public static ArrayList<Provider> getProvidersByFullName(String f, String l){
 		ArrayList<Provider> provList = new ArrayList<Provider>();
 		for(Provider p: providerList){
 			if(p.getfName().equals(f) && p.getlName().equals(l)){
@@ -1006,5 +1020,9 @@ public class DatabaseController {
 			e.printStackTrace();
 		}
 	}
+
+	public static ArrayList<Node> getNodeList(){ return nodeList; }
+	public static ArrayList<Provider> getProviderList(){ return providerList; }
+	public static ArrayList<Floor> getFloorList(){ return floorList; }
 
 }
