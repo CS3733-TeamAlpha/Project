@@ -39,68 +39,64 @@ public class DatabaseController {
 		shutdown();
 	}
 
-//	public static void droptablesForShittyTesting(){
-//
-//		try
-//		{
-//			stmt = connection.createStatement();
-//			// Drop the UnpaidOrder table.
-//			stmt.execute("DROP TABLE Provider");
-//			System.out.println("Provider table dropped.");
-//		} catch (SQLException ex)
-//		{
-//			// No need to report an error.
-//			// The table simply did not exist.
-//		}
-//		try
-//		{
-//			stmt = connection.createStatement();
-//			// Drop the UnpaidOrder table.
-//			stmt.execute("DROP TABLE Node");
-//			System.out.println("Node table dropped.");
-//		} catch (SQLException ex)
-//		{
-//			// No need to report an error.
-//			// The table simply did not exist.
-//		}
-//		try
-//		{
-//			stmt = connection.createStatement();
-//			// Drop the UnpaidOrder table.
-//			stmt.execute("DROP TABLE Office");
-//			System.out.println("Office table dropped.");
-//		} catch (SQLException ex)
-//		{
-//			// No need to report an error.
-//			// The table simply did not exist.
-//		}
-//		try
-//		{
-//			stmt = connection.createStatement();
-//			// Drop the UnpaidOrder table.
-//			stmt.execute("DROP TABLE Neighbor");
-//			System.out.println("Neighbor table dropped.");
-//		} catch (SQLException ex)
-//		{
-//			// No need to report an error.
-//			// The table simply did not exist.
-//		}
-//		try
-//		{
-//			stmt = connection.createStatement();
-//			// Drop the UnpaidOrder table.
-//			stmt.execute("DROP TABLE Floor");
-//			System.out.println("Floor table dropped.");
-//		} catch (SQLException ex)
-//		{
-//			// No need to report an error.
-//			// The table simply did not exist.
-//		}	}
+	public static void droptablesForShittyTesting(){
 
-	//examples of commands to create tables and attributes, etc.
-	//public static final String CREATE_ITEMS_DB = "CREATE TABLE items (item_id INTEGER NOT NULL, item_name VARCHAR(20) NOT NULL, item_price REAL NOT NULL, multiplicity_shop INTEGER NOT NULL, multiplicity_store INTEGER NOT NULL)";
-	//public static final String INSERT_PRODUCT = "INSERT INTO items (item_id, item_name, item_price, multiplicity_shop, multiplicity_store) VALUES (?, ?, ?, ?, ?)";
-	//public static final String CLEAR_ITEMS_DB = "DELETE FROM items";
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Provider");
+			System.out.println("Provider table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Node");
+			System.out.println("Node table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Office");
+			System.out.println("Office table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Neighbor");
+			System.out.println("Neighbor table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Floor");
+			System.out.println("Floor table dropped.");
+		} catch (SQLException ex)
+		{
+			// No need to report an error.
+			// The table simply did not exist.
+		}
+	}
 
 	//used for creating connection to the DB
 	protected static void createConnection() {
@@ -196,7 +192,8 @@ public class DatabaseController {
 			stmt = connection.createStatement();
 			stmt.execute("CREATE TABLE Office(" +
 					"ProviderID INT NOT NULL REFERENCES Provider(ProviderID), " +
-					"NodeID INT REFERENCES Node(NodeID)" +
+					"NodeID INT REFERENCES Node(NodeID), " +
+					"CONSTRAINT UQ_OFFICE UNIQUE(ProviderID, NodeID)" +
 					")");
 
 			System.out.println("Office table initialized");
@@ -336,9 +333,6 @@ public class DatabaseController {
 			}
 			for(int i=0;i<provIDs.size();i++){
 				providerList.add(makeProviderByID(provIDs.get(i)));
-			}
-			for(int i=0;i<providerList.size();i++){
-				providerList.get(i).addLocations(getProviderNodes(providerList.get(i).getID()));
 			}
 			results.close();
 			stmt.close();
@@ -553,7 +547,9 @@ public class DatabaseController {
 			while(results.next())
 			{
 				int nodeID = results.getInt(2);
-				provNodes.add(getNodeByID(nodeID));
+				if(!provNodes.contains(getNodeByID(nodeID))) {
+					provNodes.add(getNodeByID(nodeID));
+				}
 			}
 			results.close();
 			stmt.close();
