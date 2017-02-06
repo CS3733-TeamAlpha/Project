@@ -399,6 +399,7 @@ public class DatabaseController
     /*
      * get a node closest to a source node.
      * currently assuming nodes can't have the exact same XY coordinates
+     * Check floorID is different to discern between different building/floors
      * @param source The souce node from which we want to find the nearest node
      */
     public static Node getNearestNode(Node source)
@@ -409,9 +410,8 @@ public class DatabaseController
         for (Node n : nodeList)
         {
             if (n.getX() == source.getX() && n.getY() == source.getY())
-            {
-                //TODO: are multiple nodes allowed in the same location?
-            } else
+            { //todo: something for same location?
+            } else if(n.getOnFloor().getID() == source.getOnFloor().getID()) //check node is on same floor
             {
                 double dist = source.distance(n);
                 if (dist < min || min == -1)
