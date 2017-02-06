@@ -16,7 +16,8 @@ public class Main extends Application
 	private static Stage stage;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception{
+	public void start(Stage primaryStage) throws Exception
+	 {
 		Parent root = FXMLLoader.load(getClass().getResource("/fxml/Map.fxml"));
 		stage = primaryStage;
 		primaryStage.setTitle("Faulkner Hospital Map");
@@ -29,7 +30,8 @@ public class Main extends Application
 		launch(args);
 	}
 
-	public static void loadFXML(String path){
+	public static void loadFXML(String path)
+	{
 		Parent root = null;
 		try
 		{

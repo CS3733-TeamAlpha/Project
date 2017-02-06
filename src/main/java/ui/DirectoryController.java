@@ -22,11 +22,13 @@ public class DirectoryController
 
 	public DirectoryController(){}
 
-	public void initialize(){
+	public void initialize()
+	{
 		//TODO - read from database and populate tables
 	}
 
-	public void showMap(){
+	public void showMap()
+	{
 		Main.loadFXML("/fxml/Map.fxml");
 	}
 

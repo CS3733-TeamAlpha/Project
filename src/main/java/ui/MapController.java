@@ -43,25 +43,33 @@ public class MapController
 
 	public MapController(){}
 
-	public void initialize(){
+	public void initialize()
+	{
 		hideRoomInfo();
 	}
 
-	public void showRoomInfo(MouseEvent e){
-		if(!roomInfoShown){
-			roomviewSplit.getItems().add(1, roomInfo);
-			roomviewSplit.setDividerPositions(.75);
-			roomInfoShown = true;
+	public void showRoomInfo(MouseEvent e)
+	{
+		if(e.isStillSincePress())
+		{
+			if (!roomInfoShown)
+			{
+				roomviewSplit.getItems().add(1, roomInfo);
+				roomviewSplit.setDividerPositions(.75);
+				roomInfoShown = true;
+			}
+			roomName.setText("" + e.getX() + ", " + e.getY());
 		}
-		roomName.setText(""+e.getX()+", "+e.getY());
 	}
 
-	public void hideRoomInfo(){
+	public void hideRoomInfo()
+	{
 		roomviewSplit.getItems().remove(roomInfo);
 		roomInfoShown = false;
 	}
 
-	public void showDirectory(){
+	public void showDirectory()
+	{
 		Main.loadFXML("/fxml/Directory.fxml");
 	}
 
