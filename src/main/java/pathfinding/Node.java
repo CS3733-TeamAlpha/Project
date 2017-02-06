@@ -1,5 +1,7 @@
 package pathfinding;
 
+import data.Floor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -37,6 +39,8 @@ public interface Node
 	Collection<Node> getNeighbors();
 	void addNeighbors(Collection<Node> newNeighbors);
 	void addNeighbor(Node newNeighbor);
+	Floor getOnFloor();
+	void setOnFloor(Floor flr);
 	int getID();
 	double getX();
 	double getY();

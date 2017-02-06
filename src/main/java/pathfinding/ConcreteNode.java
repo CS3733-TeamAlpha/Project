@@ -2,11 +2,13 @@ package pathfinding;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import data.Floor;
 
 public class ConcreteNode implements Node
 {
 	private ArrayList<String> data; // name, type
 	private ArrayList<Node> neighbors;
+	private Floor onFloor;
 	private double x;
 	private double y;
 	private int nodeID; //unique
@@ -17,13 +19,14 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<Node>();
 	}
 
-	public ConcreteNode (int ID, ArrayList<String> newData, double newX, double newY)
+	public ConcreteNode (int ID, ArrayList<String> newData, double newX, double newY, Floor flr)
 	{
 		nodeID = ID;
 		data = newData;
 		neighbors = new ArrayList<Node>();
 		x = newX;
 		y = newY;
+		onFloor = flr;
 	}
 
 	/**
@@ -73,6 +76,10 @@ public class ConcreteNode implements Node
 	{
 		neighbors.add(newNeighbor);
 	}
+
+	public Floor getOnFloor(){ return onFloor; }
+
+	public void setOnFloor(Floor flr){ onFloor = flr; }
 
 	public int getID(){ return nodeID; }
 
