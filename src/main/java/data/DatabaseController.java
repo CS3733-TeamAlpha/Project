@@ -141,6 +141,7 @@ public class DatabaseController {
 
 	}
 
+	//initialize the provider table, if not already created
 	public static void initializeProviderTable(){
 		try
 		{
@@ -162,6 +163,7 @@ public class DatabaseController {
 		}
 	}
 
+	//initialize the node table, if not already created
 	public static void initializeNodeTable(){
 		try
 		{
@@ -187,6 +189,7 @@ public class DatabaseController {
 		}
 	}
 
+	//initialize the office table, if not already created
 	public static void initializeOfficeTable(){
 		try
 		{
@@ -208,6 +211,7 @@ public class DatabaseController {
 		}
 	}
 
+	//initialize the neighbor table, if not already created
 	public static void initializeNeighborTable(){
 		try
 		{
@@ -228,6 +232,7 @@ public class DatabaseController {
 		}
 	}
 
+	//initialize the floor table, if not already created
 	public static void initializeFloorTable(){
 		try
 		{
@@ -249,6 +254,7 @@ public class DatabaseController {
 		}
 	}
 
+	//make floor objects from all entries in the floor table
 	public static Collection<Floor> initializeAllFloors(){
 		try
 		{
@@ -278,6 +284,8 @@ public class DatabaseController {
 		}
 	}
 
+	//make node objects from all entries in the node table
+	//dependent on floorlist already being initialized
 	public static Collection<Node> initializeAllNodes(){
 		try
 		{
@@ -310,6 +318,8 @@ public class DatabaseController {
 		}
 	}
 
+	//make provider objects from all entries in the provider table
+	//dependent on providerlist already being initialized
 	public static Collection<Provider> initializeAllProviders(){
 		try
 		{
@@ -344,7 +354,7 @@ public class DatabaseController {
 
 	/*
 	 * make a single node by NodeID
-	 * TODO: Fix return type instead of just printing
+	 * @param id NodeID of node object to be created
 	 */
 	public static ConcreteNode makeNodeByID(int id){
 		try
@@ -353,7 +363,6 @@ public class DatabaseController {
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Node " +
 					"WHERE NodeID = " + id + "");
-			//TODO: convert result into a node, or return relevant strings
 
 			String NodeName = " ";
 			String NodeType = " ";
@@ -363,13 +372,11 @@ public class DatabaseController {
 
 			while(results.next())
 			{
-				int NodeID = results.getInt(1);
 				NodeName = results.getString(2);
 				NodeType = results.getString(3);
 				XCoord = results.getInt(4);
 				YCoord = results.getInt(5);
-				//TODO: utilize floor info, for future iterations
-				flr = makeFloorByID(results.getInt(6));
+				flr = getFloorByID(results.getInt(6));
 			}
 			ArrayList<String> data = new ArrayList<>();
 			data.add(NodeName);
@@ -382,18 +389,23 @@ public class DatabaseController {
 		}
 		catch (SQLException e)
 		{
+			//TODO: properly handle exceptions
 			e.printStackTrace();
 			return null;
 		}
 	}
 
+	/*
+	 * retrieve a node from nodeList based on id
+	 * @param id NodeID of desired node
+	 */
 	public static Node getNodeByID(int id){
 		for(Node n: nodeList){
 			if(n.getID() == id){
 				return n;
 			}
 		}
-		//TODO: probably should throw an exception or something if not found
+		//TODO: Handle when no match was found
 		return null;
 	}
 
@@ -407,29 +419,40 @@ public class DatabaseController {
 				return n;
 			}
 		}
-		//TODO: probably should throw an exception or something if not found
+		//TODO: handle if no node found at xy coordinate
 		return null;
 	}
 
+	/*
+	 * get nodes based on their NodeName, contained in data
+	 * @param name The name of the node to find
+	 */
 	public static Node getNodeByName(String name){
 		for(Node n: nodeList){
 			if(n.containsData(name)){
+				//TODO: This just returns the first match. what if multiple matches?
 				return n;
 			}
 		}
-		//TODO: probably should throw an exception or something if not found
+		//TODO: handle when no match is found
 		return null;
 	}
 
+	/*
+	 * get a node closest to a source node.
+	 * currently assuming nodes can't have the exact same XY coordinates
+	 * @param source The souce node from which we want to find the nearest node
+	 */
 	public static Node getNearestNode(Node source){
-		double min = 999999;
+		double min = -1;
 		Node nearest = null;
+
 		for(Node n: nodeList){
 			if (n.getX() == source.getX() && n.getY() == source.getY()) {
-				//assuming nodes can't be in same location, so samexy is same node.
+				//TODO: are multiple nodes allowed in the same location?
 			} else {
 				double dist = source.distance(n);
-				if(dist < min){
+				if(dist < min || min == -1){
 					min = dist;
 					nearest = n;
 				}
@@ -441,6 +464,7 @@ public class DatabaseController {
 	/*
 	 * Make a single provider by ID.
 	 * Relies on nodeList already being initialized
+	 * @param id ProviderID
  	*/
 	public static Provider makeProviderByID(int id){
 		try
@@ -470,6 +494,8 @@ public class DatabaseController {
 
 	/*
 	 * get providers by name. expect possibility of duplicates since no uniqueness constraints
+	 * @param f FirstName of provider
+	 * @param l LastName of provider
 	 */
 	public static Collection<Provider> getProviderByFullName(String f, String l){
 		ArrayList<Provider> provList = new ArrayList<Provider>();
@@ -483,6 +509,7 @@ public class DatabaseController {
 
 	/*
 	 * Get providers at a specific node
+	 * @param id NodeID to get providers from
 	 */
 	public static ArrayList<Provider> getProvidersAtNode(int id){
 		ArrayList<Provider> pList = new ArrayList<Provider>();
@@ -492,12 +519,13 @@ public class DatabaseController {
 				pList.add(p);
 			}
 		}
+		//TODO: Handle no providers at a node
 		return pList;
 	}
 
 	/*
-	 * Get nodes a provider is associated with from the office table
-	 * Use ProviderID
+	 * Get nodes a provider is associated with
+	 * @param id ProviderID of provider for which we are looking for linked nodes
 	 */
 	public static ArrayList<Node> getProviderNodes(int id){
 		try
@@ -525,6 +553,7 @@ public class DatabaseController {
 
 	/*
 	 * Get neighbors of a specific node
+	 * @param id NodeID from which we are getting neighbors
 	 */
 	public static ArrayList<Node> getNeighbors(int id){
 		try
@@ -537,6 +566,7 @@ public class DatabaseController {
 			while(results.next())
 			{
 				int ToID = results.getInt(2);
+				//TODO: Handle null nodes being added or fix getNodeByID
 				neighbors.add(getNodeByID(ToID));
 			}
 			results.close();
@@ -545,10 +575,15 @@ public class DatabaseController {
 		}
 		catch (SQLException e){
 			e.printStackTrace();
+			//TODO: Handle exceptions
 			return null;
 		}
 	}
 
+	/*
+	 * Make a floor from floor table
+	 * @param id FloorID of the floor to make
+	 */
 	public static Floor makeFloorByID(int id){
 		try
 		{
@@ -574,18 +609,22 @@ public class DatabaseController {
 		}
 	}
 
+	/*
+	 * Get a floor from floorList
+	 * @param id FloorID of floor to search for
+	 */
 	public static Floor getFloorByID(int id){
 		for(Floor f: floorList){
 			if(f.getID() == id){
 				return f;
 			}
 		}
-		//TODO: probably do something proper if floor isn't found
+		//TODO: handle when no match is found
 		return null;
 	}
 
 	/*
-	 * insert new provider
+	 * insert new provider into table
 	 */
 	public static void insertProvider (int provID, String fname, String lname) {
 		try
@@ -599,14 +638,14 @@ public class DatabaseController {
 			if(!sqlExcept.getSQLState().equals("23505")){
 				sqlExcept.printStackTrace();
 			} else {
+				//TODO: handle already exist, perhaps update instead
 				System.out.println("ProviderID already exists");
-
 			}
 		}
 	}
 
 	/*
-	 * insert new node from a concrete node
+	 * insert new node from a concrete node into table
 	 */
 	public static void insertNode(ConcreteNode newNode){
 		int id = newNode.getID();
@@ -619,7 +658,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * insert new node
+	 * insert new node into table
 	 */
 	public static void insertNode (int nodeID, String name, String type, double x, double y, int floor) {
 		try
@@ -634,6 +673,7 @@ public class DatabaseController {
 			if(!sqlExcept.getSQLState().equals("23505")){
 				sqlExcept.printStackTrace();
 			} else {
+				//TODO: Handle node already existing, perhaps update instead
 				System.out.println("NodeID already exists");
 			}
 		}
@@ -668,7 +708,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * insert new provider office
+	 * insert new provider node relationship (office) into table
 	 */
 	public static void insertOffice(int provID, int nodeID){
 		try
@@ -683,13 +723,14 @@ public class DatabaseController {
 			if(!sqlExcept.getSQLState().equals("23505")){
 				sqlExcept.printStackTrace();
 			} else {
+				//TODO: handle already existing, perhaps update instead
 				System.out.println("Office relation already exists");
 			}
 		}
 	}
 
 	/*
- 	* insert new floor
+ 	* insert new floor into table
  	*/
 	public static void insertFloor(int floorID, String name, int lvl){
 		try
@@ -704,13 +745,14 @@ public class DatabaseController {
 			if(!sqlExcept.getSQLState().equals("23505")){
 				sqlExcept.printStackTrace();
 			} else {
+				//TODO: handle floor already existing, perhaps update instead
 				System.out.println("FloorID already exists");
 			}
 		}
 	}
 
 	/*
-	 * delete a single provider
+	 * delete a single provider from tables
  	 */
 	public static void removeProvider(int provID){
 		try
@@ -727,7 +769,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * delete a single node
+	 * delete a single node from tables
  	 */
 	public static void removeNode(int nodeID){
 		try
@@ -744,7 +786,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * delete a single office relationship
+	 * delete a single office relationship from tables
 	 */
 	public static void removeOffice(int provID, int nodeID){
 		try
@@ -761,7 +803,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * delete all office relationships for a provider
+	 * delete all office relationships for a provider from tables
 	 */
 	public static void removeOfficeByProvider(int provID){
 		try
@@ -778,7 +820,7 @@ public class DatabaseController {
 	}
 
 	/*
- 	* delete all office relationships for a node
+ 	* delete all office relationships for a node from tables
  	*/
 	public static void removeOfficeByNode(int nodeID){
 		try
@@ -795,7 +837,7 @@ public class DatabaseController {
 	}
 
 	/*
- 	* delete a single neighbor relationship
+ 	* delete a single neighbor relationship from tables
   	*/
 	public static void removeNeighbor(int fromID, int toID){
 		try
@@ -812,7 +854,7 @@ public class DatabaseController {
 	}
 
 	/*
- 	* delete all neighbor relationships from a certain ID
+ 	* delete all neighbor relationships from a certain ID from tables
   	*/
 	public static void removeNeighborsFromID(int fromID){
 		try
@@ -829,7 +871,7 @@ public class DatabaseController {
 	}
 
 	/*
- 	* delete all neighbor relationships to a certain ID
+ 	* delete all neighbor relationships to a certain ID from tables
  	 */
 	public static void removeNeighborsToID(int toID){
 		try
