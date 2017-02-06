@@ -26,8 +26,7 @@ public class DatabaseController
     private static ArrayList<Provider> providerList = new ArrayList<Provider>();
     private static ArrayList<Floor> floorList = new ArrayList<Floor>();
 
-    //TODO: Remove main and properly initialize connections/tabes from elsewhere
-    public static void main(String[] args)
+    static
     {
         createConnection();
 
@@ -39,66 +38,6 @@ public class DatabaseController
         initializeNeighborTable();
 
         shutdown();
-    }
-
-    public static void droptablesForShittyTesting()
-    {
-
-        try
-        {
-            stmt = connection.createStatement();
-            // Drop the UnpaidOrder table.
-            stmt.execute("DROP TABLE Provider");
-            System.out.println("Provider table dropped.");
-        } catch (SQLException ex)
-        {
-            // No need to report an error.
-            // The table simply did not exist.
-        }
-        try
-        {
-            stmt = connection.createStatement();
-            // Drop the UnpaidOrder table.
-            stmt.execute("DROP TABLE Node");
-            System.out.println("Node table dropped.");
-        } catch (SQLException ex)
-        {
-            // No need to report an error.
-            // The table simply did not exist.
-        }
-        try
-        {
-            stmt = connection.createStatement();
-            // Drop the UnpaidOrder table.
-            stmt.execute("DROP TABLE Office");
-            System.out.println("Office table dropped.");
-        } catch (SQLException ex)
-        {
-            // No need to report an error.
-            // The table simply did not exist.
-        }
-        try
-        {
-            stmt = connection.createStatement();
-            // Drop the UnpaidOrder table.
-            stmt.execute("DROP TABLE Neighbor");
-            System.out.println("Neighbor table dropped.");
-        } catch (SQLException ex)
-        {
-            // No need to report an error.
-            // The table simply did not exist.
-        }
-        try
-        {
-            stmt = connection.createStatement();
-            // Drop the UnpaidOrder table.
-            stmt.execute("DROP TABLE Floor");
-            System.out.println("Floor table dropped.");
-        } catch (SQLException ex)
-        {
-            // No need to report an error.
-            // The table simply did not exist.
-        }
     }
 
     //used for creating connection to the DB
