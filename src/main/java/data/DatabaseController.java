@@ -23,6 +23,7 @@ public class DatabaseController {
 	private static Statement stmt = null;
 	private static ArrayList<Node> nodeList = new ArrayList<Node>();
 	private static ArrayList<Provider> providerList = new ArrayList<Provider>();
+	private static ArrayList<Floor> floorList = new ArrayList<Floor>();
 
 	//TODO: Remove main and properly initialize connections/tabes from elsewhere
 	public static void main(String[] args) {
@@ -237,10 +238,6 @@ public class DatabaseController {
 					"FloorLevel INT NOT NULL" +
 					")");
 			System.out.println("Floor table initialized");
-			//TODO:
-			insertFloor(1, "", 1);
-			insertFloor(2, "", 2);
-			insertFloor(3, "", 3); //default floor first iteration
 			stmt.close();
 		}
 		catch (SQLException sqlExcept){
@@ -249,6 +246,35 @@ public class DatabaseController {
 			} else {
 				System.out.println("Floor table already exists");
 			}
+		}
+	}
+
+	public static Collection<Floor> initializeAllFloors(){
+		try
+		{
+			floorList.clear(); //sanitize floorlist
+			stmt = connection.createStatement();
+
+			ResultSet results = stmt.executeQuery("SELECT * FROM Floor " + "");
+
+			ArrayList<Integer> floorIDs = new ArrayList<Integer>();
+			while(results.next())
+			{
+				int FloorID = results.getInt(1);
+				floorIDs.add(FloorID);
+			}
+			for(int i=0;i<floorIDs.size();i++){
+				floorList.add(makeFloorByID(floorIDs.get(i)));
+			}
+			results.close();
+			stmt.close();
+
+			return floorList;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -333,6 +359,7 @@ public class DatabaseController {
 			String NodeType = " ";
 			int XCoord = -1;
 			int YCoord = -1;
+			Floor flr = null;
 
 			while(results.next())
 			{
@@ -342,13 +369,12 @@ public class DatabaseController {
 				XCoord = results.getInt(4);
 				YCoord = results.getInt(5);
 				//TODO: utilize floor info, for future iterations
-				int Floor = results.getInt(6);
-				System.out.println(NodeID + "\t\t" + NodeName + "\t\t" + NodeType + "\t\t" + XCoord + YCoord + "\t\t" + Floor);
+				flr = makeFloorByID(results.getInt(6));
 			}
 			ArrayList<String> data = new ArrayList<>();
 			data.add(NodeName);
 			data.add(NodeType);
-			ConcreteNode node = new ConcreteNode(id, data, XCoord, YCoord); //Return new node using node's information
+			ConcreteNode node = new ConcreteNode(id, data, XCoord, YCoord, flr); //Return new node using node's information
 			results.close();
 			stmt.close();
 
@@ -499,7 +525,6 @@ public class DatabaseController {
 
 	/*
 	 * Get neighbors of a specific node
-	 * TODO: Fix return type instead of just printing
 	 */
 	public static ArrayList<Node> getNeighbors(int id){
 		try
@@ -524,27 +549,39 @@ public class DatabaseController {
 		}
 	}
 
-	public static void makeFloorInfo(int id){
+	public static Floor makeFloorByID(int id){
 		try
 		{
 			stmt = connection.createStatement();
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Floor " +
 					"WHERE FloorID = " + id + "");
-			//TODO: convert result into something, or return relevant strings
-			System.out.println("FloorID " + id + " info " );
+			String bld = "";
+			int lvl = 0;
 			while(results.next())
 			{
-				String bld = results.getString(2);
-				int lvl = results.getInt(3);
-				System.out.println(bld + " " + lvl);
+				bld = results.getString(2);
+				lvl = results.getInt(3);
 			}
 			results.close();
 			stmt.close();
+
+			return new Floor(id, bld, lvl);
 		}
 		catch (SQLException e){
 			e.printStackTrace();
+			return null;
 		}
+	}
+
+	public static Floor getFloorByID(int id){
+		for(Floor f: floorList){
+			if(f.getID() == id){
+				return f;
+			}
+		}
+		//TODO: probably do something proper if floor isn't found
+		return null;
 	}
 
 	/*
