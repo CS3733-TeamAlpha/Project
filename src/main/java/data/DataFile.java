@@ -1,27 +1,30 @@
 package data;
 
 import java.util.Collection;
+
 import pathfinding.Node;
 import pathfinding.ConcreteNode;
 
 public class DataFile
 {
-	private String filename;
+    private String filename;
 
-	public DataFile(){}
+    public DataFile()
+    {
+    }
 
-	public Collection<Node> loadNodes(String filename)
-	{
-		return null;
-	}
+    public Collection<Node> loadNodes(String filename)
+    {
+        return null;
+    }
 
-	public void saveNodes(String filename, Collection<Node> nodes)
-	{
+    public void saveNodes(String filename, Collection<Node> nodes)
+    {
 
-	}
+    }
 
-	protected void linkNodes(Node node1, Node node2)
-	{
+    protected void linkNodes(Node node1, Node node2)
+    {
 
-	}
+    }
 }
