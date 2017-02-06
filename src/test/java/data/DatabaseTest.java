@@ -2,9 +2,7 @@ package data;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
@@ -98,19 +96,19 @@ public class DatabaseTest
 
         for (int i = 0; i < flL.size(); i++)
         {
-            compareFloor(flL.get(i), DatabaseController.getFloorList().get(i));
+            compareFloor(flL.get(i), DatabaseController.getAllFloors().get(i));
         }
 
         //for(int i=0;i<ndL.size();i++){
         //TODO: Why is data coming in this order?
-        compareNode(ndL.get(0), DatabaseController.getNodeList().get(2));
-        compareNode(ndL.get(1), DatabaseController.getNodeList().get(0));
-        compareNode(ndL.get(2), DatabaseController.getNodeList().get(1));
+        compareNode(ndL.get(0), DatabaseController.getAllNodes().get(2));
+        compareNode(ndL.get(1), DatabaseController.getAllNodes().get(0));
+        compareNode(ndL.get(2), DatabaseController.getAllNodes().get(1));
         //}
         //for(int i=0;i<pvdL.size();i++){
         //TODO: why is data coming in this order?
-        compareProvider(pvdL.get(0), DatabaseController.getProviderList().get(1));
-        compareProvider(pvdL.get(1), DatabaseController.getProviderList().get(0));
+        compareProvider(pvdL.get(0), DatabaseController.getAllProviders().get(1));
+        compareProvider(pvdL.get(1), DatabaseController.getAllProviders().get(0));
         //}
 
     }
@@ -154,8 +152,8 @@ public class DatabaseTest
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
 
-        assertNotEquals(DatabaseController.getProviderList().size(), pvdL.size());
-        assertNotEquals(DatabaseController.getNodeList().size(), ndL.size());
+        assertNotEquals(DatabaseController.getAllProviders().size(), pvdL.size());
+        assertNotEquals(DatabaseController.getAllNodes().size(), ndL.size());
     }
 
     @Test
