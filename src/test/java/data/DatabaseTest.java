@@ -13,14 +13,16 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class DatabaseTest {
+public class DatabaseTest
+{
 
     ArrayList<Node> ndL = new ArrayList<Node>();
     ArrayList<Provider> pvdL = new ArrayList<Provider>();
     ArrayList<Floor> flL = new ArrayList<Floor>();
 
     @Before
-    public void setUp(){
+    public void setUp()
+    {
         ndL.clear();
         pvdL.clear();
         flL.clear();
@@ -53,12 +55,14 @@ public class DatabaseTest {
     }
 
     @After
-    public void shutdown(){
+    public void shutdown()
+    {
         DatabaseController.shutdown();
     }
 
     @Test
-    public void testInsert(){
+    public void testInsert()
+    {
         DatabaseController.insertFloor(01, "TestFloor", 1);
         DatabaseController.insertNode(001, "Room001", "room", 1, 1, 01);
         DatabaseController.insertNode(002, "Room002", "room", 2, 2, 01);
@@ -72,7 +76,8 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testInitialization(){
+    public void testInitialization()
+    {
 
         DatabaseController.droptablesForShittyTesting();
 
@@ -86,26 +91,28 @@ public class DatabaseTest {
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
 
-        for(int i=0;i<flL.size();i++){
+        for (int i = 0; i < flL.size(); i++)
+        {
             compareFloor(flL.get(i), DatabaseController.getFloorList().get(i));
         }
 
         //for(int i=0;i<ndL.size();i++){
         //TODO: Why is data coming in this order?
-            compareNode(ndL.get(0), DatabaseController.getNodeList().get(2));
-            compareNode(ndL.get(1), DatabaseController.getNodeList().get(0));
-            compareNode(ndL.get(2), DatabaseController.getNodeList().get(1));
+        compareNode(ndL.get(0), DatabaseController.getNodeList().get(2));
+        compareNode(ndL.get(1), DatabaseController.getNodeList().get(0));
+        compareNode(ndL.get(2), DatabaseController.getNodeList().get(1));
         //}
         //for(int i=0;i<pvdL.size();i++){
-            //TODO: why is data coming in this order?
-            compareProvider(pvdL.get(0), DatabaseController.getProviderList().get(1));
-            compareProvider(pvdL.get(1), DatabaseController.getProviderList().get(0));
+        //TODO: why is data coming in this order?
+        compareProvider(pvdL.get(0), DatabaseController.getProviderList().get(1));
+        compareProvider(pvdL.get(1), DatabaseController.getProviderList().get(0));
         //}
 
     }
 
     @Test
-    public void testGets(){
+    public void testGets()
+    {
         DatabaseController.initializeAllFloors();
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
@@ -121,7 +128,8 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testProviderAtNode(){
+    public void testProviderAtNode()
+    {
         DatabaseController.initializeAllFloors();
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
@@ -131,7 +139,8 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testRemoves(){
+    public void testRemoves()
+    {
         DatabaseController.removeOfficeByProvider(111);
         DatabaseController.removeAllNeighborsByID(001);
         DatabaseController.removeNode(001);
@@ -145,7 +154,8 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testNullGets(){
+    public void testNullGets()
+    {
         assertNull(DatabaseController.getFloorByID(123456));
         assertNull(DatabaseController.getNodeByID(987654));
         assertNull(DatabaseController.getProviderByID(765484));
@@ -157,14 +167,16 @@ public class DatabaseTest {
 
 
     //compare contents of floor
-    public void compareFloor(Floor e, Floor a){
+    public void compareFloor(Floor e, Floor a)
+    {
         assertEquals(e.getID(), a.getID());
         assertEquals(e.getLevel(), a.getLevel());
         assertEquals(e.getName(), a.getName());
     }
 
     //compare contents of node
-    public void compareNode(Node e, Node a){
+    public void compareNode(Node e, Node a)
+    {
         assertEquals(e.getID(), a.getID());
         assertEquals(e.getData(), a.getData());
         //TODO: proper neighbor testing?
@@ -174,22 +186,26 @@ public class DatabaseTest {
     }
 
     //check that nodes aren't equal. for now just assert that IDs are different
-    public void compareNodeFail(Node e, Node a){
+    public void compareNodeFail(Node e, Node a)
+    {
         assertNotEquals(e.getID(), a.getID());
     }
 
     //compare contents of provider
-    public void compareProvider(Provider e, Provider a){
+    public void compareProvider(Provider e, Provider a)
+    {
         assertEquals(e.getID(), a.getID());
         assertEquals(e.getfName(), a.getfName());
         assertEquals(e.getlName(), a.getlName());
-        for(int i=0;i<e.getLocations().size();i++){
+        for (int i = 0; i < e.getLocations().size(); i++)
+        {
             compareNode(e.getLocations().get(i), a.getLocations().get(i));
         }
     }
 
     //check that providers aren't equal. for now just assert that IDs are different
-    public void compareProviderFail(Provider e, Provider a){
+    public void compareProviderFail(Provider e, Provider a)
+    {
         assertNotEquals(e.getID(), a.getID());
     }
 
