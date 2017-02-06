@@ -8,9 +8,14 @@ import org.junit.runners.MethodSorters;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static java.sql.DriverManager.println;
 import static org.junit.Assert.*;
 
 public class DatabaseTest
@@ -28,7 +33,7 @@ public class DatabaseTest
         flL.clear();
         DatabaseController.createConnection();
 
-        DatabaseController.droptablesForShittyTesting();
+        droptablesForShittyTesting();
         DatabaseController.initializeProviderTable();
         DatabaseController.initializeFloorTable();
         DatabaseController.initializeNodeTable();
@@ -79,7 +84,7 @@ public class DatabaseTest
     public void testInitialization()
     {
 
-        DatabaseController.droptablesForShittyTesting();
+        droptablesForShittyTesting();
 
         DatabaseController.initializeProviderTable();
         DatabaseController.initializeFloorTable();
@@ -208,5 +213,79 @@ public class DatabaseTest
     {
         assertNotEquals(e.getID(), a.getID());
     }
+
+    private static void droptablesForShittyTesting()
+    {
+        Connection connection = null;
+        Statement stmt = null;
+        try
+        {
+            String DB_URL = "jdbc:derby:FHAlpha;create=true";
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            connection = DriverManager.getConnection(DB_URL);
+        } catch (Exception except)
+        {
+            except.printStackTrace();
+            //remove this piece
+            println("error here");
+        }
+        try
+        {
+            stmt = connection.createStatement();
+            // Drop the UnpaidOrder table.
+            stmt.execute("DROP TABLE Provider");
+            System.out.println("Provider table dropped.");
+        } catch (SQLException ex)
+        {
+            // No need to report an error.
+            // The table simply did not exist.
+        }
+        try
+        {
+            stmt = connection.createStatement();
+            // Drop the UnpaidOrder table.
+            stmt.execute("DROP TABLE Node");
+            System.out.println("Node table dropped.");
+        } catch (SQLException ex)
+        {
+            // No need to report an error.
+            // The table simply did not exist.
+        }
+        try
+        {
+            stmt = connection.createStatement();
+            // Drop the UnpaidOrder table.
+            stmt.execute("DROP TABLE Office");
+            System.out.println("Office table dropped.");
+        } catch (SQLException ex)
+        {
+            // No need to report an error.
+            // The table simply did not exist.
+        }
+        try
+        {
+            stmt = connection.createStatement();
+            // Drop the UnpaidOrder table.
+            stmt.execute("DROP TABLE Neighbor");
+            System.out.println("Neighbor table dropped.");
+        } catch (SQLException ex)
+        {
+            // No need to report an error.
+            // The table simply did not exist.
+        }
+        try
+        {
+            stmt = connection.createStatement();
+            // Drop the UnpaidOrder table.
+            stmt.execute("DROP TABLE Floor");
+            System.out.println("Floor table dropped.");
+        } catch (SQLException ex)
+        {
+            // No need to report an error.
+            // The table simply did not exist.
+        }
+    }
+
 
 }
