@@ -9,8 +9,6 @@ import pathfinding.*;
 
 public class JFXController extends Application
 {
-	private DataFile datafile;
-	private NodeRepository database;
 	private Graph graph;
 
 	public static void main(String[] args)
