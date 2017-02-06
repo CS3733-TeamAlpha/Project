@@ -18,23 +18,24 @@ public class Provider {
         providerID = id;
         fName = f;
         lName = l;
+        locations = new ArrayList<Node>();
     }
 
     public boolean atLocation(Node locationNode){ return locations.contains(locationNode); }
 
-    public Collection<Node> getLocations()
+    public ArrayList<Node> getLocations()
     {
         return locations;
     }
 
-    public void addLocations(Collection<Node> newNeighbors)
+    public void addLocations(Collection<Node> locationNodes)
     {
-        locations.addAll(newNeighbors);
+        locations.addAll(locationNodes);
     }
 
-    public void addLocation(Node newNeighbor)
+    public void addLocation(Node locationNode)
     {
-        locations.add(newNeighbor);
+        locations.add(locationNode);
     }
 
     public String getfName(){ return fName; }
