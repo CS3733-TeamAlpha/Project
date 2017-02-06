@@ -147,10 +147,29 @@ public class DatabaseTest {
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
 
-        compareProviderFail(DatabaseController.getProviderList().get(0), pvdL.get(0));
-        compareNodeFail(DatabaseController.getNodeList().get(0), ndL.get(2));
+        assertNotEquals(DatabaseController.getProviderList().size(), pvdL.size());
+        assertNotEquals(DatabaseController.getNodeList().size(), ndL.size());
         DatabaseController.shutdown();
     }
+
+    @Test
+    public void testNullGets(){
+        DatabaseController.createConnection();
+
+        DatabaseController.initializeAllFloors();
+        DatabaseController.initializeAllNodes();
+        DatabaseController.initializeAllProviders();
+
+        assertNull(DatabaseController.getFloorByID(123456));
+        assertNull(DatabaseController.getNodeByID(987654));
+        assertNull(DatabaseController.getProviderByID(765484));
+        assertNull(DatabaseController.makeNodeByID(123456));
+        assertNull(DatabaseController.makeProviderByID(123456));
+        assertNull(DatabaseController.makeFloorByID(123456));
+
+        DatabaseController.shutdown();
+    }
+
 
     //compare contents of floor
     public void compareFloor(Floor e, Floor a){
