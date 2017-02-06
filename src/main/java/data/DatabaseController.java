@@ -2,6 +2,7 @@ package data;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import pathfinding.Node;
 import pathfinding.ConcreteNode;
@@ -13,14 +14,15 @@ public class DatabaseController {
 	//private static String dbURL = "jdbc:derby://localhost:1527/myDB;create=true;user=me;password=mine";
 	static final String DB_URL = "jdbc:derby:FHAlpha;create=true";
 	private static String providerTable = "Provider";
-	private static String locationTable = "Location";
+	private static String nodeTable = "Node";
 	private static String officeTable = "Office";
 	private static String neighborTable = "Neighbor";
 	private static String floorTable = "Floor";
 	// jdbc Connection
 	private static Connection connection = null;
 	private static Statement stmt = null;
-
+	private static ArrayList<Node> nodeList = new ArrayList<Node>();
+	private static ArrayList<Provider> providerList = new ArrayList<Provider>();
 
 	//TODO: Remove main and properly initialize connections/tabes from elsewhere
 	public static void main(String[] args) {
@@ -29,7 +31,7 @@ public class DatabaseController {
 		//initialize tables
 		initializeProviderTable();
 		initializeFloorTable();
-		initializeLocationTable();
+		initializeNodeTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
 
@@ -53,8 +55,8 @@ public class DatabaseController {
 //		{
 //			stmt = connection.createStatement();
 //			// Drop the UnpaidOrder table.
-//			stmt.execute("DROP TABLE Location");
-//			System.out.println("Location table dropped.");
+//			stmt.execute("DROP TABLE Node");
+//			System.out.println("Node table dropped.");
 //		} catch (SQLException ex)
 //		{
 //			// No need to report an error.
@@ -159,27 +161,27 @@ public class DatabaseController {
 		}
 	}
 
-	public static void initializeLocationTable(){
+	public static void initializeNodeTable(){
 		try
 		{
-			//TODO: Location type is ok as a string? or change?
+			//TODO: Node type is ok as a string? or change?
 			stmt = connection.createStatement();
-			stmt.execute("CREATE TABLE Location(" +
-					"LocationID INT NOT NULL PRIMARY KEY, " +
-					"LocationName VARCHAR(30), " +
-					"LocationType VARCHAR(10), " +
+			stmt.execute("CREATE TABLE Node(" +
+					"NodeID INT NOT NULL PRIMARY KEY, " +
+					"NodeName VARCHAR(30), " +
+					"NodeType VARCHAR(10), " +
 					"XCoord DOUBLE, " +
 					"YCoord DOUBLE, " +
 					"FloorID INT REFERENCES Floor(FloorID)" +
 					")");
-			System.out.println("Location table initialized");
+			System.out.println("Node table initialized");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept){
 			if(!sqlExcept.getSQLState().equals("X0Y32")){
 				sqlExcept.printStackTrace();
 			} else {
-				System.out.println("Location table already exists");
+				System.out.println("Node table already exists");
 			}
 		}
 	}
@@ -190,7 +192,7 @@ public class DatabaseController {
 			stmt = connection.createStatement();
 			stmt.execute("CREATE TABLE Office(" +
 					"ProviderID INT NOT NULL REFERENCES Provider(ProviderID), " +
-					"LocationID INT REFERENCES Location(LocationID)" +
+					"NodeID INT REFERENCES Node(NodeID)" +
 					")");
 
 			System.out.println("Office table initialized");
@@ -210,8 +212,8 @@ public class DatabaseController {
 		{
 			stmt = connection.createStatement();
 			stmt.execute("CREATE TABLE Neighbor(" +
-					"FromID INT NOT NULL REFERENCES Location(LocationID), " +
-					"ToID INT REFERENCES Location(LocationID) " +
+					"FromID INT NOT NULL REFERENCES Node(NodeID), " +
+					"ToID INT REFERENCES Node(NodeID) " +
 					")");
 			System.out.println("Neighbor table initialized");
 			stmt.close();
@@ -250,39 +252,103 @@ public class DatabaseController {
 		}
 	}
 
+	public static Collection<Node> initializeAllNodes(){
+		try
+		{
+			nodeList.clear(); //sanitize nodelist
+			stmt = connection.createStatement();
+
+			ResultSet results = stmt.executeQuery("SELECT * FROM Node " + "");
+
+			ArrayList<Integer> nodeIDs = new ArrayList<Integer>();
+			while(results.next())
+			{
+				int NodeID = results.getInt(1);
+				nodeIDs.add(NodeID);
+			}
+			for(int i=0;i<nodeIDs.size();i++){
+				nodeList.add(makeNodeByID(nodeIDs.get(i)));
+			}
+			for(int i=0;i<nodeList.size();i++){
+				nodeList.get(i).addNeighbors(getNeighbors(nodeList.get(i).getID()));
+			}
+			results.close();
+			stmt.close();
+
+			return nodeList;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Collection<Provider> initializeAllProviders(){
+		try
+		{
+			providerList.clear(); //sanitize providerList
+			stmt = connection.createStatement();
+
+			ResultSet results = stmt.executeQuery("SELECT * FROM Provider " + "");
+
+			ArrayList<Integer> provIDs = new ArrayList<Integer>();
+			while(results.next())
+			{
+				int NodeID = results.getInt(1);
+				provIDs.add(NodeID);
+			}
+			for(int i=0;i<provIDs.size();i++){
+				providerList.add(makeProviderByID(provIDs.get(i)));
+			}
+			for(int i=0;i<providerList.size();i++){
+				providerList.get(i).addLocations(getProviderNodes(providerList.get(i).getID()));
+			}
+			results.close();
+			stmt.close();
+
+			return providerList;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/*
-	 * Get a single location by LocationID
+	 * make a single node by NodeID
 	 * TODO: Fix return type instead of just printing
 	 */
-	public static ConcreteNode getLocationByID(int id){
+	public static ConcreteNode makeNodeByID(int id){
 		try
 		{
 			stmt = connection.createStatement();
 
-			ResultSet results = stmt.executeQuery("SELECT * FROM Location " +
-					"WHERE LocationID = " + id + "");
-			//TODO: convert result into a location, or return relevant strings
+			ResultSet results = stmt.executeQuery("SELECT * FROM Node " +
+					"WHERE NodeID = " + id + "");
+			//TODO: convert result into a node, or return relevant strings
 
-			String LocName = " ";
-			String LocType = " ";
+			String NodeName = " ";
+			String NodeType = " ";
 			int XCoord = -1;
 			int YCoord = -1;
 
 			while(results.next())
 			{
-				int LocID = results.getInt(1);
-				LocName = results.getString(2);
-				LocType = results.getString(3);
+				int NodeID = results.getInt(1);
+				NodeName = results.getString(2);
+				NodeType = results.getString(3);
 				XCoord = results.getInt(4);
 				YCoord = results.getInt(5);
 				//TODO: utilize floor info, for future iterations
 				int Floor = results.getInt(6);
-				System.out.println(LocID + "\t\t" + LocName + "\t\t" + LocType + "\t\t" + XCoord + YCoord + "\t\t" + Floor);
+				System.out.println(NodeID + "\t\t" + NodeName + "\t\t" + NodeType + "\t\t" + XCoord + YCoord + "\t\t" + Floor);
 			}
 			ArrayList<String> data = new ArrayList<>();
-			data.add(LocName);
-			data.add(LocType);
-			ConcreteNode node = new ConcreteNode(id, data, XCoord, YCoord); //Return new node using location's information
+			data.add(NodeName);
+			data.add(NodeType);
+			ConcreteNode node = new ConcreteNode(id, data, XCoord, YCoord); //Return new node using node's information
 			results.close();
 			stmt.close();
 
@@ -295,86 +361,139 @@ public class DatabaseController {
 		}
 	}
 
+	public static Node getNodeByID(int id){
+		for(Node n: nodeList){
+			if(n.getID() == id){
+				return n;
+			}
+		}
+		//TODO: probably should throw an exception or something if not found
+		return null;
+	}
+
 	/*
-	 * Get a single provider by ProviderID
- 	* TODO: Fix return type instead of just printing
+	 * get a single node by xy coordinates. assuming only one node can exist at a coordinate
+	 * TODO: fix if multiple nodes in same location
+	 */
+	public static Node getNodeByXY(int x, int y){
+		for(Node n: nodeList){
+			if(n.getX() == x && n.getY() == y){
+				return n;
+			}
+		}
+		//TODO: probably should throw an exception or something if not found
+		return null;
+	}
+
+	public static Node getNodeByName(String name){
+		for(Node n: nodeList){
+			if(n.containsData(name)){
+				return n;
+			}
+		}
+		//TODO: probably should throw an exception or something if not found
+		return null;
+	}
+
+	public static Node getNearestNode(Node source){
+		double min = 999999;
+		Node nearest = null;
+		for(Node n: nodeList){
+			if (n.getX() == source.getX() && n.getY() == source.getY()) {
+				//assuming nodes can't be in same location, so samexy is same node.
+			} else {
+				double dist = source.distance(n);
+				if(dist < min){
+					min = dist;
+					nearest = n;
+				}
+			}
+		}
+		return nearest;
+	}
+
+	/*
+	 * Make a single provider by ID.
+	 * Relies on nodeList already being initialized
  	*/
-	public static void getProviderByID(int id){
+	public static Provider makeProviderByID(int id){
 		try
 		{
 			stmt = connection.createStatement();
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Provider " +
 					"WHERE ProviderID = " + id + "");
-			//TODO: convert result into something, or return relevant strings
-			System.out.println("ProviderID: " + id);
+			String fname = "";
+			String lname = "";
 			while(results.next())
 			{
-				String fname = results.getString(2);
-				String lname = results.getString(3);
-				System.out.println(fname + ", "+ lname);
+				fname = results.getString(2);
+				lname = results.getString(3);
 			}
 			results.close();
 			stmt.close();
+			Provider p = new Provider(id, fname, lname);
+			p.addLocations(getProviderNodes(id));
+			return p;
 		}
 		catch (SQLException e){
 			e.printStackTrace();
+			return null;
 		}
 	}
 
 	/*
-	 * Get providers at a specific location
-	 * Use LocationID
-	 * TODO: Fix return type instead of just printing
-	 * TODO: Rename office table?
+	 * get providers by name. expect possibility of duplicates since no uniqueness constraints
 	 */
-	public static void getProvidersAtLocation(int id){
-		try
-		{
-			stmt = connection.createStatement();
-
-			ResultSet results = stmt.executeQuery("SELECT * FROM Office " +
-					"WHERE LocationID = " + id + "");
-			//TODO: convert result into a provider, or return relevant strings
-			System.out.println("Location " + id + " has providerIDs ");
-			while(results.next())
-			{
-				int ProvID = results.getInt(1);
-				System.out.println(ProvID + ", ");
+	public static Collection<Provider> getProviderByFullName(String f, String l){
+		ArrayList<Provider> provList = new ArrayList<Provider>();
+		for(Provider p: providerList){
+			if(p.getfName().equals(f) && p.getlName().equals(l)){
+				provList.add(p);
 			}
-			results.close();
-			stmt.close();
 		}
-		catch (SQLException e){
-			e.printStackTrace();
-		}
+		return provList;
 	}
 
 	/*
-	 * Get locations a provider is associated with from the office table
+	 * Get providers at a specific node
+	 */
+	public static ArrayList<Provider> getProvidersAtNode(int id){
+		ArrayList<Provider> pList = new ArrayList<Provider>();
+		Node target = getNodeByID(id);
+		for(Provider p: providerList){
+			if(p.atLocation(target)){
+				pList.add(p);
+			}
+		}
+		return pList;
+	}
+
+	/*
+	 * Get nodes a provider is associated with from the office table
 	 * Use ProviderID
-	 * TODO: Fix return type instead of just printing
-	 * TODO: Rename office table?
 	 */
-	public static void getProviderLocations(int id){
+	public static ArrayList<Node> getProviderNodes(int id){
 		try
 		{
 			stmt = connection.createStatement();
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Office " +
 					"WHERE ProviderID = " + id + "");
-			//TODO: convert result into a provider, or return relevant strings
-			System.out.println("Location: " + id + " is at ");
+
+			ArrayList<Node> provNodes = new ArrayList<Node>();
 			while(results.next())
 			{
-				int locID = results.getInt(2);
-				System.out.println(locID + ", ");
+				int nodeID = results.getInt(2);
+				provNodes.add(getNodeByID(nodeID));
 			}
 			results.close();
 			stmt.close();
+			return provNodes;
 		}
 		catch (SQLException e){
 			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -390,13 +509,10 @@ public class DatabaseController {
 
 			ResultSet results = stmt.executeQuery("SELECT * FROM Neighbor " +
 					"WHERE FromID = " + id + "");
-			//TODO: convert result into something, or return relevant strings
-			System.out.println("LocationID " + id + " connects to " );
 			while(results.next())
 			{
 				int ToID = results.getInt(2);
-				neighbors.add(getLocationByID(ToID));
-				System.out.println(ToID + ", ");
+				neighbors.add(getNodeByID(ToID));
 			}
 			results.close();
 			stmt.close();
@@ -408,7 +524,7 @@ public class DatabaseController {
 		}
 	}
 
-	public static void getFloorInfo(int id){
+	public static void makeFloorInfo(int id){
 		try
 		{
 			stmt = connection.createStatement();
@@ -453,27 +569,27 @@ public class DatabaseController {
 	}
 
 	/*
-	 * insert new location from a concrete node
+	 * insert new node from a concrete node
 	 */
-	public static void insertLocation(ConcreteNode newNode){
+	public static void insertNode(ConcreteNode newNode){
 		int id = newNode.getID();
 		String name = newNode.getData().get(0);
 		String type = newNode.getData().get(1);
 		double x = newNode.getX();
 		double y = newNode.getY();
 		int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
-		insertLocation(id, name, type, x, y, floor);
+		insertNode(id, name, type, x, y, floor);
 	}
 
 	/*
-	 * insert new location
+	 * insert new node
 	 */
-	public static void insertLocation (int locID, String name, String type, double x, double y, int floor) {
+	public static void insertNode (int nodeID, String name, String type, double x, double y, int floor) {
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.execute("insert into " + locationTable +
-					" values (" + locID + ", '" + name + "', '" + type + "', " + x + ", " + y + ", " + floor + ")");
+			stmt.execute("insert into " + nodeTable +
+					" values (" + nodeID + ", '" + name + "', '" + type + "', " + x + ", " + y + ", " + floor + ")");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -481,7 +597,7 @@ public class DatabaseController {
 			if(!sqlExcept.getSQLState().equals("23505")){
 				sqlExcept.printStackTrace();
 			} else {
-				System.out.println("LocationID already exists");
+				System.out.println("NodeID already exists");
 			}
 		}
 	}
@@ -494,7 +610,7 @@ public class DatabaseController {
 	}
 
 	/*
-	 * insert new location neighbor
+	 * insert new node neighbor
 	 */
 	public static void insertNeighbor(int fromid, int toid){
 		try
@@ -517,12 +633,12 @@ public class DatabaseController {
 	/*
 	 * insert new provider office
 	 */
-	public static void insertOffice(int provID, int locID){
+	public static void insertOffice(int provID, int nodeID){
 		try
 		{
 			stmt = connection.createStatement();
 			stmt.execute("insert into " + officeTable +
-					" values (" + provID + ", " + locID + ")");
+					" values (" + provID + ", " + nodeID + ")");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -574,14 +690,14 @@ public class DatabaseController {
 	}
 
 	/*
-	 * delete a single location
+	 * delete a single node
  	 */
-	public static void removeLocation(int locID){
+	public static void removeNode(int nodeID){
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.execute("DELETE FROM " + locationTable +
-					" WHERE LocationID = " + locID + "");
+			stmt.execute("DELETE FROM " + nodeTable +
+					" WHERE NodeID = " + nodeID + "");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -593,12 +709,12 @@ public class DatabaseController {
 	/*
 	 * delete a single office relationship
 	 */
-	public static void removeOffice(int provID, int locID){
+	public static void removeOffice(int provID, int nodeID){
 		try
 		{
 			stmt = connection.createStatement();
 			stmt.execute("DELETE FROM " + officeTable +
-					" WHERE ProviderID = " + provID + " AND LocationID = " + locID + "");
+					" WHERE ProviderID = " + provID + " AND NodeID = " + nodeID + "");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -625,14 +741,14 @@ public class DatabaseController {
 	}
 
 	/*
- 	* delete all office relationships for a location
+ 	* delete all office relationships for a node
  	*/
-	public static void removeOfficeByLocation(int locID){
+	public static void removeOfficeByNode(int nodeID){
 		try
 		{
 			stmt = connection.createStatement();
 			stmt.execute("DELETE FROM " + officeTable +
-					" WHERE LocationID = " + locID + "");
+					" WHERE NodeID = " + nodeID + "");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -732,7 +848,7 @@ public class DatabaseController {
 	 * TODO: Probably should break this down to modify a single field at a time
 	 * TODO: Fix return type?
 	 */
-	public static void modifyProvider(int ID, String fname, String lname){
+	public static void modifyProviderTable(int ID, String fname, String lname){
 		try
 		{
 			stmt = connection.createStatement();
@@ -750,36 +866,36 @@ public class DatabaseController {
 	}
 
 	/*
- 	* modify a location's entry in the table from a ConcreteNode
+ 	* modify a node's entry in the table from a ConcreteNode
  	*/
-	public static void modifyLocation(ConcreteNode modNode) {
+	public static void modifyNodeTable(ConcreteNode modNode) {
 		int id = modNode.getID();
 		String name = modNode.getData().get(0);
 		String type = modNode.getData().get(1);
 		double x = modNode.getX();
 		double y = modNode.getY();
 		int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
-		modifyLocation(id, name, type, x, y, floor);
+		modifyNodeTable(id, name, type, x, y, floor);
 	}
 
 	/*
- 	* modify a location's entry in the table
+ 	* modify a node's entry in the table
  	* TODO: Probably should break this down to modify a single field at a time
  	* TODO: Fix return type?
  	*/
-	public static void modifyLocation(int ID, String name, String type, double x, double y, int floor)
+	public static void modifyNodeTable(int ID, String name, String type, double x, double y, int floor)
 	{
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.executeUpdate("UPDATE Location " +
-					"SET LocationID = " + ID + ", " +
-					"LocationName = '" + name + "', " +
-					"LocationType = '" + type + "', " +
+			stmt.executeUpdate("UPDATE Node " +
+					"SET NodeID = " + ID + ", " +
+					"NodeName = '" + name + "', " +
+					"NodeType = '" + type + "', " +
 					"XCoord = " + x + ", " +
 					"YCoord = " + y + ", " +
 					"FloorID = " + floor + " " +
-					"WHERE LocationID = " + ID +
+					"WHERE NodeID = " + ID +
 					"");
 			stmt.close();
 		} catch (SQLException e)
@@ -794,7 +910,7 @@ public class DatabaseController {
  	* TODO: Probably should break this down to modify a single field at a time
  	* TODO: Fix return type?
  	*/
-	public static void modifyFloor(int ID, String name, int lvl)
+	public static void modifyFloorTable(int ID, String name, int lvl)
 	{
 		try
 		{
