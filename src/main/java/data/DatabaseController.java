@@ -1025,17 +1025,17 @@ public class DatabaseController
         }
     }
 
-    public static ArrayList<Node> getNodeList()
+    public static ArrayList<Node> getAllNodes()
     {
         return nodeList;
     }
 
-    public static ArrayList<Provider> getProviderList()
+    public static ArrayList<Provider> getAllProviders()
     {
         return providerList;
     }
 
-    public static ArrayList<Floor> getFloorList()
+    public static ArrayList<Floor> getAllFloors()
     {
         return floorList;
     }
