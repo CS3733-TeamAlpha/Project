@@ -208,7 +208,7 @@ public class DatabaseController
     }
 
     //make floor objects from all entries in the floor table
-    public static Collection<Floor> initializeAllFloors()
+    public static void initializeAllFloors()
     {
         try
         {
@@ -229,18 +229,15 @@ public class DatabaseController
             }
             results.close();
             stmt.close();
-
-            return floorList;
         } catch (SQLException e)
         {
             e.printStackTrace();
-            return null;
         }
     }
 
     //make node objects from all entries in the node table
     //dependent on floorlist already being initialized
-    public static Collection<Node> initializeAllNodes()
+    public static void initializeAllNodes()
     {
         try
         {
@@ -266,17 +263,15 @@ public class DatabaseController
             results.close();
             stmt.close();
 
-            return nodeList;
         } catch (SQLException e)
         {
             e.printStackTrace();
-            return null;
         }
     }
 
     //make provider objects from all entries in the provider table
     //dependent on providerlist already being initialized
-    public static Collection<Provider> initializeAllProviders()
+    public static void initializeAllProviders()
     {
         try
         {
@@ -297,12 +292,9 @@ public class DatabaseController
             }
             results.close();
             stmt.close();
-
-            return providerList;
         } catch (SQLException e)
         {
             e.printStackTrace();
-            return null;
         }
     }
 
