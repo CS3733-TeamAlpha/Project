@@ -128,6 +128,8 @@ public class DatabaseTest
         compareProvider(DatabaseController.getProvidersByFullName("Donald", "Trump").get(0), pvdL.get(0));
 
         compareFloor(DatabaseController.getFloorByID(01), flL.get(0));
+
+        compareNode(DatabaseController.getNearestNode(DatabaseController.getNodeByID(001)), ndL.get(1));
     }
 
     @Test
