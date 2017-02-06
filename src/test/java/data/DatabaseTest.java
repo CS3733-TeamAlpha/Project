@@ -1,5 +1,6 @@
 package data;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -31,7 +32,6 @@ public class DatabaseTest {
         DatabaseController.initializeNodeTable();
         DatabaseController.initializeOfficeTable();
         DatabaseController.initializeNeighborTable();
-        DatabaseController.shutdown();
 
         Floor fl1 = new Floor(01, "TestFloor", 1);
         ConcreteNode n001 = new ConcreteNode(001, new ArrayList<>(Arrays.asList("Room001", "room")), 1, 1, fl1);
@@ -52,9 +52,13 @@ public class DatabaseTest {
         testInsert();
     }
 
+    @After
+    public void shutdown(){
+        DatabaseController.shutdown();
+    }
+
     @Test
     public void testInsert(){
-        DatabaseController.createConnection();
         DatabaseController.insertFloor(01, "TestFloor", 1);
         DatabaseController.insertNode(001, "Room001", "room", 1, 1, 01);
         DatabaseController.insertNode(002, "Room002", "room", 2, 2, 01);
@@ -65,14 +69,11 @@ public class DatabaseTest {
         DatabaseController.insertNeighbor(002, 001);
         DatabaseController.insertOffice(111, 003);
 
-        DatabaseController.shutdown();
-        //DatabaseController.getFloorList().size();
     }
 
     @Test
     public void testInitialization(){
 
-        DatabaseController.createConnection();
         DatabaseController.droptablesForShittyTesting();
 
         DatabaseController.initializeProviderTable();
@@ -81,7 +82,6 @@ public class DatabaseTest {
         DatabaseController.initializeOfficeTable();
         DatabaseController.initializeNeighborTable();
         testInsert();
-        DatabaseController.createConnection();
         DatabaseController.initializeAllFloors();
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
@@ -102,12 +102,10 @@ public class DatabaseTest {
             compareProvider(pvdL.get(1), DatabaseController.getProviderList().get(0));
         //}
 
-        DatabaseController.shutdown();
     }
 
     @Test
     public void testGets(){
-        DatabaseController.createConnection();
         DatabaseController.initializeAllFloors();
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
@@ -120,25 +118,20 @@ public class DatabaseTest {
         compareProvider(DatabaseController.getProvidersByFullName("Donald", "Trump").get(0), pvdL.get(0));
 
         compareFloor(DatabaseController.getFloorByID(01), flL.get(0));
-        DatabaseController.shutdown();
     }
 
     @Test
     public void testProviderAtNode(){
-        DatabaseController.createConnection();
         DatabaseController.initializeAllFloors();
         DatabaseController.initializeAllNodes();
         DatabaseController.initializeAllProviders();
 
         compareProvider(DatabaseController.getProvidersAtNode(003).get(0), pvdL.get(0));
         compareNode(DatabaseController.getProviderNodes(111).get(0), ndL.get(2));
-        DatabaseController.shutdown();
     }
 
     @Test
     public void testRemoves(){
-        DatabaseController.createConnection();
-
         DatabaseController.removeOfficeByProvider(111);
         DatabaseController.removeAllNeighborsByID(001);
         DatabaseController.removeNode(001);
@@ -149,17 +142,10 @@ public class DatabaseTest {
 
         assertNotEquals(DatabaseController.getProviderList().size(), pvdL.size());
         assertNotEquals(DatabaseController.getNodeList().size(), ndL.size());
-        DatabaseController.shutdown();
     }
 
     @Test
     public void testNullGets(){
-        DatabaseController.createConnection();
-
-        DatabaseController.initializeAllFloors();
-        DatabaseController.initializeAllNodes();
-        DatabaseController.initializeAllProviders();
-
         assertNull(DatabaseController.getFloorByID(123456));
         assertNull(DatabaseController.getNodeByID(987654));
         assertNull(DatabaseController.getProviderByID(765484));
@@ -167,7 +153,6 @@ public class DatabaseTest {
         assertNull(DatabaseController.makeProviderByID(123456));
         assertNull(DatabaseController.makeFloorByID(123456));
 
-        DatabaseController.shutdown();
     }
 
 
