@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.StartupController">
+   <children>
+      <Button layoutX="284.0" layoutY="303.0" mnemonicParsing="false" onAction="#showMap" text="View Map">
+         <font>
+            <Font size="48.0" />
+         </font></Button>
+      <Button layoutX="763.0" layoutY="303.0" mnemonicParsing="false" onAction="#showDirectory" text="View Directory">
+         <font>
+            <Font size="48.0" />
+         </font></Button>
+      <Label layoutX="453.0" layoutY="116.0" text="Welcome">
+         <font>
+            <Font size="96.0" />
+         </font>
+      </Label>
+      <Button layoutX="65.0" layoutY="627.0" mnemonicParsing="false" onAction="#showLogin" text="Administrator">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>
