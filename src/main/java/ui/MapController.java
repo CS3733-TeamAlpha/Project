@@ -1,6 +1,4 @@
-package ui;/**
- * Created by sourec on 2/3/17.
- */
+package ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -16,10 +14,7 @@ import java.io.IOException;
 
 public class MapController
 {
-	private DataFile datafile;
-	private NodeRepository database;
 	private Graph graph;
-
 	private boolean roomInfoShown;
 	private Stage stage;
 
