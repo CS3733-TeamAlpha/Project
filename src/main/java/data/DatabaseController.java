@@ -33,6 +33,7 @@ public class DatabaseController
         //initialize tables
         initializeProviderTable();
         initializeFloorTable();
+        insertFloor(3, "defaultFloor", 3); //insert default floor for minimal app
         initializeNodeTable();
         initializeOfficeTable();
         initializeNeighborTable();
@@ -41,7 +42,7 @@ public class DatabaseController
     }
 
     //used for creating connection to the DB
-    protected static void createConnection()
+    public static void createConnection()
     {
 
         try
@@ -332,6 +333,47 @@ public class DatabaseController
             data.add(NodeName);
             data.add(NodeType);
             ConcreteNode node = new ConcreteNode(id, data, XCoord, YCoord, flr); //Return new node using node's information
+            results.close();
+            stmt.close();
+
+            return node;
+        } catch (SQLException e)
+        {
+            //TODO: properly handle exceptions
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Create a new node based on xy coordinates and the floor it's on
+     * @param x new node's x coordinate
+     * @param y new node's y coordinate
+     * @param floorid new node's floor
+     * @return the newly created node
+     */
+    public static Node generateNewNode(String name, String type, double x, double y, int floorid){
+        try
+        {
+            stmt = connection.createStatement();
+            ResultSet results = stmt.executeQuery("SELECT * FROM NODE "+
+                "ORDER BY NodeID");
+
+            int newID = -1;
+            while(results.next()){
+                newID = results.getInt(1);
+            }
+            newID++;
+            String NodeName = name;
+            String NodeType = type;
+            double XCoord = x;
+            double YCoord = y;
+            Floor flr = getFloorByID(floorid);
+
+            ArrayList<String> data = new ArrayList<>();
+            data.add(NodeName);
+            data.add(NodeType);
+            ConcreteNode node = new ConcreteNode(newID, data, XCoord, YCoord, flr); //Return new node using node's information
             results.close();
             stmt.close();
 
