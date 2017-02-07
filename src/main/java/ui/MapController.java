@@ -16,8 +16,6 @@ import java.io.IOException;
 
 public class MapController
 {
-	private DataFile datafile;
-	private NodeRepository database;
 	private Graph graph;
 
 	private boolean roomInfoShown;
