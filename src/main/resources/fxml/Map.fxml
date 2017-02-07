@@ -27,8 +27,9 @@
               <Pane pickOnBounds="false">
                   <children>
                       <TextField fx:id="searchField" layoutX="20.0" layoutY="12.0" prefHeight="23.0" prefWidth="263.0" />
-                      <Button fx:id="directoryButton" layoutX="405.0" layoutY="12.0" mnemonicParsing="false" onAction="#showDirectory" text="Directory" />
+                      <Button fx:id="directoryButton" layoutX="387.0" layoutY="11.0" mnemonicParsing="false" onAction="#showDirectory" text="Directory" />
                       <Button fx:id="searchButton" layoutX="286.0" layoutY="12.0" mnemonicParsing="false" text="Search" />
+                  <Button layoutX="585.0" layoutY="12.0" mnemonicParsing="false" onAction="#showStartup" text="Done" />
                   </children>
               </Pane>
           </children>

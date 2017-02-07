@@ -73,5 +73,9 @@ public class MapController
 		Main.loadFXML("/fxml/Directory.fxml");
 	}
 
+	public void showStartup()
+	{
+		Main.loadFXML("/fxml/Startup.fxml");
+	}
 
 }

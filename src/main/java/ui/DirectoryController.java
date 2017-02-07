@@ -32,4 +32,9 @@ public class DirectoryController
 		Main.loadFXML("/fxml/Map.fxml");
 	}
 
+	public void showStartup()
+	{
+		Main.loadFXML("/fxml/Startup.fxml");
+	}
+
 }

@@ -25,6 +25,6 @@ public class StartupController
 
 	public void showLogin()
 	{
-
+		Main.loadFXML("/fxml/Login.fxml");
 	}
 }
