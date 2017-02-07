@@ -29,6 +29,10 @@ public class DatabasePathfindingTest
 		//TODO: Either these idiot checks are redundant or they need to be moved into a more suitable function
 		ConcreteNode node1 = new ConcreteNode(0, new ArrayList<String>(), 1, 7, null);
 		ConcreteNode node2 = new ConcreteNode(1, new ArrayList<String>(), 0, 1, null);
+		node1.getData().add("Hello"); //TODO: Remove this once issue #7 is fixed
+		node1.getData().add("World");
+		node2.getData().add("dlroW");
+		node2.getData().add("olleH");
 		assertNull(graph.findPath(node1, node2)); //Idiot check... you never know when programs drop 100 IQ on the spot
 
 		node1.addNeighbor(node2);
