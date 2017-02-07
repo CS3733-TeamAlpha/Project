@@ -148,18 +148,23 @@ public class MapEditorToolController
             newNodeButton.setText("Add a New Node");
         } else if(modifyingLocation)
         {
-            //modify button text
-            clickModLocation.setText("Modify Location by Click");
-            modifyingLocation = false;
+            if(currentButton != null && currentNode != null)
+            {
+                //modify button text
+                clickModLocation.setText("Modify Location by Click");
+                modifyingLocation = false;
 
-            //update button and node location
-            currentButton.setLayoutX(e.getX() - XOFFSET);
-            currentButton.setLayoutY(e.getY() - YOFFSET);
-            currentNode.setX(e.getX());
-            currentNode.setY(e.getY());
+                //update button and node location
+                currentButton.setLayoutX(e.getX() - XOFFSET);
+                currentButton.setLayoutY(e.getY() - YOFFSET);
+                currentNode.setX(e.getX());
+                currentNode.setY(e.getY());
 
-            //TODO: implement some tracking that this node has been modified, if it is a node
-            //TODO: loaded in from the databsecontroller
+                //TODO: implement some tracking that this node has been modified, if it is a node
+                //TODO: loaded in from the databsecontroller
+            } else {
+                hideNodeDetails();
+            }
         }
         else
         {
