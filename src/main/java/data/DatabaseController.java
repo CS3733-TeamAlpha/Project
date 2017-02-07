@@ -1014,7 +1014,16 @@ public class DatabaseController
         double x = modNode.getX();
         double y = modNode.getY();
         int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
+        System.out.println("Modifying");
         modifyNodeTable(id, name, type, x, y, floor);
+    }
+
+    public static void modifyNodes(ArrayList<Node> modNodes){
+        for(Node n: modNodes){
+            //TODO: do something better than hard cast to ConcreteNode?
+            ConcreteNode cn = (ConcreteNode) n;
+            modifyNodeTable(cn);
+        }
     }
 
     /*

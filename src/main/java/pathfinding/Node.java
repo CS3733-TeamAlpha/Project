@@ -47,4 +47,5 @@ public interface Node
 	void setX(double newX);
 	void setY(double newY);
 	ArrayList<String> getData();
+	void setData(ArrayList<String> newData);
 }

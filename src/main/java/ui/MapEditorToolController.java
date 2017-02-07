@@ -304,7 +304,9 @@ public class MapEditorToolController
         {
             currentButton.setLayoutX(Double.parseDouble(xField.getText()));
             currentNode.setX(Double.parseDouble(xField.getText()));
-            //TODO: track changes to nodes loaded in from DatabaseController
+            if(!modifiedNodesList.contains(currentNode)){
+                modifiedNodesList.add(currentNode);
+            }
         } catch (NumberFormatException e){
             //TODO: need more exception handling?
             System.out.println("Not a double");
@@ -322,7 +324,32 @@ public class MapEditorToolController
             {
                 currentButton.setLayoutY(Double.parseDouble(yField.getText()));
                 currentNode.setY(Double.parseDouble(yField.getText()));
-                //TODO: track changes to nodes loaded in from DatabaseController
+                if(!modifiedNodesList.contains(currentNode)){
+                    modifiedNodesList.add(currentNode);
+                }
+            }
+        } catch (NumberFormatException e){
+            //TODO: need more exception handling?
+            System.out.println("Not a double");
+        }
+    }
+
+    @FXML
+    /**
+     * update a node's Name string
+     */
+    void updateNodeData(ActionEvent event) {
+        try
+        {
+            if(currentButton != null && currentNode != null)
+            {
+                ArrayList<String> data = new ArrayList<String>();
+                data.add(nameField.getText());
+                data.add(typeField.getText());
+                currentNode.setData(data);
+                if(!modifiedNodesList.contains(currentNode)){
+                    modifiedNodesList.add(currentNode);
+                }
             }
         } catch (NumberFormatException e){
             //TODO: need more exception handling?
@@ -343,6 +370,8 @@ public class MapEditorToolController
             ConcreteNode cn = (ConcreteNode)n;
             DatabaseController.insertNode(cn);
         }
+        System.out.println(modifiedNodesList.size());
+        DatabaseController.modifyNodes(modifiedNodesList);
     }
 
 }

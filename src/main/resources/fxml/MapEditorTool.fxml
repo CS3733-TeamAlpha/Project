@@ -35,9 +35,9 @@
                <children>
                   <Button fx:id="newNodeButton" layoutX="3.0" layoutY="7.0" mnemonicParsing="false" onAction="#createNewNode" text="Add a New Node" />
                   <Label layoutX="4.0" layoutY="42.0" text="Selected Node Name" />
-                  <TextField fx:id="nameField" layoutX="4.0" layoutY="58.0" prefHeight="26.0" prefWidth="254.0" />
+                  <TextField fx:id="nameField" layoutX="4.0" layoutY="58.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="254.0" />
                   <Label layoutX="4.0" layoutY="94.0" text="Selected Node Type" />
-                  <TextField fx:id="typeField" layoutX="4.0" layoutY="110.0" prefHeight="26.0" prefWidth="254.0" />
+                  <TextField fx:id="typeField" layoutX="4.0" layoutY="110.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="254.0" />
                   <Label layoutX="4.0" layoutY="150.0" text="Node X Coordinate" />
                   <TextField layoutX="4.0" layoutY="166.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
                   <Label layoutX="4.0" layoutY="202.0" text="Node Y Coordinate" />

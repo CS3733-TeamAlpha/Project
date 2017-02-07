@@ -104,4 +104,6 @@ public class ConcreteNode implements Node
 	{
 		y = newY;
 	}
+
+	public void setData(ArrayList<String> newData){ data = newData; }
 }
