@@ -27,5 +27,6 @@ public class StartupController
 	{
 		//TODO: load up login instead of going straight to the editor tool
 		Main.loadFXML("/fxml/MapEditorTool.fxml");
+
 	}
 }

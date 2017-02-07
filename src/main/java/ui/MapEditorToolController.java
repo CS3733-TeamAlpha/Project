@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.InputMethodEvent;
@@ -13,35 +14,64 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import data.*;
+import javafx.stage.WindowEvent;
 import pathfinding.*;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ResourceBundle;
+
+import static java.awt.SystemColor.window;
 
 public class MapEditorToolController
 {
     //link buttons to node objects
     private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
-    //arraylist of newly created nodes
+
+    //arraylist of new nodes
+    //IMPORTANT: this list is distinct from the nodes in DatabaseController.nodeList
     private ArrayList<Node> newNodesList = new ArrayList<Node>();
+
+    //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
+
+    //arraylist of nodes loaded by DatabaseController that have been modified
+    //we will use this array to check for any updates that need to be made
+    // to the database (DatabaseController.modifyXTable)
     private ArrayList<Node> modifiedNodesList = new ArrayList<Node>();
-    private static int XOFFSET = 12; // to be used to modify button placement
+
+    //X and Y offsets, for button placement.
+    //TODO: fine tune offsets to make button placement visuals better
+    private static int XOFFSET = 12;
     private static int YOFFSET = 12;
 
-    static
-    {
-        DatabaseController.createConnection();
-        DatabaseController.initializeAllFloors();
-        DatabaseController.initializeAllNodes();
-    }
 
-    private boolean makingNew = false;
-    private boolean modifyingLocation = false;
+    private boolean makingNew = false; //currently making a new node?
+    private boolean modifyingLocation = false; //currently moving a node?
     private boolean showingDetails = false;
 
     private int FLOORID = 3; //Default floor id for minimal application
+
+
+    static
+    {
+        //initialize connection and floor/node/provider lists right away
+        //DatabaseController will hold onto these lists
+        DatabaseController.createConnection();
+        DatabaseController.initializeAllFloors();
+        DatabaseController.initializeAllNodes();
+        DatabaseController.initializeAllProviders();
+    }
+
+    public MapEditorToolController(){}
+    {
+        //TODO: make editortool load all nodes without making evrything static
+        //currently acheived by pressing a button
+       // loadNodesFromDatabase();
+    }
+
 
     @FXML
     private AnchorPane editingFloor;
@@ -71,6 +101,11 @@ public class MapEditorToolController
     private Button clickModLocation;
 
     @FXML
+    /**
+     * Function used to either add a new node at the clicked location
+     * or move an existing node to the clicked location.
+     * Choose which event to do based on makingNew or modifyingLocation bool
+     */
     void addNodeHere(MouseEvent e) {
         if(e.isStillSincePress())
         { if(makingNew)
@@ -78,15 +113,23 @@ public class MapEditorToolController
             Node newNode = null;
             if (newNodesList.size() == 0)
             {
+                //if we haven't made any new nodes yet, call databasecontroller so that
+                //we have a baseline nodeID to start with.
+                //This nodeID is going the be the greatest int nodeID in the existing nodes
+                //IMPORTANT: this doesn't actually add the new node to the database tables
                 newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
             } else
             {
+                //otherwise use our own function to generate a new node.
                 newNode = editorGenerateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
             }
             newNodesList.add(newNode);
+            //make a new button to associate with the node
             Button nodeB = new Button("+");
             nodeB.setLayoutX(e.getX() - XOFFSET);
             nodeB.setLayoutY(e.getY() - YOFFSET);
+
+            //on button click...
             nodeB.setOnAction(new EventHandler<ActionEvent>()
             {
                 @Override
@@ -96,36 +139,58 @@ public class MapEditorToolController
                 }
             });
             nodeButtonLinks.put(nodeB, newNode);
+
+            //add the new button to the scene
             editingFloor.getChildren().add(1, nodeB);
+
+            //modify bool and change button text
             makingNew = false;
             newNodeButton.setText("Add a New Node");
         } else if(modifyingLocation)
         {
+            //modify button text
             clickModLocation.setText("Modify Location by Click");
             modifyingLocation = false;
+
+            //update button and node location
             currentButton.setLayoutX(e.getX() - XOFFSET);
             currentButton.setLayoutY(e.getY() - YOFFSET);
             currentNode.setX(e.getX());
             currentNode.setY(e.getY());
+
+            //TODO: implement some tracking that this node has been modified, if it is a node
+            //TODO: loaded in from the databsecontroller
         }
         else
         {
+            //if not making or moving nodes, hide node details.
             hideNodeDetails();
         }
         }
     }
 
 
+    /**
+     * Load all nodes from the databasecontroller's list of nodes onto our scene
+     */
     public void loadNodesFromDatabase(){
         for(Node n: DatabaseController.getAllNodes()){
             loadNode(n);
         }
     }
 
+    /**
+     * Create a button on the scene and associate it with a node
+     * @param n the node to load into the scene
+     */
     private void loadNode(Node n){
+        //new button
         Button nodeB = new Button("+");
+        //set button XY coordinates
         nodeB.setLayoutX(n.getX()-XOFFSET);
         nodeB.setLayoutY(n.getY()-YOFFSET);
+
+        //on button click...
         nodeB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -133,6 +198,7 @@ public class MapEditorToolController
             }
         });
         nodeButtonLinks.put(nodeB, n);
+        //add button to scene
         editingFloor.getChildren().add(1, nodeB);
     }
 
@@ -147,27 +213,44 @@ public class MapEditorToolController
      * @return a new Node object
      */
     private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid){
+        //add 1 to greatest node ID value, which should be last item in the list
         int newID = newNodesList.get(newNodesList.size()-1).getID()+1;
+
+        //initialize data
         ArrayList<String> data = new ArrayList<String>();
         data.add(name);
         data.add(type);
+        //create new concrete node
         Node newNode = new ConcreteNode(newID, data, x, y, DatabaseController.getFloorByID(floorid));
         return newNode;
     }
 
+    /**
+     * display node details when a node's button is clicked
+     * @param nodeB the button clicked. associated to a node
+     */
     private void showNodeDetails(Button nodeB){
+        //get node linked to this button
         Node linkedNode = nodeButtonLinks.get(nodeB);
+
+        //modify text fields to display node info
         nameField.setText(linkedNode.getData().get(0));
         typeField.setText(linkedNode.getData().get(1));
         xField.setText(Double.toString(linkedNode.getX()));
         yField.setText(Double.toString(linkedNode.getY()));
+
+        //set current node/button
         currentNode = linkedNode;
         //TODO: make it so that we can visually see which node is selected
         currentButton = nodeB;
     }
 
+    /**
+     * hide node details sidebar and deselect current node/button
+     */
     private void hideNodeDetails(){
         currentNode = null;
+        currentButton = null;
 
         nameField.setText("");
         typeField.setText("");
@@ -175,7 +258,9 @@ public class MapEditorToolController
         yField.setText("");
     }
 
-
+    /**
+     * Create a new node on the map. alternatively, cancel new node creation
+     */
     public void createNewNode()
     {
         if(newNodeButton.getText().equals("Add a New Node"))
@@ -189,6 +274,9 @@ public class MapEditorToolController
     }
 
     @FXML
+    /**
+     * modify a node's location on the map. alternately, cancel node location modification
+     */
     void modNodeLocation(ActionEvent event){
         if(!modifyingLocation)
         {
@@ -203,11 +291,15 @@ public class MapEditorToolController
     }
 
     @FXML
+    /**
+     * update a node's X coordinate, both visually and in the node's properties
+     */
     void updateNodeX(ActionEvent event) {
         try
         {
             currentButton.setLayoutX(Double.parseDouble(xField.getText()));
             currentNode.setX(Double.parseDouble(xField.getText()));
+            //TODO: track changes to nodes loaded in from DatabaseController
         } catch (NumberFormatException e){
             //TODO: need more exception handling?
             System.out.println("Not a double");
@@ -215,6 +307,9 @@ public class MapEditorToolController
     }
 
     @FXML
+    /**
+     * update a node's Y coordinate, both visually and in the node's properties
+     */
     void updateNodeY(ActionEvent event) {
         try
         {
@@ -222,6 +317,7 @@ public class MapEditorToolController
             {
                 currentButton.setLayoutY(Double.parseDouble(yField.getText()));
                 currentNode.setY(Double.parseDouble(yField.getText()));
+                //TODO: track changes to nodes loaded in from DatabaseController
             }
         } catch (NumberFormatException e){
             //TODO: need more exception handling?
@@ -231,6 +327,10 @@ public class MapEditorToolController
 
 
     @FXML
+    /**
+     * Push newly created nodes into the databasecontroller's node table.
+     * TODO: nodes loaded in from the table and modified should also be pushed.
+     */
     void pushChangesToDatabase(ActionEvent event) {
         for(Node n: newNodesList){
             //TODO: change types of things to be concretenode instead of node?
