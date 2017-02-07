@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     //TODO: Find a better way to organize these dependencies!
-    runtime(
+    compile(
             [group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'],
             [group: 'org.apache.derby', name: 'derbyclient', version: '10.13.1.1'],
             [group: 'org.apache.derby', name: 'derbytools', version: '10.13.1.1'],

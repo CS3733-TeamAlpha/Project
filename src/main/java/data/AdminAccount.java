@@ -1,6 +1,6 @@
 package data;
 
-import crypto.BCrypt;
+import org.mindrot.jbcrypt.*;
 
 import static java.sql.DriverManager.println;
 
