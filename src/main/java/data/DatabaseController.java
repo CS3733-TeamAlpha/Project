@@ -41,7 +41,7 @@ public class DatabaseController
         initializeOfficeTable();
         initializeNeighborTable();
 
-        shutdown(); //TODO: This *might* be important to remove...?
+        //shutdown(); //TODO: This *might* be important to remove...?
     }
 
     /**
