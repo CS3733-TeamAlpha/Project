@@ -1018,6 +1018,10 @@ public class DatabaseController
         modifyNodeTable(id, name, type, x, y, floor);
     }
 
+    /**
+     * parse a list of nodes that have been modified and run the modifyNodeTable for each
+     * @param modNodes List of modified Nodes
+     */
     public static void modifyNodes(ArrayList<Node> modNodes){
         for(Node n: modNodes){
             //TODO: do something better than hard cast to ConcreteNode?

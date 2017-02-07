@@ -304,6 +304,7 @@ public class MapEditorToolController
         {
             currentButton.setLayoutX(Double.parseDouble(xField.getText()));
             currentNode.setX(Double.parseDouble(xField.getText()));
+            //track that this node has been modified
             if(!modifiedNodesList.contains(currentNode)){
                 modifiedNodesList.add(currentNode);
             }
@@ -324,6 +325,7 @@ public class MapEditorToolController
             {
                 currentButton.setLayoutY(Double.parseDouble(yField.getText()));
                 currentNode.setY(Double.parseDouble(yField.getText()));
+                //track that this node has been modified
                 if(!modifiedNodesList.contains(currentNode)){
                     modifiedNodesList.add(currentNode);
                 }
@@ -347,6 +349,7 @@ public class MapEditorToolController
                 data.add(nameField.getText());
                 data.add(typeField.getText());
                 currentNode.setData(data);
+                //track that this node has been modified
                 if(!modifiedNodesList.contains(currentNode)){
                     modifiedNodesList.add(currentNode);
                 }
