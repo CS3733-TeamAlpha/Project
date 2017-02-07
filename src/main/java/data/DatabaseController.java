@@ -9,6 +9,10 @@ import pathfinding.ConcreteNode;
 
 import static java.sql.DriverManager.println;
 
+/**
+ * Database controller to interact with the Java Derby database
+ * @// TODO: 2/7/17 Either relevant functions like getNodeByID() need to return ConcreteNodes, or everything that wants a ConcreteNode must allow for a Node passed in instead... I think
+ */
 public class DatabaseController
 {
 
@@ -37,7 +41,7 @@ public class DatabaseController
         initializeOfficeTable();
         initializeNeighborTable();
 
-        shutdown();
+        shutdown(); //TODO: This *might* be important to remove...?
     }
 
     /**
