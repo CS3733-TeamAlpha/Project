@@ -9,6 +9,7 @@ public class ConcreteGraph implements Graph {
 	/**
 	 * {@inheritDoc}
 	 * @implNote This implementation returns an ArrayList.
+	 * @// TODO: 2/6/17 Implement straight-shot optimization for travsersing multiple floors 
 	 */
 	public Collection<Node> findPath(Node start, Node end) {
 		if (start == null || end == null)
@@ -67,7 +68,6 @@ public class ConcreteGraph implements Graph {
 		return path;
 	}
 
-	//This is the only class I bothered to fully implement, for now. Isn't it cute though?
 	private static class ASTNode implements Comparable<ASTNode> {
 		double f;
 		double g;

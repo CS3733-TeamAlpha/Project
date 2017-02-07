@@ -55,11 +55,14 @@ public class ConcreteGraphTest {
         assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[4][4]));
        	assertEquals(5, graph.findPath(gridNodes[0][0], gridNodes[0][4]).size());
         assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[4][4]));
-        assertTrue(graph.findPath(gridNodes[0][0], gridNodes[4][4]).size() > 5);
+        assertEquals(9, graph.findPath(gridNodes[0][0], gridNodes[4][4]).size());
 
-        //Edge cases
+        //***EDGE CASES***
         assertNull(graph.findPath(null, null));
-        assertNull(graph.findPath(gridNodes[0][0], straightNodes[0])); //no path
-    }
+        assertNull(graph.findPath(gridNodes[0][0], straightNodes[0]));	//No path
+		Node emptyNode = new ConcreteNode();
+		assertNull(graph.findPath(emptyNode, gridNodes[0][0]));
+		assertNull(graph.findPath(gridNodes[0][0], emptyNode));
 
+    }
 }
