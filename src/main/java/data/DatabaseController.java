@@ -33,8 +33,7 @@ public class DatabaseController
         //initialize tables
         initializeProviderTable();
         initializeFloorTable();
-        //TODO: Floor3 is hardcoded to be initialized for first iteration
-        insertFloor(3, "defaultFloor", 3);
+        insertFloor(3, "defaultFloor", 3); //insert default floor for minimal app
         initializeNodeTable();
         initializeOfficeTable();
         initializeNeighborTable();
@@ -45,7 +44,7 @@ public class DatabaseController
     /**
      * Creates a connection to the DB.
      */
-    protected static void createConnection()
+    public static void createConnection()
     {
 
         try
@@ -61,10 +60,10 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Shuts down the statement
-	 */
-	protected static void shutdown()
+   /**
+    * Shuts down the statement
+    */
+    protected static void shutdown()
     {
         try
         {
@@ -84,10 +83,10 @@ public class DatabaseController
 
     }
 
-	/**
-	 * Intiailize the provider table if not already initialized
-	 */
-	public static void initializeProviderTable()
+    /**
+     * Intiailize the provider table if not already initialized
+     */
+    public static void initializeProviderTable()
     {
         try
         {
@@ -111,10 +110,10 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Initialize the node table if not already initialized
-	 */
-	public static void initializeNodeTable()
+    /**
+     * Initialize the node table if not already initialized
+     */
+    public static void initializeNodeTable()
     {
         try
         {
@@ -142,9 +141,9 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Initialize the office table, if not already created
-	 */
+     /**
+      * Initialize the office table, if not already created
+      */
     public static void initializeOfficeTable()
     {
         try
@@ -170,10 +169,8 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Initialize the neighbor table, if not already created
-	 */
-	public static void initializeNeighborTable()
+    //initialize the neighbor table, if not already created
+    public static void initializeNeighborTable()
     {
         try
         {
@@ -223,10 +220,8 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Make floor objects from all floor entries in the floor table
-	 */
-	public static void initializeAllFloors()
+    //make floor objects from all entries in the floor table
+    public static void initializeAllFloors()
     {
         try
         {
@@ -253,9 +248,8 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Make node objects from all entries in the node table. Dependent on floorlist having already been initialized.
-	 */
+    //make node objects from all entries in the node table
+    //dependent on floorlist already being initialized
     public static void initializeAllNodes()
     {
         try
@@ -288,10 +282,8 @@ public class DatabaseController
         }
     }
 
-	/**
-	 * Make provider objects from all entries in the provider table. Dependent on providerList having already been
-	 * initialized.
-	 */
+    //make provider objects from all entries in the provider table
+    //dependent on providerlist already being initialized
     public static void initializeAllProviders()
     {
         try
@@ -319,8 +311,8 @@ public class DatabaseController
         }
     }
 
-    /**
-     * Makes a single node by NodeID
+    /*
+     * make a single node by NodeID
      * @param id NodeID of node object to be created
      */
     public static ConcreteNode makeNodeByID(int id)
@@ -365,8 +357,8 @@ public class DatabaseController
         }
     }
 
-    /**
-     * Retrieve a node from nodeList based on id
+    /*
+     * retrieve a node from nodeList based on id
      * @param id NodeID of desired node
      */
     public static Node getNodeByID(int id)
@@ -459,7 +451,8 @@ public class DatabaseController
     }
 
     /**
-     * Make a single provider by ID. Relies on nodeList already being initialized
+     * Make a single provider by ID.
+     * Relies on nodeList already being initialized
      * @param id ProviderID
      */
     public static Provider makeProviderByID(int id)
@@ -979,7 +972,7 @@ public class DatabaseController
     /**
      * Delete all neighbor relationships referencing a certain ID.
      * Maybe unnecessary? T
-	 * @// TODO: Look into whether necessary or not
+     * @// TODO: Look into whether necessary or not
      */
     public static void removeAllNeighborsByID(int ID)
     {
@@ -1051,13 +1044,26 @@ public class DatabaseController
         double x = modNode.getX();
         double y = modNode.getY();
         int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
+        System.out.println("Modifying");
         modifyNodeTable(id, name, type, x, y, floor);
     }
 
     /**
-     * Modify a node's entry in the table
-     * @// TODO: Probably should break this down to modify a single field at a time
-     * @// TODO: Fix return type?
+     * parse a list of nodes that have been modified and run the modifyNodeTable for each
+     * @param modNodes List of modified Nodes
+     */
+    public static void modifyNodes(ArrayList<Node> modNodes){
+        for(Node n: modNodes){
+            //TODO: do something better than hard cast to ConcreteNode?
+            ConcreteNode cn = (ConcreteNode) n;
+            modifyNodeTable(cn);
+        }
+    }
+
+    /*
+     * modify a node's entry in the table
+     * TODO: Probably should break this down to modify a single field at a time
+     * TODO: Fix return type?
      */
     public static void modifyNodeTable(int ID, String name, String type, double x, double y, int floor)
     {

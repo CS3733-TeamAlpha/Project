@@ -77,6 +77,13 @@ public class ConcreteNode implements Node
 		neighbors.add(newNeighbor);
 	}
 
+	public void removeNeighbor(Node oldNeighbor)
+	{
+		if (neighbors.contains(oldNeighbor)) {
+			neighbors.remove(oldNeighbor);
+		}
+	}
+
 	public Floor getOnFloor(){ return onFloor; }
 
 	public void setOnFloor(Floor flr){ onFloor = flr; }
@@ -104,4 +111,6 @@ public class ConcreteNode implements Node
 	{
 		y = newY;
 	}
+
+	public void setData(ArrayList<String> newData){ data = newData; }
 }

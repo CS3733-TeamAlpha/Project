@@ -67,9 +67,9 @@ public class DatabaseTest
     public void testInsert()
     {
         DatabaseController.insertFloor(03, "defaultFloor", 3);
-        DatabaseController.insertNode(001, "Room001", "room", 1, 1, 3);
-        DatabaseController.insertNode(002, "Room002", "room", 2, 2, 3);
-        DatabaseController.insertNode(003, "Room003", "room", 3, 3, 3);
+        DatabaseController.insertNode(001, "Room001", "room", 1, 1, 03);
+        DatabaseController.insertNode(002, "Room002", "room", 2, 2, 03);
+        DatabaseController.insertNode(003, "Room003", "room", 3, 3, 03);
         DatabaseController.insertProvider(111, "Donald", "Trump");
         DatabaseController.insertProvider(222, "Barack", "Obama");
         DatabaseController.insertNeighbor(001, 002);
@@ -127,7 +127,7 @@ public class DatabaseTest
 
         compareProvider(DatabaseController.getProvidersByFullName("Donald", "Trump").get(0), pvdL.get(0));
 
-        compareFloor(DatabaseController.getFloorByID(03), flL.get(0));
+        compareFloor(DatabaseController.getFloorByID(01), flL.get(0));
 
         compareNode(DatabaseController.getNearestNode(DatabaseController.getNodeByID(001)), ndL.get(1));
     }
