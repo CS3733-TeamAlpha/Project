@@ -41,6 +41,7 @@ public class DatabasePathfindingTest
 		tempList.add(node1);
 		tempList.add(node2);
 		DatabaseController.insertNodeList(tempList);
+		DatabaseController.initializeAllNodes();
 
 		//Now get the nodes back out and check their data to make sure that it is IDENTICAL
 		Node dNode1 = DatabaseController.getNodeByID(500);
@@ -100,6 +101,7 @@ public class DatabasePathfindingTest
 			for (int j = 0; j < 100; j++)
 				tempList.add(gridNodes[i][j]);
 		DatabaseController.insertNodeList(tempList);
+		DatabaseController.initializeAllNodes();
 		System.out.println("Finished inserting nodes into database");
 
 		//...and get them all back out again!
