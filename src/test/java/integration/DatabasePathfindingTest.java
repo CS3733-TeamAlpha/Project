@@ -32,7 +32,7 @@ public class DatabasePathfindingTest
 	}
 
 	@Test
-	public void testLinkPersistance(){
+	public void testLinkPersistence(){
 		//Test to make sure that connections between two nodes are maintained after being stored in the database
 		//TODO: Either these idiot checks are redundant or they need to be moved into a more suitable function
 		ConcreteNode node1 = new ConcreteNode(100, new ArrayList<String>(), 1, 7, null);
@@ -59,8 +59,6 @@ public class DatabasePathfindingTest
 		assertEquals(7, dNode1.getY(), 0);
 		assertEquals(0, dNode2.getX(), 0);
 		assertEquals(1, dNode2.getY(), 0);
-		assertNull(dNode1.getOnFloor());
-		assertNull(dNode1.getOnFloor()); //getOnFloor()? that's awkwardly named...
 		assertNotNull(dNode1.getData());
 		assertNotNull(dNode2.getData());
 
