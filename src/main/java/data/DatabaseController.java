@@ -56,8 +56,19 @@ public class DatabaseController
 		insertNode(8, "Volunteer Services", "Service",1222.0, 1148.0, 3);
 		insertNode(9, "Kiosk", "Service",1104.0, 1113.0, 3);
 		insertNode(10, "Shutte Pickup", "Service",1117.0, 1218.0, 3);
-		insertNode(11, "Hillside Lobby", "Service",1116.0, 1161.0, 3);
+		insertNode(11, "Hillside Lobby", "Service",1116.0, 1148.0, 3);
 		insertNode(12, "Eye Care Specialists" , "Practice",1169.0, 202.0, 3);
+
+		//Creates hard-coded node values for the hallway nodes on 3rd floor
+		insertNode(13, "F3Hallway1", "Hallway", 1025.0, 226.0, 3);
+		insertNode(14, "F3Hallway2", "Hallway", 1117.0, 208.0, 3);
+		insertNode(15, "F3Hallway3", "Hallway", 1117.0, 383.0, 3);
+		insertNode(16, "F3Hallway4", "Hallway", 1078.0, 387.0, 3);
+		insertNode(17, "F3Hallway5", "Hallway", 1080.0, 542.0, 3);
+		insertNode(18, "F3Hallway6", "Hallway", 1107.0, 600.0, 3);
+		insertNode(19, "F3Hallway7", "Hallway", 1116.0, 791.0, 3);
+		insertNode(20, "F3Hallway8", "Hallway", 1108.0, 1032.0, 3);
+		insertNode(21, "F3Hallway9", "Hallway", 1161.0, 1148.0, 3);
 
 		insertServices("Atrium Café", "Service");
 		insertServices("Chapel and Chaplaincy Services", "Service");
