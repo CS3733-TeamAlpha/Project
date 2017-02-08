@@ -2,6 +2,8 @@ package pathfinding;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class ConcreteGraphTest
@@ -67,5 +69,7 @@ public class ConcreteGraphTest
 		assertNull(graph.findPath(emptyNode, gridNodes[0][0]));
 		assertNull(graph.findPath(gridNodes[0][0], emptyNode));
 
+		//Ordering tests
+		ArrayList<Node> orderedSolution = graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]);
 	}
 }

@@ -1,7 +1,6 @@
 package pathfinding;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.PriorityQueue;
 
 public class ConcreteGraph implements Graph {
@@ -11,7 +10,7 @@ public class ConcreteGraph implements Graph {
 	 * @implNote This implementation returns an ArrayList.
 	 * @// TODO: 2/6/17 Implement straight-shot optimization for traversing multiple floors
 	 */
-	public Collection<Node> findPath(Node start, Node end) {
+	public ArrayList<Node> findPath(Node start, Node end) {
 		if (start == null || end == null)
 			return null; //idiot check
 
