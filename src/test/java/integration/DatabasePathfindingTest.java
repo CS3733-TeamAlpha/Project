@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.awt.image.renderable.ContextualRenderedImageFactory;
 import java.util.ArrayList;
 
 /**
@@ -27,17 +28,19 @@ public class DatabasePathfindingTest
 	public void testLinkPersistance(){
 		//Test to make sure that connections between two nodes are maintained after being stored in the database
 		//TODO: Either these idiot checks are redundant or they need to be moved into a more suitable function
-		ConcreteNode node1 = new ConcreteNode(0, new ArrayList<String>(), 1, 7, null);
-		ConcreteNode node2 = new ConcreteNode(1, new ArrayList<String>(), 0, 1, null);
+		ConcreteNode node1 = new ConcreteNode(500, new ArrayList<String>(), 1, 7, null);
+		ConcreteNode node2 = new ConcreteNode(501, new ArrayList<String>(), 0, 1, null);
 		assertNull(graph.findPath(node1, node2)); //Idiot check... you never know when programs drop 100 IQ on the spot
 
 		node1.addNeighbor(node2);
 		node2.addNeighbor(node1);
 		assertNotNull(graph.findPath(node1, node2)); //Idiot check round 2
 
-		//Add these nodes to the database
-		DatabaseController.insertNode(node1);
-		DatabaseController.insertNode(node2);
+		//Add these nodes to the database using insertNodeList
+		ArrayList<Node> tempList = new ArrayList<Node>();
+		tempList.add(node1);
+		tempList.add(node2);
+		DatabaseController.insertNodeList(tempList);
 
 		//Now get the nodes back out and check their data to make sure that it is IDENTICAL
 		Node dNode1 = DatabaseController.getNodeByID(0);
@@ -67,7 +70,7 @@ public class DatabasePathfindingTest
 		ConcreteNode[][] gridNodes = new ConcreteNode[100][100];
 		for (int i = 0; i <100; i++)
 			for (int j = 0; j < 100; j++)
-				gridNodes[i][j] = new ConcreteNode(i * 100 + j, new ArrayList<String>(), i, j, null);
+				gridNodes[i][j] = new ConcreteNode(i * 100 + j + 500, new ArrayList<String>(), i, j, null);
 
 		System.out.println("Finished initializing graph");
 		for (int i = 0; i < 100; i++)
@@ -92,9 +95,11 @@ public class DatabasePathfindingTest
 		System.out.println("Finished base test of graph");
 
 		//Now put them all in the database...
+		ArrayList<Node> tempList = new ArrayList<Node>();
 		for (int i = 0; i < 100; i++)
 			for (int j = 0; j < 100; j++)
-				DatabaseController.insertNode(gridNodes[i][j]);
+				tempList.add(gridNodes[i][j]);
+		DatabaseController.insertNodeList(tempList);
 		System.out.println("Finished inserting nodes into database");
 
 		//...and get them all back out again!
@@ -103,7 +108,7 @@ public class DatabasePathfindingTest
 		{
 			for (int j = 0; j < 100; j++)
 			{
-				dGridNodes[i][j] = DatabaseController.getNodeByID(i * 100 + j);
+				dGridNodes[i][j] = DatabaseController.getNodeByID(i * 100 + j + 500); //500 is used as offset for... reasons.
 				assertNotNull(dGridNodes[i][j]);
 				assertTrue(dGridNodes[i][j].getNeighbors().size() >= 2);
 			}
