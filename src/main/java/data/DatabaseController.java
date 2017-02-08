@@ -40,7 +40,9 @@ public class DatabaseController
         shutdown();
     }
 
-    //used for creating connection to the DB
+    /**
+     * Creates a connection to the DB.
+     */
     protected static void createConnection()
     {
 
@@ -57,8 +59,10 @@ public class DatabaseController
         }
     }
 
-    //shuts down the statement
-    protected static void shutdown()
+	/**
+	 * Shuts down the statement
+	 */
+	protected static void shutdown()
     {
         try
         {
@@ -78,8 +82,10 @@ public class DatabaseController
 
     }
 
-    //initialize the provider table, if not already created
-    public static void initializeProviderTable()
+	/**
+	 * Intiailize the provider table if not already initialized
+	 */
+	public static void initializeProviderTable()
     {
         try
         {
@@ -93,7 +99,7 @@ public class DatabaseController
             stmt.close();
         } catch (SQLException sqlExcept)
         {
-            if (!sqlExcept.getSQLState().equals("X0Y32"))
+            if (!sqlExcept.getSQLState().equals("X0Y32")) //TODO: Remove magic numbers
             {
                 sqlExcept.printStackTrace();
             } else
@@ -103,8 +109,10 @@ public class DatabaseController
         }
     }
 
-    //initialize the node table, if not already created
-    public static void initializeNodeTable()
+	/**
+	 * Initialize the node table if not already initialized
+	 */
+	public static void initializeNodeTable()
     {
         try
         {
@@ -132,7 +140,9 @@ public class DatabaseController
         }
     }
 
-    //initialize the office table, if not already created
+	/**
+	 * Initialize the office table, if not already created
+	 */
     public static void initializeOfficeTable()
     {
         try
@@ -158,8 +168,10 @@ public class DatabaseController
         }
     }
 
-    //initialize the neighbor table, if not already created
-    public static void initializeNeighborTable()
+	/**
+	 * Initialize the neighbor table, if not already created
+	 */
+	public static void initializeNeighborTable()
     {
         try
         {
@@ -182,8 +194,10 @@ public class DatabaseController
         }
     }
 
-    //initialize the floor table, if not already created
-    public static void initializeFloorTable()
+	/**
+	 * Initialize the floor table, if not already created
+	 */
+	public static void initializeFloorTable()
     {
         try
         {
@@ -207,8 +221,10 @@ public class DatabaseController
         }
     }
 
-    //make floor objects from all entries in the floor table
-    public static void initializeAllFloors()
+	/**
+	 * Make floor objects from all floor entries in the floor table
+	 */
+	public static void initializeAllFloors()
     {
         try
         {
@@ -235,8 +251,9 @@ public class DatabaseController
         }
     }
 
-    //make node objects from all entries in the node table
-    //dependent on floorlist already being initialized
+	/**
+	 * Make node objects from all entries in the node table. Dependent on floorlist having already been initialized.
+	 */
     public static void initializeAllNodes()
     {
         try
@@ -269,8 +286,10 @@ public class DatabaseController
         }
     }
 
-    //make provider objects from all entries in the provider table
-    //dependent on providerlist already being initialized
+	/**
+	 * Make provider objects from all entries in the provider table. Dependent on providerList having already been
+	 * initialized.
+	 */
     public static void initializeAllProviders()
     {
         try
@@ -298,8 +317,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * make a single node by NodeID
+    /**
+     * Makes a single node by NodeID
      * @param id NodeID of node object to be created
      */
     public static ConcreteNode makeNodeByID(int id)
@@ -344,8 +363,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * retrieve a node from nodeList based on id
+    /**
+     * Retrieve a node from nodeList based on id
      * @param id NodeID of desired node
      */
     public static Node getNodeByID(int id)
@@ -396,8 +415,8 @@ public class DatabaseController
         return null;
     }
 
-    /*
-     * get a node closest to a source node.
+    /**
+     * Get a node closest to a source node.
      * currently assuming nodes can't have the exact same XY coordinates
      * Check floorID is different to discern between different building/floors
      * @param source The souce node from which we want to find the nearest node
@@ -424,9 +443,8 @@ public class DatabaseController
         return nearest;
     }
 
-    /*
-     * Make a single provider by ID.
-     * Relies on nodeList already being initialized
+    /**
+     * Make a single provider by ID. Relies on nodeList already being initialized
      * @param id ProviderID
      */
     public static Provider makeProviderByID(int id)
@@ -460,7 +478,7 @@ public class DatabaseController
         }
     }
 
-    /*
+    /**
      * Get a single provider by id
      * @param id ProviderID
      */
@@ -477,8 +495,8 @@ public class DatabaseController
         return null;
     }
 
-    /*
-     * get providers by name. expect possibility of duplicates since no uniqueness constraints
+    /**
+     * Get providers by name. expect possibility of duplicates since no uniqueness constraints
      * @param f FirstName of provider
      * @param l LastName of provider
      */
@@ -495,7 +513,7 @@ public class DatabaseController
         return provList;
     }
 
-    /*
+    /**
      * Get providers at a specific node
      * @param id NodeID to get providers from
      */
@@ -514,7 +532,7 @@ public class DatabaseController
         return pList;
     }
 
-    /*
+    /**
      * Get nodes a provider is associated with
      * @param id ProviderID of provider for which we are looking for linked nodes
      */
@@ -546,7 +564,7 @@ public class DatabaseController
         }
     }
 
-    /*
+    /**
      * Get neighbors of a specific node
      * @param id NodeID from which we are getting neighbors
      */
@@ -576,7 +594,7 @@ public class DatabaseController
         }
     }
 
-    /*
+    /**
      * Make a floor from floor table
      * @param id FloorID of the floor to make
      */
@@ -610,7 +628,7 @@ public class DatabaseController
         }
     }
 
-    /*
+    /**
      * Get a floor from floorList
      * @param id FloorID of floor to search for
      */
@@ -627,8 +645,8 @@ public class DatabaseController
         return null;
     }
 
-    /*
-     * insert new provider into table
+    /**
+     * Insert new provider into table
      */
     public static void insertProvider(int provID, String fname, String lname)
     {
@@ -669,7 +687,7 @@ public class DatabaseController
     }
 
     /**
-     * insert new node from a concrete node into table
+     * Insert new node from a concrete node into table
      * IMPORTANT doesn't add neighbor relationships
      * @param newNode
      */
@@ -684,8 +702,8 @@ public class DatabaseController
         insertNode(id, name, type, x, y, floor);
     }
 
-    /*
-     * insert new node into table
+    /**
+     * Insert new node into table
      */
     public static void insertNode(int nodeID, String name, String type, double x, double y, int floor)
     {
@@ -708,16 +726,16 @@ public class DatabaseController
         }
     }
 
-    /*
-     * insert new neighbor from ConcreteNodes
+    /**
+     * Insert new neighbor from ConcreteNodes
      */
     public static void insertNeighbor(ConcreteNode node1, ConcreteNode node2)
     {
         insertNeighbor(node1.getID(), node2.getID());
     }
 
-    /*
-     * insert new node neighbor
+    /**
+     * Insert new node neighbor
      */
     public static void insertNeighbor(int fromid, int toid)
     {
@@ -739,8 +757,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * insert new provider node relationship (office) into table
+    /**
+     * Insert new provider node relationship (office) into table
      */
     public static void insertOffice(int provID, int nodeID)
     {
@@ -763,8 +781,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * insert new floor into table
+    /**
+     * Insert new floor into table
      */
     public static void insertFloor(int floorID, String name, int lvl)
     {
@@ -787,9 +805,9 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete a single provider from tables
-      */
+    /**
+     * Delete a single provider from tables
+     */
     public static void removeProvider(int provID)
     {
         try
@@ -804,9 +822,9 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete a single node from tables
-      */
+    /**
+     * Delete a single node from tables
+     */
     public static void removeNode(int nodeID)
     {
         try
@@ -821,8 +839,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete a single office relationship from tables
+    /**
+     * Delete a single office relationship from tables
      */
     public static void removeOffice(int provID, int nodeID)
     {
@@ -838,8 +856,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete all office relationships for a provider from tables
+    /**
+     * Delete all office relationships for a provider from tables
      */
     public static void removeOfficeByProvider(int provID)
     {
@@ -855,8 +873,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete all office relationships for a node from tables
+    /**
+     * Delete all office relationships for a node from tables
      */
     public static void removeOfficeByNode(int nodeID)
     {
@@ -872,9 +890,9 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete a single neighbor relationship from tables
-      */
+    /**
+     * Delete a single neighbor relationship from tables
+     */
     public static void removeNeighbor(int fromID, int toID)
     {
         try
@@ -889,9 +907,9 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete all neighbor relationships from a certain ID from tables
-      */
+    /**
+     * Delete all neighbor relationships from a certain ID from tables
+     */
     public static void removeNeighborsFromID(int fromID)
     {
         try
@@ -906,9 +924,9 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete all neighbor relationships to a certain ID from tables
-      */
+    /**
+     * Delete all neighbor relationships to a certain ID from tables
+     */
     public static void removeNeighborsToID(int toID)
     {
         try
@@ -923,10 +941,11 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete all neighbor relationships referencing a certain ID.
-     * Maybe unnecessary? TODO: Look into whether necessary or not
-      */
+    /**
+     * Delete all neighbor relationships referencing a certain ID.
+     * Maybe unnecessary? T
+	 * @// TODO: Look into whether necessary or not
+     */
     public static void removeAllNeighborsByID(int ID)
     {
         try
@@ -941,9 +960,9 @@ public class DatabaseController
         }
     }
 
-    /*
-     * delete a floor from the floor table
-      */
+    /**
+     * Delete a floor from the floor table
+     */
     public static void removeFloorByID(int ID)
     {
         try
@@ -958,10 +977,10 @@ public class DatabaseController
         }
     }
 
-    /*
-     * modify a provider's entry in the table
-     * TODO: Probably should break this down to modify a single field at a time
-     * TODO: Fix return type?
+    /**
+     * Modify a provider's entry in the table
+     * @// TODO: Probably should break this down to modify a single field at a time
+     * @// TODO: Fix return type?
      */
     public static void modifyProviderTable(int ID, String fname, String lname)
     {
@@ -981,8 +1000,8 @@ public class DatabaseController
         }
     }
 
-    /*
-     * modify a node's entry in the table from a ConcreteNode
+    /**
+     * Modify a node's entry in the table from a ConcreteNode
      */
     public static void modifyNodeTable(ConcreteNode modNode)
     {
@@ -995,10 +1014,10 @@ public class DatabaseController
         modifyNodeTable(id, name, type, x, y, floor);
     }
 
-    /*
-     * modify a node's entry in the table
-     * TODO: Probably should break this down to modify a single field at a time
-     * TODO: Fix return type?
+    /**
+     * Modify a node's entry in the table
+     * @// TODO: Probably should break this down to modify a single field at a time
+     * @// TODO: Fix return type?
      */
     public static void modifyNodeTable(int ID, String name, String type, double x, double y, int floor)
     {
@@ -1022,10 +1041,10 @@ public class DatabaseController
     }
 
 
-    /*
-     * modify a floor's entry in the table
-     * TODO: Probably should break this down to modify a single field at a time
-     * TODO: Fix return type?
+    /**
+     * Modify a floor's entry in the table
+     * @// TODO: Probably should break this down to modify a single field at a time
+     * @// TODO: Fix return type?
      */
     public static void modifyFloorTable(int ID, String name, int lvl)
     {
