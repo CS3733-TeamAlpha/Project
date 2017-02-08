@@ -15,7 +15,7 @@
                   <content>
                       <AnchorPane fx:id="imgAnchor" minHeight="0.0" minWidth="0.0" prefHeight="1300.0" prefWidth="2250.0">
                           <children>
-                              <ImageView fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                <image>
                                   <Image url="@/images/floor3.png" />
                                </image>

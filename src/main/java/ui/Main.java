@@ -13,8 +13,6 @@ import java.io.IOException;
  */
 public class Main extends Application
 {
-	private static final String HIGH_CONTRAST_CSS = "css/high-contrast.css";
-
 	private static Stage stage;
 
 	@Override
@@ -48,13 +46,13 @@ public class Main extends Application
 
 	public static void toggleHighContrast()
 	{
-		if(stage.getScene().getStylesheets().contains(HIGH_CONTRAST_CSS))
+		if(stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
 		{
-			stage.getScene().getStylesheets().remove(HIGH_CONTRAST_CSS);
+			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
 		}
 		else
 		{
-			stage.getScene().getStylesheets().add(HIGH_CONTRAST_CSS);
+			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
 		}
 	}
 }

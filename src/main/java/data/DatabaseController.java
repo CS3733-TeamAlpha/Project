@@ -45,6 +45,46 @@ public class DatabaseController
 		initializeServicesTable();
 		initializeResidesInTable();
 
+		//Creates hard-coded node values for 3rd floor rooms
+		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
+		insertNode(2, "Chapel and Chaplaincy Services", "Service",1037.0, 1175.0, 3);
+		insertNode(3, "Gift Shop", "Service",1129.0, 809.0, 3);
+		insertNode(4, "Huvos Auditorium", "Service",1087.0, 619.0, 3);
+		insertNode(5, "Obstetrics and Gynecology Associates", "Practice",1242.0, 228.0, 3);
+		insertNode(6, "Roslindale Pediatric Associates" , "Practice",1041.0, 1057.0, 3);
+		insertNode(7, "Suburban Eye Specialists" , "Practice",1195.0, 207.0, 3);
+		insertNode(8, "Volunteer Services", "Service",1247.0, 1172.0, 3);
+		insertNode(9, "Kiosk", "Service",1130.0, 1150.0, 3);
+		insertNode(10, "Shutte Pickup", "Service",1145.0, 1233.0, 3);
+		insertNode(11, "Hillside Lobby", "Service",1141.0, 1190.0, 3);
+		insertNode(12, "Eye Care Specialists" , "Practice",1195.0, 207.0, 3);
+
+		insertServices("Atrium Café", "Service");
+		insertServices("Chapel and Chaplaincy Services", "Service");
+		insertServices("Gift Shop", "Service");
+		insertServices("Huvos Auditorium", "Service");
+		insertServices("Obstetrics and Gynecology Associates", "Practice");
+		insertServices("Roslindale Pediatric Associates", "Practice");
+		insertServices("Suburban Eye Specialists", "Practice");
+		insertServices("Volunteer Services", "Service");
+		insertServices("Kiosk", "Service");
+		insertServices("Shutte Pickup", "Service");
+		insertServices("Hillside Lobby", "Service");
+		insertServices("Eye Care Specialists", "Practice");
+
+		//Creates hard-coded values for all floors (Faulkner and Belkin)
+		insertFloor(1, "Faulkner", 1);
+		insertFloor(2, "Faulkner", 2);
+		insertFloor(3, "Faulkner", 3);
+		insertFloor(4, "Faulkner", 4);
+		insertFloor(5, "Faulkner", 5);
+		insertFloor(6, "Faulkner", 6);
+		insertFloor(7, "Faulkner", 7);
+		insertFloor(8, "Belkin", 1);
+		insertFloor(9, "Belkin", 2);
+		insertFloor(10, "Belkin", 3);
+		insertFloor(11, "Belkin", 4);
+
 		//creates hard-coded values for all providers
 		insertProvider(1, "Alqueza", " Arnold");
 		insertProvider(2, "Altschul", " Nomee");
@@ -291,33 +331,6 @@ public class DatabaseController
 		insertProvider(243, "Yung", " Rachel");
 		insertProvider(244, "Zampini", " Jay");
 
-		//Creates hard-coded values for all floors (Faulkner and Belkin)
-		insertFloor(1, "Faulkner", 1);
-		insertFloor(2, "Faulkner", 2);
-		insertFloor(3, "Faulkner", 3);
-		insertFloor(4, "Faulkner", 4);
-		insertFloor(5, "Faulkner", 5);
-		insertFloor(6, "Faulkner", 6);
-		insertFloor(7, "Faulkner", 7);
-		insertFloor(8, "Belkin", 1);
-		insertFloor(9, "Belkin", 2);
-		insertFloor(10, "Belkin", 3);
-		insertFloor(11, "Belkin", 4);
-
-		//Creates hard-coded node values for 3rd floor rooms
-		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
-		insertNode(2, "Chapel and Chaplaincy Services", "Service",1037.0, 1175.0, 3);
-		insertNode(3, "Gift Shop", "Service",1129.0, 809.0, 3);
-		insertNode(4, "Huvos Auditorium", "Service",1087.0, 619.0, 3);
-		insertNode(5, "Obstetrics and Gynecology Associates", "Practice",1242.0, 228.0, 3);
-		insertNode(6, "Roslindale Pediatric Associates" , "Practice",1041.0, 1057.0, 3);
-		insertNode(7, "Suburban Eye Specialists" , "Practice",1195.0, 207.0, 3);
-		insertNode(8, "Volunteer Services", "Service",1247.0, 1172.0, 3);
-		insertNode(9, "Kiosk", "Service",1130.0, 1150.0, 3);
-		insertNode(10, "Shutte Pickup", "Service",1145.0, 1233.0, 3);
-		insertNode(11, "Hillside Lobby", "Service",1141.0, 1190.0, 3);
-		insertNode(12, "Eye Care Specialists" , "Practice",1195.0, 207.0, 3);
-
 		//creates hard-coded values for all offices
 		insertOffice(26, 6);
 		insertOffice(72, 6);
@@ -339,21 +352,6 @@ public class DatabaseController
 		insertOffice(197, 5);
 		insertOffice(206, 5);
 
-		//inserts hard-coded values into Services table
-		insertServices("Atrium Café", "Service");
-		insertServices("Chapel and Chaplaincy Services", "Service");
-		insertServices("Gift Shop", "Service");
-		insertServices("Huvos Auditorium", "Service");
-		insertServices("Obstetrics and Gynecology Associates", "Practice");
-		insertServices("Roslindale Pediatric Associates", "Practice");
-		insertServices("Suburban Eye Specialists", "Practice");
-		insertServices("Volunteer Services", "Service");
-		insertServices("Kiosk", "Service");
-		insertServices("Shutte Pickup", "Service");
-		insertServices("Hillside Lobby", "Service");
-		insertServices("Eye Care Specialists", "Practice");
-
-		//inserts hard-coded values into ResidesIn tables
 		insertResidesIn("Roslindale Pediatric Associates" , 6);
 		insertResidesIn("Eye Care Specialists" , 7);
 		insertResidesIn("Suburban Eye Specialists" , 7);
@@ -1600,7 +1598,7 @@ public class DatabaseController
 		catch (SQLException sqlExcept){
 
 			//ToDO: Check if the below value is correct
-			if(!sqlExcept.getSQLState().equals("X0Y32")) { //TODO: Remove magic numbers
+			if(!sqlExcept.getSQLState().equals("X0Y33")){
 				sqlExcept.printStackTrace();
 			} else {
 				System.out.println("ResidesIn table already exists");
@@ -1625,7 +1623,7 @@ public class DatabaseController
 		catch (SQLException sqlExcept){
 
 			//ToDO: Check if the below value is correct
-			if(!sqlExcept.getSQLState().equals("X0Y32")) { //TODO: Remove magic numbers
+			if(!sqlExcept.getSQLState().equals("X0Y34")){
 				sqlExcept.printStackTrace();
 			} else {
 				System.out.println("Services table already exists");

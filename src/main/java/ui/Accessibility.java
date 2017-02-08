@@ -1,7 +1,10 @@
 package ui;
 
-public class AccessibilityState
+public class Accessibility
 {
+	public static final String HIGH_CONTRAST_CSS = "css/high-contrast.css";
+	public static final String HIGH_CONTRAST_MAP_PATH = "images/floor3-hc.png";
+
 	private static boolean highContrast = false;
 	private static boolean largeText = false;
 
@@ -12,7 +15,7 @@ public class AccessibilityState
 
 	public static void setHighContrast(boolean highContrast)
 	{
-		AccessibilityState.highContrast = highContrast;
+		Accessibility.highContrast = highContrast;
 	}
 
 	public static boolean isLargeText()
@@ -22,7 +25,7 @@ public class AccessibilityState
 
 	public static void setLargeText(boolean largeText)
 	{
-		AccessibilityState.largeText = largeText;
+		Accessibility.largeText = largeText;
 	}
 
 	public static void toggleHighContrast()
