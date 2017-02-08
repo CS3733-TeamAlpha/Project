@@ -48,7 +48,22 @@ public class ConcreteGraph implements Graph {
 				ASTNode expNode = new ASTNode(expTempNode, curNode.g + 1.0);
 				expNode.f = expNode.g + expTempNode.distance(end); //Compute f value using g and h
 				expNode.parent = curNode;
-				openList.add(expNode);
+				boolean hasNode = false;
+				for (ASTNode node : openList)
+				{
+					if (node.node == expTempNode)
+					{
+						if (node.f > expNode.f)
+						{
+							openList.remove(node);
+							break; //There will only ever be one copy of the same none on the openlist
+						}
+						hasNode = true;
+						break;
+					}
+				}
+				if (!hasNode)
+					openList.offer(expNode);
 			}
 			closedList.add(curNode.node);
 		}
@@ -81,8 +96,6 @@ public class ConcreteGraph implements Graph {
 		}
 
 		public int compareTo(ASTNode node) {
-			//Inverted ordering to trick PriorityQueue into thinking that lower valued nodes should be at the top of
-			//the queue
 			if (f < node.f)
 				return -1;
 			if (f > node.f)
