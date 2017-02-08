@@ -37,6 +37,7 @@ public class DatabaseController
         //initialize tables
         initializeProviderTable();
         initializeFloorTable();
+        //TODO: Floor3 is hardcoded to be initialized for first iteration
         insertFloor(3, "defaultFloor", 3);
         initializeNodeTable();
         initializeOfficeTable();
@@ -675,6 +676,11 @@ public class DatabaseController
 
     /**
      * insert a list of new nodes into the database, as well as their neighbor relationships.
+     * Currently completely unoptimized. goes through every node and inserts it into database, then
+     * goes through every node agian and adds its neighbor relations to the neighbor table.
+     *
+     * Neighbor relations need to be added after all nodes have been inserted so that no
+     * uninitialized nodes are being referenced.
      * @param nodes List of nodes to insert
      */
     public static void insertNodeList(ArrayList<Node> nodes){
@@ -693,7 +699,9 @@ public class DatabaseController
 
     /**
      * Insert new node from a concrete node into table
-     * IMPORTANT doesn't add neighbor relationships
+     * IMPORTANT this doesn't add neighbor relationships
+     *
+     * Node floor is defaulted to 3 for now since it is our default floor.
      * @param newNode
      */
     public static void insertNode(ConcreteNode newNode)
@@ -738,6 +746,11 @@ public class DatabaseController
 
     /**
      * Insert new neighbor from ConcreteNodes
+     * This will extract the nodeIDs and pass those to the insertNeighbor(int, int) function.
+     *
+     * This only inserts a neighbor relationship from node1 to node2, not both ways.
+     * Insertneighbor must be called with the argument order switched if you want bidirectional
+     * neighbor relationship in the database
      */
     public static void insertNeighbor(ConcreteNode node1, ConcreteNode node2)
     {
@@ -746,6 +759,9 @@ public class DatabaseController
 
     /**
      * Insert new node neighbor
+     * Neighbore relationship is created as fromid to toid.
+     * ID refers to NodeID
+     * neighbor relationships are not bidirectional.
      */
     public static void insertNeighbor(int fromid, int toid)
     {
