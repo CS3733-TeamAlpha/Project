@@ -57,12 +57,6 @@ public class DatabaseTest
         testInsert();
     }
 
-    @After
-    public void shutdown()
-    {
-        DatabaseController.shutdown();
-    }
-
     @Test
     public void testInsert()
     {
