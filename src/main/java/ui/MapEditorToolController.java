@@ -48,9 +48,6 @@ public class MapEditorToolController
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
-	//currently selected node and button
-	private Node currentNode = null;
-	private Button currentButton = null;
 
 	//arraylist of nodes loaded by DatabaseController that have been modified
 	//we will use this array to check for any updates that need to be made
