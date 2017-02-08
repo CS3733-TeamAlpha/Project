@@ -41,6 +41,9 @@ public class MapEditorToolController
     //IMPORTANT: this list is distinct from the nodes in DatabaseController.nodeList
     private ArrayList<Node> newNodesList = new ArrayList<Node>();
 
+    //arraylist of nodes to be deleted
+    private ArrayList<Node> deleteNodesList = new ArrayList<Node>();
+
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
@@ -184,8 +187,23 @@ public class MapEditorToolController
                     currentNode.setX(e.getX());
                     currentNode.setY(e.getY());
 
-                    //TODO: implement some tracking that this node has been modified, if it is a node
-                    //TODO: loaded in from the databsecontroller
+                    //redraw lines for any node that has currentNode as a neighbor
+                    //store nodes that need to be redrawn in a list as a workaround
+                    //for concurrentmodificationexception
+                    ArrayList<Node> toRedraw = new ArrayList<Node>();
+                    for(Node n: lineGroups.keySet()){
+                        boolean has = false;
+                        if(n.getNeighbors().contains(currentNode)){
+                            has = true;
+                        }
+                        if(has){
+                            toRedraw.add(n);
+                        }
+                    }
+                    for(Node n: toRedraw){
+                        drawToNeighbors(n);
+                    }
+                    drawToNeighbors(currentNode);
                 } else {
                     hideNodeDetails();
                     modifyingLocation = false;
@@ -390,6 +408,24 @@ public class MapEditorToolController
             if(!modifiedNodesList.contains(currentNode)){
                 modifiedNodesList.add(currentNode);
             }
+
+            //redraw lines for any node that has currentNode as a neighbor
+            //store nodes that need to be redrawn in a list as a workaround
+            //for concurrentmodificationexception
+            ArrayList<Node> toRedraw = new ArrayList<Node>();
+            for(Node n: lineGroups.keySet()){
+                boolean has = false;
+                if(n.getNeighbors().contains(currentNode)){
+                    has = true;
+                }
+                if(has){
+                    toRedraw.add(n);
+                }
+            }
+            for(Node n: toRedraw){
+                drawToNeighbors(n);
+            }
+            drawToNeighbors(currentNode);
         }
         catch (NumberFormatException e)
         {
@@ -413,6 +449,24 @@ public class MapEditorToolController
                 if(!modifiedNodesList.contains(currentNode)){
                     modifiedNodesList.add(currentNode);
                 }
+
+                //redraw lines for any node that has currentNode as a neighbor
+                //store nodes that need to be redrawn in a list as a workaround
+                //for concurrentmodificationexception
+                ArrayList<Node> toRedraw = new ArrayList<Node>();
+                for(Node n: lineGroups.keySet()){
+                    boolean has = false;
+                    if(n.getNeighbors().contains(currentNode)){
+                        has = true;
+                    }
+                    if(has){
+                        toRedraw.add(n);
+                    }
+                }
+                for(Node n: toRedraw){
+                    drawToNeighbors(n);
+                }
+                drawToNeighbors(currentNode);
             }
         } catch (NumberFormatException e){
             //TODO: need more exception handling?
@@ -542,6 +596,13 @@ public class MapEditorToolController
                 DatabaseController.removeNeighbor(n.getID(), sourceNeighbor.getID());
             }
         }
+
+        //remove nodes from database
+        for(Node n: deleteNodesList){
+            //delete any neighbor relations coming from this node
+            DatabaseController.removeNeighborsFromID(n.getID());
+            DatabaseController.removeNode(n.getID());
+        }
     }
 
 
@@ -663,11 +724,83 @@ public class MapEditorToolController
 
     @FXML
     /**
-     * Removes the currently selected node from the database
-     * TODO: actually write this thing
+     * Add the current node to the deleteNodesList to be deleted from the database
      */
     void deleteNode(ActionEvent event) {
+        if(currentNode != null)
+        {
+            //if this node had any neighbors remove lines
+            if (lineGroups.containsKey(currentNode))
+            {
+                for (Group g : lineGroups.get(currentNode))
+                {
+                    // Removes all lines going from the deleted node
+                    ((AnchorPane) g.getParent()).getChildren().remove(g);
+                }
+                lineGroups.remove(currentNode); // Remove current Node from lineGroups if it is inside lineGroups
+            }
 
+            //redraw lines for any nodes that have the deleted node as a neighbor
+            for(Node n: newNodesList)
+            {
+                boolean has = false;
+                if(n.getNeighbors().contains(currentNode)){
+                    has = true;
+                }
+                if(has)
+                {
+                    n.removeNeighbor(currentNode);
+                    drawToNeighbors(n);
+                    //indicate that this node has been modified
+                    if (!modifiedNodesList.contains(n))
+                    {
+                        modifiedNodesList.add(n);
+                    }
+                }
+            }
+            //TODO: collapse this into a single function, completely duplicate and perhaps redundant code
+            for(Node n: DatabaseController.getAllNodes())
+            {
+                boolean has = false;
+                if(n.getNeighbors().contains(currentNode)){
+                    has = true;
+                }
+                if(has)
+                {
+                    n.removeNeighbor(currentNode);
+                    drawToNeighbors(n);
+                    //indicate that this node has been modified
+                    if (!modifiedNodesList.contains(n))
+                    {
+                        modifiedNodesList.add(n);
+                    }
+                }
+            }
+            //TODO: collapse this into a single function, completely duplicate and perhaps redundant code
+            for(Node n: modifiedNodesList)
+            {
+                boolean has = false;
+                if(n.getNeighbors().contains(currentNode)){
+                    has = true;
+                }
+                if(has)
+                {
+                    n.removeNeighbor(currentNode);
+                    drawToNeighbors(n);
+                    //indicate that this node has been modified
+                    if (!modifiedNodesList.contains(n))
+                    {
+                        modifiedNodesList.add(n);
+                    }
+                }
+            }
+        }
+
+        //add node to deleteNodesList
+        deleteNodesList.add(currentNode);
+        ((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+        //hide details view
+        hideNodeDetails();
     }
 
 }
