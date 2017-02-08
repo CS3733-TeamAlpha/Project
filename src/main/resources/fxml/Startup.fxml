@@ -17,9 +17,9 @@
          <font>
             <Font size="48.0" />
          </font></Button>
-      <Label layoutX="453.0" layoutY="116.0" text="Welcome">
+      <Label layoutX="80.0" layoutY="116.0" text="Welcome to the Faulkner Hospital">
          <font>
-            <Font size="96.0" />
+            <Font size="76.0" />
          </font>
       </Label>
       <Button layoutX="65.0" layoutY="627.0" mnemonicParsing="false" onAction="#showLogin" text="Administrator">
