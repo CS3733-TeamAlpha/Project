@@ -650,4 +650,12 @@ public class MapEditorToolController
         }
     }
 
+    @FXML
+    /**
+     *  Go back to startup screen
+     */
+    void goBack(){
+        Main.loadFXML("/fxml/Startup.fxml");
+    }
+
 }
