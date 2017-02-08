@@ -418,6 +418,19 @@ public class DatabaseController
     }
 
     /**
+     * Get the nearest node given X and Y coordinates.
+     * Generates a node and pass it to the getNearestNode(Node) function
+     * @param x x coordinate to find nearest node from
+     * @param y y coordinate ||
+     * @return the Node object closest to the given xy coordinates
+     */
+    public static Node getNearestNode(double x, double y){
+        //initialize a placeholder node and pass to GetNearestNode(node) function
+        Node fakeNode = new ConcreteNode(-1, null, x, y, getFloorByID(3));
+        return getNearestNode(fakeNode);
+    }
+
+    /**
      * Get a node closest to a source node.
      * currently assuming nodes can't have the exact same XY coordinates
      * Check floorID is different to discern between different building/floors
