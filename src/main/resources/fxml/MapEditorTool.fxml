@@ -45,6 +45,8 @@
                   <Button fx:id="pushChanges" layoutX="3.0" layoutY="678.0" mnemonicParsing="false" onAction="#pushChangesToDatabase" prefHeight="26.0" prefWidth="194.0" text="Push Changes to Database" />
                   <Button fx:id="loadNodeButton" layoutX="3.0" layoutY="629.0" mnemonicParsing="false" onAction="#loadNodesFromDatabase" text="Load Nodes" />
                   <Button fx:id="clickModLocation" layoutX="4.0" layoutY="251.0" mnemonicParsing="false" onAction="#modNodeLocation" text="Modify Location by Click" />
+                  <Button fx:id="addConnectionButton" layoutX="4.0" layoutY="328.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="154.0" text="Add Connection" />
+                  <Button fx:id="removeConnectionButton" layoutX="4.0" layoutY="368.0" mnemonicParsing="false" onAction="#removeNeighbor" text="Remove Connection" />
                </children>
             </AnchorPane>
         </items>

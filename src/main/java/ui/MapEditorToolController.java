@@ -12,6 +12,7 @@ import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import data.*;
 import javafx.stage.WindowEvent;
@@ -19,6 +20,7 @@ import pathfinding.*;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -26,6 +28,9 @@ import static java.awt.SystemColor.window;
 
 public class MapEditorToolController
 {
+    //Arraylist of all lines drawn from a node to its neighbors
+    private HashMap<Node, ArrayList<Line>> neighborLines = new HashMap<Node, ArrayList<Line>>();
+
     //link buttons to node objects
     private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
 
@@ -47,7 +52,8 @@ public class MapEditorToolController
     private static int XOFFSET = 12;
     private static int YOFFSET = 12;
 
-
+    private boolean addingNeighbor = false; //currently adding a neighbor?
+    private boolean removingNeighbor = false; //currently removing a neighbor?
     private boolean makingNew = false; //currently making a new node?
     private boolean modifyingLocation = false; //currently moving a node?
     private boolean showingDetails = false;
@@ -99,6 +105,14 @@ public class MapEditorToolController
 
     @FXML
     private Button clickModLocation;
+
+    @FXML
+    private Button addConnectionButton;
+
+    @FXML
+    private Button removeConnectionButton;
+
+
 
     @FXML
     /**
@@ -172,6 +186,8 @@ public class MapEditorToolController
             hideNodeDetails();
         }
         }
+        addingNeighbor = false;
+        removingNeighbor = false;
     }
 
 
@@ -181,7 +197,10 @@ public class MapEditorToolController
     public void loadNodesFromDatabase(){
         for(Node n: DatabaseController.getAllNodes()){
             loadNode(n);
+            drawToNeighbors(n);
         }
+
+
     }
 
     /**
@@ -238,16 +257,33 @@ public class MapEditorToolController
         //get node linked to this button
         Node linkedNode = nodeButtonLinks.get(nodeB);
 
-        //modify text fields to display node info
-        nameField.setText(linkedNode.getData().get(0));
-        typeField.setText(linkedNode.getData().get(1));
-        xField.setText(Double.toString(linkedNode.getX()));
-        yField.setText(Double.toString(linkedNode.getY()));
+        if (addingNeighbor) {
+            currentNode.addNeighbor(linkedNode);
+            if(!modifiedNodesList.contains(currentNode)){
+                modifiedNodesList.add(currentNode);
+            }
+            addingNeighbor = false;
+            drawToNeighbors(currentNode);
+        } else if (removingNeighbor) {
+            currentNode.removeNeighbor(linkedNode);
+            if(!modifiedNodesList.contains(currentNode)){
+                modifiedNodesList.add(currentNode);
+            }
+            removingNeighbor = false;
+            drawToNeighbors(currentNode);
+        } else {
+            //modify text fields to display node info
+            nameField.setText(linkedNode.getData().get(0));
+            typeField.setText(linkedNode.getData().get(1));
+            xField.setText(Double.toString(linkedNode.getX()));
+            yField.setText(Double.toString(linkedNode.getY()));
 
-        //set current node/button
-        currentNode = linkedNode;
-        //TODO: make it so that we can visually see which node is selected
-        currentButton = nodeB;
+            //set current node/button
+            currentNode = linkedNode;
+            //TODO: make it so that we can visually see which node is selected
+            currentButton = nodeB;
+        }
+
     }
 
     /**
@@ -373,8 +409,95 @@ public class MapEditorToolController
             ConcreteNode cn = (ConcreteNode)n;
             DatabaseController.insertNode(cn);
         }
-        System.out.println(modifiedNodesList.size());
         DatabaseController.modifyNodes(modifiedNodesList);
+
+        for(Node n: newNodesList) { // Insert neighbor relationships to database
+            //Also has sloppy casting here
+            ConcreteNode cn = (ConcreteNode)n;
+            for(Node nn: cn.getNeighbors()) {
+                DatabaseController.insertNeighbor(cn, (ConcreteNode) nn);
+            }
+        }
+
+        DatabaseController.initializeAllNodes();
+        for(Node n: modifiedNodesList) {
+
+        //    if (n.getNeighbors() != DatabaseController.getNodeByID(n.getID()).getNeighbors()){
+                Collection<Node> sourceNeighbors = DatabaseController.getNodeByID(n.getID()).getNeighbors();
+                Collection<Node> modNeighbors = n.getNeighbors();
+                ArrayList<Node> toDeleteSourceNeighbors = new ArrayList<Node>();
+                ArrayList<Node> toDeleteModNeighbors = new ArrayList<Node>();
+
+                for(Node nn: modNeighbors){
+                    for(Node sn: sourceNeighbors){
+                        if(sn.getID() == nn.getID()){
+                            toDeleteModNeighbors.add(nn);
+                            toDeleteSourceNeighbors.add(sn);
+                        }
+                    }
+                }
+                modNeighbors.removeAll(toDeleteModNeighbors);
+                sourceNeighbors.removeAll(toDeleteSourceNeighbors);
+                for(Node nn: modNeighbors){
+                    DatabaseController.insertNeighbor(n.getID(), nn.getID());
+                }
+                for(Node sn: sourceNeighbors){
+                    System.out.println(sn.getID());
+                    DatabaseController.removeNeighbor(n.getID(), sn.getID());
+                }
+        //    }
+        }
+    }
+
+
+    @FXML
+    /**
+     * Create lines from a node (source) to all of the node's neighbors
+     */
+    void drawToNeighbors(Node source) {
+        // Remove all existing lines from source at beginning
+        if (neighborLines.containsKey(source)) { // Check if source has existing lines
+            ArrayList<Line> oldLines = neighborLines.get(source);
+            for (Line l: oldLines) { // Removes all lines from oldLines from the UI
+                ((AnchorPane)l.getParent()).getChildren().remove(l);
+            }
+            neighborLines.remove(source);
+        }
+
+        ArrayList<Line> lines = new ArrayList<Line>();
+        Collection<Node> neighbors = source.getNeighbors();
+        for(Node neighbor: neighbors) {
+            Line line = new Line();
+            line.setStartX(source.getX());
+            line.setStartY(source.getY());
+            line.setEndX(neighbor.getX());
+            line.setEndY(neighbor.getY());
+            editingFloor.getChildren().add(1, line);
+            lines.add(line);
+        }
+        neighborLines.put(source, lines);
+    }
+
+    @FXML
+    /**
+     * Set controller to addingNeighbor state
+     */
+    void addNeighbor(ActionEvent event) {
+        if (currentNode != null) { //Don't do anything unless a node is selected
+            addingNeighbor = true;
+            removingNeighbor = false;
+        }
+    }
+
+    @FXML
+    /**
+     * Set controller to removingNeighbor state
+     */
+    void removeNeighbor(ActionEvent event) {
+        if (currentNode != null) {
+            removingNeighbor = true;
+            addingNeighbor = false;
+        }
     }
 
 }
