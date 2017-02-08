@@ -33,6 +33,7 @@ public class DatabaseController
         //initialize tables
         initializeProviderTable();
         initializeFloorTable();
+        insertFloor(3, "defaultFloor", 3);
         initializeNodeTable();
         initializeOfficeTable();
         initializeNeighborTable();
