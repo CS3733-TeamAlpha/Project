@@ -79,7 +79,7 @@ public class MapController
 	public void hideRoomInfo()
 	{
 		roomviewSplit.getItems().remove(roomInfo);
-		roomInfoShown = false;		roomInfoShown = false;
+		roomInfoShown = false;
 	}
 
 	public void showDirectory()
