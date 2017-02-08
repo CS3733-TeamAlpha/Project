@@ -7,7 +7,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.DirectoryController">
    <children>
-      <ToolBar prefHeight="40.0" prefWidth="1280.0">
+      <ToolBar prefHeight="40.0" prefWidth="1280.0" styleClass="pane">
         <items>
             <TextField fx:id="searchField" />
           <Button mnemonicParsing="false" text="Search" translateX="-5.0" />
@@ -15,7 +15,7 @@
             <Button mnemonicParsing="false" onAction="#showStartup" text="Done" translateX="80.0" />
         </items>
       </ToolBar>
-      <TableView layoutY="39.0" prefHeight="680.0" prefWidth="1280.0">
+      <TableView layoutY="39.0" prefHeight="680.0" prefWidth="1280.0" styleClass="pane">
         <columns>
           <TableColumn fx:id="nameColumn" prefWidth="75.0" text="C1" />
           <TableColumn prefWidth="75.0" text="C2" />
