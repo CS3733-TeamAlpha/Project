@@ -40,8 +40,6 @@ public class DatabaseController
 		initializeNodeTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
-
-		shutdown();
 	}
 
 	/**

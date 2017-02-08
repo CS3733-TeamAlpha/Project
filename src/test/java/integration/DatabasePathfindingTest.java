@@ -43,8 +43,8 @@ public class DatabasePathfindingTest
 		DatabaseController.insertNodeList(tempList);
 
 		//Now get the nodes back out and check their data to make sure that it is IDENTICAL
-		Node dNode1 = DatabaseController.getNodeByID(0);
-		Node dNode2 = DatabaseController.getNodeByID(1);
+		Node dNode1 = DatabaseController.getNodeByID(500);
+		Node dNode2 = DatabaseController.getNodeByID(501);
 		assertNotNull(dNode1);
 		assertNotNull(dNode2);
 		assertEquals(1, dNode1.getX(), 0);
