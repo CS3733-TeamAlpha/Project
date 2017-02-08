@@ -53,7 +53,7 @@ public class MapController
 			Button b = new Button("+");
 			b.setLayoutX(n.getX());
 			b.setLayoutY(n.getY());
-			imgAnchor.getChildren().add(b);
+			imgAnchor.getChildren().add(1,b);
 			b.setOnAction(new EventHandler<ActionEvent>()
 			{
 				@Override
