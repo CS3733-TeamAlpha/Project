@@ -58,18 +58,21 @@ public class MapController
 		ArrayList<Node> nodes = DatabaseController.getAllNodes();
 		for (Node n:nodes)
 		{
-			Button b = new Button("+");
-			b.setLayoutX(n.getX());
-			b.setLayoutY(n.getY());
-			imgAnchor.getChildren().add(1,b);
-			b.setOnAction(new EventHandler<ActionEvent>()
+			if(!n.getData().get(1).equals("Hallway"))
 			{
-				@Override
-				public void handle(ActionEvent event)
+				Button b = new Button("+");
+				b.setLayoutX(n.getX());
+				b.setLayoutY(n.getY());
+				imgAnchor.getChildren().add(1, b);
+				b.setOnAction(new EventHandler<ActionEvent>()
 				{
-					showRoomInfo(n);
-				}
-			});
+					@Override
+					public void handle(ActionEvent event)
+					{
+						showRoomInfo(n);
+					}
+				});
+			}
 		}
 		graph = new ConcreteGraph();
 
@@ -82,7 +85,7 @@ public class MapController
 	public void showRoomInfo(Node n)
 	{
 		if(findingDirections){
-			ArrayList<Node> path = (ArrayList<Node>) graph.findPath(selected, n);
+			ArrayList<Node> path = graph.findPath(selected,n);
 			if(path == null){
 				System.out.println("No path found");
 			}else
@@ -92,11 +95,11 @@ public class MapController
 					Line line = new Line();
 					System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
 					System.out.println(path.get(i+1).getID());
-					line.setStartX(path.get(i).getX());
-					line.setStartY(path.get(i).getY());
-					line.setEndX(path.get(i+1).getX());
-					line.setEndY(path.get(i+1).getY());
-					line.setStrokeWidth(5);
+					line.setStartX(path.get(i).getX()+15); //plus 15 to center on button
+					line.setStartY(path.get(i).getY()+15);
+					line.setEndX(path.get(i+1).getX()+15);
+					line.setEndY(path.get(i+1).getY()+15);
+					line.setStrokeWidth(10);
 					line.setStroke(Color.BLUE);
 					imgAnchor.getChildren().add(1,line);
 				}
@@ -110,7 +113,8 @@ public class MapController
 			roomviewSplit.setDividerPositions(.75);
 			roomInfoShown = true;
 		}
-		roomName.setText("" + n.getID());
+		roomName.setText(n.getData().get(0));
+		roomDescription.setText(n.getData().get(1));
 	}
 
 	public void hideRoomInfo()
