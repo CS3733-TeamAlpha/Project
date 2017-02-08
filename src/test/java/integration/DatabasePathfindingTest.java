@@ -22,11 +22,13 @@ public class DatabasePathfindingTest
 	public void setUp()
 	{
 		graph = new ConcreteGraph();
+		DatabaseController.createTestConnection();
 	}
 
 	@After
 	public void tearDown()
 	{
+		DatabaseController.shutdownTest();
 	}
 
 	@Test
