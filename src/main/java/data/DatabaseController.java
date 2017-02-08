@@ -37,6 +37,7 @@ public class DatabaseController
         //initialize tables
         initializeProviderTable();
         initializeFloorTable();
+        insertFloor(3, "defaultFloor", 3);
         initializeNodeTable();
         initializeOfficeTable();
         initializeNeighborTable();
@@ -673,7 +674,27 @@ public class DatabaseController
     }
 
     /**
+     * insert a list of new nodes into the database, as well as their neighbor relationships.
+     * @param nodes List of nodes to insert
+     */
+    public static void insertNodeList(ArrayList<Node> nodes){
+        for(Node n: nodes){
+            ConcreteNode newNode = (ConcreteNode)n;
+            insertNode(newNode);
+        }
+        for(Node n: nodes){
+            ConcreteNode newNode = (ConcreteNode)n;
+            for(Node nn: newNode.getNeighbors()){
+                ConcreteNode nnn = (ConcreteNode)nn;
+                insertNeighbor(newNode, nnn);
+            }
+        }
+    }
+
+    /**
      * Insert new node from a concrete node into table
+     * IMPORTANT doesn't add neighbor relationships
+     * @param newNode
      */
     public static void insertNode(ConcreteNode newNode)
     {

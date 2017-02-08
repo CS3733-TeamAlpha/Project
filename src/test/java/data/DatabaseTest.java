@@ -38,7 +38,7 @@ public class DatabaseTest
         DatabaseController.initializeOfficeTable();
         DatabaseController.initializeNeighborTable();
 
-        Floor fl1 = new Floor(01, "TestFloor", 1);
+        Floor fl1 = new Floor(03, "defaultFloor", 3);
         ConcreteNode n001 = new ConcreteNode(001, new ArrayList<>(Arrays.asList("Room001", "room")), 1, 1, fl1);
         ConcreteNode n002 = new ConcreteNode(002, new ArrayList<>(Arrays.asList("Room002", "room")), 2, 2, fl1);
         ConcreteNode n003 = new ConcreteNode(003, new ArrayList<>(Arrays.asList("Room003", "room")), 3, 3, fl1);
@@ -66,10 +66,10 @@ public class DatabaseTest
     @Test
     public void testInsert()
     {
-        DatabaseController.insertFloor(01, "TestFloor", 1);
-        DatabaseController.insertNode(001, "Room001", "room", 1, 1, 01);
-        DatabaseController.insertNode(002, "Room002", "room", 2, 2, 01);
-        DatabaseController.insertNode(003, "Room003", "room", 3, 3, 01);
+        DatabaseController.insertFloor(03, "defaultFloor", 3);
+        DatabaseController.insertNode(001, "Room001", "room", 1, 1, 3);
+        DatabaseController.insertNode(002, "Room002", "room", 2, 2, 3);
+        DatabaseController.insertNode(003, "Room003", "room", 3, 3, 3);
         DatabaseController.insertProvider(111, "Donald", "Trump");
         DatabaseController.insertProvider(222, "Barack", "Obama");
         DatabaseController.insertNeighbor(001, 002);
@@ -127,7 +127,7 @@ public class DatabaseTest
 
         compareProvider(DatabaseController.getProvidersByFullName("Donald", "Trump").get(0), pvdL.get(0));
 
-        compareFloor(DatabaseController.getFloorByID(01), flL.get(0));
+        compareFloor(DatabaseController.getFloorByID(03), flL.get(0));
 
         compareNode(DatabaseController.getNearestNode(DatabaseController.getNodeByID(001)), ndL.get(1));
     }
