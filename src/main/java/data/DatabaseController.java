@@ -3,8 +3,10 @@ package data;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static java.sql.DriverManager.println;
 
@@ -13,6 +15,7 @@ public class DatabaseController
 
 	//private static String dbURL = "jdbc:derby://localhost:1527/myDB;create=true;user=me;password=mine";
 	static final String DB_URL = "jdbc:derby:FHAlpha;create=true";
+	static final String DB_TEST_URL = "jdbc:derby:TestFHAlpha;create=true";
 	private static String providerTable = "Provider";
 	private static String nodeTable = "Node";
 	private static String officeTable = "Office";
@@ -22,6 +25,7 @@ public class DatabaseController
 	private static String servicesTable = "Services";
 	// jdbc Connection
 	private static Connection connection = null;
+	//private static Connection testConnection = null;
 	private static Statement stmt = null;
 	private static ArrayList<Node> nodeList = new ArrayList<Node>();
 	private static ArrayList<Provider> providerList = new ArrayList<Provider>();
@@ -34,14 +38,50 @@ public class DatabaseController
 		//initialize tables
 		initializeProviderTable();
 		initializeFloorTable();
+		insertFloor(3, "defaultFloor", 3); //insert default floor for minimal app
 		initializeNodeTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
-		initializeResidesInTable();
-		initializeServicesTable();
 
-		//Alters Node table to have longer VARCHAR value for NodeName
-		//alterNode();
+		//Creates hard-coded node values for 3rd floor rooms
+		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
+		insertNode(2, "Chapel and Chaplaincy Services", "Service",1037.0, 1175.0, 3);
+		insertNode(3, "Gift Shop", "Service",1129.0, 809.0, 3);
+		insertNode(4, "Huvos Auditorium", "Service",1087.0, 619.0, 3);
+		insertNode(5, "Obstetrics and Gynecology Associates", "Practice",1242.0, 228.0, 3);
+		insertNode(6, "Roslindale Pediatric Associates" , "Practice",1041.0, 1057.0, 3);
+		insertNode(7, "Suburban Eye Specialists" , "Practice",1195.0, 207.0, 3);
+		insertNode(8, "Volunteer Services", "Service",1247.0, 1172.0, 3);
+		insertNode(9, "Kiosk", "Service",1130.0, 1150.0, 3);
+		insertNode(10, "Shutte Pickup", "Service",1145.0, 1233.0, 3);
+		insertNode(11, "Hillside Lobby", "Service",1141.0, 1190.0, 3);
+		insertNode(12, "Eye Care Specialists" , "Practice",1195.0, 207.0, 3);
+
+		insertServices("Atrium Café", "Service");
+		insertServices("Chapel and Chaplaincy Services", "Service");
+		insertServices("Gift Shop", "Service");
+		insertServices("Huvos Auditorium", "Service");
+		insertServices("Obstetrics and Gynecology Associates", "Practice");
+		insertServices("Roslindale Pediatric Associates", "Practice");
+		insertServices("Suburban Eye Specialists", "Practice");
+		insertServices("Volunteer Services", "Service");
+		insertServices("Kiosk", "Service");
+		insertServices("Shutte Pickup", "Service");
+		insertServices("Hillside Lobby", "Service");
+		insertServices("Eye Care Specialists", "Practice");
+
+		//Creates hard-coded values for all floors (Faulkner and Belkin)
+		insertFloor(1, "Faulkner", 1);
+		insertFloor(2, "Faulkner", 2);
+		insertFloor(3, "Faulkner", 3);
+		insertFloor(4, "Faulkner", 4);
+		insertFloor(5, "Faulkner", 5);
+		insertFloor(6, "Faulkner", 6);
+		insertFloor(7, "Faulkner", 7);
+		insertFloor(8, "Belkin", 1);
+		insertFloor(9, "Belkin", 2);
+		insertFloor(10, "Belkin", 3);
+		insertFloor(11, "Belkin", 4);
 
 		//creates hard-coded values for all providers
 		insertProvider(1, "Alqueza", " Arnold");
@@ -289,33 +329,6 @@ public class DatabaseController
 		insertProvider(243, "Yung", " Rachel");
 		insertProvider(244, "Zampini", " Jay");
 
-		//Creates hard-coded values for all floors (Faulkner and Belkin)
-		insertFloor(1, "Faulkner", 1);
-		insertFloor(2, "Faulkner", 2);
-		insertFloor(3, "Faulkner", 3);
-		insertFloor(4, "Faulkner", 4);
-		insertFloor(5, "Faulkner", 5);
-		insertFloor(6, "Faulkner", 6);
-		insertFloor(7, "Faulkner", 7);
-		insertFloor(8, "Belkin", 1);
-		insertFloor(9, "Belkin", 2);
-		insertFloor(10, "Belkin", 3);
-		insertFloor(11, "Belkin", 4);
-
-		//Creates hard-coded node values for 3rd floor rooms
-		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
-		insertNode(2, "Chapel and Chaplaincy Services", "Service",1037.0, 1175.0, 3);
-		insertNode(3, "Gift Shop", "Service",1129.0, 809.0, 3);
-		insertNode(4, "Huvos Auditorium", "Service",1087.0, 619.0, 3);
-		insertNode(5, "Obstetrics and Gynecology Associates", "Practice",1242.0, 228.0, 3);
-		insertNode(6, "Roslindale Pediatric Associates" , "Practice",1041.0, 1057.0, 3);
-		insertNode(7, "Suburban Eye Specialists" , "Practice",1195.0, 207.0, 3);
-		insertNode(8, "Volunteer Services", "Service",1247.0, 1172.0, 3);
-		insertNode(9, "Kiosk", "Service",1130.0, 1150.0, 3);
-		insertNode(10, "Shutte Pickup", "Service",1145.0, 1233.0, 3);
-		insertNode(11, "Hillside Lobby", "Service",1141.0, 1190.0, 3);
-		insertNode(12, "Eye Care Specialists" , "Practice",1195.0, 207.0, 3);
-
 		//creates hard-coded values for all offices
 		insertOffice(26, 6);
 		insertOffice(72, 6);
@@ -337,25 +350,12 @@ public class DatabaseController
 		insertOffice(197, 5);
 		insertOffice(206, 5);
 
-		//inserts hard-coded data for ResidesIn table
 		insertResidesIn("Roslindale Pediatric Associates" , 6);
 		insertResidesIn("Eye Care Specialists" , 7);
 		insertResidesIn("Suburban Eye Specialists" , 7);
 		insertResidesIn("Obstetrics and Gynecology Associates", 5);
 
-		//inserts hard-coded data for Services table
-		insertServices("Atrium Café", "Service");
-		insertServices("Chapel and Chaplaincy Services", "Service");
-		insertServices("Gift Shop", "Service");
-		insertServices("Huvos Auditorium", "Service");
-		insertServices("Obstetrics and Gynecology Associates", "Practice");
-		insertServices("Roslindale Pediatric Associates", "Practice");
-		insertServices("Suburban Eye Specialists", "Practice");
-		insertServices("Volunteer Services", "Service");
-		insertServices("Kiosk", "Service");
-		insertServices("Shutte Pickup", "Service");
-		insertServices("Hillside Lobby", "Service");
-		insertServices("Eye Care Specialists", "Practice");
+
 
 		//prints results of all tables defined
 		printResults(nodeTable);
@@ -365,12 +365,57 @@ public class DatabaseController
 		printOffice(officeTable);
 		printResidesIn(residesInTable);
 
-		//updateRefInt();
+		updateRefInt();
 
-		//Adds all the nodes to the map view
+		//******* NEW WORK ******
 		initializeAllNodes();
+	}
 
+	public static void createTestConnection()
+	{
+		//shutdown the standard connection
 		shutdown();
+		try
+		{
+			Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+			//Get a connection
+			connection = DriverManager.getConnection(DB_TEST_URL);
+		} catch (Exception except)
+		{
+			except.printStackTrace();
+			//remove this piece
+			println("error here");
+		}
+
+	}
+
+	public static void shutdownTest()
+	{
+		try
+		{
+			if (stmt != null)
+			{
+				stmt.close();
+			}
+			if (connection != null)
+			{
+				DriverManager.getConnection(DB_TEST_URL + ";shutdown=true");
+				connection.close();
+				//delete the test database contents and folder
+				File index = new File("TESTFHAlpha");
+				if (index.exists()) {
+					String[]entries = index.list();
+					for(String s: entries){
+						File currentFile = new File(index.getPath(),s);
+						currentFile.delete();
+					}
+					index.delete();
+				}
+			}
+		} catch (SQLException sqlExcept)
+		{
+
+		}
 	}
 
 	/**
@@ -501,7 +546,9 @@ public class DatabaseController
 		}
 	}
 
-	//initialize the neighbor table, if not already created
+	/**
+	 * Initialize the neighbor table, if not already created
+	 */
 	public static void initializeNeighborTable()
 	{
 		try
@@ -1044,7 +1091,7 @@ public class DatabaseController
 	/**
 	 * Insert new provider into table
 	 */
-	public static void insertProvider(int provID, String lname, String fname)
+	public static void insertProvider(int provID, String fname, String lname)
 	{
 		try
 		{
@@ -1542,8 +1589,10 @@ public class DatabaseController
 			stmt = connection.createStatement();
 			//TODO: delete following line after hard coding is done
 			stmt.execute("CREATE TABLE ResidesIn(" +
-					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY REFERENCES Services (ServiceName, " +
-					"NodeID INT REFERENCES Node (NodeID))");
+					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY, " +
+					"NodeID INT " +
+					")");
+			System.out.println("ResidesIn table initialized");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept){
@@ -1701,6 +1750,9 @@ public class DatabaseController
 
 			stmt.execute("ALTER TABLE Node ADD CONSTRAINT NODE_FLOOR_REF " +
 					"FOREIGN KEY(FloorID) REFERENCES Floor (FloorID)");
+
+			stmt.execute("ALTER TABLE Office ADD CONSTRAINT PROVIDER_REF " +
+					"FOREIGN KEY(ProviderID) REFERENCES Provider (ProviderID)");
 
 			stmt.execute("ALTER TABLE Office ADD CONSTRAINT PROVIDER_REF " +
 					"FOREIGN KEY(ProviderID) REFERENCES Provider (ProviderID)");

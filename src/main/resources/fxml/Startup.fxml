@@ -27,5 +27,6 @@
             <Font size="24.0" />
          </font>
       </Button>
+      <Button layoutX="1130.0" layoutY="661.0" mnemonicParsing="false" onAction="#toggleHighContrast" prefHeight="45.0" prefWidth="136.0" text="High Contrast" />
    </children>
 </Pane>
