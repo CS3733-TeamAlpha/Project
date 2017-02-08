@@ -34,7 +34,7 @@ public class StartupController
 
 	public void toggleHighContrast(ActionEvent actionEvent)
 	{
-		AccessibilityState.toggleHighContrast();
+		Accessibility.toggleHighContrast();
 		Main.toggleHighContrast();
 	}
 }

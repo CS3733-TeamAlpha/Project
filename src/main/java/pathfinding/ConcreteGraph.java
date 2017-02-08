@@ -1,7 +1,6 @@
 package pathfinding;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.PriorityQueue;
 
 public class ConcreteGraph implements Graph {
@@ -11,7 +10,7 @@ public class ConcreteGraph implements Graph {
 	 * @implNote This implementation returns an ArrayList.
 	 * @// TODO: 2/6/17 Implement straight-shot optimization for traversing multiple floors
 	 */
-	public Collection<Node> findPath(Node start, Node end) {
+	public ArrayList<Node> findPath(Node start, Node end) {
 		if (start == null || end == null)
 			return null; //idiot check
 
@@ -40,14 +39,15 @@ public class ConcreteGraph implements Graph {
 				if (expTempNode == end)
 				{
 					complete = true;
-					astEnd.node = expTempNode;
-					astEnd.parent = curNode.parent;
+					astEnd.parent = curNode;
 					break;
 				}
 
 				ASTNode expNode = new ASTNode(expTempNode, curNode.g + 1.0);
 				expNode.f = expNode.g + expTempNode.distance(end); //Compute f value using g and h
 				expNode.parent = curNode;
+
+				//Try to add the newly found node to the list
 				boolean hasNode = false;
 				for (ASTNode node : openList)
 				{
@@ -73,17 +73,13 @@ public class ConcreteGraph implements Graph {
 
 		//Backtrack from the end node, assembling an ordered list as we go
 		ArrayList<Node> path = new ArrayList<Node>();
-		ASTNode curNode = astEnd;
-		while (curNode != null)
-		{
-			path.add(curNode.node);
-			curNode = curNode.parent;
-		}
-		path.add(start);
+		for (ASTNode node = astEnd; node != null; node = node.parent)
+			path.add(node.node);
 		return path;
 	}
 
-	private static class ASTNode implements Comparable<ASTNode> {
+	private static class ASTNode implements Comparable<ASTNode>
+	{
 		double f;
 		double g;
 		ASTNode parent;

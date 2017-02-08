@@ -2,6 +2,8 @@ package pathfinding;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class ConcreteGraphTest
@@ -24,6 +26,7 @@ public class ConcreteGraphTest
 		//Create a simple straightshot array of nodes to idiot-test the pathfinding
 		for (int i = 0; i < straightNodes.length; i++)
 		{
+			straightNodes[i].setX(i);
 			if (i > 0)
 				straightNodes[i].addNeighbor(straightNodes[i - 1]);
 			if (i < straightNodes.length - 1)
@@ -67,5 +70,10 @@ public class ConcreteGraphTest
 		assertNull(graph.findPath(emptyNode, gridNodes[0][0]));
 		assertNull(graph.findPath(gridNodes[0][0], emptyNode));
 
+		//Ordering + path integrity test
+		ArrayList<Node> orderedSolution = graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]);
+		assertNotNull(orderedSolution);
+		for (int i = 0; i < 100; i++)
+			assertEquals(orderedSolution.get(i), straightNodes[99-i]);
 	}
 }
