@@ -49,7 +49,6 @@
                   <Label layoutX="4.0" layoutY="202.0" text="Node Y Coordinate" />
                   <TextField fx:id="yField" layoutX="4.0" layoutY="218.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0" />
                   <Button fx:id="pushChanges" layoutX="3.0" layoutY="678.0" mnemonicParsing="false" onAction="#pushChangesToDatabase" prefHeight="26.0" prefWidth="194.0" text="Push Changes to Database" />
-                  <Button fx:id="loadNodeButton" layoutX="3.0" layoutY="629.0" mnemonicParsing="false" onAction="#loadNodesFromDatabase" text="Load Nodes" />
                   <Button fx:id="clickModLocation" layoutX="4.0" layoutY="251.0" mnemonicParsing="false" onAction="#modNodeLocation" prefHeight="31.0" prefWidth="194.0" text="Modify Location by Click" />
                   <Button fx:id="addConnectionButton" layoutX="4.0" layoutY="328.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
                   <Button fx:id="removeConnectionButton" layoutX="4.0" layoutY="368.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
