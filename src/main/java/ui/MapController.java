@@ -9,18 +9,23 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import data.*;
 import pathfinding.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class MapController
 {
 	private Graph graph;
 	private boolean roomInfoShown;
-	private Stage stage;
+
+	private Node selected;
+	boolean findingDirections = false;
 
 	@FXML
 	private SplitPane roomviewSplit;
@@ -63,23 +68,49 @@ public class MapController
 				}
 			});
 		}
+
+		graph = new ConcreteGraph();
 	}
 
 	public void showRoomInfo(Node n)
 	{
-			if (!roomInfoShown)
+		if(findingDirections){
+			ArrayList<Node> path = (ArrayList<Node>) graph.findPath(selected, n);
+			if(path == null){
+				System.out.println("No path found");
+			}else
 			{
-				roomviewSplit.getItems().add(1, roomInfo);
-				roomviewSplit.setDividerPositions(.75);
-				roomInfoShown = true;
+				for (int i = 0; i < path.size()-1; i++)
+				{
+					Line line = new Line();
+					System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
+					System.out.println(path.get(i+1).getID());
+					line.setStartX(path.get(i).getX());
+					line.setStartY(path.get(i).getY());
+					line.setEndX(path.get(i+1).getX());
+					line.setEndY(path.get(i+1).getY());
+					line.setStrokeWidth(5);
+					line.setStroke(Color.BLUE);
+					imgAnchor.getChildren().add(1,line);
+				}
 			}
-			roomName.setText("" + n.getID());
+			findingDirections = false;
+		}
+		selected = n;
+		if (!roomInfoShown)
+		{
+			roomviewSplit.getItems().add(1, roomInfo);
+			roomviewSplit.setDividerPositions(.75);
+			roomInfoShown = true;
+		}
+		roomName.setText("" + n.getID());
 	}
 
 	public void hideRoomInfo()
 	{
 		roomviewSplit.getItems().remove(roomInfo);
 		roomInfoShown = false;
+		selected = null;
 	}
 
 	public void showDirectory()
@@ -90,6 +121,10 @@ public class MapController
 	public void showStartup()
 	{
 		Main.loadFXML("/fxml/Startup.fxml");
+	}
+
+	public void findDirectionsTo(){
+		findingDirections = true;
 	}
 
 }

@@ -61,6 +61,7 @@ public class ConcreteGraph implements Graph {
 		ASTNode curNode = astEnd;
 		while (curNode != null)
 		{
+			System.out.printf("On node ID %s\n", curNode.node.toString());
 			path.add(curNode.node);
 			curNode = curNode.parent;
 		}
