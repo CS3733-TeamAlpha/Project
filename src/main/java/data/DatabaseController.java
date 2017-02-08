@@ -367,6 +367,9 @@ public class DatabaseController
 
 		updateRefInt();
 
+		//******* NEW WORK ******
+		initializeAllNodes();
+
 		shutdown();
 	}
 
@@ -1538,7 +1541,6 @@ public class DatabaseController
 		{
 			stmt = connection.createStatement();
 			//TODO: delete following line after hard coding is done
-			stmt.execute("DROP TABLE ResidesIn");
 			stmt.execute("CREATE TABLE ResidesIn(" +
 					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY, " +
 					"NodeID INT " +
@@ -1564,7 +1566,6 @@ public class DatabaseController
 		{
 			stmt = connection.createStatement();
 			//TODO: delete following line, after hardcoding is done
-			stmt.execute("DROP TABLE Services");
 			stmt.execute("CREATE TABLE Services(" +
 					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY, " +
 					"ServiceType VARCHAR(20)" +
