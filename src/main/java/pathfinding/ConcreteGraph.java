@@ -39,14 +39,15 @@ public class ConcreteGraph implements Graph {
 				if (expTempNode == end)
 				{
 					complete = true;
-					astEnd.node = expTempNode;
-					astEnd.parent = curNode.parent;
+					astEnd.parent = curNode;
 					break;
 				}
 
 				ASTNode expNode = new ASTNode(expTempNode, curNode.g + 1.0);
 				expNode.f = expNode.g + expTempNode.distance(end); //Compute f value using g and h
 				expNode.parent = curNode;
+
+				//Try to add the newly found node to the list
 				boolean hasNode = false;
 				for (ASTNode node : openList)
 				{
@@ -72,18 +73,13 @@ public class ConcreteGraph implements Graph {
 
 		//Backtrack from the end node, assembling an ordered list as we go
 		ArrayList<Node> path = new ArrayList<Node>();
-		ASTNode curNode = astEnd;
-		while (curNode != null)
-		{
-			System.out.printf("On node ID %s\n", curNode.node.toString());
-			path.add(curNode.node);
-			curNode = curNode.parent;
-		}
-		path.add(start);
+		for (ASTNode node = astEnd; node != null; node = node.parent)
+			path.add(node.node);
 		return path;
 	}
 
-	private static class ASTNode implements Comparable<ASTNode> {
+	private static class ASTNode implements Comparable<ASTNode>
+	{
 		double f;
 		double g;
 		ASTNode parent;
