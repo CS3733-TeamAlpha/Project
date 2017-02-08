@@ -419,6 +419,8 @@ public class MapEditorToolController
             }
         }
 
+        //TODO: MAJOR NEED FOR DOCUMENTATION
+        //TODO: ADD SOME SAUCE TO THIS SPAGHETTI
         DatabaseController.initializeAllNodes();
         for(Node n: modifiedNodesList) {
 
