@@ -694,8 +694,13 @@ public class DatabaseController
     public static void insertNode(ConcreteNode newNode)
     {
         int id = newNode.getID();
-        String name = newNode.getData().get(0);
-        String type = newNode.getData().get(1);
+        String name = "";
+        String type = "";
+        if(newNode.getData().size() >= 2)
+        {
+            name = newNode.getData().get(0);
+            type = newNode.getData().get(1);
+        }
         double x = newNode.getX();
         double y = newNode.getY();
         int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
@@ -1006,8 +1011,13 @@ public class DatabaseController
     public static void modifyNodeTable(ConcreteNode modNode)
     {
         int id = modNode.getID();
-        String name = modNode.getData().get(0);
-        String type = modNode.getData().get(1);
+        String name = "";
+        String type = "";
+        if(modNode.getData().size() >= 2)
+        {
+            name = modNode.getData().get(0);
+            type = modNode.getData().get(1);
+        }
         double x = modNode.getX();
         double y = modNode.getY();
         int floor = 3; //TODO: default floor to 3 since first iteration is just on 3rd floor
