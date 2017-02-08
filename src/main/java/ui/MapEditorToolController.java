@@ -72,10 +72,6 @@ public class MapEditorToolController
 	{
 		//initialize connection and floor/node/provider lists right away
 		//DatabaseController will hold onto these lists
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
 	}
 
 	public MapEditorToolController()
@@ -92,6 +88,11 @@ public class MapEditorToolController
 		{
 			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
 		}
+		DatabaseController.createConnection();
+		DatabaseController.initializeAllFloors();
+		DatabaseController.initializeAllNodes();
+		DatabaseController.initializeAllProviders();
+		loadNodesFromDatabase();
 	}
 
 
@@ -744,6 +745,7 @@ public class MapEditorToolController
 	 */
 	void goBack()
 	{
+		DatabaseController.initializeAllNodes();
 		Main.loadFXML("/fxml/Startup.fxml");
 	}
 
