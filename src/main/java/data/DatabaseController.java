@@ -42,6 +42,8 @@ public class DatabaseController
 		initializeNodeTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
+		initializeServicesTable();
+		initializeResidesInTable();
 
 		//Creates hard-coded node values for 3rd floor rooms
 		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
@@ -496,7 +498,7 @@ public class DatabaseController
 			stmt = connection.createStatement();
 			stmt.execute("CREATE TABLE Node(" +
 					"NodeID INT NOT NULL PRIMARY KEY, " +
-					"NodeName VARCHAR(30), " +
+					"NodeName VARCHAR(50), " +
 					"NodeType VARCHAR(10), " +
 					"XCoord DOUBLE, " +
 					"YCoord DOUBLE, " +
