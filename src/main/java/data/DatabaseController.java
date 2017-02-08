@@ -355,8 +355,6 @@ public class DatabaseController
 		insertResidesIn("Suburban Eye Specialists" , 7);
 		insertResidesIn("Obstetrics and Gynecology Associates", 5);
 
-
-
 		//prints results of all tables defined
 		printResults(nodeTable);
 		printResults(floorTable);
@@ -365,7 +363,7 @@ public class DatabaseController
 		printOffice(officeTable);
 		printResidesIn(residesInTable);
 
-		updateRefInt();
+		//updateRefInt();
 
 		//******* NEW WORK ******
 		initializeAllNodes();
@@ -1589,8 +1587,8 @@ public class DatabaseController
 			stmt = connection.createStatement();
 			//TODO: delete following line after hard coding is done
 			stmt.execute("CREATE TABLE ResidesIn(" +
-					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY, " +
-					"NodeID INT " +
+					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY REFERENCES Services (ServiceName), " +
+					"NodeID INT REFERENCES Node (NodeID)" +
 					")");
 			System.out.println("ResidesIn table initialized");
 			stmt.close();
