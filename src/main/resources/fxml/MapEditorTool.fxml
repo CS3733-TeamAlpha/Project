@@ -16,7 +16,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapEditorToolController">
    <children>
-      <SplitPane dividerPositions="0.8153364632237872" prefHeight="720.0" prefWidth="1280.0">
+      <SplitPane dividerPositions="0.8153364632237872" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0">
         <items>
             <StackPane>
                <children>
@@ -33,7 +33,7 @@
                         </AnchorPane>
                     </content>
                   </ScrollPane>
-                  <Pane prefHeight="200.0" prefWidth="200.0">
+                  <Pane pickOnBounds="false" prefHeight="200.0" prefWidth="200.0">
                      <children>
                         <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back" />
                      </children>
