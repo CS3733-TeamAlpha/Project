@@ -39,6 +39,7 @@ public interface Node
 	Collection<Node> getNeighbors();
 	void addNeighbors(Collection<Node> newNeighbors);
 	void addNeighbor(Node newNeighbor);
+	void removeNeighbor(Node oldNeighbor);
 	Floor getOnFloor();
 	void setOnFloor(Floor flr);
 	int getID();
@@ -47,4 +48,5 @@ public interface Node
 	void setX(double newX);
 	void setY(double newY);
 	ArrayList<String> getData();
+	void setData(ArrayList<String> newData);
 }
