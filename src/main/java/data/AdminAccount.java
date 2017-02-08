@@ -1,6 +1,7 @@
 package data;
 
-import org.mindrot.jbcrypt.*;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 import static java.sql.DriverManager.println;
 
@@ -67,9 +68,7 @@ public class AdminAccount
         }
     }
 
-    //TODO I'm not sure if this info should be password protected like the fname and the lname; for now, it's public
-
-    public String getUsername(String attempt) {
+    public String getUsername() {
         return username;
     }
 
