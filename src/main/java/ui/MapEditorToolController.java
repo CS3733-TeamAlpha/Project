@@ -211,6 +211,11 @@ public class MapEditorToolController
                         drawToNeighbors(n);
                     }
                     drawToNeighbors(currentNode);
+
+					if (!modifiedNodesList.contains(currentNode))
+					{
+						modifiedNodesList.add(currentNode);
+					}
                 } else {
                     hideNodeDetails();
                     modifyingLocation = false;
