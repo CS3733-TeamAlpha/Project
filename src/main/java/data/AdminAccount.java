@@ -80,13 +80,6 @@ public class AdminAccount
         }
     }
 
-    /** I'm commenting this out because I can't think of any reason the hashword for an AdminAccount would
-     * need to be accessed outside the object itself.
-     */
-   /* public String getHashword(String attempt) {
-        return hashword;
-    }*/
-
     /**
      * the parameter "newPass" is the UNHASHED desired new password for an AdminAccount.
      * the method verifies that the password "attempt", when hashed, matches the existing hashword, as with all other
