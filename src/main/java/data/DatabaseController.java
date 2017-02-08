@@ -42,6 +42,8 @@ public class DatabaseController
 		initializeNodeTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
+		initializeServicesTable();
+		initializeResidesInTable();
 
 		//Creates hard-coded node values for 3rd floor rooms
 		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
@@ -355,8 +357,6 @@ public class DatabaseController
 		insertResidesIn("Suburban Eye Specialists" , 7);
 		insertResidesIn("Obstetrics and Gynecology Associates", 5);
 
-
-
 		//prints results of all tables defined
 		printResults(nodeTable);
 		printResults(floorTable);
@@ -365,7 +365,7 @@ public class DatabaseController
 		printOffice(officeTable);
 		printResidesIn(residesInTable);
 
-		updateRefInt();
+		//updateRefInt();
 
 		//******* NEW WORK ******
 		initializeAllNodes();
@@ -498,7 +498,7 @@ public class DatabaseController
 			stmt = connection.createStatement();
 			stmt.execute("CREATE TABLE Node(" +
 					"NodeID INT NOT NULL PRIMARY KEY, " +
-					"NodeName VARCHAR(30), " +
+					"NodeName VARCHAR(50), " +
 					"NodeType VARCHAR(10), " +
 					"XCoord DOUBLE, " +
 					"YCoord DOUBLE, " +
@@ -1589,8 +1589,8 @@ public class DatabaseController
 			stmt = connection.createStatement();
 			//TODO: delete following line after hard coding is done
 			stmt.execute("CREATE TABLE ResidesIn(" +
-					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY, " +
-					"NodeID INT " +
+					"ServiceName VARCHAR(50) NOT NULL PRIMARY KEY REFERENCES Services (ServiceName), " +
+					"NodeID INT REFERENCES Node (NodeID)" +
 					")");
 			System.out.println("ResidesIn table initialized");
 			stmt.close();

@@ -686,4 +686,13 @@ public class MapEditorToolController
 		Main.loadFXML("/fxml/Startup.fxml");
 	}
 
+    @FXML
+    /**
+     * Removes the currently selected node from the database
+     * TODO: actually write this thing
+     */
+    void deleteNode(ActionEvent event) {
+
+    }
+
 }
