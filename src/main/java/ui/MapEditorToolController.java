@@ -115,6 +115,9 @@ public class MapEditorToolController
     @FXML
     private Button removeConnectionButton;
 
+    @FXML
+    private Button deleteNodeButton;
+
 
 
     @FXML
@@ -340,7 +343,7 @@ public class MapEditorToolController
         if(newNodeButton.getText().equals("Add a New Node"))
         {
             makingNew = true;
-            newNodeButton.setText("Cancel new node creation");
+            newNodeButton.setText("Cancel New Node Creation");
         } else {
             makingNew = false;
             newNodeButton.setText("Add a New Node");
@@ -656,6 +659,15 @@ public class MapEditorToolController
      */
     void goBack(){
         Main.loadFXML("/fxml/Startup.fxml");
+    }
+
+    @FXML
+    /**
+     * Removes the currently selected node from the database
+     * TODO: actually write this thing
+     */
+    void deleteNode(ActionEvent event) {
+
     }
 
 }
