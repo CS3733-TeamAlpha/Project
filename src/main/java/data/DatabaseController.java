@@ -3,6 +3,7 @@ package data;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,7 @@ public class DatabaseController
 
 	//private static String dbURL = "jdbc:derby://localhost:1527/myDB;create=true;user=me;password=mine";
 	static final String DB_URL = "jdbc:derby:FHAlpha;create=true";
+	static final String DB_TEST_URL = "jdbc:derby:TestFHAlpha;create=true";
 	private static String providerTable = "Provider";
 	private static String nodeTable = "Node";
 	private static String officeTable = "Office";
@@ -24,6 +26,7 @@ public class DatabaseController
 	private static String floorTable = "Floor";
 	// jdbc Connection
 	private static Connection connection = null;
+	//private static Connection testConnection = null;
 	private static Statement stmt = null;
 	private static ArrayList<Node> nodeList = new ArrayList<Node>();
 	private static ArrayList<Provider> providerList = new ArrayList<Provider>();
@@ -40,6 +43,53 @@ public class DatabaseController
 		initializeNodeTable();
 		initializeOfficeTable();
 		initializeNeighborTable();
+	}
+
+	public static void createTestConnection()
+	{
+		//shutdown the standard connection
+		shutdown();
+		try
+		{
+			Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+			//Get a connection
+			connection = DriverManager.getConnection(DB_TEST_URL);
+		} catch (Exception except)
+		{
+			except.printStackTrace();
+			//remove this piece
+			println("error here");
+		}
+
+	}
+
+	public static void shutdownTest()
+	{
+		try
+		{
+			if (stmt != null)
+			{
+				stmt.close();
+			}
+			if (connection != null)
+			{
+				DriverManager.getConnection(DB_TEST_URL + ";shutdown=true");
+				connection.close();
+				//delete the test database contents and folder
+				File index = new File("TESTFHAlpha");
+				if (index.exists()) {
+					String[]entries = index.list();
+					for(String s: entries){
+						File currentFile = new File(index.getPath(),s);
+						currentFile.delete();
+					}
+					index.delete();
+				}
+			}
+		} catch (SQLException sqlExcept)
+		{
+
+		}
 	}
 
 	/**
