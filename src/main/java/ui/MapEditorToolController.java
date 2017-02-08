@@ -360,7 +360,7 @@ public class MapEditorToolController
 		if (newNodeButton.getText().equals("Add a New Node"))
 		{
 			makingNew = true;
-			newNodeButton.setText("Cancel new node creation");
+			newNodeButton.setText("Cancel New Node Creation");
 		}
 		else
 		{
