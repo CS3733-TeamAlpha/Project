@@ -692,7 +692,11 @@ public class MapEditorToolController
      * TODO: actually write this thing
      */
     void deleteNode(ActionEvent event) {
+		if (lineGroups.containsKey(currentNode)) {
+			lineGroups.remove(currentNode); // Remove current Node from lineGroups if it is inside lineGroups
+		}
 
+		//TODO: check neighbor list of all nodes to see if it contains current node
     }
 
 }
