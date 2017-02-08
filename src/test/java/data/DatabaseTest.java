@@ -29,8 +29,9 @@ public class DatabaseTest
 		ndL.clear();
 		pvdL.clear();
 		flL.clear();
-		DatabaseController.createConnection();
+		//DatabaseController.createConnection();
 
+		DatabaseController.createTestConnection();
 		droptablesForShittyTesting();
 		DatabaseController.initializeProviderTable();
 		DatabaseController.initializeFloorTable();
@@ -55,6 +56,11 @@ public class DatabaseTest
 		pvdL.add(p222);
 
 		testInsert();
+	}
+
+	@After
+	public void shutdown(){
+		DatabaseController.shutdownTest();
 	}
 
 	@Test
