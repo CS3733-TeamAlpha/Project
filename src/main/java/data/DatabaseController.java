@@ -46,18 +46,18 @@ public class DatabaseController
 		initializeResidesInTable();
 
 		//Creates hard-coded node values for 3rd floor rooms
-		insertNode(1, "Atrium Café", "Service",1161.0, 562.0, 3);
-		insertNode(2, "Chapel and Chaplaincy Services", "Service",1037.0, 1175.0, 3);
-		insertNode(3, "Gift Shop", "Service",1129.0, 809.0, 3);
+		insertNode(1, "Atrium Café", "Service",1138.0, 538.0, 3);
+		insertNode(2, "Chapel and Chaplaincy Services", "Service",1012.0, 1148.0, 3);
+		insertNode(3, "Gift Shop", "Service",1098.0, 791.0, 3);
 		insertNode(4, "Huvos Auditorium", "Service",1087.0, 619.0, 3);
-		insertNode(5, "Obstetrics and Gynecology Associates", "Practice",1242.0, 228.0, 3);
-		insertNode(6, "Roslindale Pediatric Associates" , "Practice",1041.0, 1057.0, 3);
-		insertNode(7, "Suburban Eye Specialists" , "Practice",1195.0, 207.0, 3);
-		insertNode(8, "Volunteer Services", "Service",1247.0, 1172.0, 3);
-		insertNode(9, "Kiosk", "Service",1130.0, 1150.0, 3);
-		insertNode(10, "Shutte Pickup", "Service",1145.0, 1233.0, 3);
-		insertNode(11, "Hillside Lobby", "Service",1141.0, 1190.0, 3);
-		insertNode(12, "Eye Care Specialists" , "Practice",1195.0, 207.0, 3);
+		insertNode(5, "Obstetrics and Gynecology Associates", "Practice",1218.0, 225.0, 3);
+		insertNode(6, "Roslindale Pediatric Associates" , "Practice",1013.0, 316.0, 3);
+		insertNode(7, "Suburban Eye Specialists" , "Practice",1169.0, 202.0, 3);
+		insertNode(8, "Volunteer Services", "Service",1222.0, 1148.0, 3);
+		insertNode(9, "Kiosk", "Service",1104.0, 1113.0, 3);
+		insertNode(10, "Shutte Pickup", "Service",1117.0, 1218.0, 3);
+		insertNode(11, "Hillside Lobby", "Service",1116.0, 1161.0, 3);
+		insertNode(12, "Eye Care Specialists" , "Practice",1169.0, 202.0, 3);
 
 		insertServices("Atrium Café", "Service");
 		insertServices("Chapel and Chaplaincy Services", "Service");
@@ -352,6 +352,7 @@ public class DatabaseController
 		insertOffice(197, 5);
 		insertOffice(206, 5);
 
+		//inserts the hard-coded values for the ResidesIn table
 		insertResidesIn("Roslindale Pediatric Associates" , 6);
 		insertResidesIn("Eye Care Specialists" , 7);
 		insertResidesIn("Suburban Eye Specialists" , 7);
