@@ -1598,7 +1598,8 @@ public class DatabaseController
 		catch (SQLException sqlExcept){
 
 			//ToDO: Check if the below value is correct
-			if(!sqlExcept.getSQLState().equals("X0Y33")){
+			if (!sqlExcept.getSQLState().equals("X0Y32"))
+			{
 				sqlExcept.printStackTrace();
 			} else {
 				System.out.println("ResidesIn table already exists");
@@ -1623,9 +1624,10 @@ public class DatabaseController
 		catch (SQLException sqlExcept){
 
 			//ToDO: Check if the below value is correct
-			if(!sqlExcept.getSQLState().equals("X0Y34")){
+			if (!sqlExcept.getSQLState().equals("X0Y32"))
+			{
 				sqlExcept.printStackTrace();
-			} else {
+			} else  {
 				System.out.println("Services table already exists");
 			}
 		}
