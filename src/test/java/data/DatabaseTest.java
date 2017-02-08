@@ -220,7 +220,7 @@ public class DatabaseTest
 		Statement stmt = null;
 		try
 		{
-			String DB_URL = "jdbc:derby:FHAlpha;create=true";
+			String DB_URL = "jdbc:derby:TestFHAlpha;create=true";
 			Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
 			//Get a connection
 			connection = DriverManager.getConnection(DB_URL);

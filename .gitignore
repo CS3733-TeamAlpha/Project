@@ -8,3 +8,4 @@ build/
 .gradle/
 FHAlpha/
 derby.log
+TestFHAlpha/
