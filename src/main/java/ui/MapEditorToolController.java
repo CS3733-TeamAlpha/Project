@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.InputMethodEvent;
@@ -13,6 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import data.*;
 import javafx.stage.WindowEvent;
@@ -29,7 +32,7 @@ import static java.awt.SystemColor.window;
 public class MapEditorToolController
 {
     //Arraylist of all lines drawn from a node to its neighbors
-    private HashMap<Node, ArrayList<Line>> neighborLines = new HashMap<Node, ArrayList<Line>>();
+    private HashMap<Node, ArrayList<Group>> lineGroups = new HashMap<Node, ArrayList<Group>>();
 
     //link buttons to node objects
     private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
@@ -550,19 +553,19 @@ public class MapEditorToolController
 
         // Remove all existing lines coming from source Node
         // Check if source has existing lines
-        if (neighborLines.containsKey(source))
+        if (lineGroups.containsKey(source))
         {
-            ArrayList<Line> oldLines = neighborLines.get(source);
-            for (Line l: oldLines)
+            ArrayList<Group> oldGroups = lineGroups.get(source);
+            for (Group g: oldGroups)
             {
                 // Removes all lines from oldLines from the UI
-                ((AnchorPane)l.getParent()).getChildren().remove(l);
+                ((AnchorPane)g.getParent()).getChildren().remove(g);
             }
-            neighborLines.remove(source);
+            lineGroups.remove(source);
         }
 
         //keep track of lines created for this node
-        ArrayList<Line> lines = new ArrayList<Line>();
+        ArrayList<Group> groups = new ArrayList<Group>();
         Collection<Node> neighbors = source.getNeighbors();
 
         //for each neighbor associated with source Node, draw a line.
@@ -572,13 +575,47 @@ public class MapEditorToolController
             line.setStartY(source.getY());
             line.setEndX(neighbor.getX());
             line.setEndY(neighbor.getY());
-            editingFloor.getChildren().add(1, line);
+
+            //some shape creation magic for making arrow lines
+
+            //get difference in xy position
+            double diffY = neighbor.getY()-source.getY();
+            double diffX = neighbor.getX()-source.getX();
+
+
+            //we will use pathShift to place the line's arrow somewhere in the middle of the line.
+            //this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
+            double pathShift = 0.8;
+
+            //make a new triangle
+            Polygon arrowTriangle = new Polygon();
+            arrowTriangle.getPoints().addAll(new Double[]{
+                    0.0, 0.0,
+                    -10.0, 10.0,
+                    10.0, 10.0
+            });
+
+            //get angle the angle of the line we'll be making in degrees
+            double slopeAngle = Math.toDegrees(Math.atan2(diffY, diffX));
+            //reotate the triangle we made
+            //simple correction rotation angle
+            double correction = 90;
+            arrowTriangle.getTransforms().add(new Rotate(slopeAngle+correction, 0, 0));
+            //position the triangle onto the line
+            arrowTriangle.setLayoutX(source.getX()+pathShift*diffX);
+            arrowTriangle.setLayoutY(source.getY()+pathShift*diffY);
+
+            //group together the line and triangle for future referencing
+            Group g = new Group();
+            g.getChildren().add(line);
+            g.getChildren().add(arrowTriangle);
+            editingFloor.getChildren().add(1, g);
             //add this line into the lines array
-            lines.add(line);
+            groups.add(g);
         }
         //store the array of lines for this source node into the hashmap
         //to be used to delete all lines later when redrawing
-        neighborLines.put(source, lines);
+        lineGroups.put(source, groups);
     }
 
     @FXML
