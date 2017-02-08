@@ -6,6 +6,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -21,6 +23,7 @@ import java.util.Collection;
 
 public class MapController
 {
+	public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
 
@@ -68,8 +71,12 @@ public class MapController
 				}
 			});
 		}
-
 		graph = new ConcreteGraph();
+
+		if(Accessibility.isHighContrast())
+		{
+			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
+		}
 	}
 
 	public void showRoomInfo(Node n)

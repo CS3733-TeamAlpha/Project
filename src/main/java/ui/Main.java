@@ -18,10 +18,11 @@ public class Main extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	 {
-		Parent root = FXMLLoader.load(getClass().getResource("/fxml/Startup.fxml"));
+	 	Parent root = FXMLLoader.load(getClass().getResource("/fxml/Startup.fxml"));
 		stage = primaryStage;
 		primaryStage.setTitle("Faulkner Hospital Map");
-		primaryStage.setScene(new Scene(root, 1280, 720));
+		Scene scene = new Scene(root, 1280, 720);
+		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 
@@ -40,7 +41,18 @@ public class Main extends Application
 		{
 			e.printStackTrace();
 		}
-		stage.setScene(new Scene(root, 1280, 720));
+		stage.getScene().setRoot(root);
 	}
 
+	public static void toggleHighContrast()
+	{
+		if(stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
+		{
+			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
+		}
+		else
+		{
+			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
+		}
+	}
 }
