@@ -73,7 +73,7 @@ public class MapEditorToolController
 
     public MapEditorToolController(){}
     {
-        //TODO: make editortool load all nodes without making evrything static
+        //TODO: make editortool load all nodes without making everything static
         //currently acheived by pressing a button
        // loadNodesFromDatabase();
     }
@@ -120,101 +120,108 @@ public class MapEditorToolController
      * or move an existing node to the clicked location.
      * Choose which event to do based on makingNew or modifyingLocation bool
      */
-    void addNodeHere(MouseEvent e) {
+    void addNodeHere(MouseEvent e)
+    {
         if(e.isStillSincePress())
-        { if(makingNew)
         {
-            Node newNode = null;
-            if (newNodesList.size() == 0)
-            {
-                //if we haven't made any new nodes yet, call databasecontroller so that
-                //we have a baseline nodeID to start with.
-                //This nodeID is going the be the greatest int nodeID in the existing nodes
-                //IMPORTANT: this doesn't actually add the new node to the database tables
-                newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-            } else
-            {
-                //otherwise use our own function to generate a new node.
-                newNode = editorGenerateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-            }
-            newNodesList.add(newNode);
-            //make a new button to associate with the node
-            Button nodeB = new Button("+");
-            nodeB.setLayoutX(e.getX() - XOFFSET);
-            nodeB.setLayoutY(e.getY() - YOFFSET);
-
-            //on button click...
-            nodeB.setOnAction(new EventHandler<ActionEvent>()
-            {
-                @Override
-                public void handle(ActionEvent event)
+            if(makingNew) //making a new button/node
                 {
-                    showNodeDetails(nodeB);
+                Node newNode = null;
+                if (newNodesList.size() == 0)
+                {
+                    //if we haven't made any new nodes yet, call databasecontroller so that
+                    //we have a baseline nodeID to start with.
+                    //This nodeID is going the be the greatest int nodeID in the existing nodes
+                    //IMPORTANT: this doesn't actually add the new node to the database tables
+                    newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
+                } else
+                {
+                    //otherwise use our own function to generate a new node.
+                    newNode = editorGenerateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
                 }
-            });
-            nodeButtonLinks.put(nodeB, newNode);
+                newNodesList.add(newNode);
+                //make a new button to associate with the node
+                Button nodeB = new Button("+");
+                nodeB.setLayoutX(e.getX() - XOFFSET);
+                nodeB.setLayoutY(e.getY() - YOFFSET);
 
-            //add the new button to the scene
-            editingFloor.getChildren().add(1, nodeB);
+                //on button click show node details on the righthand panel
+                nodeB.setOnAction(new EventHandler<ActionEvent>()
+                {
+                    @Override
+                    public void handle(ActionEvent event)
+                    {
+                        showNodeDetails(nodeB);
+                    }
+                });
+                nodeButtonLinks.put(nodeB, newNode);
 
-            //modify bool and change button text
-            makingNew = false;
-            newNodeButton.setText("Add a New Node");
-        } else if(modifyingLocation)
-        {
-            if(currentButton != null && currentNode != null)
+                //add the new button to the scene
+                editingFloor.getChildren().add(1, nodeB);
+
+                //modify bool and change button text
+                makingNew = false;
+                //change new node button text back to original
+                newNodeButton.setText("Add a New Node");
+            }
+            else if(modifyingLocation) //modifying the location of an existing node
             {
-                //modify button text
-                clickModLocation.setText("Modify Location by Click");
-                modifyingLocation = false;
+                if(currentButton != null && currentNode != null) //check that a button/node is actually selected
+                {
+                    //modify button text
+                    clickModLocation.setText("Modify Location by Click");
+                    modifyingLocation = false;
 
-                //update button and node location
-                currentButton.setLayoutX(e.getX() - XOFFSET);
-                currentButton.setLayoutY(e.getY() - YOFFSET);
-                currentNode.setX(e.getX());
-                currentNode.setY(e.getY());
+                    //update button and node location
+                    currentButton.setLayoutX(e.getX() - XOFFSET);
+                    currentButton.setLayoutY(e.getY() - YOFFSET);
+                    currentNode.setX(e.getX());
+                    currentNode.setY(e.getY());
 
-                //TODO: implement some tracking that this node has been modified, if it is a node
-                //TODO: loaded in from the databsecontroller
-            } else {
+                    //TODO: implement some tracking that this node has been modified, if it is a node
+                    //TODO: loaded in from the databsecontroller
+                } else {
+                    hideNodeDetails();
+                    modifyingLocation = false;
+                }
+            }
+            else
+            {
+                //if not making or moving nodes, hide node details.
                 hideNodeDetails();
             }
         }
-        else
-        {
-            //if not making or moving nodes, hide node details.
-            hideNodeDetails();
-        }
-        }
         addingNeighbor = false;
         removingNeighbor = false;
+
     }
 
 
     /**
      * Load all nodes from the databasecontroller's list of nodes onto our scene
      */
-    public void loadNodesFromDatabase(){
-        for(Node n: DatabaseController.getAllNodes()){
+    public void loadNodesFromDatabase()
+    {
+        for(Node n: DatabaseController.getAllNodes())
+        {
             loadNode(n);
             drawToNeighbors(n);
         }
-
-
     }
 
     /**
      * Create a button on the scene and associate it with a node
      * @param n the node to load into the scene
      */
-    private void loadNode(Node n){
+    private void loadNode(Node n)
+    {
         //new button
         Button nodeB = new Button("+");
         //set button XY coordinates
         nodeB.setLayoutX(n.getX()-XOFFSET);
         nodeB.setLayoutY(n.getY()-YOFFSET);
 
-        //on button click...
+        //on button click display the node's details
         nodeB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -236,7 +243,8 @@ public class MapEditorToolController
      * @param floorid id of floor this node is on
      * @return a new Node object
      */
-    private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid){
+    private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid)
+    {
         //add 1 to greatest node ID value, which should be last item in the list
         int newID = newNodesList.get(newNodesList.size()-1).getID()+1;
 
@@ -250,28 +258,49 @@ public class MapEditorToolController
     }
 
     /**
-     * display node details when a node's button is clicked
+     * display node details when a node's button is clicked.
+     *
+     * This function is also used to add/remove node neighbor relations (see inner comments)
      * @param nodeB the button clicked. associated to a node
      */
     private void showNodeDetails(Button nodeB){
         //get node linked to this button
         Node linkedNode = nodeButtonLinks.get(nodeB);
 
-        if (addingNeighbor) {
+        /**
+         * IMPORTANT: showNodeDetails is called by node buttons when clicked.
+         * To add/remove a neighbor, we need to click a node button.
+         * Therefore at the beginning of this function we check whether the
+         * addingNeighbor or removingNeighbor booleans have been tagged true, and if so
+         * we add/remove the currently clicked node from the original node's neighborlist,
+         * and then update the lines by calling DrawToNeighbors.
+         */
+        if (addingNeighbor)
+        {
+            //add neighbor
             currentNode.addNeighbor(linkedNode);
+            //add currentNode (not the node that has just been clicked) to the modifiedlist
             if(!modifiedNodesList.contains(currentNode)){
                 modifiedNodesList.add(currentNode);
             }
             addingNeighbor = false;
+            //redraw lines
             drawToNeighbors(currentNode);
-        } else if (removingNeighbor) {
+        }
+        else if (removingNeighbor)
+        {
+            //remove neighbor
             currentNode.removeNeighbor(linkedNode);
+            //add currentNode (not the node that has just been clicked) to the modifiedlist
             if(!modifiedNodesList.contains(currentNode)){
                 modifiedNodesList.add(currentNode);
             }
             removingNeighbor = false;
+            //redraw lines
             drawToNeighbors(currentNode);
-        } else {
+        }
+        else
+        {
             //modify text fields to display node info
             nameField.setText(linkedNode.getData().get(0));
             typeField.setText(linkedNode.getData().get(1));
@@ -289,7 +318,8 @@ public class MapEditorToolController
     /**
      * hide node details sidebar and deselect current node/button
      */
-    private void hideNodeDetails(){
+    private void hideNodeDetails()
+    {
         currentNode = null;
         currentButton = null;
 
@@ -318,16 +348,25 @@ public class MapEditorToolController
     /**
      * modify a node's location on the map. alternately, cancel node location modification
      */
-    void modNodeLocation(ActionEvent event){
+    void modNodeLocation(ActionEvent event)
+    {
         if(!modifyingLocation)
         {
             clickModLocation.setText("Cancel");
+            //set booleans to track which state we are in right now
             modifyingLocation = true;
+            addingNeighbor = false;
+            removingNeighbor = false;
+            makingNew = false;
         }
         else
         {
             clickModLocation.setText("Modify Location by Click");
+            //set booleans to track which state we are in right now
             modifyingLocation = false;
+            addingNeighbor = false;
+            removingNeighbor = false;
+            makingNew = false;
         }
     }
 
@@ -335,7 +374,8 @@ public class MapEditorToolController
     /**
      * update a node's X coordinate, both visually and in the node's properties
      */
-    void updateNodeX(ActionEvent event) {
+    void updateNodeX(ActionEvent event)
+    {
         try
         {
             currentButton.setLayoutX(Double.parseDouble(xField.getText()));
@@ -344,7 +384,9 @@ public class MapEditorToolController
             if(!modifiedNodesList.contains(currentNode)){
                 modifiedNodesList.add(currentNode);
             }
-        } catch (NumberFormatException e){
+        }
+        catch (NumberFormatException e)
+        {
             //TODO: need more exception handling?
             System.out.println("Not a double");
         }
@@ -376,7 +418,8 @@ public class MapEditorToolController
     /**
      * update a node's Name string
      */
-    void updateNodeData(ActionEvent event) {
+    void updateNodeData(ActionEvent event)
+    {
         try
         {
             if(currentButton != null && currentNode != null)
@@ -386,11 +429,14 @@ public class MapEditorToolController
                 data.add(typeField.getText());
                 currentNode.setData(data);
                 //track that this node has been modified
-                if(!modifiedNodesList.contains(currentNode)){
+                if(!modifiedNodesList.contains(currentNode))
+                {
                     modifiedNodesList.add(currentNode);
                 }
             }
-        } catch (NumberFormatException e){
+        }
+        catch (NumberFormatException e)
+        {
             //TODO: need more exception handling?
             System.out.println("Not a double");
         }
@@ -400,74 +446,126 @@ public class MapEditorToolController
     @FXML
     /**
      * Push newly created nodes into the databasecontroller's node table.
+     *
+     * This function will:
+     *  - insert all newly created nodes into the database
+     *  - update all modified nodes that were loaded in from the database
+     *  - insert all new neighbor relations that have been created
+     *  - delete all neighbor relations that have been deleted
      * TODO: nodes loaded in from the table and modified should also be pushed.
      */
-    void pushChangesToDatabase(ActionEvent event) {
-        for(Node n: newNodesList){
+    void pushChangesToDatabase(ActionEvent event)
+    {
+        for(Node n: newNodesList)
+        {
             //TODO: change types of things to be concretenode instead of node?
             //sloppy to cast like this I assume
-            ConcreteNode cn = (ConcreteNode)n;
-            DatabaseController.insertNode(cn);
+            ConcreteNode newNode = (ConcreteNode)n;
+            DatabaseController.insertNode(newNode);
         }
+
+        //modifyNodes will update Node tables for all nodes in the list
         DatabaseController.modifyNodes(modifiedNodesList);
 
-        for(Node n: newNodesList) { // Insert neighbor relationships to database
+        //for each newly created node, insert it's neighbor relations into the table
+        for(Node n: newNodesList)
+        {
             //Also has sloppy casting here
-            ConcreteNode cn = (ConcreteNode)n;
-            for(Node nn: cn.getNeighbors()) {
-                DatabaseController.insertNeighbor(cn, (ConcreteNode) nn);
+            ConcreteNode newNode = (ConcreteNode)n;
+            for(Node neighborNode: newNode.getNeighbors()) {
+                //neighbor relation from newNode to neighborNode
+                DatabaseController.insertNeighbor(newNode, (ConcreteNode) neighborNode);
             }
         }
 
-        //TODO: MAJOR NEED FOR DOCUMENTATION
         //TODO: ADD SOME SAUCE TO THIS SPAGHETTI
+        //reinitialize all nodes in the databasecontroller
+        //We are doing this because the nodes in modifiedNodesList reference the objects
+        //in databasecontroller.nodeList. This means that changes we made in the editor also have
+        //been changed in databasecontroller's nodeList. nodeList stores objects, but those objects
+        //don't directly affect the database's tables.
+
+        //THEREFORE: we reinitialize all nodes so that we have an accurate and updated picture
+        //of what nodes and neighbors are currently in the database
         DatabaseController.initializeAllNodes();
-        for(Node n: modifiedNodesList) {
 
-        //    if (n.getNeighbors() != DatabaseController.getNodeByID(n.getID()).getNeighbors()){
-                Collection<Node> sourceNeighbors = DatabaseController.getNodeByID(n.getID()).getNeighbors();
-                Collection<Node> modNeighbors = n.getNeighbors();
-                ArrayList<Node> toDeleteSourceNeighbors = new ArrayList<Node>();
-                ArrayList<Node> toDeleteModNeighbors = new ArrayList<Node>();
+        //for each node that has been modified
+        for(Node n: modifiedNodesList)
+        {
+            //initialize a collection of all neighbors for node N that the database knows about
+            Collection<Node> sourceNeighbors = DatabaseController.getNodeByID(n.getID()).getNeighbors();
+            //get neighbors from node N as the editortool knows about
+            Collection<Node> modNeighbors = n.getNeighbors();
 
-                for(Node nn: modNeighbors){
-                    for(Node sn: sourceNeighbors){
-                        if(sn.getID() == nn.getID()){
-                            toDeleteModNeighbors.add(nn);
-                            toDeleteSourceNeighbors.add(sn);
-                        }
+            //arrays of nodes that will be used to store which nodes are common to both sourceNeighbors and modNeighbors
+            ArrayList<Node> toDeleteSourceNeighbors = new ArrayList<Node>();
+            ArrayList<Node> toDeleteModNeighbors = new ArrayList<Node>();
+
+            //for each neighbor editor knows about
+            for(Node modNeighbor: modNeighbors)
+            {
+                //for each neighbor database knows about
+                for(Node sourceNeighbor: sourceNeighbors)
+                {
+                    //if ID is same, they are the same node.
+                    if(sourceNeighbor.getID() == modNeighbor.getID())
+                    {
+                        //store the node in toDelete arrays, to indicate both source and mod
+                        //know about this neighbor relationship
+                        toDeleteModNeighbors.add(modNeighbor);
+                        toDeleteSourceNeighbors.add(sourceNeighbor);
                     }
                 }
-                modNeighbors.removeAll(toDeleteModNeighbors);
-                sourceNeighbors.removeAll(toDeleteSourceNeighbors);
-                for(Node nn: modNeighbors){
-                    DatabaseController.insertNeighbor(n.getID(), nn.getID());
-                }
-                for(Node sn: sourceNeighbors){
-                    System.out.println(sn.getID());
-                    DatabaseController.removeNeighbor(n.getID(), sn.getID());
-                }
-        //    }
+            }
+
+            //remove all nodes that are common to mod and source.
+            //this will leave just the neighbor nodes that are different.
+            //any neighbor nodes in modNeighbors but not in source are newly created neighbors.
+            //any neighbor nodes in sourceNeighbors but not in mod are old neighbors that have been deleted.
+            modNeighbors.removeAll(toDeleteModNeighbors);
+            sourceNeighbors.removeAll(toDeleteSourceNeighbors);
+
+            //insert new neighbor relations
+            for(Node modNeighbor: modNeighbors)
+            {
+                 DatabaseController.insertNeighbor(n.getID(), modNeighbor.getID());
+            }
+            //remove all neighbor relations that have been removed by the editor
+            for(Node sourceNeighbor: sourceNeighbors)
+            {
+                DatabaseController.removeNeighbor(n.getID(), sourceNeighbor.getID());
+            }
         }
     }
 
 
     @FXML
     /**
-     * Create lines from a node (source) to all of the node's neighbors
+     * Create lines from a node (source) to all of the node's neighbors.
+     *
+     * This will need to be called many times to properly and fully update drawn lines
+     * because this only updates lines coming from a Node.
      */
     void drawToNeighbors(Node source) {
-        // Remove all existing lines from source at beginning
-        if (neighborLines.containsKey(source)) { // Check if source has existing lines
+
+        // Remove all existing lines coming from source Node
+        // Check if source has existing lines
+        if (neighborLines.containsKey(source))
+        {
             ArrayList<Line> oldLines = neighborLines.get(source);
-            for (Line l: oldLines) { // Removes all lines from oldLines from the UI
+            for (Line l: oldLines)
+            {
+                // Removes all lines from oldLines from the UI
                 ((AnchorPane)l.getParent()).getChildren().remove(l);
             }
             neighborLines.remove(source);
         }
 
+        //keep track of lines created for this node
         ArrayList<Line> lines = new ArrayList<Line>();
         Collection<Node> neighbors = source.getNeighbors();
+
+        //for each neighbor associated with source Node, draw a line.
         for(Node neighbor: neighbors) {
             Line line = new Line();
             line.setStartX(source.getX());
@@ -475,8 +573,11 @@ public class MapEditorToolController
             line.setEndX(neighbor.getX());
             line.setEndY(neighbor.getY());
             editingFloor.getChildren().add(1, line);
+            //add this line into the lines array
             lines.add(line);
         }
+        //store the array of lines for this source node into the hashmap
+        //to be used to delete all lines later when redrawing
         neighborLines.put(source, lines);
     }
 
@@ -484,10 +585,15 @@ public class MapEditorToolController
     /**
      * Set controller to addingNeighbor state
      */
-    void addNeighbor(ActionEvent event) {
-        if (currentNode != null) { //Don't do anything unless a node is selected
+    void addNeighbor(ActionEvent event)
+    {
+        if (currentNode != null)//Don't do anything unless a node is selected
+        {
+            //set boolean to track state of editor
             addingNeighbor = true;
             removingNeighbor = false;
+            modifyingLocation = false;
+            makingNew = false;
         }
     }
 
@@ -495,10 +601,15 @@ public class MapEditorToolController
     /**
      * Set controller to removingNeighbor state
      */
-    void removeNeighbor(ActionEvent event) {
-        if (currentNode != null) {
+    void removeNeighbor(ActionEvent event)
+    {
+        if (currentNode != null)  //Don't do anything unless a node is selected
+        {
+            //set boolean to track state of editor
             removingNeighbor = true;
             addingNeighbor = false;
+            modifyingLocation = false;
+            makingNew = false;
         }
     }
 
