@@ -28,6 +28,7 @@ public class MapController
 	private boolean roomInfoShown;
 
 	private Node selected;
+	private Node kiosk;
 	boolean findingDirections = false;
 
 	@FXML
@@ -52,6 +53,7 @@ public class MapController
 	{
 		hideRoomInfo();
 		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		kiosk = DatabaseController.getNodeByID(9);
 		for (Node n:nodes)
 		{
 			if(!n.getData().get(1).equals("Hallway"))
@@ -81,7 +83,7 @@ public class MapController
 	public void showRoomInfo(Node n)
 	{
 		if(findingDirections){
-			ArrayList<Node> path = graph.findPath(selected,n);
+			ArrayList<Node> path = graph.findPath(kiosk,selected);
 			if(path == null){
 				System.out.println("No path found");
 			}else
@@ -132,6 +134,7 @@ public class MapController
 
 	public void findDirectionsTo(){
 		findingDirections = true;
+		showRoomInfo(selected);
 	}
 
 }
