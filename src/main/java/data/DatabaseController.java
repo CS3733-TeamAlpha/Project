@@ -483,7 +483,8 @@ public class DatabaseController
 			stmt.execute("CREATE TABLE Provider(" +
 					"ProviderID INT NOT NULL PRIMARY KEY, " +
 					"FirstName VARCHAR(20), " +
-					"LastName VARCHAR(20) " +
+					"LastName VARCHAR(20), " +
+					"Title VARCHAR(20) " +
 					")");
 			System.out.println("Provider table initialized");
 			stmt.close();
@@ -905,18 +906,20 @@ public class DatabaseController
 					"WHERE ProviderID = " + id + "");
 			String fname = "";
 			String lname = "";
+			String title = "";
 
 			if (results.next())
 			{
 				fname = results.getString(2);
 				lname = results.getString(3);
+				title = results.getString(4);
 			} else
 			{
 				return null;
 			}
 			results.close();
 			stmt.close();
-			Provider p = new Provider(id, fname, lname);
+			Provider p = new Provider(id, fname, lname, title);
 			p.addLocations(getProviderNodes(id));
 			return p;
 		} catch (SQLException e)
@@ -1103,12 +1106,13 @@ public class DatabaseController
 	/**
 	 * Insert new provider into table
 	 */
-	public static void insertProvider(int provID, String fname, String lname)
+	public static void insertProvider(int provID, String fname, String lname, String title)
 	{
 		try
 		{
 			stmt = connection.createStatement();
-			stmt.execute("insert into " + providerTable + " values (" + provID + ", '" + fname + "', '" + lname + "')");
+			stmt.execute("insert into " + providerTable + " values (" + provID + ", '" + fname + "', '" +
+					lname + "', '" + title + "')");
 			stmt.close();
 		} catch (SQLException sqlExcept)
 		{
@@ -1465,7 +1469,7 @@ public class DatabaseController
 	 * @// TODO: Probably should break this down to modify a single field at a time
 	 * @// TODO: Fix return type?
 	 */
-	public static void modifyProviderTable(int ID, String fname, String lname)
+	public static void modifyProviderTable(int ID, String fname, String lname, String title)
 	{
 		try
 		{
@@ -1474,6 +1478,7 @@ public class DatabaseController
 					"SET ProviderID = " + ID + ", " +
 					"FirstName = '" + fname + "', " +
 					"LastName = '" + lname + "' " +
+					"Title = '" + title + "' " +
 					"WHERE ProviderID = " + ID +
 					"");
 			stmt.close();

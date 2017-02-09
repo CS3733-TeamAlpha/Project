@@ -12,16 +12,18 @@ public class Provider
     private int providerID;
     private String fName;
     private String lName;
+    private String title;
 
     public Provider()
     {
     }
 
-    public Provider(int id, String f, String l)
+    public Provider(int id, String f, String l, String t)
     {
         providerID = id;
         fName = f;
         lName = l;
+        title = t;
         locations = new ArrayList<Node>();
     }
 
@@ -54,6 +56,10 @@ public class Provider
     {
         return lName;
     }
+
+    public String getTitle() { return title; }
+
+    public void setTitle(String t){ title = t; }
 
     public void setfName(String f)
     {
