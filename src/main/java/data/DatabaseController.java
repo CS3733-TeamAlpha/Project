@@ -35,7 +35,6 @@ public class DatabaseController
 	{
 		createConnection();
 
-
 		//prints results of all tables defined
 		printResults(nodeTable);
 		printResults(floorTable);
@@ -483,6 +482,7 @@ public class DatabaseController
 		insertResidesIn("Eye Care Specialists" , 7);
 		insertResidesIn("Suburban Eye Specialists" , 7);
 		insertResidesIn("Obstetrics and Gynecology Associates", 5);
+
 	}
 
 	public static void createTestConnection()
@@ -1944,6 +1944,12 @@ public class DatabaseController
 				System.out.println("Issue with Node Table Alter");
 			}
 		}
+	}
+
+	public static void initializeAll(){
+		initializeAllFloors();
+		initializeAllNodes();
+		initializeAllProviders();
 	}
 
 	public static ArrayList<Node> getAllNodes()
