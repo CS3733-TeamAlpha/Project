@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -13,12 +14,66 @@
             <Button mnemonicParsing="false" onAction="#showStartup" text="Done" translateX="80.0" />
         </items>
       </ToolBar>
-      <TableView layoutY="39.0" prefHeight="680.0" prefWidth="1280.0" styleClass="pane">
-        <columns>
-          <TableColumn fx:id="nameColumn" editable="false" prefWidth="477.0096846818924" text="Name" />
-          <TableColumn editable="false" minWidth="0.0" prefWidth="108.99030303955078" text="Type" />
-            <TableColumn editable="false" minWidth="0.0" prefWidth="128.944580078125" text="Go To" />
-        </columns>
-      </TableView>
+      <ScrollPane layoutY="81.0" prefHeight="550.0" prefWidth="1280.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1067.0" prefWidth="1272.0">
+               <children>
+                  <VBox prefHeight="84.0" prefWidth="1276.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="234.0" prefWidth="1276.0">
+                           <children>
+                              <Separator opacity="0.0" prefWidth="30.0" />
+                              <TextField />
+                              <Separator opacity="0.0" prefWidth="50.0" />
+                              <TextField />
+                              <Separator opacity="0.0" prefWidth="50.0" />
+                              <TextField />
+                              <Separator opacity="0.0" prefWidth="50.0" />
+                              <VBox alignment="CENTER" prefHeight="170.0" prefWidth="288.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="35.0" prefWidth="288.0">
+                                       <children>
+                                          <Label text="Label" />
+                                          <Separator opacity="0.0" prefWidth="30.0" />
+                                          <Button mnemonicParsing="false" text="X" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <Separator opacity="0.0" prefWidth="10.0" />
+                                          <Button mnemonicParsing="false" text="Add" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+      <Label layoutX="74.0" layoutY="44.0" text="First Name">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="282.0" layoutY="44.0" text="Last Name">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="524.0" layoutY="44.0" text="Titles">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="797.0" layoutY="44.0" text="Locations">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

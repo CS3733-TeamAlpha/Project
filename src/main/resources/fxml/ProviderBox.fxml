@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox fx:id="providerBox" alignment="CENTER_LEFT" prefHeight="132.0" prefWidth="1276.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.ProviderBox">
+   <children>
+      <Separator opacity="0.0" prefWidth="30.0" />
+      <TextField fx:id="firstNameField" />
+      <Separator opacity="0.0" prefWidth="50.0" />
+      <TextField fx:id="lastNameField" />
+      <Separator opacity="0.0" prefWidth="50.0" />
+      <TextField fx:id="titlesField" />
+      <Separator opacity="0.0" prefWidth="50.0" />
+      <VBox fx:id="locationsVBox" alignment="CENTER" prefHeight="170.0" prefWidth="288.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="288.0">
+               <children>
+                  <Label text="Label" />
+                  <Separator opacity="0.0" prefWidth="30.0" />
+                  <Button mnemonicParsing="false" text="X" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ChoiceBox fx:id="locationSelector" prefWidth="150.0" />
+                  <Separator opacity="0.0" prefWidth="10.0" />
+                  <Button mnemonicParsing="false" text="Add" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</HBox>

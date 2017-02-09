@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -11,7 +15,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapEditorToolController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapEditorToolController">
    <children>
       <SplitPane dividerPositions="0.8153364632237872" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0">
         <items>
@@ -41,9 +45,9 @@
                <children>
                   <Button fx:id="newNodeButton" layoutX="3.0" layoutY="7.0" mnemonicParsing="false" onAction="#createNewNode" text="Add a New Node" />
                   <Label layoutX="4.0" layoutY="42.0" text="Selected Node Name" />
-                  <TextField fx:id="nameField" layoutX="4.0" layoutY="58.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="254.0" />
+                  <TextField fx:id="nameField" layoutX="4.0" layoutY="58.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
                   <Label layoutX="4.0" layoutY="94.0" text="Selected Node Type" />
-                  <TextField fx:id="typeField" layoutX="4.0" layoutY="110.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="254.0" />
+                  <TextField fx:id="typeField" layoutX="4.0" layoutY="110.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
                   <Label layoutX="4.0" layoutY="150.0" text="Node X Coordinate" />
                   <TextField layoutX="4.0" layoutY="166.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
                   <Label layoutX="4.0" layoutY="202.0" text="Node Y Coordinate" />

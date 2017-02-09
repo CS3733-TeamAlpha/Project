@@ -18,8 +18,6 @@ import java.util.ArrayList;
 public class DirectoryController
 {
 
-	@FXML
-	private TableColumn nameColumn;
 
 	public DirectoryController(){}
 
