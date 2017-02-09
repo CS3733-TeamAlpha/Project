@@ -88,10 +88,10 @@ public class MapEditorToolController
 		{
 			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
 		}
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
+	//	DatabaseController.createConnection();
+	//	DatabaseController.initializeAllFloors();
+	//	DatabaseController.initializeAllNodes();
+	//	DatabaseController.initializeAllProviders();
 		loadNodesFromDatabase();
 	}
 
@@ -149,7 +149,7 @@ public class MapEditorToolController
 					//we have a baseline nodeID to start with.
 					//This nodeID is going the be the greatest int nodeID in the existing nodes
 					//IMPORTANT: this doesn't actually add the new node to the database tables
-					newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
+					//newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
 				}
 				else
 				{
@@ -239,10 +239,10 @@ public class MapEditorToolController
 	 */
 	public void loadNodesFromDatabase()
 	{
-		for (Node n : DatabaseController.getAllNodes())
+	//	for (Node n : DatabaseController.getAllNodes())
 		{
-			loadNode(n);
-			drawToNeighbors(n);
+	//		loadNode(n);
+	//		drawToNeighbors(n);
 		}
 	}
 
@@ -294,8 +294,8 @@ public class MapEditorToolController
 		data.add(name);
 		data.add(type);
 		//create new concrete node
-		Node newNode = new ConcreteNode(newID, data, x, y, DatabaseController.getFloorByID(floorid));
-		return newNode;
+		//Node newNode = new ConcreteNode(newID, data, x, y, DatabaseController.getFloorByID(floorid));
+		return null;
 	}
 
 	/**
@@ -543,11 +543,11 @@ public class MapEditorToolController
 			//TODO: change types of things to be concretenode instead of node?
 			//sloppy to cast like this I assume
 			ConcreteNode newNode = (ConcreteNode) n;
-			DatabaseController.insertNode(newNode);
+		//	DatabaseController.insertNode(newNode);
 		}
 
 		//modifyNodes will update Node tables for all nodes in the list
-		DatabaseController.modifyNodes(modifiedNodesList);
+		//DatabaseController.modifyNodes(modifiedNodesList);
 
 		//for each newly created node, insert it's neighbor relations into the table
 		for (Node n : newNodesList)
@@ -557,7 +557,7 @@ public class MapEditorToolController
 			for (Node neighborNode : newNode.getNeighbors())
 			{
 				//neighbor relation from newNode to neighborNode
-				DatabaseController.insertNeighbor(newNode, (ConcreteNode) neighborNode);
+			//	DatabaseController.insertNeighbor(newNode, (ConcreteNode) neighborNode);
 			}
 		}
 
@@ -570,13 +570,13 @@ public class MapEditorToolController
 
 		//THEREFORE: we reinitialize all nodes so that we have an accurate and updated picture
 		//of what nodes and neighbors are currently in the database
-		DatabaseController.initializeAllNodes();
+		//DatabaseController.initializeAllNodes();
 
 		//for each node that has been modified
 		for (Node n : modifiedNodesList)
 		{
 			//initialize a collection of all neighbors for node N that the database knows about
-			Collection<Node> sourceNeighbors = DatabaseController.getNodeByID(n.getID()).getNeighbors();
+		//	Collection<Node> sourceNeighbors = DatabaseController.getNodeByID(n.getID()).getNeighbors();
 			//get neighbors from node N as the editortool knows about
 			Collection<Node> modNeighbors = n.getNeighbors();
 
@@ -588,15 +588,15 @@ public class MapEditorToolController
 			for (Node modNeighbor : modNeighbors)
 			{
 				//for each neighbor database knows about
-				for (Node sourceNeighbor : sourceNeighbors)
+		//		for (Node sourceNeighbor : sourceNeighbors)
 				{
 					//if ID is same, they are the same node.
-					if (sourceNeighbor.getID() == modNeighbor.getID())
+			//		if (sourceNeighbor.getID() == modNeighbor.getID())
 					{
 						//store the node in toDelete arrays, to indicate both source and mod
 						//know about this neighbor relationship
 						toDeleteModNeighbors.add(modNeighbor);
-						toDeleteSourceNeighbors.add(sourceNeighbor);
+			//			toDeleteSourceNeighbors.add(sourceNeighbor);
 					}
 				}
 			}
@@ -606,25 +606,25 @@ public class MapEditorToolController
 			//any neighbor nodes in modNeighbors but not in source are newly created neighbors.
 			//any neighbor nodes in sourceNeighbors but not in mod are old neighbors that have been deleted.
 			modNeighbors.removeAll(toDeleteModNeighbors);
-			sourceNeighbors.removeAll(toDeleteSourceNeighbors);
+			//sourceNeighbors.removeAll(toDeleteSourceNeighbors);
 
             //insert new neighbor relations
             for(Node modNeighbor: modNeighbors)
             {
-                 DatabaseController.insertNeighbor(n.getID(), modNeighbor.getID());
+           //      DatabaseController.insertNeighbor(n.getID(), modNeighbor.getID());
             }
             //remove all neighbor relations that have been removed by the editor
-            for(Node sourceNeighbor: sourceNeighbors)
+         //   for(Node sourceNeighbor: sourceNeighbors)
             {
-                DatabaseController.removeNeighbor(n.getID(), sourceNeighbor.getID());
+         //       DatabaseController.removeNeighbor(n.getID(), sourceNeighbor.getID());
             }
         }
 
         //remove nodes from database
         for(Node n: deleteNodesList){
             //delete any neighbor relations coming from this node
-            DatabaseController.removeNeighborsFromID(n.getID());
-            DatabaseController.removeNode(n.getID());
+       //     DatabaseController.removeNeighborsFromID(n.getID());
+       //     DatabaseController.removeNode(n.getID());
         }
     }
 
@@ -745,7 +745,7 @@ public class MapEditorToolController
 	 */
 	void goBack()
 	{
-		DatabaseController.initializeAllNodes();
+	//	DatabaseController.initializeAllNodes();
 		Main.loadFXML("/fxml/Startup.fxml");
 	}
 
@@ -786,20 +786,20 @@ public class MapEditorToolController
                 }
             }
             //TODO: collapse this into a single function, completely duplicate and perhaps redundant code
-            for(Node n: DatabaseController.getAllNodes())
+           // for(Node n: DatabaseController.getAllNodes())
             {
                 boolean has = false;
-                if(n.getNeighbors().contains(currentNode)){
+             //   if(n.getNeighbors().contains(currentNode)){
                     has = true;
-                }
-                if(has)
+             //   }
+           //     if(has)
                 {
-                    n.removeNeighbor(currentNode);
-                    drawToNeighbors(n);
+          //          n.removeNeighbor(currentNode);
+            //        drawToNeighbors(n);
                     //indicate that this node has been modified
-                    if (!modifiedNodesList.contains(n))
+          //          if (!modifiedNodesList.contains(n))
                     {
-                        modifiedNodesList.add(n);
+          //              modifiedNodesList.add(n);
                     }
                 }
             }
@@ -824,10 +824,10 @@ public class MapEditorToolController
         }
 
         //add node to deleteNodesList
-        deleteNodesList.add(currentNode);
-        ((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+       // deleteNodesList.add(currentNode);
+       // ((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
         //hide details view
-        hideNodeDetails();
+      //  hideNodeDetails();
     }
 
 }

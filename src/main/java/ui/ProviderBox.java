@@ -1,6 +1,6 @@
 package ui;
 
-import data.DatabaseController;
+//import data.DatabaseController;
 import data.Provider;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,12 +49,12 @@ public class ProviderBox extends HBox
 			throw new RuntimeException(exception);
 		}
 
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+	//	ArrayList<Node> nodes = DatabaseController.getAllNodes();
 		ArrayList<String> nodeNames = new ArrayList<String>();
-		for(Node n: nodes){
-			nodeNames.add(n.getData().get(0));
-		}
-		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
+	//	for(Node n: nodes){
+	//		nodeNames.add(n.getData().get(0));
+	//	}
+	//	locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 	}
 
 	//public ProviderBox(Provider p){
@@ -67,11 +67,11 @@ public class ProviderBox extends HBox
 	protected void addLocation(){
 		String s = locationSelector.getValue().toString();  //might be broken
 		Node toAdd = null;
-		for(Node n: DatabaseController.getAllNodes()){
-			if(n.getData().get(0).equals(s)){
-				toAdd = n;
-			}
-		}
+	//	for(Node n: DatabaseController.getAllNodes()){
+	//		if(n.getData().get(0).equals(s)){
+	//			toAdd = n;
+	//		}
+	//	}
 		provider.addLocation(toAdd);
 		refreshBox();
 	}

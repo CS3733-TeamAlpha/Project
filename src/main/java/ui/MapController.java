@@ -54,25 +54,25 @@ public class MapController
 	public void initialize()
 	{
 		hideRoomInfo();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
-		kiosk = DatabaseController.getNodeByID(9);
-		for (Node n:nodes)
+		//ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		//kiosk = DatabaseController.getNodeByID(9);
+		//for (Node n:nodes)
 		{
-			if(!n.getData().get(1).equals("Hallway"))
-			{
-				Button b = new Button("+");
-				b.setLayoutX(n.getX());
-				b.setLayoutY(n.getY());
-				imgAnchor.getChildren().add(1, b);
-				b.setOnAction(new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent event)
-					{
-						showRoomInfo(n);
-					}
-				});
-			}
+		//	if(!n.getData().get(1).equals("Hallway"))
+		//	{
+		//		Button b = new Button("+");
+		//		b.setLayoutX(n.getX());
+		//		b.setLayoutY(n.getY());
+		//		imgAnchor.getChildren().add(1, b);
+		//		b.setOnAction(new EventHandler<ActionEvent>()
+		//		{
+		//			@Override
+		//			public void handle(ActionEvent event)
+		//			{
+		//				showRoomInfo(n);
+		//			}
+		//		});
+		//	}
 		}
 		graph = new ConcreteGraph();
 

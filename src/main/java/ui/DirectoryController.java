@@ -1,6 +1,6 @@
 package ui;
 
-import data.DatabaseController;
+//import data.DatabaseController;
 import data.Provider;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -56,10 +56,10 @@ public class DirectoryController
 
 	public void initialize()
 	{
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
+		//DatabaseController.createConnection();
+		//DatabaseController.initializeAllFloors();
+		//DatabaseController.initializeAllNodes();
+		//DatabaseController.initializeAllProviders();
 		loadProvidersFromDatabase();
 	}
 
@@ -68,20 +68,20 @@ public class DirectoryController
 	 */
 	public void loadProvidersFromDatabase()
 	{
-		for (Provider p : DatabaseController.getAllProviders())
-		{
-			loadProvider(p);
-		}
+		//for (Provider p : DatabaseController.getAllProviders())
+		//{
+		//	loadProvider(p);
+		//}
 	}
 
 	public void addNewProvider(){
 		Provider newP = null;
-		if(newProviderList.size() == 0){
-			newP = DatabaseController.generateNewProvider("FName", "LName", "Title");
-		} else {
+		//if(newProviderList.size() == 0){
+		//	newP = DatabaseController.generateNewProvider("FName", "LName", "Title");
+		//} else {
 			newP = generateNewProvider();
-		}
-		loadProvider(newP);
+//		}
+		//loadProvider(newP);
 	}
 
 	public Provider generateNewProvider()
@@ -142,11 +142,11 @@ public class DirectoryController
 		////////////////////
 
 		ChoiceBox locationSelector = new ChoiceBox();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		//ArrayList<Node> nodes = DatabaseController.getAllNodes();
 		ArrayList<String> nodeNames = new ArrayList<String>();
-		for(Node n: nodes)
+	//	for(Node n: nodes)
 		{
-			nodeNames.add(Integer.toString(n.getID())+":"+n.getData().get(0));
+	//		nodeNames.add(Integer.toString(n.getID())+":"+n.getData().get(0));
 		}
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 
@@ -161,15 +161,15 @@ public class DirectoryController
 				int idIndex = s.indexOf(":");
 				s = s.substring(0, idIndex);
 
-				if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
+		//		if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
 				{
 						int nodeID = Integer.parseInt(s);
 
-						Node n = DatabaseController.getNodeByID(nodeID);
-						p.addLocation(n);
+		//				Node n = DatabaseController.getNodeByID(nodeID);
+		//				p.addLocation(n);
 						HBox innerH = new HBox();
 						Label locL = new Label();
-						locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
+		//				locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
 						Button xBut = new Button("X");
 						xBut.setOnAction(new EventHandler<ActionEvent>()
 						{
@@ -234,13 +234,13 @@ public class DirectoryController
 			TextField ln = (TextField)hb.getChildren().get(3);
 			thisProvider.setTitle(ln.getText());
 			System.out.println(thisProvider.getID()+ thisProvider.getfName()+thisProvider.getlName()+thisProvider.getTitle());
-			if(DatabaseController.getProviderByID(thisProvider.getID()) == null)
+	//		if(DatabaseController.getProviderByID(thisProvider.getID()) == null)
 			{
-				DatabaseController.insertProvider(thisProvider);
+	//			DatabaseController.insertProvider(thisProvider);
 			}
-			else
+			//else
 			{
-				DatabaseController.modifyProviderTable(thisProvider);
+	//			DatabaseController.modifyProviderTable(thisProvider);
 			}
 
 			ArrayList<Integer> pbIDs = new ArrayList<Integer>();
@@ -250,21 +250,21 @@ public class DirectoryController
 			{
 				pbIDs.add(loc.getID());
 			}
-			DatabaseController.initializeAllProviders();
-			for(Node n: DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
+	//		DatabaseController.initializeAllProviders();
+	//		for(Node n: DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
 			{
-				oldIDs.add(n.getID());
+		//		oldIDs.add(n.getID());
 			}
 			for(int i: pbIDs){
 				if(!oldIDs.contains(i))
 				{
-					DatabaseController.insertOffice(thisProvider.getID(), i);
+	//				DatabaseController.insertOffice(thisProvider.getID(), i);
 				}
 			}
 			for(int i: oldIDs){
 				if(!pbIDs.contains(i))
 				{
-					DatabaseController.removeOffice(thisProvider.getID(), i);
+	//				DatabaseController.removeOffice(thisProvider.getID(), i);
 				}
 			}
 
@@ -272,15 +272,15 @@ public class DirectoryController
 
 		for(Provider p: deleteProviderList)
 		{
-			DatabaseController.removeOfficeByProvider(p.getID());
-			DatabaseController.removeProvider(p.getID());
+	//		DatabaseController.removeOfficeByProvider(p.getID());
+	//		DatabaseController.removeProvider(p.getID());
 		}
 		for(Provider p: newProviderList)
 		{
 			System.out.println("Pls");
-			DatabaseController.insertProvider(p);
+	//		DatabaseController.insertProvider(p);
 			for(Node n: p.getLocations()){
-				DatabaseController.insertOffice(p.getID(), n.getID());
+	//			DatabaseController.insertOffice(p.getID(), n.getID());
 			}
 		}
 	}
