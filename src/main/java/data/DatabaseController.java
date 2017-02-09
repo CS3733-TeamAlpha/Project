@@ -1103,6 +1103,15 @@ public class DatabaseController
 		return null;
 	}
 
+	public static void insertProvider(Provider p)
+	{
+		int i = p.getID();
+		String fn = p.getfName();
+		String ln = p.getlName();
+		String tit = p.getTitle();
+		insertProvider(i, fn, ln, tit);
+	}
+
 	/**
 	 * Insert new provider into table
 	 */
@@ -1461,6 +1470,14 @@ public class DatabaseController
 		{
 			sqlExcept.printStackTrace();
 		}
+	}
+
+	public static void modifyProviderTable(Provider p){
+		int i = p.getID();
+		String fn = p.getfName();
+		String ln = p.getlName();
+		String tit = p.getTitle();
+		modifyProviderTable(i, fn, ln, tit);
 	}
 
 	/**
