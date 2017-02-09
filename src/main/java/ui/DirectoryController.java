@@ -2,6 +2,7 @@ package ui;
 
 import data.DatabaseController;
 import data.Provider;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -111,35 +112,52 @@ public class DirectoryController
 		title.setText(p.getTitle());
 		VBox newV = new VBox();
 		HBox newLocH = new HBox();
-		TextField inputID = new TextField();
+		////////////////////
+
+		ChoiceBox locationSelector = new ChoiceBox();
+		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		ArrayList<String> nodeNames = new ArrayList<String>();
+		for(Node n: nodes)
+		{
+			nodeNames.add(Integer.toString(n.getID())+":"+n.getData().get(0));
+		}
+		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
+
 		Button addBut = new Button("Add Location");
 		addBut.setOnAction(new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle(ActionEvent event)
 			{
-				if(DatabaseController.getNodeByID(Integer.parseInt(inputID.getText())) != null)
+				String s = locationSelector.getValue().toString();
+
+				int idIndex = s.indexOf(":");
+				s = s.substring(0, idIndex);
+
+				if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
 				{
-					Node n = DatabaseController.getNodeByID(Integer.parseInt(inputID.getText()));
-					p.addLocation(n);
-					HBox innerH = new HBox();
-					Label locL = new Label();
-					locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
-					Button xBut = new Button("X");
-					xBut.setOnAction(new EventHandler<ActionEvent>()
-					{
-						@Override
-						public void handle(ActionEvent event)
+						int nodeID = Integer.parseInt(s);
+
+						Node n = DatabaseController.getNodeByID(nodeID);
+						p.addLocation(n);
+						HBox innerH = new HBox();
+						Label locL = new Label();
+						locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
+						Button xBut = new Button("X");
+						xBut.setOnAction(new EventHandler<ActionEvent>()
 						{
-							((VBox) innerH.getParent()).getChildren().remove(innerH);
-						}
-					});
-					innerH.getChildren().addAll(locL, xBut);
-					newV.getChildren().add(innerH);
+							@Override
+							public void handle(ActionEvent event)
+							{
+								((VBox) innerH.getParent()).getChildren().remove(innerH);
+							}
+						});
+						innerH.getChildren().addAll(locL, xBut);
+						newV.getChildren().add(innerH);
 				}
 			}
 		});
-		newLocH.getChildren().addAll(inputID, addBut);
+		newLocH.getChildren().addAll(locationSelector, addBut);
 		newV.getChildren().add(newLocH);
 		for(Node n: p.getLocations())
 		{
