@@ -35,10 +35,6 @@ public class MapController
 	@FXML
 	private ScrollPane scroller;
 	@FXML
-	private TextField searchField;
-	@FXML
-	private Button searchButton;
-	@FXML
 	private Button directoryButton;
 	@FXML
 	private VBox roomInfo;
