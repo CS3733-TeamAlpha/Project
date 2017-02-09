@@ -1,11 +1,8 @@
 package ui;
 
 //import data.DatabaseController;
+
 import data.Provider;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -31,30 +28,33 @@ public class ProviderBox extends HBox
 	@FXML
 	private TextField lastNameField;
 	@FXML
-	private  TextField titlesField;
+	private TextField titlesField;
 	@FXML
 	private ChoiceBox locationSelector;
 	@FXML
 	private VBox locationsVBox;
 
 
-	public ProviderBox(){
+	public ProviderBox()
+	{
 		super();
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ProviderBox.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
-		try {
+		try
+		{
 			fxmlLoader.load();
-		} catch (IOException exception) {
+		} catch (IOException exception)
+		{
 			throw new RuntimeException(exception);
 		}
 
-	//	ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		//	ArrayList<Node> nodes = DatabaseController.getAllNodes();
 		ArrayList<String> nodeNames = new ArrayList<String>();
-	//	for(Node n: nodes){
-	//		nodeNames.add(n.getData().get(0));
-	//	}
-	//	locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
+		//	for(Node n: nodes){
+		//		nodeNames.add(n.getData().get(0));
+		//	}
+		//	locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 	}
 
 	//public ProviderBox(Provider p){
@@ -64,40 +64,46 @@ public class ProviderBox extends HBox
 	//}
 
 	@FXML
-	protected void addLocation(){
+	protected void addLocation()
+	{
 		String s = locationSelector.getValue().toString();  //might be broken
 		Node toAdd = null;
-	//	for(Node n: DatabaseController.getAllNodes()){
-	//		if(n.getData().get(0).equals(s)){
-	//			toAdd = n;
-	//		}
-	//	}
+		//	for(Node n: DatabaseController.getAllNodes()){
+		//		if(n.getData().get(0).equals(s)){
+		//			toAdd = n;
+		//		}
+		//	}
 		provider.addLocation(toAdd);
 		refreshBox();
 	}
 
-	public String getFirstName(){
+	public String getFirstName()
+	{
 		return firstNameField.getText();
 	}
 
-	public String getLastName(){
+	public String getLastName()
+	{
 		return lastNameField.getText();
 	}
 
-	public String getTitles(){
+	public String getTitles()
+	{
 		return titlesField.getText();
 	}
 
-	public void refreshBox(){
+	public void refreshBox()
+	{
 		firstNameField.setText(provider.getfName());
 		lastNameField.setText(provider.getlName());
 		titlesField.setText(provider.getTitle());
-		for(Node n:provider.getLocations()){
+		for (Node n : provider.getLocations())
+		{
 			HBox box = new HBox();
 			Label label = new Label(n.getData().get(0));
 			Button button = new Button("X");
-			box.getChildren().addAll(label,button);
-			locationsVBox.getChildren().add(0,box);
+			box.getChildren().addAll(label, button);
+			locationsVBox.getChildren().add(0, box);
 		}
 	}
 }

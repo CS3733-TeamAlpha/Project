@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -16,25 +15,8 @@ public class Main extends Application
 {
 	private static Stage stage;
 
-	@Override
-	public void start(Stage primaryStage) throws Exception
-	 {
-	 	//Font f = Font.loadFont(getClass().getResource("/fonts/GlacialIndifference-Regular.otf").toExternalForm());
-
-	 	Parent root = FXMLLoader.load(getClass().getResource("/fxml/Startup.fxml"));
-		stage = primaryStage;
-		primaryStage.setTitle("Faulkner Hospital Map");
-		Scene scene = new Scene(root, 1280, 720);
-		primaryStage.setScene(scene);
-		primaryStage.setResizable(false);
-
-		stage.getScene().getStylesheets().add(Accessibility.NORMAL_CSS);
-
-		primaryStage.show();
-	}
-
-
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		launch(args);
 	}
 
@@ -53,13 +35,29 @@ public class Main extends Application
 
 	public static void toggleHighContrast()
 	{
-		if(stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
+		if (stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
 		{
 			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
-		}
-		else
+		} else
 		{
 			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
 		}
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception
+	{
+		//Font f = Font.loadFont(getClass().getResource("/fonts/GlacialIndifference-Regular.otf").toExternalForm());
+
+		Parent root = FXMLLoader.load(getClass().getResource("/fxml/Startup.fxml"));
+		stage = primaryStage;
+		primaryStage.setTitle("Faulkner Hospital Map");
+		Scene scene = new Scene(root, 1280, 720);
+		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+
+		stage.getScene().getStylesheets().add(Accessibility.NORMAL_CSS);
+
+		primaryStage.show();
 	}
 }

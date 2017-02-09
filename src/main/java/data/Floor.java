@@ -5,43 +5,44 @@ package data;
  */
 public class Floor
 {
-    private int FloorID;
-    private String FloorName;
-    private int FloorLevel;
 
-    public Floor()
-    {
-    }
+	private int FloorID;
+	private String FloorName;
+	private int FloorLevel;
 
-    public Floor(int id, String name, int lvl)
-    {
-        FloorID = id;
-        FloorName = name;
-        FloorLevel = lvl;
-    }
+	public Floor()
+	{
+	}
 
-    public int getID()
-    {
-        return FloorID;
-    }
+	public Floor(int id, String name, int lvl)
+	{
+		FloorID = id;
+		FloorName = name;
+		FloorLevel = lvl;
+	}
 
-    public String getName()
-    {
-        return FloorName;
-    }
+	public int getID()
+	{
+		return FloorID;
+	}
 
-    public void setName(String n)
-    {
-        FloorName = n;
-    }
+	public String getName()
+	{
+		return FloorName;
+	}
 
-    public int getLevel()
-    {
-        return FloorLevel;
-    }
+	public void setName(String n)
+	{
+		FloorName = n;
+	}
 
-    public void setLevel(int l)
-    {
-        FloorLevel = l;
-    }
+	public int getLevel()
+	{
+		return FloorLevel;
+	}
+
+	public void setLevel(int l)
+	{
+		FloorLevel = l;
+	}
 }

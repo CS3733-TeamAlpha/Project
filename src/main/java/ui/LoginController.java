@@ -14,7 +14,9 @@ public class LoginController
 	@FXML
 	private TextField passwordField;
 
-	public LoginController(){}
+	public LoginController()
+	{
+	}
 
 	public void initialize()
 	{

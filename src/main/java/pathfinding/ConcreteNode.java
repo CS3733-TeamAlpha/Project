@@ -1,8 +1,9 @@
 package pathfinding;
 
-import java.util.Collection;
-import java.util.ArrayList;
 import data.Floor;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class ConcreteNode implements Node
 {
@@ -19,7 +20,7 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<Node>();
 	}
 
-	public ConcreteNode (int ID, ArrayList<String> newData, double newX, double newY, Floor flr)
+	public ConcreteNode(int ID, ArrayList<String> newData, double newX, double newY, Floor flr)
 	{
 		nodeID = ID;
 		data = newData;
@@ -79,27 +80,40 @@ public class ConcreteNode implements Node
 
 	public void removeNeighbor(Node oldNeighbor)
 	{
-		if (neighbors.contains(oldNeighbor)) {
+		if (neighbors.contains(oldNeighbor))
+		{
 			neighbors.remove(oldNeighbor);
 		}
 	}
 
-	public Floor getOnFloor(){ return onFloor; }
+	public Floor getOnFloor()
+	{
+		return onFloor;
+	}
 
-	public void setOnFloor(Floor flr){ onFloor = flr; }
+	public void setOnFloor(Floor flr)
+	{
+		onFloor = flr;
+	}
 
-	public int getID(){ return nodeID; }
+	public int getID()
+	{
+		return nodeID;
+	}
 
-	public ArrayList<String> getData(){ return data; }
+	public ArrayList<String> getData()
+	{
+		return data;
+	}
+
+	public void setData(ArrayList<String> newData)
+	{
+		data = newData;
+	}
 
 	public double getX()
 	{
 		return x;
-	}
-
-	public double getY()
-	{
-		return y;
 	}
 
 	public void setX(double newX)
@@ -107,10 +121,13 @@ public class ConcreteNode implements Node
 		x = newX;
 	}
 
+	public double getY()
+	{
+		return y;
+	}
+
 	public void setY(double newY)
 	{
 		y = newY;
 	}
-
-	public void setData(ArrayList<String> newData){ data = newData; }
 }
