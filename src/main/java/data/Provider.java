@@ -5,6 +5,9 @@ import pathfinding.Node;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Represents a service provider.
+ */
 public class Provider
 {
 

@@ -1,6 +1,6 @@
 package data;
 
-/*
+/**
  * Floor currently does nothing other than exist.
  */
 public class Floor
