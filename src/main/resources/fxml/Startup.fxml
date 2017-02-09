@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.StartupController">
+   <children>
+      <Pane prefHeight="303.0" prefWidth="1280.0" styleClass="bh-white">
+         <children>
+            <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/BWHlogo.gif" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Pane prefHeight="200.0" prefWidth="200.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1280.0">
+         <children>
+            <Button layoutX="477.0" layoutY="213.0" mnemonicParsing="false" onAction="#showMap" prefHeight="92.0" prefWidth="342.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="View Map">
+               <font>
+                  <Font size="43.0" />
+               </font>
+            </Button>
+            <Button layoutX="438.0" layoutY="346.0" mnemonicParsing="false" onAction="#showDirectory" prefHeight="103.0" prefWidth="420.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="Edit Directory">
+               <font>
+                  <Font size="47.0" />
+               </font>
+            </Button>
+            <Label layoutX="225.0" layoutY="92.0" text="Welcome to the Faulkner Hospital">
+               <font>
+                  <Font name="Glacial Indifference Regular" size="59.0" />
+               </font>
+            </Label>
+            <Button layoutX="1024.0" layoutY="548.0" mnemonicParsing="false" onAction="#showLogin" prefHeight="31.0" prefWidth="117.0" styleClass="bh-admin-button" text="Administrator">
+               <font>
+                  <Font name="Glacial Indifference Regular" size="13.0" />
+               </font></Button>
+            <Button layoutX="1149.0" layoutY="548.0" mnemonicParsing="false" onAction="#toggleHighContrast" prefHeight="31.0" prefWidth="117.0" text="High Contrast">
+               <styleClass>
+                  <String fx:value="bh-admin-button" />
+                  <String fx:value="bh-button" />
+               </styleClass>
+               <font>
+                  <Font name="Glacial Indifference Regular" size="13.0" />
+               </font>
+            </Button>
+            <Button layoutX="901.0" layoutY="548.0" mnemonicParsing="false" onAction="#resetData" prefHeight="31.0" prefWidth="117.0" styleClass="bh-admin-button" text="Reset Data">
+               <font>
+                  <Font name="Glacial Indifference Regular" size="13.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

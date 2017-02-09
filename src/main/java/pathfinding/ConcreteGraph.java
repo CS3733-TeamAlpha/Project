@@ -1,40 +1,100 @@
 package pathfinding;
 
-import java.util.Collection;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class ConcreteGraph implements Graph
-{
-	private PriorityQueue<ASTNode> openList;
-	private ArrayList<Node> closedList;
+public class ConcreteGraph implements Graph {
 
-	public ConcreteGraph(){};
+	/**
+	 * {@inheritDoc}
+	 * @implNote This implementation returns an ArrayList.
+	 * @// TODO: 2/6/17 Implement straight-shot optimization for traversing multiple floors
+	 */
+	public ArrayList<Node> findPath(Node start, Node end) {
+		if (start == null || end == null)
+			return null; //idiot check
 
-	public Collection<Node> findPath(Node start, Node end)
-	{
-		return null;
-	}
+		//Init: add the first node to the open list
+		ASTNode astStart = new ASTNode(start, 0);
+		ASTNode astEnd = new ASTNode(end, -1);
+		astStart.f = start.distance(end);
 
-	//This is the only class I bothered to fully implement, for now. Isn't it cute though?
-	private static class ASTNode implements Comparable<ASTNode>
-	{
-		public float f;
-		public float g;
-		public Node node;
+		PriorityQueue<ASTNode> openList = new PriorityQueue<ASTNode>();
+		ArrayList<Node> closedList = new ArrayList<Node>();
+		openList.add(astStart);
 
-		public ASTNode()
+		boolean complete = false;
+		while (openList.size() > 0 && !complete)
 		{
-			f = 0;
-			g = 0;
-			node = new ConcreteNode();
+			//Pop off the lowest f-val node from the open list
+			ASTNode curNode = openList.poll();
+
+			//Explore curNode's children
+			for (Node expTempNode : curNode.node.getNeighbors())
+			{
+				if (closedList.contains(expTempNode))
+					continue; //Don't explore nodes that have already been explored
+
+				//Check to see if we've found the end node yet
+				if (expTempNode == end)
+				{
+					complete = true;
+					astEnd.parent = curNode;
+					break;
+				}
+
+				ASTNode expNode = new ASTNode(expTempNode, curNode.g + 1.0);
+				expNode.f = expNode.g + expTempNode.distance(end); //Compute f value using g and h
+				expNode.parent = curNode;
+
+				//Try to add the newly found node to the list
+				boolean hasNode = false;
+				for (ASTNode node : openList)
+				{
+					if (node.node == expTempNode)
+					{
+						if (node.f > expNode.f)
+						{
+							openList.remove(node);
+							break; //There will only ever be one copy of the same none on the openlist
+						}
+						hasNode = true;
+						break;
+					}
+				}
+				if (!hasNode)
+					openList.offer(expNode);
+			}
+			closedList.add(curNode.node);
 		}
 
-		public int compareTo(ASTNode node)
-		{
-			if (f + g < node.f + node.g)
+		if (!complete)
+			return null;
+
+		//Backtrack from the end node, assembling an ordered list as we go
+		ArrayList<Node> path = new ArrayList<Node>();
+		for (ASTNode node = astEnd; node != null; node = node.parent)
+			path.add(node.node);
+		return path;
+	}
+
+	private static class ASTNode implements Comparable<ASTNode>
+	{
+		double f;
+		double g;
+		ASTNode parent;
+		Node node;
+
+		ASTNode(Node newNode, double newG) {
+			f = 0;
+			g = newG;
+			node = newNode;
+		}
+
+		public int compareTo(ASTNode node) {
+			if (f < node.f)
 				return -1;
-			if (f + g > node.f + node.g)
+			if (f > node.f)
 				return 1;
 			return 0;
 		}

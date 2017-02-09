@@ -1,0 +1,27 @@
+.root, .pane, .table-view .column-header-background, .table-view .filler, .text-field
+{
+    -fx-background-color: black;
+}
+
+.table-view .column-header
+{
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+}
+
+.text-field
+{
+    -fx-border-color: white;
+}
+
+.label, .text-field
+{
+    -fx-text-fill: white;
+}
+
+.button, .button.bh-button
+{
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-border-color: white;
+}

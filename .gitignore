@@ -6,3 +6,6 @@ build/
 *.lock
 *.swp
 .gradle/
+FHAlpha/
+derby.log
+TestFHAlpha/
