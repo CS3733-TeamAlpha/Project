@@ -43,8 +43,8 @@ public class DatabaseTest
 		ConcreteNode n001 = new ConcreteNode(001, new ArrayList<>(Arrays.asList("Room001", "room")), 1, 1, fl1);
 		ConcreteNode n002 = new ConcreteNode(002, new ArrayList<>(Arrays.asList("Room002", "room")), 2, 2, fl1);
 		ConcreteNode n003 = new ConcreteNode(003, new ArrayList<>(Arrays.asList("Room003", "room")), 3, 3, fl1);
-		Provider p111 = new Provider(111, "Donald", "Trump");
-		Provider p222 = new Provider(222, "Barack", "Obama");
+		Provider p111 = new Provider(111, "Donald", "Trump", "");
+		Provider p222 = new Provider(222, "Barack", "Obama", "");
 		n001.addNeighbor(n002);
 		n002.addNeighbor(n001);
 		p111.addLocation(n003);
@@ -70,8 +70,8 @@ public class DatabaseTest
 		DatabaseController.insertNode(001, "Room001", "room", 1, 1, 03);
 		DatabaseController.insertNode(002, "Room002", "room", 2, 2, 03);
 		DatabaseController.insertNode(003, "Room003", "room", 3, 3, 03);
-		DatabaseController.insertProvider(111, "Donald", "Trump");
-		DatabaseController.insertProvider(222, "Barack", "Obama");
+		DatabaseController.insertProvider(111, "Donald", "Trump", "");
+		DatabaseController.insertProvider(222, "Barack", "Obama", "");
 		DatabaseController.insertNeighbor(001, 002);
 		DatabaseController.insertNeighbor(002, 001);
 		DatabaseController.insertOffice(111, 003);

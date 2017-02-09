@@ -37,6 +37,14 @@ public class Provider
         return locations;
     }
 
+    public void removeLocation(Node locationNode)
+    {
+        if(locations.contains(locationNode))
+        {
+            locations.remove(locationNode);
+        }
+    }
+
     public void addLocations(Collection<Node> locationNodes)
     {
         locations.addAll(locationNodes);

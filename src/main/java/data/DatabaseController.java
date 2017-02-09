@@ -97,11 +97,11 @@ public class DatabaseController
 		insertFloor(11, "Belkin", 4);
 
 		//creates hard-coded values for all providers
-//		insertProvider(1, "Alqueza", " Arnold");
-//		insertProvider(2, "Altschul", " Nomee");
-//		insertProvider(3, "Andromalos", " Laura");
-//		insertProvider(4, "Angell", " Trevor");
-//		insertProvider(5, "Ariagno", " Meghan");
+		insertProvider(1, "Alqueza", " Arnold", "");
+		insertProvider(2, "Altschul", " Nomee", "");
+		insertProvider(3, "Andromalos", " Laura", "MD");
+		insertProvider(4, "Angell", " Trevor", "PhD");
+		insertProvider(5, "Ariagno", " Meghan", "LERP");
 //		insertProvider(6, "Ash", " Samuel");
 //		insertProvider(7, "Bachman", " William");
 //		insertProvider(8, "Balash", " Eva");
@@ -362,6 +362,12 @@ public class DatabaseController
 //		insertOffice(150, 5);
 //		insertOffice(197, 5);
 //		insertOffice(206, 5);
+		insertOffice(3, 5);
+
+		insertOffice(3, 3);
+
+		insertOffice(3, 2);
+		insertOffice(2, 3);
 
 		//inserts the hard-coded values for the ResidesIn table
 		insertResidesIn("Roslindale Pediatric Associates" , 6);
@@ -739,6 +745,44 @@ public class DatabaseController
 			stmt.close();
 
 			return node;
+		} catch (SQLException e)
+		{
+			//TODO: properly handle exceptions
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * generate a new provider for the directory editing tool
+	 * @param fname first name of provider
+	 * @param lname last name of provider
+	 * @param title title of provider
+	 * @return a new provider with the greatest id value
+	 */
+	public static Provider generateNewProvider(String fname, String lname, String title)
+	{
+		try
+		{
+			stmt = connection.createStatement();
+			ResultSet results = stmt.executeQuery("SELECT * FROM PROVIDER " +
+					"ORDER BY ProviderID");
+
+			int newID = -1;
+			while (results.next())
+			{
+				newID = results.getInt(1);
+			}
+			newID++;
+			String FirstName = fname;
+			String LastName = lname;
+			String Title = title;
+
+			Provider newProvider = new Provider(newID, FirstName, LastName, Title);
+			results.close();
+			stmt.close();
+
+			return newProvider;
 		} catch (SQLException e)
 		{
 			//TODO: properly handle exceptions
@@ -1494,7 +1538,7 @@ public class DatabaseController
 			stmt.executeUpdate("UPDATE Provider " +
 					"SET ProviderID = " + ID + ", " +
 					"FirstName = '" + fname + "', " +
-					"LastName = '" + lname + "' " +
+					"LastName = '" + lname + "', " +
 					"Title = '" + title + "' " +
 					"WHERE ProviderID = " + ID +
 					"");

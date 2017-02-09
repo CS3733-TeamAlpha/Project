@@ -2,9 +2,7 @@ package ui;
 
 import javafx.event.ActionEvent;
 
-/**
- * Created by Ari on 2/6/17.
- */
+
 public class StartupController
 {
 

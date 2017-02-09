@@ -39,6 +39,7 @@ public class ProviderBox extends HBox
 
 
 	public ProviderBox(){
+		super();
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ProviderBox.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
@@ -56,11 +57,11 @@ public class ProviderBox extends HBox
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 	}
 
-	public ProviderBox(Provider p){
-		this();
-		provider = p;
-		refreshBox();
-	}
+	//public ProviderBox(Provider p){
+	//	this();
+	//	provider = p;
+	//	refreshBox();
+	//}
 
 	@FXML
 	protected void addLocation(){
