@@ -1,7 +1,7 @@
 package ui;
 
 import javafx.event.ActionEvent;
-
+import data.DatabaseController;
 
 public class StartupController
 {
@@ -34,5 +34,9 @@ public class StartupController
 	{
 		Accessibility.toggleHighContrast();
 		Main.toggleHighContrast();
+	}
+
+	public void resetData(ActionEvent e){
+		DatabaseController.resetData();
 	}
 }

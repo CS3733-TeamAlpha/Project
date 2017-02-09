@@ -35,6 +35,115 @@ public class DatabaseController
 	{
 		createConnection();
 
+
+		//prints results of all tables defined
+		printResults(nodeTable);
+		printResults(floorTable);
+		printResults(providerTable);
+		printResults(servicesTable);
+		printOffice(officeTable);
+		printResidesIn(residesInTable);
+
+		//updateRefInt();
+
+		//******* NEW WORK ******
+		initializeAllNodes();
+	}
+
+	/**
+	 * reset all data in the database to match the hard-coded defaults
+	 */
+	public static void resetData()
+	{
+		try
+		{
+			String DB_URL = "jdbc:derby:FHAlpha;create=true";
+			Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+			//Get a connection
+			connection = DriverManager.getConnection(DB_URL);
+		} catch (Exception except)
+		{
+			except.printStackTrace();
+			//remove this piece
+			println("error here");
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Residesin");
+			System.out.println("Residesin table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Services");
+			System.out.println("Services table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Office");
+			System.out.println("Office table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Provider");
+			System.out.println("Provider table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Neighbor");
+			System.out.println("Neighbor table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Node");
+			System.out.println("Node table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		try
+		{
+			stmt = connection.createStatement();
+			// Drop the UnpaidOrder table.
+			stmt.execute("DROP TABLE Floor");
+			System.out.println("Floor table dropped.");
+		} catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
+
+
+
 		//initialize tables
 		initializeProviderTable();
 		initializeFloorTable();
@@ -374,19 +483,6 @@ public class DatabaseController
 		insertResidesIn("Eye Care Specialists" , 7);
 		insertResidesIn("Suburban Eye Specialists" , 7);
 		insertResidesIn("Obstetrics and Gynecology Associates", 5);
-
-		//prints results of all tables defined
-		printResults(nodeTable);
-		printResults(floorTable);
-		printResults(providerTable);
-		printResults(servicesTable);
-		printOffice(officeTable);
-		printResidesIn(residesInTable);
-
-		//updateRefInt();
-
-		//******* NEW WORK ******
-		initializeAllNodes();
 	}
 
 	public static void createTestConnection()
