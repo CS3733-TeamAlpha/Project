@@ -478,6 +478,45 @@ public class DatabaseController
 		insertOffice(3, 2);
 		insertOffice(2, 3);
 
+		insertNeighbor(10, 11);
+		11 : 10
+		11 : 2
+		11 : 9
+		11 : 21
+		2 : 11
+		9 : 11
+		21 : 11
+		21 : 8
+		21 : 20
+		8 : 21
+		20 : 21
+		20 : 19
+		19 : 20
+		19 : 3
+		19 : 18
+		3 : 19
+		18 : 19
+		18 : 1
+		18 : 4
+		18 : 17
+		1 : 18
+		4 : 18
+		17 : 18
+		17 : 16
+		16 : 17
+		16 : 15
+		15 : 16
+		15 : 14
+		14 : 15
+		14 : 13
+		14 : 7
+		13 : 14
+		13 : 6
+		6 : 13
+		7 : 14
+		7 : 5
+		5 : 7
+
 		//inserts the hard-coded values for the ResidesIn table
 		insertResidesIn("Roslindale Pediatric Associates" , 6);
 		insertResidesIn("Eye Care Specialists" , 7);
@@ -1374,6 +1413,7 @@ public class DatabaseController
 	 */
 	public static void insertNeighbor(int fromid, int toid)
 	{
+		System.out.println(fromid + " : " + toid);
 		try
 		{
 			stmt = connection.createStatement();
