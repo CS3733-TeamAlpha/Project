@@ -492,30 +492,30 @@ public class DatabaseController
 		20 : 21
 		20 : 19
 		19 : 20
-		insertNeighbor(19, 3);
-		insertNeighbor(19, 18);
-		insertNeighbor(3, 19);
-		insertNeighbor(18, 19);
-		insertNeighbor(18, 1);
-		insertNeighbor(18, 4);
-		insertNeighbor(18, 17);
-		insertNeighbor(1, 18);
-		insertNeighbor(4, 18);
-		insertNeighbor(17, 18);
-		insertNeighbor(17, 16);
-		insertNeighbor(16, 17);
-		insertNeighbor(16, 15);
-		insertNeighbor(15, 16);
-		insertNeighbor(15, 14);
-		insertNeighbor(14, 15);
-		insertNeighbor(14, 13);
-		insertNeighbor(14, 7);
-		insertNeighbor(13, 14);
-		insertNeighbor(13, 6);
-		insertNeighbor(6, 13);
-		insertNeighbor(7, 14);
-		insertNeighbor(7, 5);
-		insertNeighbor(5, 7);
+		19 : 3
+		19 : 18
+		3 : 19
+		18 : 19
+		18 : 1
+		18 : 4
+		18 : 17
+		1 : 18
+		4 : 18
+		17 : 18
+		17 : 16
+		16 : 17
+		16 : 15
+		15 : 16
+		15 : 14
+		14 : 15
+		14 : 13
+		14 : 7
+		13 : 14
+		13 : 6
+		6 : 13
+		7 : 14
+		7 : 5
+		5 : 7
 
 		//inserts the hard-coded values for the ResidesIn table
 		insertResidesIn("Roslindale Pediatric Associates" , 6);
