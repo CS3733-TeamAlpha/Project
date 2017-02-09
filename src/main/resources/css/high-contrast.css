@@ -19,7 +19,7 @@
     -fx-text-fill: white;
 }
 
-.button
+.button, .button.bh-button
 {
     -fx-background-color: black;
     -fx-text-fill: white;
