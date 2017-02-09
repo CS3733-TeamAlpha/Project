@@ -9,7 +9,6 @@ public interface Node
 {
 	/**
 	 * Determine whether the node contains some piece of data
-	 *
 	 * @param data Data as a string
 	 * @return True if the node contains given data, false otherwise.
 	 */
@@ -17,14 +16,12 @@ public interface Node
 
 	/**
 	 * Merge given data into current data
-	 *
 	 * @param newData Collection of data to merge in
 	 */
 	void addData(Collection<String> newData);
 
 	/**
 	 * Calculate distance to another node using simple pythagorean theorem
-	 *
 	 * @param node Second node
 	 * @return Distance
 	 */
@@ -32,7 +29,6 @@ public interface Node
 
 	/**
 	 * Calculate distance from node to given coordinates
-	 *
 	 * @param nodeX X coordinate
 	 * @param nodeY Y coordinate
 	 * @return Distance to node
@@ -41,28 +37,16 @@ public interface Node
 
 	//Documentation on getters/setters? NEVER!
 	Collection<Node> getNeighbors();
-
 	void addNeighbors(Collection<Node> newNeighbors);
-
 	void addNeighbor(Node newNeighbor);
-
 	void removeNeighbor(Node oldNeighbor);
-
 	Floor getOnFloor();
-
 	void setOnFloor(Floor flr);
-
 	int getID();
-
 	double getX();
-
-	void setX(double newX);
-
 	double getY();
-
+	void setX(double newX);
 	void setY(double newY);
-
 	ArrayList<String> getData();
-
 	void setData(ArrayList<String> newData);
 }

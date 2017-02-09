@@ -6,9 +6,7 @@ import javafx.event.ActionEvent;
 public class StartupController
 {
 
-	public StartupController()
-	{
-	}
+	public StartupController(){}
 
 	public void initialize()
 	{
@@ -16,20 +14,20 @@ public class StartupController
 
 	public void showMap()
 	{
-		//	DatabaseController.initializeAll();
+	//	DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/Map.fxml");
 	}
 
 	public void showDirectory()
 	{
-		//	DatabaseController.initializeAll();
+	//	DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/Directory.fxml");
 	}
 
 	public void showLogin()
 	{
 		//TODO: load up login instead of going straight to the editor tool
-		//	DatabaseController.initializeAll();
+	//	DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/MapEditorTool.fxml");
 
 	}
@@ -40,8 +38,7 @@ public class StartupController
 		Main.toggleHighContrast();
 	}
 
-	public void resetData(ActionEvent e)
-	{
-		//	DatabaseController.resetData();
+	public void resetData(ActionEvent e){
+	//	DatabaseController.resetData();
 	}
 }
