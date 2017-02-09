@@ -25,7 +25,7 @@ public class DirectoryController
 {
 
 	//link buttons to node objects
-	private HashMap<HBox, Provider> boxProviderLinks = new HashMap<HBox, Provider>();
+	private HashMap<Provider, HBox> boxProviderLinks = new HashMap<Provider, HBox>();
 
 	//arraylist of new Providers
 	private ArrayList<Provider> newProviderList = new ArrayList<Provider>();
@@ -106,10 +106,37 @@ public class DirectoryController
 		});
 		TextField fname = new TextField();
 		fname.setText(p.getfName());
+		fname.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event)
+			{
+				if(!modifiedProvidersList.contains(p)){
+					modifiedProvidersList.add(p);
+				}
+			}
+		});
 		TextField lname = new TextField();
 		lname.setText(p.getlName());
+		lname.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event)
+			{
+				if(!modifiedProvidersList.contains(p)){
+					modifiedProvidersList.add(p);
+				}
+			}
+		});
 		TextField title = new TextField();
 		title.setText(p.getTitle());
+		title.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event)
+			{
+				if(!modifiedProvidersList.contains(p)){
+					modifiedProvidersList.add(p);
+				}
+			}
+		});
 		VBox newV = new VBox();
 		HBox newLocH = new HBox();
 		////////////////////
@@ -150,6 +177,9 @@ public class DirectoryController
 							public void handle(ActionEvent event)
 							{
 								((VBox) innerH.getParent()).getChildren().remove(innerH);
+								if(!modifiedProvidersList.contains(p)){
+									modifiedProvidersList.add(p);
+								}
 							}
 						});
 						innerH.getChildren().addAll(locL, xBut);
@@ -172,13 +202,16 @@ public class DirectoryController
 				{
 					p.removeLocation(n);
 					((VBox) innerH.getParent()).getChildren().remove(innerH);
+					if(!modifiedProvidersList.contains(p)){
+						modifiedProvidersList.add(p);
+					}
 				}
 			});
 			innerH.getChildren().addAll(locL, xBut);
 			newV.getChildren().add(innerH);
 		}
 		newH.getChildren().addAll(deleteBut, fname, lname, title, newV);
-		boxProviderLinks.put(newH, p);
+		boxProviderLinks.put(p, newH);
 		//add button to scene
 		//TODO: set editingFloor to the correct panel name
 		scrollContents.getChildren().add(newH);
@@ -190,8 +223,9 @@ public class DirectoryController
 	}
 
 	public void pushChangesToDatabase(){
-		for(HBox hb: boxProviderLinks.keySet()){
-			Provider thisProvider = boxProviderLinks.get(hb);
+		for(Provider thisProvider: modifiedProvidersList){
+			HBox hb = boxProviderLinks.get(thisProvider);
+			//Provider thisProvider = boxProviderLinks.get(hb);
 
 			TextField tit = (TextField)hb.getChildren().get(1);
 			thisProvider.setfName(tit.getText());

@@ -10,26 +10,25 @@ public class StartupController
 
 	public void initialize()
 	{
-		DatabaseController.initializeAll();
 	}
 
 	public void showMap()
 	{
-		DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/Map.fxml");
+		DatabaseController.initializeAll();
 	}
 
 	public void showDirectory()
 	{
-		DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/Directory.fxml");
+		DatabaseController.initializeAll();
 	}
 
 	public void showLogin()
 	{
-		DatabaseController.initializeAll();
 		//TODO: load up login instead of going straight to the editor tool
 		Main.loadFXML("/fxml/MapEditorTool.fxml");
+		DatabaseController.initializeAll();
 
 	}
 
