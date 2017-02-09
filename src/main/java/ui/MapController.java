@@ -31,6 +31,8 @@ public class MapController
 	private Node kiosk;
 	boolean findingDirections = false;
 
+	private ArrayList<Line> currentPath = new ArrayList<Line>();
+
 	@FXML
 	private SplitPane roomviewSplit;
 	@FXML
@@ -88,6 +90,12 @@ public class MapController
 				System.out.println("No path found");
 			}else
 			{
+				if(currentPath.size() != 0){
+					for(Line l: currentPath){
+						((AnchorPane) l.getParent()).getChildren().remove(l);
+					}
+					currentPath.clear();
+				}
 				for (int i = 0; i < path.size()-1; i++)
 				{
 					Line line = new Line();
@@ -100,6 +108,7 @@ public class MapController
 					line.setStrokeWidth(10);
 					line.setStroke(Color.BLUE);
 					imgAnchor.getChildren().add(1,line);
+					currentPath.add(line);
 				}
 			}
 			findingDirections = false;

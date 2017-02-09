@@ -14,21 +14,21 @@ public class StartupController
 
 	public void showMap()
 	{
-		Main.loadFXML("/fxml/Map.fxml");
 		DatabaseController.initializeAll();
+		Main.loadFXML("/fxml/Map.fxml");
 	}
 
 	public void showDirectory()
 	{
-		Main.loadFXML("/fxml/Directory.fxml");
 		DatabaseController.initializeAll();
+		Main.loadFXML("/fxml/Directory.fxml");
 	}
 
 	public void showLogin()
 	{
 		//TODO: load up login instead of going straight to the editor tool
-		Main.loadFXML("/fxml/MapEditorTool.fxml");
 		DatabaseController.initializeAll();
+		Main.loadFXML("/fxml/MapEditorTool.fxml");
 
 	}
 
