@@ -479,19 +479,19 @@ public class DatabaseController
 		insertOffice(2, 3);
 
 		insertNeighbor(10, 11);
-		11 : 10
-		11 : 2
-		11 : 9
-		11 : 21
-		2 : 11
-		9 : 11
-		21 : 11
-		21 : 8
-		21 : 20
-		8 : 21
-		20 : 21
-		20 : 19
-		19 : 20
+		insertNeighbor(11, 10);
+		insertNeighbor(11, 2);
+		insertNeighbor(11, 9);
+		insertNeighbor(11, 21);
+		insertNeighbor(2, 11);
+		insertNeighbor(9, 11);
+		insertNeighbor(21, 11);
+		insertNeighbor(21, 8);
+		insertNeighbor(21, 20);
+		insertNeighbor(8, 21);
+		insertNeighbor(20, 21);
+		insertNeighbor(20, 19);
+		insertNeighbor(19, 20);
 		insertNeighbor(19, 3);
 		insertNeighbor(19, 18);
 		insertNeighbor(3, 19);
