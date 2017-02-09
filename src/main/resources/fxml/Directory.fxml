@@ -9,16 +9,15 @@
    <children>
       <ToolBar prefHeight="40.0" prefWidth="1280.0" styleClass="pane">
         <items>
-            <TextField fx:id="searchField" />
-          <Button mnemonicParsing="false" text="Search" translateX="-5.0" />
             <Button mnemonicParsing="false" onAction="#showMap" text="Map" translateX="30.0" />
             <Button mnemonicParsing="false" onAction="#showStartup" text="Done" translateX="80.0" />
         </items>
       </ToolBar>
       <TableView layoutY="39.0" prefHeight="680.0" prefWidth="1280.0" styleClass="pane">
         <columns>
-          <TableColumn fx:id="nameColumn" prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
+          <TableColumn fx:id="nameColumn" editable="false" prefWidth="477.0096846818924" text="Name" />
+          <TableColumn editable="false" minWidth="0.0" prefWidth="108.99030303955078" text="Type" />
+            <TableColumn editable="false" minWidth="0.0" prefWidth="128.944580078125" text="Go To" />
         </columns>
       </TableView>
    </children>
