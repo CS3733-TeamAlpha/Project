@@ -57,14 +57,22 @@ public class Database
 		try
 		{
 			statement.close();
-			DriverManager.getConnection("jdbc:derby:" + dbName + ";shutdown=true").close(); //Well that was quick!
+			Connection connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";shutdown=true");
+			connection.close(); //TODO: Can I just put this immediately after the above line?
 		} catch (SQLException e)
 		{
-			if (!e.getSQLState().equals("XJ015"))
+			if (!e.getSQLState().equals("XJ015") && !e.getSQLState().equals("08006")) //derby shutdowns always raise 08006 exceptions
 			{
 				System.out.println("Couldn't shutdown derby engine correctly!");
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	/*Misc getters and setters*/
+	public boolean isConnected()
+	{
+		return connected;
 	}
 }

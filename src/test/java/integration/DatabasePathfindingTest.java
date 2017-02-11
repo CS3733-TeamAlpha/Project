@@ -14,6 +14,8 @@ import java.util.ArrayList;
  * THIS IS AWFUL!
  * THERE HAS TO BE A BETTER WAY OF DOING INTEGRATION TESTS
  */
+
+/*
 public class DatabasePathfindingTest
 {
 	Graph graph;
@@ -125,4 +127,4 @@ public class DatabasePathfindingTest
 		assertNotNull(graph.findPath(dGridNodes[0][0], dGridNodes[9][9]));
 		assertEquals(19, graph.findPath(dGridNodes[0][0], dGridNodes[9][9]).size());
 	}
-}
+}*/
