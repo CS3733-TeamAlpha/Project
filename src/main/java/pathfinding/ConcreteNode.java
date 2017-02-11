@@ -12,8 +12,8 @@ public class ConcreteNode implements Node
 	private String id;
 	private String name;
 	private String building;
-	private double posX;
-	private double posY;
+	private double x;
+	private double y;
 	private int type; //TODO: Create a better type field, probably an enum
 	private int floor;
 
@@ -23,8 +23,8 @@ public class ConcreteNode implements Node
 		id = UUID.randomUUID().toString();
 		name = "noname";
 		building = "nobuilding";
-		posX = 0;
-		posY = 0;
+		x = 0;
+		y = 0;
 		type = 0;
 		floor = 1;
 	}
@@ -35,8 +35,8 @@ public class ConcreteNode implements Node
 		id = newID;
 		name = newName;
 		building = newBuilding;
-		posX = newPosX;
-		posY = newPosY;
+		x = newPosX;
+		y = newPosY;
 		type = newType;
 		floor = newFloor;
 	}
@@ -64,8 +64,22 @@ public class ConcreteNode implements Node
 	public double distance(double nodeX, double nodeY)
 	{
 
-		return Math.sqrt(Math.pow(posX - nodeX, 2) + Math.pow(posY - nodeY, 2));
+		return Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
 	}
+
+	@Override
+	public boolean equals(Node node)
+	{
+		return id.equals(node.getID()) &&
+				name.equals(node.getName()) &&
+				building.equals(node.getBuilding()) &&
+				x == node.getX() &&
+				y == node.getY() &&
+				type == node.getType() &&
+				floor == node.getFloor();
+	}
+
+	/*Getters and setters*/
 
 	@Override
 	public void addNeighbor(Node newNeighbor)
@@ -100,13 +114,13 @@ public class ConcreteNode implements Node
 	@Override
 	public void setX(double newX)
 	{
-		posX = newX;
+		x = newX;
 	}
 
 	@Override
 	public void setY(double newY)
 	{
-		posY = newY;
+		y = newY;
 	}
 
 	@Override
@@ -148,13 +162,13 @@ public class ConcreteNode implements Node
 	@Override
 	public double getX()
 	{
-		return posX;
+		return x;
 	}
 
 	@Override
 	public double getY()
 	{
-		return posY;
+		return y;
 	}
 
 	@Override

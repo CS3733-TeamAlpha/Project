@@ -23,6 +23,8 @@ public interface Node
 	 */
 	double distance(double nodeX, double nodeY);
 
+	boolean equals(Node node);
+
 	//Documentation on getters/setters? NEVER!
 	void addNeighbor(Node newNeighbor);
 	void removeNeighbor(Node oldNeighbor);
