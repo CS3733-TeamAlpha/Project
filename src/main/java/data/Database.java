@@ -69,8 +69,20 @@ public class Database
 		}
 	}
 
+	/**
+	 * Initializes all tables, but first checks if the database already has those tables. If so, it skips out immediately.
+	 */
+	private void initTables()
+	{
+
+	}
 
 	/*Misc getters and setters*/
+
+	/**
+	 * Returns whether this database is connected or not.
+	 * @return Connection status.
+	 */
 	public boolean isConnected()
 	{
 		return connected;

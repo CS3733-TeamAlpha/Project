@@ -26,7 +26,7 @@ public class DatabaseTest
 		database.disconnect();
 
 		//Delete the test database, stored in a folder $TEST_DB
-		deleteFolder(TEST_DB);
+		//deleteFolder(TEST_DB);
 	}
 
 	/**
