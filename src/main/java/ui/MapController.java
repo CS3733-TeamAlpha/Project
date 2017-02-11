@@ -120,8 +120,8 @@ public class MapController
 			roomviewSplit.setDividerPositions(.75);
 			roomInfoShown = true;
 		}
-		roomName.setText(n.getData().get(0));
-		roomDescription.setText(n.getData().get(1));
+		//roomName.setText(n.getData().get(0));
+		//roomDescription.setText(n.getData().get(1));
 	}
 
 	public void hideRoomInfo()

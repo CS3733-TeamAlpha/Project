@@ -347,8 +347,8 @@ public class MapEditorToolController
 		else
 		{
 			//modify text fields to display node info
-			nameField.setText(linkedNode.getData().get(0));
-			typeField.setText(linkedNode.getData().get(1));
+			//nameField.setText(linkedNode.getData().get(0));
+			//typeField.setText(linkedNode.getData().get(1));
 			xField.setText(Double.toString(linkedNode.getX()));
 			yField.setText(Double.toString(linkedNode.getY()));
 
@@ -510,7 +510,7 @@ public class MapEditorToolController
 				ArrayList<String> data = new ArrayList<String>();
 				data.add(nameField.getText());
 				data.add(typeField.getText());
-				currentNode.setData(data);
+				//currentNode.setData(data);
 				//track that this node has been modified
 				if (!modifiedNodesList.contains(currentNode))
 				{
