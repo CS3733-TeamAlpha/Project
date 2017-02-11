@@ -1,116 +1,171 @@
 package pathfinding;
 
+import com.sun.corba.se.impl.logging.POASystemException;
+
 import java.util.Collection;
 import java.util.ArrayList;
-import data.Floor;
+import java.util.UUID;
 
 public class ConcreteNode implements Node
 {
-	private ArrayList<String> data; // name, type
 	private ArrayList<Node> neighbors;
-	private Floor onFloor;
-	private double x;
-	private double y;
-	private String nodeID; //unique
+	private String id;
+	private String name;
+	private String building;
+	private double posX;
+	private double posY;
+	private int type; //TODO: Create a better type field, probably an enum
+	private int floor;
 
-	public ConcreteNode()
+	ConcreteNode()
 	{
-		data = new ArrayList<String>();
-		neighbors = new ArrayList<Node>();
+		neighbors = new ArrayList<>();
+		id = UUID.randomUUID().toString();
+		name = "noname";
+		building = "nobuilding";
+		posX = 0;
+		posY = 0;
+		type = 0;
+		floor = 1;
 	}
 
-	public ConcreteNode (String ID, ArrayList<String> newData, double newX, double newY, Floor flr)
+	ConcreteNode(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
 	{
-		nodeID = ID;
-		data = newData;
-		neighbors = new ArrayList<Node>();
-		x = newX;
-		y = newY;
-		onFloor = flr;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean containsData(String data)
-	{
-		return this.data.contains(data);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addData(Collection<String> newData)
-	{
-		data.addAll(newData);
+		neighbors = new ArrayList<>();
+		id = newID;
+		name = newName;
+		building = newBuilding;
+		posX = newPosX;
+		posY = newPosY;
+		type = newType;
+		floor = newFloor;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Calculate distance to another node using simple pythagorean theorem
+	 *
+	 * @param node Second node
+	 * @return Distance
 	 */
+	@Override
 	public double distance(Node node)
 	{
-		return Math.sqrt(Math.pow(x - node.getX(), 2) + Math.pow(y - node.getY(), 2));
+		return distance(node.getX(), node.getY());
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Calculate distance from node to given coordinates
+	 *
+	 * @param nodeX X coordinate
+	 * @param nodeY Y coordinate
+	 * @return Distance to node
 	 */
+	@Override
 	public double distance(double nodeX, double nodeY)
 	{
-		return Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
+
+		return Math.sqrt(Math.pow(posX - nodeX, 2) + Math.pow(posY - nodeY, 2));
 	}
 
-
-	public Collection<Node> getNeighbors()
-	{
-		return neighbors;
-	}
-
-	public void addNeighbors(Collection<Node> newNeighbors)
-	{
-		neighbors.addAll(newNeighbors);
-	}
-
+	@Override
 	public void addNeighbor(Node newNeighbor)
 	{
 		neighbors.add(newNeighbor);
 	}
 
+	@Override
 	public void removeNeighbor(Node oldNeighbor)
 	{
-		if (neighbors.contains(oldNeighbor)) {
-			neighbors.remove(oldNeighbor);
-		}
+		neighbors.remove(oldNeighbor);
 	}
 
-	public Floor getOnFloor(){ return onFloor; }
-
-	public void setOnFloor(Floor flr){ onFloor = flr; }
-
-	public String getID(){ return nodeID; }
-
-	public ArrayList<String> getData(){ return data; }
-
-	public double getX()
+	@Override
+	public void setID(String newID)
 	{
-		return x;
+		id = newID;
 	}
 
-	public double getY()
+	@Override
+	public void setName(String newName)
 	{
-		return y;
+		name = newName;
 	}
 
+	@Override
+	public void setBuilding(String newBuilding)
+	{
+		building = newBuilding;
+	}
+
+	@Override
 	public void setX(double newX)
 	{
-		x = newX;
+		posX = newX;
 	}
 
+	@Override
 	public void setY(double newY)
 	{
-		y = newY;
+		posY = newY;
 	}
 
-	public void setData(ArrayList<String> newData){ data = newData; }
+	@Override
+	public void setType(int newType)
+	{
+		type = newType;
+	}
+
+	@Override
+	public void setFloor(int newFloor)
+	{
+		floor = newFloor;
+	}
+
+	@Override
+	public Collection<Node> getNeighbors()
+	{
+		return neighbors;
+	}
+
+	@Override
+	public String getID()
+	{
+		return id;
+	}
+
+	@Override
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
+	public String getBuilding()
+	{
+		return building;
+	}
+
+	@Override
+	public double getX()
+	{
+		return posX;
+	}
+
+	@Override
+	public double getY()
+	{
+		return posY;
+	}
+
+	@Override
+	public int getType()
+	{
+		return type;
+	}
+
+	@Override
+	public int getFloor()
+	{
+		return floor;
+	}
 }

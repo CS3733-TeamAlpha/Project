@@ -7,18 +7,6 @@ import java.util.Collection;
 
 public interface Node
 {
-	/**
-	 * Determine whether the node contains some piece of data
-	 * @param data Data as a string
-	 * @return True if the node contains given data, false otherwise.
-	 */
-	boolean containsData(String data);
-
-	/**
-	 * Merge given data into current data
-	 * @param newData Collection of data to merge in
-	 */
-	void addData(Collection<String> newData);
 
 	/**
 	 * Calculate distance to another node using simple pythagorean theorem
@@ -36,17 +24,22 @@ public interface Node
 	double distance(double nodeX, double nodeY);
 
 	//Documentation on getters/setters? NEVER!
-	Collection<Node> getNeighbors();
-	void addNeighbors(Collection<Node> newNeighbors);
 	void addNeighbor(Node newNeighbor);
 	void removeNeighbor(Node oldNeighbor);
-	Floor getOnFloor();
-	void setOnFloor(Floor flr);
-	String getID();
-	double getX();
-	double getY();
+	void setID(String newID);
+	void setName(String newName);
+	void setBuilding(String newBuilding);
 	void setX(double newX);
 	void setY(double newY);
-	ArrayList<String> getData();
-	void setData(ArrayList<String> newData);
+	void setType(int newType);
+	void setFloor(int newFloor);
+
+	Collection<Node> getNeighbors();
+	String getID();
+	String getName();
+	String getBuilding();
+	double getX();
+	double getY();
+	int getType();
+	int getFloor();
 }
