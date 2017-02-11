@@ -1,16 +1,22 @@
 package data;
 
+import org.apache.derby.tools.ij;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.*;
 
 public class Database
 {
 	//Constants
-	private static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+	private static final String DB_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 
 	private String dbName;
 	private boolean connected;
-
 	private Statement statement;
+	private Connection connection;
 
 	/**
 	 * Construct a new database object that will connect to the named database and immediately initiate the connection
@@ -21,7 +27,10 @@ public class Database
 		dbName = name;
 		connected = false;
 		statement = null;
+		connection = null;
 		connect();
+		if (connected)
+			initTables();
 	}
 
 	/**
@@ -33,7 +42,8 @@ public class Database
 	{
 		try
 		{
-			statement = DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true").createStatement();
+			connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
+			statement = connection.createStatement();
 			connected = true;
 		} catch (SQLException e)
 		{
@@ -57,8 +67,9 @@ public class Database
 		try
 		{
 			statement.close();
-			Connection connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";shutdown=true");
-			connection.close(); //TODO: Can I just put this immediately after the above line?
+			connection.close();
+			DriverManager.getConnection("jdbc:derby:" + dbName + ";shutdown=true").close();
+
 		} catch (SQLException e)
 		{
 			if (!e.getSQLState().equals("XJ015") && !e.getSQLState().equals("08006")) //derby shutdowns always raise 08006 exceptions
@@ -70,10 +81,28 @@ public class Database
 	}
 
 	/**
-	 * Initializes all tables, but first checks if the database already has those tables. If so, it skips out immediately.
+	 * Initializes tables using /db/DBCreate.sql file.
 	 */
 	private void initTables()
 	{
+		try
+		{
+			//http://apache-database.10148.n7.nabble.com/run-script-from-java-w-ij-td100234.html
+			ij.runScript(connection, getClass().getResource(DB_CREATE_SQL).openStream(), "UTF-8", new OutputStream()
+			{
+				@Override
+				public void write(int i) throws IOException
+				{
+					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
+					//to begin with though...
+				}
+			}, "UTF-8");
+		} catch (IOException e)
+		{
+			System.out.println("Couldn't find database creation script... that's an error.");
+			e.printStackTrace();
+		}
+
 
 	}
 
