@@ -42,7 +42,7 @@ public interface Node
 	void removeNeighbor(Node oldNeighbor);
 	Floor getOnFloor();
 	void setOnFloor(Floor flr);
-	int getID();
+	String getID();
 	double getX();
 	double getY();
 	void setX(double newX);

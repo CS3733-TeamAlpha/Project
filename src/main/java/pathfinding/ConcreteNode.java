@@ -11,7 +11,7 @@ public class ConcreteNode implements Node
 	private Floor onFloor;
 	private double x;
 	private double y;
-	private int nodeID; //unique
+	private String nodeID; //unique
 
 	public ConcreteNode()
 	{
@@ -19,7 +19,7 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<Node>();
 	}
 
-	public ConcreteNode (int ID, ArrayList<String> newData, double newX, double newY, Floor flr)
+	public ConcreteNode (String ID, ArrayList<String> newData, double newX, double newY, Floor flr)
 	{
 		nodeID = ID;
 		data = newData;
@@ -88,7 +88,7 @@ public class ConcreteNode implements Node
 
 	public void setOnFloor(Floor flr){ onFloor = flr; }
 
-	public int getID(){ return nodeID; }
+	public String getID(){ return nodeID; }
 
 	public ArrayList<String> getData(){ return data; }
 

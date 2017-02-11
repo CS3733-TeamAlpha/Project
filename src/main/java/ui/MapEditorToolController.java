@@ -287,7 +287,7 @@ public class MapEditorToolController
 	private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid)
 	{
 		//add 1 to greatest node ID value, which should be last item in the list
-		int newID = newNodesList.get(newNodesList.size() - 1).getID() + 1;
+		String newID = newNodesList.get(newNodesList.size() - 1).getID() + 1; //Adding one to a string... ha, ha, ha. TODO: BURN THIS TO HELL
 
 		//initialize data
 		ArrayList<String> data = new ArrayList<String>();

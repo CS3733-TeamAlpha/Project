@@ -243,8 +243,8 @@ public class DirectoryController
 	//			DatabaseController.modifyProviderTable(thisProvider);
 			}
 
-			ArrayList<Integer> pbIDs = new ArrayList<Integer>();
-			ArrayList<Integer> oldIDs = new ArrayList<Integer>();
+			ArrayList<String> pbIDs = new ArrayList<String>();
+			ArrayList<String> oldIDs = new ArrayList<String>();
 
 			for(Node loc: thisProvider.getLocations())
 			{
@@ -255,13 +255,13 @@ public class DirectoryController
 			{
 		//		oldIDs.add(n.getID());
 			}
-			for(int i: pbIDs){
+			for(String i: pbIDs){
 				if(!oldIDs.contains(i))
 				{
 	//				DatabaseController.insertOffice(thisProvider.getID(), i);
 				}
 			}
-			for(int i: oldIDs){
+			for(String i: oldIDs){
 				if(!pbIDs.contains(i))
 				{
 	//				DatabaseController.removeOffice(thisProvider.getID(), i);
