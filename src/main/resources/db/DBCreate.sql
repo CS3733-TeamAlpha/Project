@@ -3,36 +3,46 @@ CREATE TABLE Nodes
   node_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   posX DOUBLE NOT NULL,
   posY DOUBLE NOT NULL,
-  type INTEGER,
+  type INTEGER, --can be an enum in java?
   floor INTEGER NOT NULL,
-  building VARCHAR(128) NOT NULL,
+  building VARCHAR(36) NOT NULL,
   name VARCHAR(128)
 );
 
-CREATE TABLE Edges --todo: investigate the array type...
+CREATE TABLE Edges
 (
   src VARCHAR(36) NOT NULL,
   dst VARCHAR(36) NOT NULL,
   FOREIGN KEY (src) REFERENCES Nodes(node_uuid) ON DELETE CASCADE,
-  CONSTRAINT UNIQ_EDGE UNIQUE(src,dst) --prevents duplicate edges; thanks, stackoverflow!
+  CONSTRAINT UNIQ_EDGE UNIQUE(src,dst)
 );
 
-CREATE TABLE Services
+CREATE TABLE Services --Shops, cafes, etc. What is this, a mall?
 (
   node VARCHAR(36) NOT NULL,
   name VARCHAR(128) NOT NULL,
-  FOREIGN KEY (node) REFERENCES Nodes(node_uuid) ON DELETE CASCADE
+  FOREIGN KEY (node) REFERENCES Nodes(node_uuid) ON DELETE CASCADE --services and nodes have 1-1 relationship
 );
+
 CREATE TABLE Providers
 (
-  node VARCHAR(36) NOT NULL,
-  name VARCHAR(128) NOT NULL,
-  FOREIGN KEY (node) REFERENCES Nodes (node_uuid) ON DELETE CASCADE
+  provider_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
+  name VARCHAR(128) NOT NULL --If your name is bigger than 128 chars, you need a shorter name
 );
 
-CREATE TABLE Offices
+CREATE TABLE DoctorOffices --Links between doctors and their offices.
 (
-  node VARCHAR(36) NOT NULL,
-  name VARCHAR(256) NOT NULL, --title information should go in here!
-  FOREIGN KEY (node) REFERENCES Nodes(node_uuid) ON DELETE CASCADE
+  provider_uuid VARCHAR(36),
+  node_uuid VARCHAR(36),
+  FOREIGN KEY (node_uuid) REFERENCES Nodes(node_uuid) ON DELETE CASCADE,              --Delete this doctor's office if the office node is deleted
+  FOREIGN KEY (provider_uuid) REFERENCES Providers(provider_uuid) ON DELETE CASCADE,  --Delete dangling provider connections if the provider is deleted
+  CONSTRAINT UNIQ_OFFICE UNIQUE(provider_uuid, node_uuid)
 );
+
+CREATE TABLE Buildings
+(
+  building_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
+  name VARCHAR(128)
+);
+
+ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE --Delete all nodes in the building if the building gets deleted
