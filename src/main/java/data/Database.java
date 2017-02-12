@@ -142,7 +142,7 @@ public class Database
 		{
 			//Create prepared statements.
 			//TODO: Factor out commonly used queries into reusable private fields.
-			checkExist = connection.prepareStatement("SELECT * FROM Nodes WHERE NODE_UUID=?");
+			checkExist = connection.prepareStatement("SELECT node_uuid FROM Nodes WHERE NODE_UUID=?");
 			insertNode = connection.prepareStatement("INSERT INTO Nodes VALUES(?, ?, ?, ?, ?, ?, ?)");
 			insertEdge = connection.prepareStatement("INSERT INTO Edges VALUES(?, ?)");
 			deleteFrom = connection.prepareStatement("DELETE FROM Nodes WHERE node_uuid=?");
@@ -207,15 +207,15 @@ public class Database
 					results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
 
 			//Grab the neighbors off the edges table and make the appropriate links
-			results = statement.executeQuery("SELECT * FROM Edges WHERE src='" + ret.getID() + "'");
+			results = statement.executeQuery("SELECT dst FROM Edges WHERE src='" + ret.getID() + "'");
 			while (results.next())
 			{
-				if (nodeCache.containsKey(results.getString(2)))
-					ret.addNeighbor(nodeCache.get(results.getString(2)));
+				if (nodeCache.containsKey(results.getString(1)))
+					ret.addNeighbor(nodeCache.get(results.getString(1)));
 			}
 
 			//Now get links heading to this node
-			results = statement.executeQuery("SELECT * FROM Edges WHERE dst='" + ret.getID() + "'");
+			results = statement.executeQuery("SELECT src FROM Edges WHERE dst='" + ret.getID() + "'");
 			while (results.next())
 			{
 				if (nodeCache.containsKey(results.getString(1)))
