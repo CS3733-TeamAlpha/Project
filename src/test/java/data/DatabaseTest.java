@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import pathfinding.*;
+import sun.awt.AWTIcon32_java_icon16_png;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -202,4 +204,29 @@ public class DatabaseTest
 		database.deleteBuilding(uuid);
 		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1701).size());
 	}
+
+	@Test
+	public void testInsertEdge()
+	{
+		//Create a pair of unlinked nodes, put them in the database. Create a 1->2 edge between them, insert the edge,
+		//shutdown the database, restart it, and grab the two nodes out again. Verify that they're still connected.
+		Node node1 = new ConcreteNode();
+		Node node2 = new ConcreteNode();
+		database.insertNode(node1);
+		database.insertNode(node2);
+		node1.addNeighbor(node2);
+
+		database.updateEdges(node1);
+		database.disconnect(); //Clears the node cache
+		database.connect();
+
+		Node testNode1 = database.getNodeByUUID(node1.getID());
+		Node testNode2 = database.getNodeByUUID(node2.getID());
+		assertTrue(testNode1.getNeighbors().contains(testNode2));
+
+		//Clean up
+		database.deleteNodeByUUID(testNode1.getID());
+		database.deleteNodeByUUID(testNode2.getID());
+	}
+
 }

@@ -87,6 +87,7 @@ public class Database
 			return; //Nothing to see here, move along...
 
 		connected = false;
+		nodeCache.clear();
 		try
 		{
 			statement.close();
@@ -181,6 +182,33 @@ public class Database
 		} catch (SQLException e)
 		{
 			System.out.println("Error inserting node into table 'Nodes'!");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Updates a node's edges as necessary.
+	 * @param node Node whose edges should be updated.
+	 */
+	public void updateEdges(Node node)
+	{
+		try
+		{
+			PreparedStatement delOld = connection.prepareStatement("DELETE FROM Edges WHERE src=?");
+			delOld.setString(1, node.getID());
+			delOld.execute();
+
+			PreparedStatement insNbr = connection.prepareStatement("INSERT INTO Edges VALUES(?, ?)");
+			insNbr.setString(1, node.getID());
+			for (Node nbr : node.getNeighbors())
+			{
+				insNbr.setString(2, nbr.getID());
+				insNbr.execute();
+			}
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to update a node's edges!");
 			e.printStackTrace();
 		}
 	}
