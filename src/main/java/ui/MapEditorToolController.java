@@ -12,13 +12,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
+import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import data.*;
@@ -57,20 +57,31 @@ public class MapEditorToolController
 	// to the database (DatabaseController.modifyXTable)
 	private ArrayList<Node> modifiedNodesList = new ArrayList<Node>();
 
+	//constants to be used for drawing radial contextmenu
+	double CONTEXTWIDTH = 60.0;
+	double CONTEXTRAD = 90.0;
+	Group CONTEXTMENU = new Group();
+	Arc SELECTIONWEDGE = new Arc();
+	int CONTEXTSELECTION = -1; //0 new node, 1 ?, 2 ?, 3 ?
+
+
 	//define widths for circles/lines that the canvas will draw
 	double CIRCLEWIDTH = 13.0;
-	double LINEWIDTH = 3.5;
+	double LINEWIDTH = 2.5;
 
 	//X and Y offsets, for button placement.
 	//TODO: fine tune offsets to make button placement visuals better
 	private double XOFFSET = CIRCLEWIDTH/2;
 	private double YOFFSET = CIRCLEWIDTH/2;
 
+
+	//TODO: ...make this a state machine and use switch case?
 	private boolean addingNeighbor = false; //currently adding a neighbor?
 	private boolean removingNeighbor = false; //currently removing a neighbor?
 	private boolean makingNew = false; //currently making a new node?
 	private boolean modifyingLocation = false; //currently moving a node?
 	private boolean showingDetails = false;
+	private boolean showingAddHereContext = false; //currently showing contextmenu for adding new node
 
 	private int FLOORID = 3; //Default floor id for minimal application
 
@@ -112,13 +123,82 @@ public class MapEditorToolController
 		canvas = new Canvas(2200, 1300);
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent e){
-				addNodeHere(e);
+				clickFloorImage(e);
 			}
 		});
 		gc = canvas.getGraphicsContext2D();
 		editingFloor.getChildren().add(1, canvas);
+
+		//TODO: setup node context menu?
+		//TODO: node contextmenu options should different depending on type of node?
 	}
 
+	/**
+	 * Set up all initial settings for the context menu.
+	 * XY position will be initialized based on mouse position
+	 * @param x x coord for center of the radial context menu
+	 * @param y y coord same as above
+	 */
+	private void setupContextMenu(double x, double y)
+	{
+		CONTEXTMENU.getChildren().clear();
+		//set xy to compare with mouse position later
+		CONTEXTMENU.setLayoutX(x);
+		CONTEXTMENU.setLayoutY(y);
+
+		Arc radialMenu = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 360);
+		radialMenu.setType(ArcType.OPEN);
+		radialMenu.setStrokeWidth(CONTEXTWIDTH);
+		radialMenu.setStroke(Color.GRAY);
+		radialMenu.setStrokeType(StrokeType.INSIDE);
+		radialMenu.setFill(null);
+		radialMenu.setOpacity(0.5);
+
+		//arc wedge will be used to indicate current selection
+		SELECTIONWEDGE = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 0);
+		SELECTIONWEDGE.setType(ArcType.ROUND);
+		SELECTIONWEDGE.setStrokeWidth(CONTEXTWIDTH);
+		SELECTIONWEDGE.setStroke(Color.BLUE);
+		SELECTIONWEDGE.setStrokeType(StrokeType.INSIDE);
+		SELECTIONWEDGE.setFill(null);
+		SELECTIONWEDGE.setOpacity(0.9);
+
+		//draw four lines for each section of the menu
+		Line split1 = new Line((CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
+				(CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
+				(CONTEXTRAD/Math.sqrt(2)), (CONTEXTRAD/Math.sqrt(2)));
+		split1.setStrokeWidth(2);
+		Line split2 = new Line((CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
+				-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
+				(CONTEXTRAD/Math.sqrt(2)), -(CONTEXTRAD/Math.sqrt(2)));
+		split2.setStrokeWidth(2);
+		Line split3 = new Line(-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
+				(CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
+				-(CONTEXTRAD/Math.sqrt(2)), (CONTEXTRAD/Math.sqrt(2)));
+		split3.setStrokeWidth(2);
+		Line split4 = new Line(-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
+				-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
+				-(CONTEXTRAD/Math.sqrt(2)), -(CONTEXTRAD/Math.sqrt(2)));
+		split4.setStrokeWidth(2);
+
+		//TODO: image for a node instead of circle?
+		//Radius of circle is 13px as per css.
+		Circle newHallway = new Circle(0, -CONTEXTRAD+CONTEXTWIDTH/2, 13);
+		//TODO: decide on new node color
+		newHallway.setFill(Color.GREENYELLOW);
+
+		//TODO: addAll and keep the ordering i want? or just keep as is
+		CONTEXTMENU.getChildren().add(SELECTIONWEDGE);
+		CONTEXTMENU.getChildren().add(radialMenu);
+		CONTEXTMENU.getChildren().add(split1);
+		CONTEXTMENU.getChildren().add(split2);
+		CONTEXTMENU.getChildren().add(split3);
+		CONTEXTMENU.getChildren().add(split4);
+		CONTEXTMENU.getChildren().add(newHallway);
+	}
+
+	@FXML
+	private ScrollPane mainScroll;
 
 	@FXML
 	private AnchorPane editingFloor;
@@ -160,58 +240,13 @@ public class MapEditorToolController
 	 * or move an existing node to the clicked location.
 	 * Choose which event to do based on makingNew or modifyingLocation bool
 	 */
-	void addNodeHere(MouseEvent e)
+	void clickFloorImage(MouseEvent e)
 	{
 		if (e.isStillSincePress())
 		{
 			if (makingNew) //making a new button/node
 			{
-				Node newNode = null;
-				if (newNodesList.size() == 0)
-				{
-					//if we haven't made any new nodes yet, call databasecontroller so that
-					//we have a baseline nodeID to start with.
-					//This nodeID is going the be the greatest int nodeID in the existing nodes
-					//IMPORTANT: this doesn't actually add the new node to the database tables
-					newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-				}
-				else
-				{
-					//otherwise use our own function to generate a new node.
-					newNode = editorGenerateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-				}
-				newNodesList.add(newNode);
-				//make a new button to associate with the node
-				Button nodeB = new Button();
-				nodeB.setStyle(
-					"-fx-background-radius: 5em; " +
-							"-fx-min-width: "+CIRCLEWIDTH+"px; " +
-							"-fx-min-height: "+CIRCLEWIDTH+"px; " +
-							"-fx-max-width: "+CIRCLEWIDTH+"px; " +
-							"-fx-max-height: "+CIRCLEWIDTH+"px; " +
-							"-fx-background-color: #00ff00"
-				);
-				nodeB.setLayoutX(e.getX() - XOFFSET);
-				nodeB.setLayoutY(e.getY() - YOFFSET);
-
-				//on button click show node details on the righthand panel
-				nodeB.setOnAction(new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent event)
-					{
-						showNodeDetails(nodeB);
-					}
-				});
-				nodeButtonLinks.put(nodeB, newNode);
-
-				//add the new button to the scene
-				editingFloor.getChildren().add(1, nodeB);
-
-				//modify bool and change button text
-				makingNew = false;
-				//change new node button text back to original
-				newNodeButton.setText("Add a New Node");
+				createNewNode(e);
 			}
 			else if (modifyingLocation) //modifying the location of an existing node
 			{
@@ -265,6 +300,155 @@ public class MapEditorToolController
 
 	}
 
+	/**
+	 * Create a new node at a mouse location
+	 * @param e The mouse event that will be used to determine location
+	 */
+	public void createNewNode(MouseEvent e){
+		createNewNode(e.getX(), e.getY());
+	}
+
+	/**
+	 * Create a new node at given xy coordinates
+	 * @param x X coordinate of new node
+	 * @param y Y coordinate of new node
+	 */
+	public void createNewNode(double x, double y)
+	{
+		Node newNode = null;
+		if (newNodesList.size() == 0)
+		{
+			//if we haven't made any new nodes yet, call databasecontroller so that
+			//we have a baseline nodeID to start with.
+			//This nodeID is going the be the greatest int nodeID in the existing nodes
+			//IMPORTANT: this doesn't actually add the new node to the database tables
+			newNode = DatabaseController.generateNewNode("newNode", "default", x, y, FLOORID);
+		}
+		else
+		{
+			//otherwise use our own function to generate a new node.
+			newNode = editorGenerateNewNode("newNode", "default", x, y, FLOORID);
+		}
+		newNodesList.add(newNode);
+		//make a new button to associate with the node
+		Button nodeB = new Button();
+		nodeB.setId("node-button-unselected");
+		nodeB.setLayoutX(x - XOFFSET);
+		nodeB.setLayoutY(y - YOFFSET);
+
+		//on button click show node details on the righthand panel
+		nodeB.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent event)
+			{
+				showNodeDetails(nodeB);
+			}
+		});
+		nodeButtonLinks.put(nodeB, newNode);
+
+		//add the new button to the scene
+		editingFloor.getChildren().add(1, nodeB);
+
+		//modify bool and change button text
+		makingNew = false;
+		//change new node button text back to original
+		newNodeButton.setText("Add a New Node");
+	}
+
+	/**
+	 * if rightclicking, show radial context menu
+	 * @param e
+	 */
+	@FXML
+	void displayContextMenu(MouseEvent e){
+		if(e.isSecondaryButtonDown())
+		{
+			if(currentButton != null){ //radial contextmenu for nodes
+				System.out.println("This shoulnd't be happenning");
+			} else { //radial contextmenu for adding nodes
+				showingAddHereContext = true;
+				mainScroll.setPannable(false);
+			}
+		}
+
+		if(showingAddHereContext)
+		{
+			//update contextmenu objects
+			contextActions(e);
+		}
+
+	}
+
+	/**
+	 * Update views/objects to display the radial context menu.
+	 * This is called whenever the mouse moves while the right click is held down
+	 * @param e Mouse event
+	 */
+	void contextActions(MouseEvent e)
+	{
+		if(!editingFloor.getChildren().contains(CONTEXTMENU))
+		{
+			setupContextMenu(e.getX()-CIRCLEWIDTH/2, e.getY()-CIRCLEWIDTH/2);
+			editingFloor.getChildren().add(1, CONTEXTMENU);
+		}
+		double xdif = e.getX()-CONTEXTMENU.getLayoutX();
+		double ydif = e.getY()-CONTEXTMENU.getLayoutY();
+
+		if(Math.pow((xdif), 2) +
+				Math.pow((ydif), 2) >
+				Math.pow(CONTEXTRAD-CONTEXTWIDTH, 2)){
+			double angle = Math.toDegrees(Math.atan2(ydif, xdif));
+			//upper angles are negative
+			if(angle < -45 && angle > -135)
+			{
+				//selection indicator for top, new node
+				SELECTIONWEDGE.setLength(90);
+				SELECTIONWEDGE.setStartAngle(45);
+				CONTEXTSELECTION = 0;
+			}
+			else
+			{
+				//TODO: set selectionwedge to different angles for different options
+				SELECTIONWEDGE.setLength(0);
+				//SELECTIONWEDGE.setStartAngle(45);
+				CONTEXTSELECTION = -1; //TODO: set to different selection ints
+			}
+		}
+		else
+		{
+			SELECTIONWEDGE.setLength(0);
+			CONTEXTSELECTION = -1;
+		}
+	}
+
+
+	/**
+	 * Handle whenever the mouse is released.
+	 * This function was made in order to support the radial context menu
+	 * @param event
+	 */
+	@FXML
+	void releaseMouse(MouseEvent event) {
+		if(showingAddHereContext)
+		{
+			editingFloor.getChildren().remove(CONTEXTMENU);
+			//handleAddHereContext(event);
+			mainScroll.setPannable(true);
+			showingAddHereContext = false;
+		}
+		if(CONTEXTSELECTION >= 0){
+			if(CONTEXTSELECTION == 0){ // add new node
+				createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY());
+			}
+			else
+			{
+				//TODO: all other options
+			}
+			CONTEXTSELECTION = -1;
+		}
+	}
+
 
 	/**
 	 * Load all nodes from the databasecontroller's list of nodes onto our scene
@@ -292,14 +476,7 @@ public class MapEditorToolController
 		Button nodeB = new Button();
 
 		//experimental style changes to make the button a circle
-		nodeB.setStyle(
-			"-fx-background-radius: 5em; " +
-					"-fx-min-width: "+CIRCLEWIDTH+"px; " +
-					"-fx-min-height: "+CIRCLEWIDTH+"px; " +
-					"-fx-max-width: "+CIRCLEWIDTH+"px; " +
-					"-fx-max-height: "+CIRCLEWIDTH+"px; " +
-					"-fx-background-color: #00ff00"
-		);
+		nodeB.setId("node-button-unselected");
 
 		//set button XY coordinates
 		nodeB.setLayoutX(n.getX() - XOFFSET);
@@ -405,20 +582,10 @@ public class MapEditorToolController
 			{
 				//TODO: set style for background-color using hex without copying everything?
 				//TODO: Just rying to setstyle for color made button change shape
-				currentButton.setStyle("-fx-background-radius: 5em; " +
-						"-fx-min-width: "+CIRCLEWIDTH+"px; " +
-						"-fx-min-height: "+CIRCLEWIDTH+"px; " +
-						"-fx-max-width: "+CIRCLEWIDTH+"px; " +
-						"-fx-max-height: "+CIRCLEWIDTH+"px; " +
-						"-fx-background-color: #00ff00");
+				currentButton.setId("node-button-unselected");
 			}
 			currentButton = nodeB;
-			currentButton.setStyle("-fx-background-radius: 5em; " +
-					"-fx-min-width: "+CIRCLEWIDTH+"px; " +
-					"-fx-min-height: "+CIRCLEWIDTH+"px; " +
-					"-fx-max-width: "+CIRCLEWIDTH+"px; " +
-					"-fx-max-height: "+CIRCLEWIDTH+"px; " +
-					"-fx-background-color: #0000ff");
+			nodeB.setId("node-button-selected");
 		}
 
 	}
@@ -433,13 +600,8 @@ public class MapEditorToolController
 		if(currentButton != null)
 		{
 			//TODO: set style for background-color using hex without copying everything?
-			//TODO: Just rying to setstyle for color made button change shape
-			currentButton.setStyle("-fx-background-radius: 5em; " +
-					"-fx-min-width: "+CIRCLEWIDTH+"px; " +
-					"-fx-min-height: "+CIRCLEWIDTH+"px; " +
-					"-fx-max-width: "+CIRCLEWIDTH+"px; " +
-					"-fx-max-height: "+CIRCLEWIDTH+"px; " +
-					"-fx-background-color: #00ff00");
+			//TODO: Just trying to setstyle for color made button change shape
+			currentButton.setId("node-button-unselected");
 		}
 		currentButton = null;
 
@@ -452,7 +614,7 @@ public class MapEditorToolController
 	/**
 	 * Create a new node on the map. alternatively, cancel new node creation
 	 */
-	public void createNewNode()
+	public void addNewNodeClicked()
 	{
 		if (newNodeButton.getText().equals("Add a New Node"))
 		{
@@ -736,7 +898,7 @@ public class MapEditorToolController
 		for (Node neighbor : neighbors)
 		{
 			Line line = new Line();
-			line.setStrokeWidth(3.5);
+			line.setStrokeWidth(LINEWIDTH);
 			line.setStartX(source.getX());
 			line.setStartY(source.getY());
 			line.setEndX(neighbor.getX());
@@ -775,7 +937,7 @@ public class MapEditorToolController
 			Group g = new Group();
 			g.getChildren().add(line);
 			g.getChildren().add(arrowTriangle);
-			editingFloor.getChildren().add(1, g);
+			editingFloor.getChildren().add(2, g);
 			//add this line into the lines array
 			groups.add(g);
 		}
@@ -793,14 +955,14 @@ public class MapEditorToolController
 	@FXML
 	void redrawCanvas(MouseEvent event) {
 
+		//add canvas back if it has previously been removed
+		if(!editingFloor.getChildren().contains(canvas)){
+			editingFloor.getChildren().add(1, canvas);
+		}
+		//clear canvas
+		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
 		if(addingNeighbor){
-			//TODO: move this duplicated code out of function?
-			//add canvas back if it has previously been removed
-			if(!editingFloor.getChildren().contains(canvas)){
-				editingFloor.getChildren().add(1, canvas);
-			}
-			//clear canvas
-			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 			//draw line
 			gc.setStroke(Color.BLACK);
@@ -808,21 +970,19 @@ public class MapEditorToolController
 			gc.strokeLine(currentNode.getX(), currentNode.getY(), event.getX(), event.getY());
 		}
 		else if(makingNew){
-			//add canvas back if it has previously been removed
-			if(!editingFloor.getChildren().contains(canvas)){
-				editingFloor.getChildren().add(1, canvas);
-			}
-			//clear canvas
-			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 			//draw circle
 			gc.setFill(Color.BLUE);
 			//circle drawing placement offset
 			gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
 		}
+		else if(showingAddHereContext)
+		{
+			//TODO: anything?
+
+		}
 		else if (editingFloor.getChildren().contains(canvas))
 		{
-			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
 		}
 	}
