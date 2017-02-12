@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.sql.*;
 import java.util.Hashtable;
 
+/**
+ * Class for database access using java derby.
+ */
 public class Database
 {
 	//Constants
@@ -22,6 +25,12 @@ public class Database
 	private Connection connection;
 	private Hashtable<String, Node> nodeCache;
 
+	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
+	private PreparedStatement checkExist;
+	private PreparedStatement insertNode;
+	private PreparedStatement insertEdge;
+	private PreparedStatement deleteFrom;
+
 	/**
 	 * Construct a new database object that will connect to the named database and immediately initiate the connection
 	 * @param name Path to database to connect to.
@@ -33,6 +42,11 @@ public class Database
 		statement = null;
 		connection = null;
 		nodeCache = new Hashtable<String, Node>();
+
+		checkExist = null;
+		insertNode = null;
+		insertEdge = null;
+		deleteFrom = null;
 		connect();
 		if (connected)
 		{
@@ -125,29 +139,40 @@ public class Database
 
 		try
 		{
-			String dataStr = node.getX() +
-					", " + node.getY() +
-					", " + node.getType() +
-					", " + node.getFloor() +
-					", '" + node.getBuilding() +
-					"', '" + node.getName() + "')";
+			//Create prepared statements.
+			//TODO: Factor out commonly used queries into reusable private fields.
+			checkExist = connection.prepareStatement("SELECT * FROM Nodes WHERE NODE_UUID=?");
+			insertNode = connection.prepareStatement("INSERT INTO Nodes VALUES(?, ?, ?, ?, ?, ?, ?)");
+			insertEdge = connection.prepareStatement("INSERT INTO Edges VALUES(?, ?)");
+			deleteFrom = connection.prepareStatement("DELETE FROM Nodes WHERE node_uuid=?");
+
+			//Set up most preparedstatetments safely... no sql injection here
+			checkExist.setString(1, node.getID());
+			deleteFrom.setString(1, node.getID());
+			insertNode.setString(1, node.getID());
+			insertNode.setDouble(2, node.getX());
+			insertNode.setDouble(3, node.getY());
+			insertNode.setInt(4, node.getType());
+			insertNode.setInt(5, node.getFloor());
+			insertNode.setString(6, node.getBuilding());
+			insertNode.setString(7, node.getName());
+			insertEdge.setString(1, node.getID());
 
 			//Check if the node exists first
-			ResultSet results = statement.executeQuery("SELECT * FROM Nodes WHERE node_uuid='" + node.getID() + "'");
+			ResultSet results = checkExist.executeQuery();
 			if (!results.wasNull()) //TODO: why doesn't .next() work?
-				statement.execute("DELETE FROM Nodes WHERE node_uuid='" + node.getID() + "'"); //Quash old value
+				deleteFrom.execute();
 
 			//Insert node base data
-			statement.execute("INSERT INTO Nodes VALUES ('" + node.getID() + "', " + dataStr);
+			insertNode.execute();
 
-			//Now insert neighbor relationships by UUID, both into the database and into the cache
-			PreparedStatement insertNeighbor = connection.prepareStatement("INSERT INTO Edges VALUES ('" +
-					node.getID() + "', '0000')");
+			//Now insert neighbor relationships by UUID
 			for (Node nbr : node.getNeighbors())
 			{
 				//insertNeighbor.setString(2, nbr.getID());
 				//insertNeighbor.execute();
-				statement.execute("INSERT INTO Edges VALUES('" + node.getID() + "', '" + nbr.getID() + "')");
+				insertEdge.setString(2, nbr.getID());
+				insertEdge.execute();
 			}
 
 		} catch (SQLException e)
@@ -160,7 +185,7 @@ public class Database
 	/**
 	 * Gets a node by its UUID. Returns null if that node didn't exist.
 	 * @param uuid UUID of node to be returned.
-	 * @return Node if node found, null otherwise. Note that this node is NOT safe for pathfinding!
+	 * @return Node if node found, null otherwise.
 	 */
 	public Node getNodeByUUID(String uuid)
 	{
