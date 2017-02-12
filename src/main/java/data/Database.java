@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
@@ -267,6 +268,32 @@ public class Database
 	}
 
 	/**
+	 * Get all nodes on a given floor.
+	 * @param floor Floor to get from.
+	 * @return ArrayList of nodes found on the provided. ArrayList is empty if no nodes can be found.
+	 */
+	public ArrayList<Node> getNodesByFloor(int floor)
+	{
+		ArrayList<Node> retlist = new ArrayList<Node>();
+		try
+		{
+			ResultSet results = statement.executeQuery("SELECT * FROM Nodes WHERE floor=" + floor);
+
+			//Constructing new nodes will take longer than just grabbing them from the cache, plus we want these to be
+			//graph-safe anyways. TODO: Maybe switch to getNodeByUUID instead?
+
+			while (results.next())
+				retlist.add(nodeCache.get(results.getString(1)));
+		} catch (SQLException e)
+		{
+			System.out.println("Couldn't get nodes by floor " + floor + "!");
+			e.printStackTrace();
+		}
+
+		return retlist;
+	}
+
+	/**
 	 * Loads all nodes in the database into the cache and links them together. Call this function anytime you create
 	 * create multiple nodes with relationships - those relationships will be saved to the table and the cache but... they
 	 * ...might...not...work.
@@ -284,7 +311,6 @@ public class Database
 			{
 				Node node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
 						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
-				System.out.printf("Storing node '%s' in nodeCache hashtable...\n", node.getID());
 				nodeCache.put(node.getID(), node);
 			}
 

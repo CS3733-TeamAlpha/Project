@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pathfinding.*;
 import java.io.File;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -47,7 +48,7 @@ public class DatabaseTest
 	}
 
 	@Test
-	public void connectionTest()
+	public void testConnection()
 	{
 		assertTrue(database.isConnected());
 	}
@@ -133,5 +134,37 @@ public class DatabaseTest
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++)
 				database.deleteNodeByUUID(testNodes[i][j].getID());
+	}
+
+	@Test
+	public void testGetByFloor()
+	{
+		//Create some nodes on 10 different floors
+		ConcreteNode[] nodes = new ConcreteNode[50];
+		for (int i = 0; i < nodes.length; i++)
+		{
+			nodes[i] = new ConcreteNode();
+			nodes[i].setFloor(i / 5);
+			database.insertNode(nodes[i]);
+		}
+
+		//Get nodes by floor now
+		for (int i = 0; i < 10; i++)
+		{
+			ArrayList<Node> ret = database.getNodesByFloor(i);
+			assertNotNull(ret);
+			assertEquals(5, ret.size());
+
+			//Make sure that the expected nodes were returned
+			for (Node node : nodes)
+			{
+				if (node.getFloor() == i)
+					assertTrue(ret.contains(node));
+			}
+		}
+
+		//And now clean up
+		for (ConcreteNode node : nodes)
+			database.deleteNodeByUUID(node.getID());
 	}
 }
