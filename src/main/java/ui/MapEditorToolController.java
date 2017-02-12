@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +16,7 @@ import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
@@ -68,6 +71,10 @@ public class MapEditorToolController
 	private int FLOORID = 3; //Default floor id for minimal application
 
 
+	//canvas and graphicscontext, to draw onto the scene
+	private Canvas canvas;
+	private GraphicsContext gc;
+
 	static
 	{
 		//initialize connection and floor/node/provider lists right away
@@ -93,6 +100,14 @@ public class MapEditorToolController
 		DatabaseController.initializeAllNodes();
 		DatabaseController.initializeAllProviders();
 		loadNodesFromDatabase();
+
+		//TODO: Load in image for a specific floor and determine canvas size
+		//		based on image size
+
+		Group root = new Group();
+		canvas = new Canvas(2200, 1300);
+		gc = canvas.getGraphicsContext2D();
+		editingFloor.getChildren().add(1, canvas);
 	}
 
 
@@ -660,6 +675,7 @@ public class MapEditorToolController
 		for (Node neighbor : neighbors)
 		{
 			Line line = new Line();
+			line.setStrokeWidth(3.5);
 			line.setStartX(source.getX());
 			line.setStartY(source.getY());
 			line.setEndX(neighbor.getX());
@@ -674,14 +690,14 @@ public class MapEditorToolController
 
 			//we will use pathShift to place the line's arrow somewhere in the middle of the line.
 			//this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
-			double pathShift = 0.8;
+			double pathShift = 0.9;
 
 			//make a new triangle
 			Polygon arrowTriangle = new Polygon();
 			arrowTriangle.getPoints().addAll(new Double[]{
 					0.0, 0.0,
-					-10.0, 10.0,
-					10.0, 10.0
+					-5.0, 10.0,
+					5.0, 10.0
 			});
 
 			//get angle the angle of the line we'll be making in degrees
@@ -705,6 +721,30 @@ public class MapEditorToolController
 		//store the array of lines for this source node into the hashmap
 		//to be used to delete all lines later when redrawing
 		lineGroups.put(source, groups);
+	}
+
+	/**
+	 * Continuously draw and update the line on the canvas so that the user can see
+	 * lines as they are adding connections.
+	 * TODO: Probably need to fix naming of function
+	 * @param event mouse event
+	 */
+	@FXML
+	void redrawLines(MouseEvent event) {
+		if(addingNeighbor){
+			if(!editingFloor.getChildren().contains(canvas)){
+				editingFloor.getChildren().add(1, canvas);
+			}
+			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			gc.setStroke(Color.BLACK);
+			gc.setLineWidth(3.5);
+			gc.strokeLine(currentNode.getX(), currentNode.getY(), event.getX(), event.getY());
+		}
+		else if (editingFloor.getChildren().contains(canvas))
+		{
+			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
+		}
 	}
 
 	@FXML
