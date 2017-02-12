@@ -1,9 +1,11 @@
 package data;
 
+import org.apache.derby.iapi.sql.execute.ResultSetStatistics;
 import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
+import java.io.CharArrayReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -187,13 +189,18 @@ public class Database
 	}
 
 	/**
-	 * Updates a node's edges as necessary.
-	 * @param node Node whose edges should be updated.
+	 * Updates a node in the database. Use whenever modifications are made outside the database. Be warned, this is an
+	 * expensive function to call.
+	 * @param node Node to be updated
 	 */
-	public void updateEdges(Node node)
+	public void updateNode(Node node)
 	{
+		//This function is expensive because it has to delete all edges where this node is the start, and all provider
+		// & service records. Then it has to go back and re-insert them. There might be a more efficient way to do this,
+		//but this method works for now. I suspect that going through to see what needs updating is less efficient anyways
 		try
 		{
+			//Update edges
 			PreparedStatement delOld = connection.prepareStatement("DELETE FROM Edges WHERE src=?");
 			delOld.setString(1, node.getID());
 			delOld.execute();
@@ -204,6 +211,32 @@ public class Database
 			{
 				insNbr.setString(2, nbr.getID());
 				insNbr.execute();
+			}
+
+			//Update providers
+			PreparedStatement delOffices = connection.prepareStatement("DELETE FROM DoctorOffices WHERE node_uuid=?");
+			delOffices.setString(1, node.getID());
+			delOffices.execute();
+
+			PreparedStatement insPrv = connection.prepareStatement("INSERT INTO DoctorOffices VALUES(?, ?)");
+			insPrv.setString(2, node.getID());
+			for (String prv : node.getProviders())
+			{
+				insPrv.setString(1, getProviderUUID(prv));
+				insPrv.execute();
+			}
+
+			//Update services
+			PreparedStatement delServices = connection.prepareStatement("DELETE FROM Services WHERE node=?");
+			delServices.setString(1, node.getID());
+			delServices.execute();
+
+			PreparedStatement insSrv = connection.prepareStatement("INSERT INTO Services VALUES(?, ?)");
+			insSrv.setString(1, node.getID());
+			for (String srv : node.getServices())
+			{
+				insSrv.setString(2, getProviderUUID(srv));
+				insSrv.execute();
 			}
 
 		} catch (SQLException e)
@@ -398,6 +431,31 @@ public class Database
 	}
 
 	/**
+	 * Gets an ArrayList of building names
+	 * @return ArrayList of building names. Who'd have thought?
+	 */
+	public ArrayList<String> getBuildings()
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		try
+		{
+			ResultSet results = statement.executeQuery("SELECT name FROM Buildings");
+			while (results.next())
+			{
+				if (results.getString(1) != "default")
+					ret.add(results.getString(1));
+			}
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get list of building names!");
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+	/**
 	 * Deletes an entire building using a UUID. WARNING: THIS WILL CASCADE DELETE ALL NODES IN THE BUILDING, THEIR FLOORS,
 	 * PROVIDERS, ETC. USE WITH EXTREME CAUTION!
 	 * @param uuid UUID of building to delete.
@@ -414,6 +472,94 @@ public class Database
 			System.out.println("Error trying to delete a building!");
 			e.printStackTrace();
 		}
+
+	}
+
+	/**
+	 * Gets the UUID of a provider by name.
+	 * @param name Name of a UUID. Should include title information.
+	 * @return 36-char UUID.
+	 */
+	public String getProviderUUID(String name)
+	{
+		String ret = "";
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT uuid FROM Providers WHERE name=?");
+			pstmt.setString(1, name);
+			ResultSet results = pstmt.executeQuery();
+			if (results.next())
+				ret = results.getString(1);
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get provider name by UUID!");
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+
+	/**
+	 * Adds a new provider to the database using a name and a uuid.
+	 * @param uuid UUID of provider. Reccomended to use java.util.UUID.randomUUID().toString()
+	 * @param name Name of provider. Include title information.
+	 * TODO: Rename add functions to insert?
+	 */
+	public void addProvider(String uuid, String name)
+	{
+
+	}
+
+	/**
+	 * Gets a list of all provider names
+	 * @return ArrayList of names
+	 */
+	public ArrayList<String> getProviderNames()
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		return ret;
+	}
+
+	/**
+	 * Adds a provider to a given node.
+	 * @param providerUUID UUID of provider.
+	 * @param nodeUUID UUID of node that provider should be linked to
+	 */
+	public void addProviderOffice(String providerUUID, String nodeUUID)
+	{
+
+	}
+
+	/**
+	 * Returns all of a provider's offices
+	 * @param providerUUID UUID of provider
+	 * @return ArrayList of nodes that the provider has an office at
+	 */
+	public ArrayList<Node> getProviderLocations(String providerUUID)
+	{
+		ArrayList<Node> ret = new ArrayList<Node>();
+		return ret;
+	}
+
+	/**
+	 * Removes a provider from a given node.
+	 * @param providerUUID UUID of provider
+	 * @param nodeUUID UUID of node to remove provider from.
+	 */
+	public void deleteProviderOffice(String providerUUID, String nodeUUID)
+	{
+
+	}
+
+	/**
+	 * Deletes a provider and any associated offices that provider may have.
+	 * @param uuid UUID of provider to delete.
+	 * TODO: Factor out these deleteX functions into a common deleteByUUID
+	 */
+	public void deleteProvider(String uuid)
+	{
 
 	}
 
@@ -452,6 +598,7 @@ public class Database
 			e.printStackTrace();
 		}
 	}
+
 
 	/*Misc getters and setters*/
 

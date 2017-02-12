@@ -206,7 +206,7 @@ public class DatabaseTest
 	}
 
 	@Test
-	public void testInsertEdge()
+	public void testUpdateNode()
 	{
 		//Create a pair of unlinked nodes, put them in the database. Create a 1->2 edge between them, insert the edge,
 		//shutdown the database, restart it, and grab the two nodes out again. Verify that they're still connected.
@@ -216,7 +216,7 @@ public class DatabaseTest
 		database.insertNode(node2);
 		node1.addNeighbor(node2);
 
-		database.updateEdges(node1);
+		database.updateNode(node1);
 		database.disconnect(); //Clears the node cache
 		database.connect();
 
@@ -229,4 +229,24 @@ public class DatabaseTest
 		database.deleteNodeByUUID(testNode2.getID());
 	}
 
+	@Test
+	public void testProviderOperations()
+	{
+		/*
+		//Create a test node, put it in the database.
+		ConcreteNode node = new ConcreteNode();
+		database.insertNode(node);
+
+		//Create a provider, put it in, get it out
+		database.addProvider(UUID.randomUUID().toString(), "Picard, Jean-Luc; Captain");
+		assertEquals(36, database.getProviderUUID("Picard, Jean-Luc; Captain").length());
+
+		//Get another provider, verify that two are now stored
+		database.addProvider(UUID.randomUUID().toString(), "Sisko, Benjamin");
+		assertEquals(2, database.getProviderNames().size());
+
+		//Tie a provider to node
+		database.addProviderOffice(database.getProviderUUID("Picard, Jean-Luc; Captain"), node.getID());
+		*/
+	}
 }

@@ -26,6 +26,10 @@ public interface Node
 	boolean equals(Node node);
 
 	//Documentation on getters/setters? NEVER!
+	void addProvider(String newProvider);
+	void delProvider(String oldProvider);
+	void addService(String newService);
+	void delService(String oldService);
 	void addNeighbor(Node newNeighbor);
 	void removeNeighbor(Node oldNeighbor);
 	void setID(String newID);
@@ -36,6 +40,8 @@ public interface Node
 	void setType(int newType);
 	void setFloor(int newFloor);
 
+	ArrayList<String> getProviders();
+	ArrayList<String> getServices();
 	Collection<Node> getNeighbors();
 	String getID();
 	String getName();

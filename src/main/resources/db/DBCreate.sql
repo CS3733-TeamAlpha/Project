@@ -27,7 +27,7 @@ CREATE TABLE Services --Shops, cafes, etc. What is this, a mall?
 CREATE TABLE Providers
 (
   provider_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
-  name VARCHAR(128) NOT NULL --If your name is bigger than 128 chars, you need a shorter name
+  name VARCHAR(128) NOT NULL UNIQUE--If your name is bigger than 128 chars, you need a shorter name
 );
 
 CREATE TABLE DoctorOffices --Links between doctors and their offices.

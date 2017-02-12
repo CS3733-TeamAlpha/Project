@@ -2,12 +2,15 @@ package pathfinding;
 
 import com.sun.corba.se.impl.logging.POASystemException;
 
+import java.sql.Array;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class ConcreteNode implements Node
 {
+	private ArrayList<String> providers;
+	private ArrayList<String> services;
 	private ArrayList<Node> neighbors;
 	private String id;
 	private String name;
@@ -19,6 +22,8 @@ public class ConcreteNode implements Node
 
 	public ConcreteNode()
 	{
+		providers = new ArrayList<>();
+		services = new ArrayList<>();
 		neighbors = new ArrayList<>();
 		id = UUID.randomUUID().toString();
 		name = "noname";
@@ -82,6 +87,30 @@ public class ConcreteNode implements Node
 	/*Getters and setters*/
 
 	@Override
+	public void addProvider(String newProvider)
+	{
+		providers.add(newProvider);
+	}
+
+	@Override
+	public void delProvider(String oldProvider)
+	{
+		providers.remove(oldProvider);
+	}
+
+	@Override
+	public void addService(String newService)
+	{
+		services.add(newService);
+	}
+
+	@Override
+	public void delService(String oldService)
+	{
+		services.remove(oldService);
+	}
+
+	@Override
 	public void addNeighbor(Node newNeighbor)
 	{
 		neighbors.add(newNeighbor);
@@ -133,6 +162,18 @@ public class ConcreteNode implements Node
 	public void setFloor(int newFloor)
 	{
 		floor = newFloor;
+	}
+
+	@Override
+	public ArrayList<String> getProviders()
+	{
+		return providers;
+	}
+
+	@Override
+	public ArrayList<String> getServices()
+	{
+		return services;
 	}
 
 	@Override
