@@ -130,14 +130,14 @@ public class Database
 	}
 
 	/**
-	 * Inserts a new node into the table. If a node by the same UUID is found, it is replaced with the new node.
+	 * Inserts a new node into the table. If a node by the same UUID is found, it is replaced with the new node. Note
+	 * that all nodes MUST have a valid building UUID linked in the Buildings table. Otherwise, a constraint violation
+	 * exception will be raised and the node will not be inserted. For testing purposes, a "default" building and
+	 * default node building UUID of 00000000-0000-0000-0000-000000000000 are included.
 	 * @param node Node object to insert.
 	 */
 	public void insertNode(Node node)
 	{
-		//Put this node into the cache
-		nodeCache.put(node.getID(), node);
-
 		try
 		{
 			//Create prepared statements.
@@ -175,6 +175,8 @@ public class Database
 				insertEdge.setString(2, nbr.getID());
 				insertEdge.execute();
 			}
+
+		nodeCache.put(node.getID(), node);
 
 		} catch (SQLException e)
 		{

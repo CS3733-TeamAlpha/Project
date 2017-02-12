@@ -57,7 +57,7 @@ public class DatabaseTest
 	public void testInsertAndRetrieval()
 	{
 		Node testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
-				"Test Node", "SFHeadquarters", 1, 2, 3, 1701);
+				"Test Node", "00000000-0000-0000-0000-000000000000", 1, 2, 3, 1701);
 
 		database.insertNode(testNode); //Insert the node...
 		Node retNode = database.getNodeByUUID(testNode.getID());

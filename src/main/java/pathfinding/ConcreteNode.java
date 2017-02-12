@@ -22,7 +22,7 @@ public class ConcreteNode implements Node
 		neighbors = new ArrayList<>();
 		id = UUID.randomUUID().toString();
 		name = "noname";
-		building = "nobuilding";
+		building = "00000000-0000-0000-0000-000000000000";
 		x = 0;
 		y = 0;
 		type = 0;
