@@ -57,10 +57,14 @@ public class MapEditorToolController
 	// to the database (DatabaseController.modifyXTable)
 	private ArrayList<Node> modifiedNodesList = new ArrayList<Node>();
 
+	//define widths for circles/lines that the canvas will draw
+	double CIRCLEWIDTH = 13.0;
+	double LINEWIDTH = 3.5;
+
 	//X and Y offsets, for button placement.
 	//TODO: fine tune offsets to make button placement visuals better
-	private static int XOFFSET = 12;
-	private static int YOFFSET = 12;
+	private double XOFFSET = CIRCLEWIDTH/2;
+	private double YOFFSET = CIRCLEWIDTH/2;
 
 	private boolean addingNeighbor = false; //currently adding a neighbor?
 	private boolean removingNeighbor = false; //currently removing a neighbor?
@@ -106,6 +110,11 @@ public class MapEditorToolController
 
 		Group root = new Group();
 		canvas = new Canvas(2200, 1300);
+		canvas.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent e){
+				addNodeHere(e);
+			}
+		});
 		gc = canvas.getGraphicsContext2D();
 		editingFloor.getChildren().add(1, canvas);
 	}
@@ -173,7 +182,15 @@ public class MapEditorToolController
 				}
 				newNodesList.add(newNode);
 				//make a new button to associate with the node
-				Button nodeB = new Button("+");
+				Button nodeB = new Button();
+				nodeB.setStyle(
+					"-fx-background-radius: 5em; " +
+							"-fx-min-width: "+CIRCLEWIDTH+"px; " +
+							"-fx-min-height: "+CIRCLEWIDTH+"px; " +
+							"-fx-max-width: "+CIRCLEWIDTH+"px; " +
+							"-fx-max-height: "+CIRCLEWIDTH+"px; " +
+							"-fx-background-color: #00ff00"
+				);
 				nodeB.setLayoutX(e.getX() - XOFFSET);
 				nodeB.setLayoutY(e.getY() - YOFFSET);
 
@@ -257,6 +274,9 @@ public class MapEditorToolController
 		for (Node n : DatabaseController.getAllNodes())
 		{
 			loadNode(n);
+		}
+		for (Node n : DatabaseController.getAllNodes())
+		{
 			drawToNeighbors(n);
 		}
 	}
@@ -269,7 +289,18 @@ public class MapEditorToolController
 	private void loadNode(Node n)
 	{
 		//new button
-		Button nodeB = new Button("+");
+		Button nodeB = new Button();
+
+		//experimental style changes to make the button a circle
+		nodeB.setStyle(
+			"-fx-background-radius: 5em; " +
+					"-fx-min-width: "+CIRCLEWIDTH+"px; " +
+					"-fx-min-height: "+CIRCLEWIDTH+"px; " +
+					"-fx-max-width: "+CIRCLEWIDTH+"px; " +
+					"-fx-max-height: "+CIRCLEWIDTH+"px; " +
+					"-fx-background-color: #00ff00"
+		);
+
 		//set button XY coordinates
 		nodeB.setLayoutX(n.getX() - XOFFSET);
 		nodeB.setLayoutY(n.getY() - YOFFSET);
@@ -369,8 +400,25 @@ public class MapEditorToolController
 
 			//set current node/button
 			currentNode = linkedNode;
-			//TODO: make it so that we can visually see which node is selected
+
+			if(currentButton != null)
+			{
+				//TODO: set style for background-color using hex without copying everything?
+				//TODO: Just rying to setstyle for color made button change shape
+				currentButton.setStyle("-fx-background-radius: 5em; " +
+						"-fx-min-width: "+CIRCLEWIDTH+"px; " +
+						"-fx-min-height: "+CIRCLEWIDTH+"px; " +
+						"-fx-max-width: "+CIRCLEWIDTH+"px; " +
+						"-fx-max-height: "+CIRCLEWIDTH+"px; " +
+						"-fx-background-color: #00ff00");
+			}
 			currentButton = nodeB;
+			currentButton.setStyle("-fx-background-radius: 5em; " +
+					"-fx-min-width: "+CIRCLEWIDTH+"px; " +
+					"-fx-min-height: "+CIRCLEWIDTH+"px; " +
+					"-fx-max-width: "+CIRCLEWIDTH+"px; " +
+					"-fx-max-height: "+CIRCLEWIDTH+"px; " +
+					"-fx-background-color: #0000ff");
 		}
 
 	}
@@ -381,6 +429,18 @@ public class MapEditorToolController
 	private void hideNodeDetails()
 	{
 		currentNode = null;
+		//TODO: is null check on currentbutton necessary? can we get to this function with a null button?
+		if(currentButton != null)
+		{
+			//TODO: set style for background-color using hex without copying everything?
+			//TODO: Just rying to setstyle for color made button change shape
+			currentButton.setStyle("-fx-background-radius: 5em; " +
+					"-fx-min-width: "+CIRCLEWIDTH+"px; " +
+					"-fx-min-height: "+CIRCLEWIDTH+"px; " +
+					"-fx-max-width: "+CIRCLEWIDTH+"px; " +
+					"-fx-max-height: "+CIRCLEWIDTH+"px; " +
+					"-fx-background-color: #00ff00");
+		}
 		currentButton = null;
 
 		nameField.setText("");
@@ -398,6 +458,7 @@ public class MapEditorToolController
 		{
 			makingNew = true;
 			newNodeButton.setText("Cancel New Node Creation");
+			editingFloor.getChildren().add(canvas);
 		}
 		else
 		{
@@ -730,15 +791,34 @@ public class MapEditorToolController
 	 * @param event mouse event
 	 */
 	@FXML
-	void redrawLines(MouseEvent event) {
+	void redrawCanvas(MouseEvent event) {
+
 		if(addingNeighbor){
+			//TODO: move this duplicated code out of function?
+			//add canvas back if it has previously been removed
 			if(!editingFloor.getChildren().contains(canvas)){
 				editingFloor.getChildren().add(1, canvas);
 			}
+			//clear canvas
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+			//draw line
 			gc.setStroke(Color.BLACK);
-			gc.setLineWidth(3.5);
+			gc.setLineWidth(LINEWIDTH);
 			gc.strokeLine(currentNode.getX(), currentNode.getY(), event.getX(), event.getY());
+		}
+		else if(makingNew){
+			//add canvas back if it has previously been removed
+			if(!editingFloor.getChildren().contains(canvas)){
+				editingFloor.getChildren().add(1, canvas);
+			}
+			//clear canvas
+			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+			//draw circle
+			gc.setFill(Color.BLUE);
+			//circle drawing placement offset
+			gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
 		}
 		else if (editingFloor.getChildren().contains(canvas))
 		{
