@@ -279,7 +279,7 @@ public class Database
 		ArrayList<Node> retlist = new ArrayList<Node>();
 		try
 		{
-			ResultSet results = statement.executeQuery("SELECT * FROM Nodes WHERE floor=" + floor);
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE floor=" + floor);
 
 			//Constructing new nodes will take longer than just grabbing them from the cache, plus we want these to be
 			//graph-safe anyways. TODO: Maybe switch to getNodeByUUID instead?
@@ -293,6 +293,100 @@ public class Database
 		}
 
 		return retlist;
+	}
+
+	/**
+	 * Gets the UUID of a given building using its name
+	 * @param name Name of the building to find
+	 * @return 36-char UUID if found, otherwise an empty string.
+	 */
+	public String getBuildingUUID(String name)
+	{
+		String ret = "";
+
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT building_uuid FROM Buildings WHERE name=?");
+			pstmt.setString(1, name);
+			ResultSet results = pstmt.executeQuery();
+			if (results.next())
+				ret = results.getString(1);
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get building's UUID!");
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Adds a new building to the database.
+	 * @param uuid UUID of building. Recommended to use java.util.UUID.randomUUID().toString()
+	 * @param name Name of building.
+	 */
+	public void addBuilding(String uuid, String name)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Buildings VALUES(?, ?)");
+			pstmt.setString(1, uuid);
+			pstmt.setString(2, name);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to add building!");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Gets all nodes on a given floor of a given building.
+	 * @param buildingUUID UUID of building to grab from. If the UUID is not known, use getBuildingUUID.
+	 * @param floor Floor number as an int.
+	 * @return ArrayList of nodes found on this floor. If no nodes could be found, the array is empty. Never returns null.
+	 */
+	public ArrayList<Node> getNodesInBuildingFloor(String buildingUUID, int floor)
+	{
+		ArrayList<Node> ret = new ArrayList<Node>();
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM Nodes WHERE building=? AND floor=?");
+			pstmt.setString(1, buildingUUID);
+			pstmt.setInt(2, floor);
+			ResultSet results = pstmt.executeQuery();
+
+			while (results.next())
+				ret.add(nodeCache.get(results.getString(1))); //TODO: Maybe use getNodeByUUID?
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get nodes in building!");
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Deletes an entire building using a UUID. WARNING: THIS WILL CASCADE DELETE ALL NODES IN THE BUILDING, THEIR FLOORS,
+	 * PROVIDERS, ETC. USE WITH EXTREME CAUTION!
+	 * @param uuid UUID of building to delete.
+	 */
+	public void deleteBuilding(String uuid)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Buildings WHERE building_uuid=?");
+			pstmt.setString(1, uuid);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete a building!");
+			e.printStackTrace();
+		}
+
 	}
 
 	/**

@@ -6,6 +6,7 @@ import org.junit.Test;
 import pathfinding.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -166,5 +167,39 @@ public class DatabaseTest
 		//And now clean up
 		for (ConcreteNode node : nodes)
 			database.deleteNodeByUUID(node.getID());
+	}
+
+	@Test
+	public void testGetByBuilding()
+	{
+		//Create a new building with random UUID
+		database.addBuilding(UUID.randomUUID().toString(), "Starfleet Headquarters");
+
+		//Verify that the building was actually inserted
+		final String uuid = database.getBuildingUUID("Starfleet Headquarters");
+		assertEquals(36, uuid.length());
+
+		//Verify that we can't get an invalid building
+		assertTrue(database.getBuildingUUID("Dominion Headquarters").isEmpty());
+
+		//Now add some nodes to Starfleet Headquarters
+		ConcreteNode[] nodes = new ConcreteNode[5];
+		for (Node node : nodes)
+		{
+			node = new ConcreteNode();
+			node.setFloor(1701);
+			node.setBuilding(uuid);
+			database.insertNode(node);
+		}
+
+		//Try getting those nodes out again and verify situations that do and don't work
+		assertEquals(5, database.getNodesInBuildingFloor(uuid, 1701).size()); //Correct uuid, correct floor
+		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1702).size()); //Correct uuid, incorrect floor
+		assertEquals(0, database.getNodesInBuildingFloor("00", 1701).size()); //Incorrect uuid, correct floor
+		assertEquals(0, database.getNodesInBuildingFloor("00", 1702).size()); //Incorrect uuid, incorrect floor
+
+		//And clean up the database by deleting the whole building!
+		database.deleteBuilding(uuid);
+		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1701).size());
 	}
 }
