@@ -3,8 +3,9 @@ package data;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+import pathfinding.*;
 import java.io.File;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -52,4 +53,24 @@ public class DatabaseTest
 		assertTrue(database.isConnected());
 	}
 
+	@Test
+	public void testInsertAndRetrieval()
+	{
+		Node testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
+				"Test Node", "SFHeadquarters", 1, 2, 3, 1701);
+
+		database.insertNode(testNode); //Insert the node...
+		Node retNode = database.getNodeByUUID(testNode.getID());
+		assertTrue(testNode.equals(retNode));
+	}
+
+	@Test
+	public void testDelete()
+	{
+		ConcreteNode testNode = new ConcreteNode();
+		database.insertNode(testNode);
+		assertNotNull(database.getNodeByUUID(testNode.getID()));
+		database.deleteNodeByUUID(testNode.getID());
+		assertNull(database.getNodeByUUID(testNode.getID()));
+	}
 }

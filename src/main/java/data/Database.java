@@ -1,6 +1,8 @@
 package data;
 
 import org.apache.derby.tools.ij;
+import pathfinding.ConcreteNode;
+import pathfinding.Node;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -106,9 +108,85 @@ public class Database
 
 	}
 
-	/*Misc getters and setters*/
+	/**
+	 * Inserts a new node into the table. If a node by the same UUID is found, it is replaced with the new node.
+	 * @param node Node object to insert.
+	 */
+	public void insertNode(Node node)
+	{
+		String dataStr = node.getX() +
+					", " + node.getY() +
+					", " + node.getType() +
+					", " + node.getFloor() +
+					", '" + node.getBuilding() +
+					"', '" + node.getName() + "')";
+
+		try
+		{
+			//Check if the node exists first
+			ResultSet results = statement.executeQuery("SELECT * FROM Nodes WHERE node_uuid='" + node.getID() + "'");
+			if (!results.wasNull()) //TODO: why doesn't .next() work?
+				statement.execute("DELETE FROM Nodes WHERE node_uuid='" + node.getID() + "'"); //Quash old value
+
+			//Insert node base data
+			statement.execute("INSERT INTO Nodes VALUES (" + "'" + node.getID() + "', " + dataStr);
+
+			//Now insert neighbor relationships by UUID
+			PreparedStatement insertNeighbor = connection.prepareStatement("INSERT INTO Edges VALUES ('" +
+					node.getID() + "', '0000')");
+			for (Node nbr : node.getNeighbors())
+			{
+				insertNeighbor.setString(1, nbr.getID());
+				insertNeighbor.execute();
+			}
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error inserting node into table 'Nodes'!");
+			e.printStackTrace();
+		}
+	}
 
 	/**
+	 * Gets a node by its UUID. Returns null if that node didn't exist.
+	 * @param uuid UUID of node to be returned.
+	 * @return Node if node found, null otherwise. Note that this node is NOT safe for pathfinding!
+	 */
+	public Node getNodeByUUID(String uuid)
+	{
+		try
+		{
+			ResultSet results = statement.executeQuery("SELECT * FROM Nodes WHERE node_uuid='" + uuid + "'");
+			if (!results.next())
+				return null;
+
+			//Construct a new concrete node... don't do anything with the neighbors yet though.
+			Node ret = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
+					results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
+			return ret;
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get node by UUID!");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void deleteNodeByUUID(String uuid)
+	{
+		try
+		{
+			statement.execute("DELETE FROM Nodes WHERE node_uuid='" + uuid + "'");
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete node from table!");
+			e.printStackTrace();
+		}
+	}
+
+	/*Misc getters and setters*/
+
+   /**
 	 * Returns whether this database is connected or not.
 	 * @return Connection status.
 	 */

@@ -17,7 +17,7 @@ public class ConcreteNode implements Node
 	private int type; //TODO: Create a better type field, probably an enum
 	private int floor;
 
-	ConcreteNode()
+	public ConcreteNode()
 	{
 		neighbors = new ArrayList<>();
 		id = UUID.randomUUID().toString();
@@ -29,7 +29,7 @@ public class ConcreteNode implements Node
 		floor = 1;
 	}
 
-	ConcreteNode(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
+	public ConcreteNode(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
 	{
 		neighbors = new ArrayList<>();
 		id = newID;
