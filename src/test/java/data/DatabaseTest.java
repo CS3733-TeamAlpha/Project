@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import pathfinding.*;
 import java.io.File;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -62,6 +61,7 @@ public class DatabaseTest
 		database.insertNode(testNode); //Insert the node...
 		Node retNode = database.getNodeByUUID(testNode.getID());
 		assertTrue(testNode.equals(retNode));
+		database.deleteNodeByUUID(retNode.getID());
 	}
 
 	@Test
@@ -72,5 +72,66 @@ public class DatabaseTest
 		assertNotNull(database.getNodeByUUID(testNode.getID()));
 		database.deleteNodeByUUID(testNode.getID());
 		assertNull(database.getNodeByUUID(testNode.getID()));
+	}
+
+	@Test
+	public void testLinkage()
+	{
+		//Stolen from pathfinding integration test
+		ConcreteNode[][] gridNodes = new ConcreteNode[10][10];
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				gridNodes[i][j] = new ConcreteNode();
+
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				if (i > 0)
+					gridNodes[i][j].addNeighbor(gridNodes[i-1][j]);
+				if (i < 9)
+					gridNodes[i][j].addNeighbor(gridNodes[i+1][j]);
+				if (j > 0)
+					gridNodes[i][j].addNeighbor(gridNodes[i][j-1]);
+				if (j < 9)
+					gridNodes[i][j].addNeighbor(gridNodes[i][j+1]);
+			}
+		}
+
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				database.insertNode(gridNodes[i][j]);
+
+		//Now get all those nodes back out again
+		Node[][] testNodes = new ConcreteNode[10][10];
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				testNodes[i][j] = database.getNodeByUUID(gridNodes[i][j].getID());
+				assertNotNull(testNodes[i][j]);
+			}
+		}
+
+		//Verify the integrity of the node grid just retrieved
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				if (i > 0)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i-1][j]));
+				if (i < 9)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i+1][j]));
+				if (j > 0)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i][j-1]));
+				if (j < 9)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i][j+1]));
+			}
+		}
+
+		//And finally clean up, we don't want a ton of spare nodes hanging around in the database
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				database.deleteNodeByUUID(testNodes[i][j].getID());
 	}
 }

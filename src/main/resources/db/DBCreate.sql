@@ -13,8 +13,7 @@ CREATE TABLE Edges --todo: investigate the array type...
 (
   src VARCHAR(36) NOT NULL,
   dst VARCHAR(36) NOT NULL,
-  FOREIGN KEY (src) REFERENCES Nodes(node_uuid) ON DELETE CASCADE,
-  FOREIGN KEY (dst) REFERENCES Nodes(node_uuid) ON DELETE CASCADE
+  FOREIGN KEY (src) REFERENCES Nodes(node_uuid) ON DELETE CASCADE
 );
 
 CREATE TABLE Services
