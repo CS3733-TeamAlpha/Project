@@ -63,6 +63,8 @@ public class DatabaseTest
 				"Test Node", "00000000-0000-0000-0000-000000000000", 1, 2, 3, 1701);
 
 		database.insertNode(testNode); //Insert the node...
+		database.disconnect();
+		database.connect();
 		Node retNode = database.getNodeByUUID(testNode.getID());
 		assertTrue(testNode.equals(retNode));
 		database.deleteNodeByUUID(retNode.getID());
@@ -105,6 +107,9 @@ public class DatabaseTest
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++)
 				database.insertNode(gridNodes[i][j]);
+
+		database.disconnect();
+		database.connect();
 
 		//Now get all those nodes back out again
 		Node[][] testNodes = new ConcreteNode[10][10];

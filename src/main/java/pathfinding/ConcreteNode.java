@@ -36,6 +36,8 @@ public class ConcreteNode implements Node
 
 	public ConcreteNode(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
 	{
+		providers = new ArrayList<>();
+		services = new ArrayList<>();
 		neighbors = new ArrayList<>();
 		id = newID;
 		name = newName;

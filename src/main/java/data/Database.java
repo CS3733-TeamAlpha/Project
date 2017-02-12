@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.UUID;
 
 /**
  * Class for database access using java derby.
@@ -51,11 +52,6 @@ public class Database
 		insertEdge = null;
 		deleteFrom = null;
 		connect();
-		if (connected)
-		{
-			initTables();
-			reloadCache();
-		}
 	}
 
 	/**
@@ -77,6 +73,8 @@ public class Database
 			return false;
 		}
 		System.out.println("Connected to database \"" + dbName + "\"!");
+		initTables();
+		reloadCache();
 		return true;
 	}
 
@@ -179,7 +177,36 @@ public class Database
 				insertEdge.execute();
 			}
 
-		nodeCache.put(node.getID(), node);
+			//Insert provider info
+			PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?)");
+			PreparedStatement insOff = connection.prepareStatement("INSERT INTO DoctorOffices VALUES(?,?)");
+			for (String prv : node.getProviders())
+			{
+				String prvUUID = getProviderUUID(prv);
+				if (prvUUID.length() != 36)
+				{
+					//Provider does not exist
+					prvUUID = UUID.randomUUID().toString();
+					insPrv.setString(1, prvUUID);
+					insPrv.setString(2, prv);
+					insPrv.execute();
+				}
+
+				insOff.setString(1, prvUUID);
+				insOff.setString(2, node.getID());
+				insOff.execute();
+			}
+
+			//Insert service info... this one should be much simpler
+			PreparedStatement insSrv = connection.prepareStatement("INSERT INTO Services VALUES(?, ?)");
+			insSrv.setString(1, node.getID());
+			for (String srv : node.getServices())
+			{
+				insSrv.setString(2, srv);
+				insSrv.execute();
+			}
+
+			nodeCache.put(node.getID(), node);
 
 		} catch (SQLException e)
 		{
@@ -257,41 +284,6 @@ public class Database
 		if (nodeCache.containsKey(uuid))
 			return nodeCache.get(uuid);
 
-		try
-		{
-			ResultSet results = statement.executeQuery("SELECT * FROM Nodes WHERE node_uuid='" + uuid + "'");
-			if (!results.next())
-				return null;
-
-			//Construct a new concrete node...
-			Node ret = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
-					results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
-
-			//Grab the neighbors off the edges table and make the appropriate links
-			results = statement.executeQuery("SELECT dst FROM Edges WHERE src='" + ret.getID() + "'");
-			while (results.next())
-			{
-				if (nodeCache.containsKey(results.getString(1)))
-					ret.addNeighbor(nodeCache.get(results.getString(1)));
-			}
-
-			//Now get links heading to this node
-			results = statement.executeQuery("SELECT src FROM Edges WHERE dst='" + ret.getID() + "'");
-			while (results.next())
-			{
-				if (nodeCache.containsKey(results.getString(1)))
-					nodeCache.get(results.getString(1)).addNeighbor(ret);
-			}
-
-			//TODO: Investigate how much of this is actually going to be used, there might be some redundancy here.
-
-			nodeCache.put(ret.getID(), ret);
-			return ret;
-		} catch (SQLException e)
-		{
-			System.out.println("Error trying to get node by UUID!");
-			e.printStackTrace();
-		}
 		return null;
 	}
 
@@ -587,9 +579,24 @@ public class Database
 			//Now link nodes together using the hashmap to speed things up:
 			results = statement.executeQuery("SELECT * FROM Edges");
 			while (results.next())
-			{
-				System.out.printf("Linking node '%s' to node '%s'!\n", results.getString(1), results.getString(2));
 				nodeCache.get(results.getString(1)).addNeighbor(nodeCache.get(results.getString(2)));
+
+			//Load service info
+			results = statement.executeQuery("SELECT * FROM Services");
+			while (results.next())
+				nodeCache.get(results.getString(1)).addService(results.getString(2));
+
+			//Load provider info
+			results = statement.executeQuery("SELECT * FROM DoctorOffices");
+			PreparedStatement getName = connection.prepareStatement("SELECT Name FROM Providers WHERE provider_uuid=?");
+			while (results.next())
+			{
+				//Get a provider name from a UUID. Fun!
+				getName.setString(1, results.getString(1));
+				ResultSet nset = getName.executeQuery();
+				nset.next();
+
+				nodeCache.get(results.getString(2)).addProvider(nset.getString(2));
 			}
 
 		} catch (SQLException e)
