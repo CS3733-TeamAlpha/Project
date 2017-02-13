@@ -10,6 +10,11 @@ public abstract class AbstractController
 {
 	protected static Database database;
 
+	static
+	{
+		database = null;
+	}
+
 	public AbstractController()
 	{
 		if (database == null)
