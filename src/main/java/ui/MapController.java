@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MapController
+public class MapController extends AbstractController
 {
 	public ImageView floorImage;
 	private Graph graph;
@@ -49,16 +49,19 @@ public class MapController
 	private AnchorPane imgAnchor;
 
 
-	public MapController() {}
+	public MapController()
+	{
+		super();
+	}
 
 	public void initialize()
 	{
 		hideRoomInfo();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
-		kiosk = DatabaseController.getNodeByID(9);
+		ArrayList<Node> nodes = database.getAllNodes();
+		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
 		for (Node n:nodes)
 		{
-			if(!n.getData().get(1).equals("Hallway"))
+			if(n.getType() != 0) //If n isn't a hallway node... TODO: Create node type enumeration
 			{
 				Button b = new Button("+");
 				b.setLayoutX(n.getX());
