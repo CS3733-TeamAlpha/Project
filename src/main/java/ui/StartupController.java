@@ -1,7 +1,7 @@
 package ui;
 
 import javafx.event.ActionEvent;
-//import data.DatabaseController;
+import data.DatabaseController;
 
 public class StartupController
 {
@@ -14,20 +14,20 @@ public class StartupController
 
 	public void showMap()
 	{
-	//	DatabaseController.initializeAll();
+		DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/Map.fxml");
 	}
 
 	public void showDirectory()
 	{
-	//	DatabaseController.initializeAll();
+		DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/Directory.fxml");
 	}
 
 	public void showLogin()
 	{
 		//TODO: load up login instead of going straight to the editor tool
-	//	DatabaseController.initializeAll();
+		DatabaseController.initializeAll();
 		Main.loadFXML("/fxml/MapEditorTool.fxml");
 
 	}
@@ -39,6 +39,6 @@ public class StartupController
 	}
 
 	public void resetData(ActionEvent e){
-	//	DatabaseController.resetData();
+		DatabaseController.resetData();
 	}
 }
