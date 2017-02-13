@@ -21,7 +21,7 @@ public class Provider
     {
     }
 
-    public Provider(String id, String f, String l, String t, ArrayList<Node> newLocations = null)
+    public Provider(String id, String f, String l, String t, ArrayList<Node> newLocations)
     {
         providerID = id;
         fName = f;
@@ -86,5 +86,4 @@ public class Provider
     {
         return providerID;
     }
-
 }

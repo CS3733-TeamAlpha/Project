@@ -560,7 +560,7 @@ public class Database
 	}
 
 	/**
-	 * Deletes a provider and any associated offices that provider may have. Deleting the provider from a node and calling
+	 * Deletes a provider and any associated offices that provider may have. Deleting the provider from all nodes and calling
 	 * updateNode() *might* not be good enough.
 	 * @param uuid UUID of provider to delete.
 	 * TODO: Factor out these deleteX functions into a common deleteByUUID() function?
@@ -569,9 +569,21 @@ public class Database
 	{
 		try
 		{
-			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
+			//First get the provider name, it'll be needed when we update the node cache
+			String pName = "";
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Providers WHERE provider_uuid=?");
+			pstmt.setString(1, uuid);
+			ResultSet results = pstmt.executeQuery();
+			if (results.next())
+				pName = results.getString(1);
+
+			pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
 			pstmt.setString(1, uuid);
 			pstmt.execute();
+
+			//Flush changes to the node cache. This is O(n), unfortunately
+			for (String s : nodeCache.keySet())
+				nodeCache.get(s).delProvider(pName);
 
 		} catch (SQLException e)
 		{

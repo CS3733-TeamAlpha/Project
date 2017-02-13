@@ -1,6 +1,5 @@
 package ui;
 
-import data.DatabaseController;
 import data.Provider;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -166,25 +165,21 @@ public class DirectoryController extends AbstractController
 			int idIndex = s.indexOf(":");
 			s = s.substring(0, idIndex);
 
-			if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
+			if(database.getNodeByUUID(s) != null)
 			{
-					int nodeID = Integer.parseInt(s);
+					String nodeID = s; //TODO: Eliminate this
 
-					Node n = DatabaseController.getNodeByID(nodeID);
+					Node n = database.getNodeByUUID(nodeID);
 					p.addLocation(n);
 					HBox innerH = new HBox();
 					Label locL = new Label();
-					locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
+					locL.setText("ID:" + n.getID() + ": " + n.getName()); //used to be .getData().get(0)
 					Button xBut = new Button("X");
-					xBut.setOnAction(new EventHandler<ActionEvent>()
+					xBut.setOnAction(event1 ->
 					{
-						@Override
-						public void handle(ActionEvent event)
-						{
-							((VBox) innerH.getParent()).getChildren().remove(innerH);
-							if(!modifiedProvidersList.contains(p)){
-								modifiedProvidersList.add(p);
-							}
+						((VBox) innerH.getParent()).getChildren().remove(innerH);
+						if(!modifiedProvidersList.contains(p)){
+							modifiedProvidersList.add(p);
 						}
 					});
 					innerH.getChildren().addAll(locL, xBut);
@@ -226,6 +221,12 @@ public class DirectoryController extends AbstractController
 		//TODO:
 	}
 
+	/**
+	 * Pushes changes to the database. There's a good chance that this function is heavily bugged as a result of the
+	 * database changeover; obviously it will be a hotspot for future development. This is due to the entirely new
+	 * model that the new database runs under: the new database maintains tight control of its nodes and expects to
+	 * recieve updates accordingly. It does not give as easily to the changeset model presented here.
+	 */
 	public void pushChangesToDatabase(){
 		for(Provider thisProvider: modifiedProvidersList){
 			HBox hb = boxProviderLinks.get(thisProvider);
@@ -238,14 +239,10 @@ public class DirectoryController extends AbstractController
 			TextField ln = (TextField)hb.getChildren().get(3);
 			thisProvider.setTitle(ln.getText());
 			System.out.println(thisProvider.getID()+ thisProvider.getfName()+thisProvider.getlName()+thisProvider.getTitle());
-			if(DatabaseController.getProviderByID(thisProvider.getID()) == null)
-			{
-				DatabaseController.insertProvider(thisProvider);
-			}
-			else
-			{
-				DatabaseController.modifyProviderTable(thisProvider);
-			}
+
+			//Automatically inserts non-existent providers where necessary.
+			for (Node node : thisProvider.getLocations())
+				database.updateNode(node); //*Might* cause a few interesting bugs. TODO: Investigate?
 
 			ArrayList<String> pbIDs = new ArrayList<String>();
 			ArrayList<String> oldIDs = new ArrayList<String>();
@@ -254,11 +251,12 @@ public class DirectoryController extends AbstractController
 			{
 				pbIDs.add(loc.getID());
 			}
-			DatabaseController.initializeAllProviders();
-			for(Node n: DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
+			for(Node n : database.getProviderLocations(thisProvider.getID())) //DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
 			{
 				oldIDs.add(n.getID());
+
 			}
+			/* TODO: Can probably be deleted, the updateNode() function should've automagically taken care of it
 			for(String i: pbIDs){
 				if(!oldIDs.contains(i))
 				{
@@ -270,15 +268,15 @@ public class DirectoryController extends AbstractController
 				{
 					DatabaseController.removeOffice(thisProvider.getID(), i);
 				}
-			}
+			}*/
 
 		}
 
 		for(Provider p: deleteProviderList)
 		{
-			DatabaseController.removeOfficeByProvider(p.getID());
-			DatabaseController.removeProvider(p.getID());
+			database.deleteProvider(p.getID());
 		}
+		/* TODO: Can probably be deleted, the updateNode() function should've automagically taken care of it.
 		for(Provider p: newProviderList)
 		{
 			System.out.println("Pls");
@@ -287,6 +285,7 @@ public class DirectoryController extends AbstractController
 				DatabaseController.insertOffice(p.getID(), n.getID());
 			}
 		}
+		*/
 	}
 
 
