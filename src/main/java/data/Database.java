@@ -657,7 +657,7 @@ public class Database
 				ResultSet nset = getName.executeQuery();
 				nset.next();
 
-				nodeCache.get(results.getString(2)).addProvider(nset.getString(2));
+				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
 			}
 
 		} catch (SQLException e)

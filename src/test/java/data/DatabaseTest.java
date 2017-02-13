@@ -244,9 +244,12 @@ public class DatabaseTest
 		database.insertNode(node);
 		final String provID = database.getProviderUUID("Picard, Jean-Luc; Captain");
 
+		//Reload from the database
+		database.disconnect();
+		database.connect();
+
 		//Verify the presence of a provider
 		assertEquals(1, database.getProviders().size());
-		assertEquals(node, database.getProviderLocations(provID).get(0));
 
 		//Add a second provider to the node and verify the transaction
 		node.addProvider("Sisko, Benjamin; Captain");
