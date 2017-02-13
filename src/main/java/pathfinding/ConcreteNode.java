@@ -1,8 +1,5 @@
 package pathfinding;
 
-import com.sun.corba.se.impl.logging.POASystemException;
-
-import java.sql.Array;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -119,7 +116,7 @@ public class ConcreteNode implements Node
 	}
 
 	@Override
-	public void removeNeighbor(Node oldNeighbor)
+	public void delNeighbor(Node oldNeighbor)
 	{
 		neighbors.remove(oldNeighbor);
 	}

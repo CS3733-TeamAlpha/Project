@@ -1,13 +1,9 @@
 package data;
 
-import org.apache.derby.iapi.sql.execute.ResultSetStatistics;
 import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
-import javax.xml.transform.Result;
-import java.io.CharArrayReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
@@ -326,7 +322,7 @@ public class Database
 			}
 
 			for (String s : nodeCache.keySet())
-				nodeCache.get(s).removeNeighbor(node);
+				nodeCache.get(s).delNeighbor(node);
 			nodeCache.remove(uuid);
 		} catch (SQLException e)
 		{
@@ -392,7 +388,7 @@ public class Database
 	 * @param uuid UUID of building. Recommended to use java.util.UUID.randomUUID().toString()
 	 * @param name Name of building.
 	 */
-	public void addBuilding(String uuid, String name)
+	public void insertBuilding(String uuid, String name)
 	{
 		try
 		{

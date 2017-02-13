@@ -1,34 +1,22 @@
 package ui;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
-import data.*;
-import javafx.stage.WindowEvent;
 import pathfinding.*;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.ResourceBundle;
-
-import static java.awt.SystemColor.window;
 
 public class MapEditorToolController
 {
@@ -334,7 +322,7 @@ public class MapEditorToolController
 		else if (removingNeighbor)
 		{
 			//remove neighbor
-			currentNode.removeNeighbor(linkedNode);
+			currentNode.delNeighbor(linkedNode);
 			//add currentNode (not the node that has just been clicked) to the modifiedlist
 			if (!modifiedNodesList.contains(currentNode))
 			{
@@ -616,7 +604,7 @@ public class MapEditorToolController
             //remove all neighbor relations that have been removed by the editor
          //   for(Node sourceNeighbor: sourceNeighbors)
             {
-         //       DatabaseController.removeNeighbor(n.getID(), sourceNeighbor.getID());
+         //       DatabaseController.delNeighbor(n.getID(), sourceNeighbor.getID());
             }
         }
 
@@ -776,7 +764,7 @@ public class MapEditorToolController
                 }
                 if(has)
                 {
-                    n.removeNeighbor(currentNode);
+                    n.delNeighbor(currentNode);
                     drawToNeighbors(n);
                     //indicate that this node has been modified
                     if (!modifiedNodesList.contains(n))
@@ -794,7 +782,7 @@ public class MapEditorToolController
              //   }
            //     if(has)
                 {
-          //          n.removeNeighbor(currentNode);
+          //          n.delNeighbor(currentNode);
             //        drawToNeighbors(n);
                     //indicate that this node has been modified
           //          if (!modifiedNodesList.contains(n))
@@ -812,7 +800,7 @@ public class MapEditorToolController
                 }
                 if(has)
                 {
-                    n.removeNeighbor(currentNode);
+                    n.delNeighbor(currentNode);
                     drawToNeighbors(n);
                     //indicate that this node has been modified
                     if (!modifiedNodesList.contains(n))

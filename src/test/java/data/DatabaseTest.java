@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import pathfinding.*;
-import sun.awt.AWTIcon32_java_icon16_png;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -180,7 +179,7 @@ public class DatabaseTest
 	public void testGetByBuilding()
 	{
 		//Create a new building with random UUID
-		database.addBuilding(UUID.randomUUID().toString(), "Starfleet Headquarters");
+		database.insertBuilding(UUID.randomUUID().toString(), "Starfleet Headquarters");
 
 		//Verify that the building was actually inserted
 		final String uuid = database.getBuildingUUID("Starfleet Headquarters");

@@ -1,7 +1,5 @@
 package pathfinding;
 
-import data.Floor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -31,7 +29,7 @@ public interface Node
 	void addService(String newService);
 	void delService(String oldService);
 	void addNeighbor(Node newNeighbor);
-	void removeNeighbor(Node oldNeighbor);
+	void delNeighbor(Node oldNeighbor);
 	void setID(String newID);
 	void setName(String newName);
 	void setBuilding(String newBuilding);
