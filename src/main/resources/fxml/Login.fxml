@@ -1,17 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LoginController">
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LoginController">
    <children>
-      <TextField fx:id="usernameField" layoutX="617.0" layoutY="333.0" />
-      <TextField fx:id="passwordField" layoutX="619.0" layoutY="376.0" />
-      <Label layoutX="518.0" layoutY="337.0" text="Username:" />
-      <Label layoutX="519.0" layoutY="381.0" text="Password:" />
-      <Button layoutX="555.0" layoutY="446.0" mnemonicParsing="false" onAction="#login" text="Login" />
-      <Button layoutX="695.0" layoutY="446.0" mnemonicParsing="false" onAction="#showStartup" text="Cancel" />
+      <Pane prefHeight="303.0" prefWidth="1280.0" styleClass="bh-white">
+         <children>
+            <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/BWHlogo.gif" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Pane prefHeight="200.0" prefWidth="200.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
+      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1280.0">
+         <children>
+            <Button alignment="BOTTOM_RIGHT" layoutX="1185.0" layoutY="552.0" mnemonicParsing="false" onAction="#addLogin" text="Add Login" StackPane.alignment="BOTTOM_RIGHT" />
+            <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="509.0" prefWidth="645.0" StackPane.alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="413.0" fitWidth="754.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/badge.png" />
+                     </image>
+                  </ImageView>
+                  <TextField fx:id="usernameField" layoutX="429.0" layoutY="223.0"/>
+                  <PasswordField fx:id="passwordField" layoutX="429.0" layoutY="262.0" onAction="#login"/>
+                  <Label layoutX="319.0" layoutY="223.0" text="Username:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="321.0" layoutY="262.0" text="Password:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="loginButton" layoutX="515.0" layoutY="303.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER" focusTraversable="false"/>
+                  <Button fx:id="cancelButton" layoutX="429.0" layoutY="303.0" mnemonicParsing="false" onAction="#showStartup" text="Cancel" textAlignment="CENTER" focusTraversable="false"/>
+                  <Label layoutX="312.0" layoutY="164.0" text="Administrator Login">
+                     <font>
+                        <Font name="Glacial Indifference Regular" size="34.0" />
+                     </font>
+                  </Label>
+                  <ProgressIndicator fx:id="progressIndicator" visible="false" layoutX="546.0" layoutY="352.0" prefHeight="19.0" prefWidth="20.0" />
+                  <Label fx:id="resultText" layoutX="459.0" visible="false" layoutY="353.0" text="Logging in...">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </StackPane>
    </children>
-</Pane>
+</VBox>
