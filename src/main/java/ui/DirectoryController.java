@@ -288,12 +288,12 @@ public class DirectoryController
 
 	public void showMap()
 	{
-		Main.loadFXML("/fxml/Map.fxml");
+		Main.loadFXML(Paths.MAP_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML("/fxml/Startup.fxml");
+		Main.loadFXML(Paths.STARTUP_FXML);
 	}
 
 }

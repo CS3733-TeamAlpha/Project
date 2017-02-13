@@ -15,25 +15,24 @@ public class StartupController
 	public void showMap()
 	{
 		DatabaseController.initializeAll();
-		Main.loadFXML("/fxml/Map.fxml");
+		Main.loadFXML(Paths.MAP_FXML);
 	}
 
 	public void showDirectory()
 	{
 		DatabaseController.initializeAll();
-		Main.loadFXML("/fxml/Directory.fxml");
+		Main.loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void showLogin()
 	{
-		Main.loadFXML("/fxml/Login.fxml");
+		Main.loadFXML(Paths.LOGIN_FXML);
 
 	}
 
-	public void toggleHighContrast(ActionEvent actionEvent)
+	public void toggleHighContrast()
 	{
 		Accessibility.toggleHighContrast();
-		Main.toggleHighContrast();
 	}
 
 	public void resetData(ActionEvent e){

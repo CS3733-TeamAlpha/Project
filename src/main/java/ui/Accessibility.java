@@ -7,7 +7,6 @@ public class Accessibility
 	public static final String HIGH_CONTRAST_MAP_PATH = "images/floor3-hc.png";
 
 	private static boolean highContrast = false;
-	private static boolean largeText = false;
 
 	public static boolean isHighContrast()
 	{
@@ -17,25 +16,13 @@ public class Accessibility
 	public static void setHighContrast(boolean highContrast)
 	{
 		Accessibility.highContrast = highContrast;
-	}
-
-	public static boolean isLargeText()
-	{
-		return largeText;
-	}
-
-	public static void setLargeText(boolean largeText)
-	{
-		Accessibility.largeText = largeText;
+		Main.updateCSS();
 	}
 
 	public static void toggleHighContrast()
 	{
 		highContrast = !highContrast;
+		Main.updateCSS();
 	}
 
-	public static void toggleLargeText()
-	{
-		largeText = !largeText;
-	}
 }
