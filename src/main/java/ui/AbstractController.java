@@ -18,6 +18,9 @@ public abstract class AbstractController
 	public AbstractController()
 	{
 		if (database == null)
+		{
 			database = new Database("FHAlpha");
+			ProviderBox.database = database;
+		}
 	}
 }
