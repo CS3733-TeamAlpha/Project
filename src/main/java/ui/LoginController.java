@@ -38,7 +38,7 @@ public class LoginController
 
 	public void showStartup()
 	{
-		Main.loadFXML("/fxml/Startup.fxml");
+		Main.loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void login()
@@ -70,7 +70,7 @@ public class LoginController
 			new Thread(() ->
 			{
 				DatabaseController.initializeAll();
-				Main.loadFXML("/fxml/MapEditorTool.fxml");
+				Main.loadFXML(Paths.MAP_EDITOR_FXML);
 			}).start();
 		}
 		else

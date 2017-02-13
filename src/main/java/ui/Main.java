@@ -15,13 +15,15 @@ import java.io.IOException;
 public class Main extends Application
 {
 	private static Stage stage;
+	private static boolean currentSceneSupportsHC = true;
+	private static String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML};
 
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	 {
 	 	//Font f = Font.loadFont(getClass().getResource("/fonts/GlacialIndifference-Regular.otf").toExternalForm());
 
-	 	Parent root = FXMLLoader.load(getClass().getResource("/fxml/Startup.fxml"));
+	 	Parent root = FXMLLoader.load(getClass().getResource(Paths.STARTUP_FXML));
 		stage = primaryStage;
 		primaryStage.setTitle("Faulkner Hospital Map");
 		Scene scene = new Scene(root, 1280, 720);
@@ -49,17 +51,44 @@ public class Main extends Application
 			e.printStackTrace();
 		}
 		stage.getScene().setRoot(root);
+
+		//Update the high contrast option
+		currentSceneSupportsHC = true;
+		for(int i = 0; i < highContrastBlackList.length; i++)
+		{
+			if(highContrastBlackList[i].equals(path))
+			{
+				currentSceneSupportsHC = false;
+			}
+		}
+		updateCSS();
 	}
 
-	public static void toggleHighContrast()
+	private static void disableHighContrastCss()
 	{
 		if(stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
 		{
 			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
 		}
-		else
+	}
+
+	private static void enableHighContrastCss()
+	{
+		if(! stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
 		{
 			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
+		}
+	}
+
+	public static void updateCSS()
+	{
+		if(currentSceneSupportsHC && Accessibility.isHighContrast())
+		{
+			enableHighContrastCss();
+		}
+		else
+		{
+			disableHighContrastCss();
 		}
 	}
 }

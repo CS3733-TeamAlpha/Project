@@ -40,7 +40,7 @@ public class ProviderBox extends HBox
 
 	public ProviderBox(){
 		super();
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ProviderBox.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Paths.PROVIDER_BOX_FXML));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		try {
