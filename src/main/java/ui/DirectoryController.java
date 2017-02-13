@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DirectoryController
+import static ui.AbstractController.database;
+
+public class DirectoryController extends AbstractController
 {
 
 	//link buttons to node objects
@@ -56,10 +58,6 @@ public class DirectoryController
 
 	public void initialize()
 	{
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
 		loadProvidersFromDatabase();
 	}
 
@@ -68,26 +66,37 @@ public class DirectoryController
 	 */
 	public void loadProvidersFromDatabase()
 	{
-		for (Provider p : DatabaseController.getAllProviders())
+		for (String providerName : database.getProviders())
 		{
+			//Assemble providers into provider classes. This is a temporary workaround so that database changes can be
+			//pushed as soon as possible; the Provider class is slated for removal.
+			//TODO: Make DirectoryController and related class no longer use class Provider
+			Provider p = new Provider(database.getProviderUUID(providerName),
+					providerName.split(",")[1].split(";")[0], 	//fname
+					providerName.split(",")[0],						//lname
+					providerName.split(";")[1],						//titles. String.split is magical
+					database.getProviderLocations(database.getProviderUUID(providerName)));
 			loadProvider(p);
 		}
 	}
 
 	public void addNewProvider(){
+		//Most of this stuff is commented out instead because I really don't know what it's for. As far as I can tell,
+		//the original databasecontroller just made a new provider object with a set ID, and it needed to do so because
+		//it's the only thing with access to a comprehensive list of all those ids... fascinating.
+
 		Provider newP = null;
-		if(newProviderList.size() == 0){
-			newP = DatabaseController.generateNewProvider("FName", "LName", "Title");
-		} else {
-			newP = generateNewProvider();
-		}
+		//if(newProviderList.size() == 0){
+		//	newP = DatabaseController.generateNewProvider("FName", "LName", "Title");
+		//} else {
+		newP = generateNewProvider();
+		//}
 		loadProvider(newP);
 	}
 
 	public Provider generateNewProvider()
 	{
-		int newID = newProviderList.get(newProviderList.size()-1).getID()+1;
-		return new Provider(newID, "FName", "LName", "Title");
+		return new Provider(java.util.UUID.randomUUID().toString(), "FName", "LName", "Title", new ArrayList<Node>());
 	}
 
 	public void loadProvider(Provider p)
@@ -142,49 +151,44 @@ public class DirectoryController
 		////////////////////
 
 		ChoiceBox locationSelector = new ChoiceBox();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		ArrayList<Node> nodes = database.getAllNodes();
 		ArrayList<String> nodeNames = new ArrayList<String>();
 		for(Node n: nodes)
-		{
-			nodeNames.add(Integer.toString(n.getID())+":"+n.getData().get(0));
-		}
+			nodeNames.add(n.getID() + ":" +n.getName()); //this used to be n.getData().get(0) with an int->string id tacked on
+
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 
 		Button addBut = new Button("Add Location");
-		addBut.setOnAction(new EventHandler<ActionEvent>()
+		addBut.setOnAction(event ->
 		{
-			@Override
-			public void handle(ActionEvent event)
+			String s = locationSelector.getValue().toString();
+
+			int idIndex = s.indexOf(":");
+			s = s.substring(0, idIndex);
+
+			if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
 			{
-				String s = locationSelector.getValue().toString();
+					int nodeID = Integer.parseInt(s);
 
-				int idIndex = s.indexOf(":");
-				s = s.substring(0, idIndex);
-
-				if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
-				{
-						int nodeID = Integer.parseInt(s);
-
-						Node n = DatabaseController.getNodeByID(nodeID);
-						p.addLocation(n);
-						HBox innerH = new HBox();
-						Label locL = new Label();
-						locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
-						Button xBut = new Button("X");
-						xBut.setOnAction(new EventHandler<ActionEvent>()
+					Node n = DatabaseController.getNodeByID(nodeID);
+					p.addLocation(n);
+					HBox innerH = new HBox();
+					Label locL = new Label();
+					locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
+					Button xBut = new Button("X");
+					xBut.setOnAction(new EventHandler<ActionEvent>()
+					{
+						@Override
+						public void handle(ActionEvent event)
 						{
-							@Override
-							public void handle(ActionEvent event)
-							{
-								((VBox) innerH.getParent()).getChildren().remove(innerH);
-								if(!modifiedProvidersList.contains(p)){
-									modifiedProvidersList.add(p);
-								}
+							((VBox) innerH.getParent()).getChildren().remove(innerH);
+							if(!modifiedProvidersList.contains(p)){
+								modifiedProvidersList.add(p);
 							}
-						});
-						innerH.getChildren().addAll(locL, xBut);
-						newV.getChildren().add(innerH);
-				}
+						}
+					});
+					innerH.getChildren().addAll(locL, xBut);
+					newV.getChildren().add(innerH);
 			}
 		});
 		newLocH.getChildren().addAll(locationSelector, addBut);

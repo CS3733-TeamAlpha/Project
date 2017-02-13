@@ -12,7 +12,7 @@ public class Provider
 {
 
     private ArrayList<Node> locations;
-    private int providerID;
+    private String providerID;
     private String fName;
     private String lName;
     private String title;
@@ -21,13 +21,13 @@ public class Provider
     {
     }
 
-    public Provider(int id, String f, String l, String t)
+    public Provider(String id, String f, String l, String t, ArrayList<Node> newLocations = null)
     {
         providerID = id;
         fName = f;
         lName = l;
         title = t;
-        locations = new ArrayList<Node>();
+        locations = newLocations;
     }
 
     public boolean atLocation(Node locationNode)
@@ -82,8 +82,9 @@ public class Provider
         lName = l;
     }
 
-    public int getID()
+    public String getID()
     {
         return providerID;
     }
+
 }

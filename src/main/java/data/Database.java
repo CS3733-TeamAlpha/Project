@@ -297,6 +297,19 @@ public class Database
 	}
 
 	/**
+	 * Compatibilty hack for DirectoryController
+	 * TODO: EXTERMINATE
+	 * @return ArrayList of all nodes in the database.
+	 */
+	public ArrayList<Node> getAllNodes()
+	{
+		ArrayList<Node> ret = new ArrayList<Node>();
+		for (String s : nodeCache.keySet())
+			ret.add(nodeCache.get(s));
+		return ret;
+	}
+
+	/**
 	 * Deletes the node of the given UUID. Also cascade deletes anything associated with this node as well.
 	 * @param uuid UUID of node to delete.
 	 */
@@ -566,6 +579,26 @@ public class Database
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Rename a provider with a given UUID.
+	 * @param newName New name for provider. Format 'lname, fname; titles'
+	 * @param uuid UUID of provider to modify
+	 */
+	public void renameProvider(String newName, String uuid)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("UPDATE Providers SET name=? WHERE provider_uuid=?");
+			pstmt.setString(1, newName);
+			pstmt.setString(2, uuid);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to update providers!");
+			e.printStackTrace();
+		}
 	}
 
 	/**
