@@ -217,7 +217,8 @@ public class Database
 
 	/**
 	 * Updates a node in the database. Use whenever modifications are made outside the database. Be warned, this is an
-	 * expensive function to call.
+	 * expensive function to call. Note that it does NOT delete orphan providers, you'll need to explicitly call
+	 * deleteProvider() for that.
 	 * @param node Node to be updated
 	 */
 	public void updateNode(Node node)
@@ -245,12 +246,23 @@ public class Database
 			delOffices.setString(1, node.getID());
 			delOffices.execute();
 
-			PreparedStatement insPrv = connection.prepareStatement("INSERT INTO DoctorOffices VALUES(?, ?)");
-			insPrv.setString(2, node.getID());
-			for (String prv : node.getProviders())
+			PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?)");
+			PreparedStatement insOff = connection.prepareStatement("INSERT INTO DoctorOffices VALUES(?,?)");
+			for (String prv : node.getProviders()) //Is this dupe'd code? why yes, yes it is!
 			{
-				insPrv.setString(1, getProviderUUID(prv));
-				insPrv.execute();
+				String prvUUID = getProviderUUID(prv);
+				if (prvUUID.length() != 36)
+				{
+					//Provider does not exist
+					prvUUID = UUID.randomUUID().toString();
+					insPrv.setString(1, prvUUID);
+					insPrv.setString(2, prv);
+					insPrv.execute();
+				}
+
+				insOff.setString(1, prvUUID);
+				insOff.setString(2, node.getID());
+				insOff.execute();
 			}
 
 			//Update services
@@ -434,7 +446,8 @@ public class Database
 			ResultSet results = statement.executeQuery("SELECT name FROM Buildings");
 			while (results.next())
 			{
-				if (results.getString(1) != "default")
+				System.out.println("getBuildings adding " + results.getString(1) + " to ret");
+				if (!results.getString(1).equals("default"))
 					ret.add(results.getString(1));
 			}
 
@@ -464,7 +477,6 @@ public class Database
 			System.out.println("Error trying to delete a building!");
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -477,7 +489,7 @@ public class Database
 		String ret = "";
 		try
 		{
-			PreparedStatement pstmt = connection.prepareStatement("SELECT uuid FROM Providers WHERE name=?");
+			PreparedStatement pstmt = connection.prepareStatement("SELECT provider_uuid FROM Providers WHERE name=?");
 			pstmt.setString(1, name);
 			ResultSet results = pstmt.executeQuery();
 			if (results.next())
@@ -492,36 +504,25 @@ public class Database
 		return ret;
 	}
 
-
-	/**
-	 * Adds a new provider to the database using a name and a uuid.
-	 * @param uuid UUID of provider. Reccomended to use java.util.UUID.randomUUID().toString()
-	 * @param name Name of provider. Include title information.
-	 * TODO: Rename add functions to insert?
-	 */
-	public void addProvider(String uuid, String name)
-	{
-
-	}
-
 	/**
 	 * Gets a list of all provider names
 	 * @return ArrayList of names
 	 */
-	public ArrayList<String> getProviderNames()
+	public ArrayList<String> getProviders()
 	{
 		ArrayList<String> ret = new ArrayList<String>();
+		try
+		{
+			ResultSet results = statement.executeQuery("SELECT name FROM Providers");
+			while (results.next())
+				ret.add(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
 		return ret;
-	}
-
-	/**
-	 * Adds a provider to a given node.
-	 * @param providerUUID UUID of provider.
-	 * @param nodeUUID UUID of node that provider should be linked to
-	 */
-	public void addProviderOffice(String providerUUID, String nodeUUID)
-	{
-
 	}
 
 	/**
@@ -532,35 +533,49 @@ public class Database
 	public ArrayList<Node> getProviderLocations(String providerUUID)
 	{
 		ArrayList<Node> ret = new ArrayList<Node>();
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM DoctorOffices WHERE provider_uuid=?");
+			pstmt.setString(1, providerUUID);
+			ResultSet results = pstmt.executeQuery();
+			while (results.next())
+				ret.add(nodeCache.get(results.getString(1)));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get list of provider's offices!");
+			e.printStackTrace();
+		}
+
 		return ret;
 	}
 
 	/**
-	 * Removes a provider from a given node.
-	 * @param providerUUID UUID of provider
-	 * @param nodeUUID UUID of node to remove provider from.
-	 */
-	public void deleteProviderOffice(String providerUUID, String nodeUUID)
-	{
-
-	}
-
-	/**
-	 * Deletes a provider and any associated offices that provider may have.
+	 * Deletes a provider and any associated offices that provider may have. Deleting the provider from a node and calling
+	 * updateNode() *might* not be good enough.
 	 * @param uuid UUID of provider to delete.
-	 * TODO: Factor out these deleteX functions into a common deleteByUUID
+	 * TODO: Factor out these deleteX functions into a common deleteByUUID() function?
 	 */
 	public void deleteProvider(String uuid)
 	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
+			pstmt.setString(1, uuid);
+			pstmt.execute();
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete provider!");
+			e.printStackTrace();
+		}
 
 	}
 
 	/**
-	 * Loads all nodes in the database into the cache and links them together. Call this function anytime you create
-	 * create multiple nodes with relationships - those relationships will be saved to the table and the cache but... they
-	 * ...might...not...work.
-	 * TODO: Make sure this function never actually needs calling.
-	 * TODO: INVESTIGATE IF THIS FUNCTION IS ACTUALLY NEEDED!
+	 * Loads all nodes in the database into the cache, links them together, and loads service + provider info. Note that
+	 * this function will also invalidate any nodes you've already grabbed, so you'll want to make sure that you re-get
+	 * locally stored nodes after calling this function...
 	 */
 	public void reloadCache()
 	{

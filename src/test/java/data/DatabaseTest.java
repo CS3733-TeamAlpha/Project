@@ -185,8 +185,9 @@ public class DatabaseTest
 		//Verify that the building was actually inserted
 		final String uuid = database.getBuildingUUID("Starfleet Headquarters");
 		assertEquals(36, uuid.length());
+		assertEquals(1, database.getBuildings().size());
 
-		//Verify that we can't get an invalid building
+		//Verify that we can't get a bad building
 		assertTrue(database.getBuildingUUID("Dominion Headquarters").isEmpty());
 
 		//Now add some nodes to Starfleet Headquarters
@@ -237,21 +238,29 @@ public class DatabaseTest
 	@Test
 	public void testProviderOperations()
 	{
-		/*
-		//Create a test node, put it in the database.
+		//Create a test node with a test provider, put it in the database.
 		ConcreteNode node = new ConcreteNode();
+		node.addProvider("Picard, Jean-Luc; Captain");
 		database.insertNode(node);
+		final String provID = database.getProviderUUID("Picard, Jean-Luc; Captain");
 
-		//Create a provider, put it in, get it out
-		database.addProvider(UUID.randomUUID().toString(), "Picard, Jean-Luc; Captain");
-		assertEquals(36, database.getProviderUUID("Picard, Jean-Luc; Captain").length());
+		//Verify the presence of a provider
+		assertEquals(1, database.getProviders().size());
+		assertEquals(node, database.getProviderLocations(provID).get(0));
 
-		//Get another provider, verify that two are now stored
-		database.addProvider(UUID.randomUUID().toString(), "Sisko, Benjamin");
-		assertEquals(2, database.getProviderNames().size());
+		//Add a second provider to the node and verify the transaction
+		node.addProvider("Sisko, Benjamin; Captain");
+		database.updateNode(node);
+		assertEquals(2, database.getProviders().size());
 
-		//Tie a provider to node
-		database.addProviderOffice(database.getProviderUUID("Picard, Jean-Luc; Captain"), node.getID());
-		*/
+		//Delete picard and verify his deletion
+		node.delProvider("Picard, Jean-Luc; Captain");
+		database.deleteProvider(provID);
+		assertEquals(1, database.getProviders().size());
+
+		//Clean up
+		database.deleteNodeByUUID(node.getID());
+		database.deleteProvider(database.getProviderUUID("Sisko, Benjamin; Captain"));
+		assertEquals(0, database.getProviders().size());
 	}
 }
