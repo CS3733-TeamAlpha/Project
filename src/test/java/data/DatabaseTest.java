@@ -263,4 +263,39 @@ public class DatabaseTest
 		database.deleteProvider(database.getProviderUUID("Sisko, Benjamin; Captain"));
 		assertEquals(0, database.getProviders().size());
 	}
+
+	@Test
+	public void testServices()
+	{
+		//Create a test node with a service, put it in the database
+		ConcreteNode node = new ConcreteNode();
+		node.addService("tenforward");
+		database.insertNode(node);
+		assertEquals(1, database.getServices().size());
+
+		node.addService("quarks");
+		database.updateNode(node);
+		assertEquals(2, database.getServices().size());
+
+		node.delService("quarks");
+		database.updateNode(node);
+		assertEquals(1, database.getServices().size());
+
+		//Verify that two nodes can have a service by the same name - nodes and services are 1-1
+		//This could cause issues with getting a service's location, but that's a problem for another (edge-casey) time.
+		ConcreteNode node2 = new ConcreteNode();
+		node2.addService("tenforward");
+		database.insertNode(node2);
+		assertEquals(2, database.getServices().size());
+
+		//Verify that deleting a node deletes its service
+		database.deleteNodeByUUID(node2.getID());
+		assertEquals(1, database.getServices().size());
+
+		//Verify location finding
+		assertEquals(node, database.getServiceLocation("tenforward"));
+
+		//Clean up
+		database.deleteNodeByUUID(node.getID());
+	}
 }

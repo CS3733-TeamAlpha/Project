@@ -5,6 +5,7 @@ import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
+import javax.xml.transform.Result;
 import java.io.CharArrayReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -274,7 +275,7 @@ public class Database
 			insSrv.setString(1, node.getID());
 			for (String srv : node.getServices())
 			{
-				insSrv.setString(2, getProviderUUID(srv));
+				insSrv.setString(2, srv);
 				insSrv.execute();
 			}
 
@@ -446,7 +447,6 @@ public class Database
 			ResultSet results = statement.executeQuery("SELECT name FROM Buildings");
 			while (results.next())
 			{
-				System.out.println("getBuildings adding " + results.getString(1) + " to ret");
 				if (!results.getString(1).equals("default"))
 					ret.add(results.getString(1));
 			}
@@ -570,6 +570,52 @@ public class Database
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Get the location of a named service as a node
+	 * @param name Name of the service to search for
+	 * @return A node object if the service is found, null otherwise.
+	 */
+	public Node getServiceLocation(String name)
+	{
+		Node ret = null;
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT node FROM Services WHERE name=?");
+			pstmt.setString(1, name);
+			ResultSet results = pstmt.executeQuery();
+			if (results.next())
+				ret = nodeCache.get(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get service location!");
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Returns a list of all services in the database.
+	 * @return ArrayList of strings of services.
+	 */
+	public ArrayList<String> getServices()
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		try
+		{
+			ResultSet results = statement.executeQuery("SELECT name FROM Services");
+			while (results.next())
+				ret.add(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get list of services!");
+			e.printStackTrace();
+		}
+		return ret;
 	}
 
 	/**
