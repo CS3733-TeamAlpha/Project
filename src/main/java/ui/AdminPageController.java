@@ -11,11 +11,11 @@ public class AdminPageController extends BaseController
 
 	public void editDirectory(ActionEvent actionEvent)
 	{
-		Main.loadFXML(Paths.DIRECTORY_FXML);
+		loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void editMap(ActionEvent actionEvent)
 	{
-		Main.loadFXML(Paths.MAP_EDITOR_FXML);
+		loadFXML(Paths.MAP_EDITOR_FXML);
 	}
 }

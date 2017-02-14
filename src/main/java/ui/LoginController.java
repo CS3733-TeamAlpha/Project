@@ -41,7 +41,7 @@ public class LoginController extends BaseController
 
 	public void showStartup()
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void login()
@@ -73,7 +73,7 @@ public class LoginController extends BaseController
 			new Thread(() ->
 			{
 				DatabaseController.initializeAll();
-				Main.loadFXML(Paths.ADMIN_PAGE_FXML);
+				loadFXML(Paths.ADMIN_PAGE_FXML);
 			}).start();
 		}
 		else

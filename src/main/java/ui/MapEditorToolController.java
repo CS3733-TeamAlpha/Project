@@ -746,7 +746,7 @@ public class MapEditorToolController extends BaseController
 	void goBack()
 	{
 		DatabaseController.initializeAllNodes();
-		Main.loadFXML(Paths.ADMIN_PAGE_FXML);
+		loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
     @FXML

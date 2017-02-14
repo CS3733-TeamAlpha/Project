@@ -133,12 +133,12 @@ public class MapController extends BaseController
 
 	public void showDirectory()
 	{
-		Main.loadFXML(Paths.DIRECTORY_FXML);
+		loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void findDirectionsTo(){
