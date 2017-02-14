@@ -62,7 +62,6 @@ public class MapEditorToolController
 	double CONTEXTRAD = 90.0;
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
-	int CONTEXTSELECTION = -1; //0 new node, 1 ?, 2 ?, 3 ?
 
 
 	//define widths for circles/lines that the canvas will draw
@@ -75,16 +74,32 @@ public class MapEditorToolController
 	private double YOFFSET = CIRCLEWIDTH/2;
 
 
-	//TODO: ...make this a state machine and use switch case?
-	private boolean addingNeighbor = false; //currently adding a neighbor?
-	private boolean removingNeighbor = false; //currently removing a neighbor?
-	private boolean makingNew = false; //currently making a new node?
-	private boolean modifyingLocation = false; //currently moving a node?
-	private boolean showingDetails = false;
-	private boolean showingAddHereContext = false; //currently showing contextmenu for adding new node
+	//enums to indicate current state
+	private enum editorStates {
+		DOINGNOTHING,
+		MAKINGNEWHALLWAY,  //making hallway type node
+		MAKINGNEWOFFICE,   //making office type node
+		MAKINGNEWELEVATOR, //making elevator type node
+		MAKINGNEWRESTROOM, //making restroom type node
+		ADDINGNEIGHBOR,    //currently adding neighbor
+		REMOVINGNEIGHBOR,  //currently removing neighbor
+		MOVINGNODE,        //currently moving node
+		SHOWINGEMPTYMENU,  //radial contextmenu, not on node
+		SHOWINGNODEMENU    //radial contextmenu for node options
+	}
+	//store current state
+	private editorStates currentState = editorStates.DOINGNOTHING;
+
+	//contextSelection will store which area of the context menu the mouse is hovered over
+	//going from 0 to 3 starting from the right, clockwise.
+	//We store this independently since we will take different actions based on mouse position
+	//depending on whether we are in the context menu for nodes or not
+	private int contextSelection = -1; //default to -1, no context menu option selected
+
 
 	private int FLOORID = 3; //Default floor id for minimal application
-
+	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
+	//TODO: should nodes be able to be moved to different floor? probably not
 
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
@@ -152,7 +167,7 @@ public class MapEditorToolController
 		radialMenu.setStroke(Color.GRAY);
 		radialMenu.setStrokeType(StrokeType.INSIDE);
 		radialMenu.setFill(null);
-		radialMenu.setOpacity(0.5);
+		radialMenu.setOpacity(0.8);
 
 		//arc wedge will be used to indicate current selection
 		SELECTIONWEDGE = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 0);
@@ -183,18 +198,39 @@ public class MapEditorToolController
 
 		//TODO: image for a node instead of circle?
 		//Radius of circle is 13px as per css.
-		Circle newHallway = new Circle(0, -CONTEXTRAD+CONTEXTWIDTH/2, 13);
-		//TODO: decide on new node color
+		Circle newHallway = new Circle(CONTEXTRAD-CONTEXTWIDTH/2, 0, 13);
+		//TODO: decide on new node color?
 		newHallway.setFill(Color.GREENYELLOW);
 
-		//TODO: addAll and keep the ordering i want? or just keep as is
-		CONTEXTMENU.getChildren().add(SELECTIONWEDGE);
+		//TODO: replace with provider image
+		//Radius of circle is 13px as per css.
+		Circle newOffice = new Circle(0, CONTEXTRAD-CONTEXTWIDTH/2, 13);
+		newOffice.setFill(Color.RED);
+
+		//TODO: replace with Elevator image
+		//Radius of circle is 13px as per css.
+		Circle newElevator = new Circle(0, -CONTEXTRAD+CONTEXTWIDTH/2, 13);
+		newElevator.setFill(Color.WHITE);
+
+		//TODO: replace with restroom image
+		//Radius of circle is 13px as per css.
+		Circle newRestroom = new Circle(-CONTEXTRAD+CONTEXTWIDTH/2, 0, 13);
+		newRestroom.setFill(Color.BLUE);
+
+		//TODO: different icons for node context menu
+
+		//add all elements to the CONTEXTMENU group
 		CONTEXTMENU.getChildren().add(radialMenu);
+		CONTEXTMENU.getChildren().add(SELECTIONWEDGE);
 		CONTEXTMENU.getChildren().add(split1);
 		CONTEXTMENU.getChildren().add(split2);
 		CONTEXTMENU.getChildren().add(split3);
 		CONTEXTMENU.getChildren().add(split4);
+		//TODO: check whether this is node contextmenu or not to decide what to add
 		CONTEXTMENU.getChildren().add(newHallway);
+		CONTEXTMENU.getChildren().add(newElevator);
+		CONTEXTMENU.getChildren().add(newRestroom);
+		CONTEXTMENU.getChildren().add(newOffice);
 	}
 
 	@FXML
@@ -244,62 +280,94 @@ public class MapEditorToolController
 	{
 		if (e.isStillSincePress())
 		{
-			if (makingNew) //making a new button/node
+			//TODO: all of these should be occuring on drop
+			//TODO: move this shit into a drop function, not click
+			switch(currentState)
 			{
-				createNewNode(e);
-			}
-			else if (modifyingLocation) //modifying the location of an existing node
-			{
-				if (currentButton != null && currentNode != null) //check that a button/node is actually selected
-				{
-					//modify button text
-					clickModLocation.setText("Modify Location by Click");
-					modifyingLocation = false;
-
-					//update button and node location
-					currentButton.setLayoutX(e.getX() - XOFFSET);
-					currentButton.setLayoutY(e.getY() - YOFFSET);
-					currentNode.setX(e.getX());
-					currentNode.setY(e.getY());
-
-                    //redraw lines for any node that has currentNode as a neighbor
-                    //store nodes that need to be redrawn in a list as a workaround
-                    //for concurrentmodificationexception
-                    ArrayList<Node> toRedraw = new ArrayList<Node>();
-                    for(Node n: lineGroups.keySet()){
-                        boolean has = false;
-                        if(n.getNeighbors().contains(currentNode)){
-                            has = true;
-                        }
-                        if(has){
-                            toRedraw.add(n);
-                        }
-                    }
-                    for(Node n: toRedraw){
-                        drawToNeighbors(n);
-                    }
-                    drawToNeighbors(currentNode);
-
-					if (!modifiedNodesList.contains(currentNode))
+				case MAKINGNEWHALLWAY:
+					//create a new hallway node
+					createNewNode(e.getX(), e.getY(), "Hallway");
+					break;
+				case MAKINGNEWOFFICE:
+					//create a new office node
+					createNewNode(e.getX(), e.getY(), "Office");
+					break;
+				case MAKINGNEWELEVATOR:
+					//create a new elevator node
+					createNewNode(e.getX(), e.getY(), "Elevator");
+					break;
+				case MAKINGNEWRESTROOM:
+					//create a new restroom node
+					createNewNode(e.getX(), e.getY(), "Restroom");
+					break;
+				case MOVINGNODE:
+					//modifying the location of an existing node
+					if (currentButton != null && currentNode != null) //check that a button/node is actually selected
 					{
-						modifiedNodesList.add(currentNode);
-					}
-                } else {
-                    hideNodeDetails();
-                    modifyingLocation = false;
-                }
-            }
-            else
-            {
-                //if not making or moving nodes, hide node details.
-                hideNodeDetails();
-            }
-        }
-        addingNeighbor = false;
-        removingNeighbor = false;
+						//modify button text
+						clickModLocation.setText("Modify Location by Click");
 
+						//update button and node location
+						currentButton.setLayoutX(e.getX() - XOFFSET);
+						currentButton.setLayoutY(e.getY() - YOFFSET);
+						currentNode.setX(e.getX());
+						currentNode.setY(e.getY());
+
+						//redraw lines for any node that has currentNode as a neighbor
+
+						//store nodes that need to be redrawn in a list as a workaround
+						//for concurrentmodificationexception
+						ArrayList<Node> toRedraw = new ArrayList<Node>();
+						for (Node n : lineGroups.keySet())
+						{
+							boolean has = false;
+							if (n.getNeighbors().contains(currentNode))
+							{
+								has = true;
+							}
+							if (has)
+							{
+								toRedraw.add(n);
+							}
+						}
+
+						//redraw all lines from other nodes to the modified node
+						for (Node n : toRedraw)
+						{
+							drawToNeighbors(n);
+						}
+
+						//redraw all lines from this node
+						drawToNeighbors(currentNode);
+
+						//indicate this node has been modified
+						if (!modifiedNodesList.contains(currentNode))
+						{
+							modifiedNodesList.add(currentNode);
+						}
+					}
+					//if for some reason no node/button is selected, hide node details
+					else
+					{
+						//TODO: Can we ever run into this else?
+						hideNodeDetails();
+					}
+					break;
+				default:
+					//default case, hide node details
+					hideNodeDetails();
+					break;
+			}
+
+			//set currentState to -1 to indicate we are no longer in special state
+			currentState = editorStates.DOINGNOTHING;
+		}
+		else
+		{
+		}
 	}
 
+	//TODO: allow specific node creation for each kind of node
 	/**
 	 * Create a new node at a mouse location
 	 * @param e The mouse event that will be used to determine location
@@ -308,39 +376,63 @@ public class MapEditorToolController
 		createNewNode(e.getX(), e.getY());
 	}
 
+	//TODO: THIS IS A PLACEHOLDER FUNCTION IN PLACE UNTIL DATABASE IS UPDATED
+	//later all new node creations will have a type associated (which may be an int rather than string)
+	//so having this workaround function will become unnecessary
+	public void createNewNode(double x, double y){
+		createNewNode(x, y, "");
+	}
+
+	//TODO: allow specific node creation for each kind of node
 	/**
 	 * Create a new node at given xy coordinates
 	 * @param x X coordinate of new node
 	 * @param y Y coordinate of new node
 	 */
-	public void createNewNode(double x, double y)
+	public void createNewNode(double x, double y, String type)
 	{
 		Node newNode = null;
+
+		//TODO: refactor on new node creation
 		if (newNodesList.size() == 0)
 		{
 			//if we haven't made any new nodes yet, call databasecontroller so that
 			//we have a baseline nodeID to start with.
 			//This nodeID is going the be the greatest int nodeID in the existing nodes
 			//IMPORTANT: this doesn't actually add the new node to the database tables
-			newNode = DatabaseController.generateNewNode("newNode", "default", x, y, FLOORID);
+			newNode = DatabaseController.generateNewNode("New "+type, type, x, y, FLOORID);
 		}
 		else
 		{
 			//otherwise use our own function to generate a new node.
-			newNode = editorGenerateNewNode("newNode", "default", x, y, FLOORID);
+			newNode = editorGenerateNewNode("New "+type, type, x, y, FLOORID);
 		}
+
+
 		newNodesList.add(newNode);
+
+		//TODO: set buttons to be appropriate image depending on node type
 		//make a new button to associate with the node
 		Button nodeB = new Button();
 		nodeB.setId("node-button-unselected");
+
+		//modify xy position with offset so that button is centered on the node's real location
 		nodeB.setLayoutX(x - XOFFSET);
 		nodeB.setLayoutY(y - YOFFSET);
 
 		//on button click show node details on the righthand panel
-		nodeB.setOnAction(new EventHandler<ActionEvent>()
+		/*nodeB.setOnAction(new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle(ActionEvent event)
+			{
+				showNodeDetails(nodeB);
+			}
+		});*/
+		nodeB.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle(MouseEvent event)
 			{
 				showNodeDetails(nodeB);
 			}
@@ -350,34 +442,91 @@ public class MapEditorToolController
 		//add the new button to the scene
 		editingFloor.getChildren().add(1, nodeB);
 
-		//modify bool and change button text
-		makingNew = false;
 		//change new node button text back to original
 		newNodeButton.setText("Add a New Node");
 	}
 
 	/**
-	 * if rightclicking, show radial context menu
-	 * @param e
+	 * This is called whenever the mouse is dragged around on the map.
+	 * We use this function to display and use the radial context menu, if
+	 * the mouse event is a rightclick.
+	 * @param e mouse event
 	 */
 	@FXML
 	void displayContextMenu(MouseEvent e){
+
+		//is this a right click?
 		if(e.isSecondaryButtonDown())
 		{
-			if(currentButton != null){ //radial contextmenu for nodes
-				System.out.println("This shoulnd't be happenning");
-			} else { //radial contextmenu for adding nodes
-				showingAddHereContext = true;
+			if(currentButton != null){
+				//do nothing if a node is currently selected?
+				//possibly keep this doing nothing, since buttons should have their own
+				//versino of displayContextMenu occuring
+			} else { //radial context menu for adding nodes
+				currentState = editorStates.SHOWINGEMPTYMENU;
 				mainScroll.setPannable(false);
 			}
 		}
 
-		if(showingAddHereContext)
-		{
-			//update contextmenu objects
-			contextActions(e);
+		switch(currentState){
+			case SHOWINGEMPTYMENU:
+				//update contextmenu based on mouse events
+				contextActions(e);
+				break;
+			case SHOWINGNODEMENU:
+				//TODO
+				break;
+			default:
+				break;
 		}
+	}
 
+	/**
+	 * make the selectionWedge visible and adjust its start angle
+	 * to line up with the area where the mouse is being hovered
+	 * @param angle the angle of the mouse position (in degrees) relative to
+	 *              the center of the context menu
+	 */
+	private void modifyRadialSelection(double angle){
+
+		//NOTE: angles above the horizontal are negative, from 0 to -180.
+		//		angles below are positive, from 0 to 180.
+		//		in both cases 0 is in the 3 o'clock position
+
+		if(angle < -45 && angle > -135)
+		{
+			//selection indicator for top, new provider
+			SELECTIONWEDGE.setLength(90);
+			SELECTIONWEDGE.setStartAngle(45);
+			contextSelection = 0;
+		}
+		else if(angle > -45 && angle < 45)
+		{
+			//selection indicator for right, new node
+			SELECTIONWEDGE.setLength(90);
+			SELECTIONWEDGE.setStartAngle(315);
+			contextSelection = 1;
+		}
+		else if(angle > 45 && angle < 135)
+		{
+			//selection indicator for bottom, new elevator
+			SELECTIONWEDGE.setLength(90);
+			SELECTIONWEDGE.setStartAngle(225);
+			contextSelection = 2;
+		}
+		else if(angle > 135 || angle < -135)
+		{
+			//selection indicator for left, new restroom
+			SELECTIONWEDGE.setLength(90);
+			SELECTIONWEDGE.setStartAngle(135);
+			contextSelection = 3;
+		}
+		else
+		{ //TODO: is this case ever possible?
+			//make selectionwedge not visible
+			SELECTIONWEDGE.setLength(0);
+			contextSelection = -1;
+		}
 	}
 
 	/**
@@ -387,38 +536,29 @@ public class MapEditorToolController
 	 */
 	void contextActions(MouseEvent e)
 	{
+
+		//add contextmenu if it isn't already contained
 		if(!editingFloor.getChildren().contains(CONTEXTMENU))
 		{
 			setupContextMenu(e.getX()-CIRCLEWIDTH/2, e.getY()-CIRCLEWIDTH/2);
 			editingFloor.getChildren().add(1, CONTEXTMENU);
 		}
+
+		//xy distance from center of contextmenu to mouse
 		double xdif = e.getX()-CONTEXTMENU.getLayoutX();
 		double ydif = e.getY()-CONTEXTMENU.getLayoutY();
 
-		if(Math.pow((xdif), 2) +
-				Math.pow((ydif), 2) >
+		//check that the mouse is far enough away from the center
+		if(Math.pow((xdif), 2) + Math.pow((ydif), 2) >
 				Math.pow(CONTEXTRAD-CONTEXTWIDTH, 2)){
-			double angle = Math.toDegrees(Math.atan2(ydif, xdif));
-			//upper angles are negative
-			if(angle < -45 && angle > -135)
-			{
-				//selection indicator for top, new node
-				SELECTIONWEDGE.setLength(90);
-				SELECTIONWEDGE.setStartAngle(45);
-				CONTEXTSELECTION = 0;
-			}
-			else
-			{
-				//TODO: set selectionwedge to different angles for different options
-				SELECTIONWEDGE.setLength(0);
-				//SELECTIONWEDGE.setStartAngle(45);
-				CONTEXTSELECTION = -1; //TODO: set to different selection ints
-			}
+			//update selection wedge location and contextSelection
+			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
 		}
+		//mouse isn't far enough away from center, i.e. no selection
 		else
 		{
 			SELECTIONWEDGE.setLength(0);
-			CONTEXTSELECTION = -1;
+			contextSelection = -1;
 		}
 	}
 
@@ -426,26 +566,56 @@ public class MapEditorToolController
 	/**
 	 * Handle whenever the mouse is released.
 	 * This function was made in order to support the radial context menu
-	 * @param event
+	 * @param event mouse event fired when the mouse is released
 	 */
 	@FXML
 	void releaseMouse(MouseEvent event) {
-		if(showingAddHereContext)
-		{
-			editingFloor.getChildren().remove(CONTEXTMENU);
-			//handleAddHereContext(event);
-			mainScroll.setPannable(true);
-			showingAddHereContext = false;
-		}
-		if(CONTEXTSELECTION >= 0){
-			if(CONTEXTSELECTION == 0){ // add new node
-				createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY());
-			}
-			else
-			{
-				//TODO: all other options
-			}
-			CONTEXTSELECTION = -1;
+
+		switch(currentState){
+			case SHOWINGEMPTYMENU:
+				//remove context menu
+				editingFloor.getChildren().remove(CONTEXTMENU);
+				mainScroll.setPannable(true);
+
+				//switch case for contextSelection.
+				//set currentState to appropriate state based on selection.
+				//if no selection made set to -1
+				switch(contextSelection){
+					case 0:
+						//top option
+						//create new elevator node at location
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Elevator");
+						break;
+					case 1:
+						//right option
+						//create new hallway node at location
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Hallway");
+						break;
+					case 2:
+						//bottom option
+						//create new office node at location
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Office");
+						break;
+					case 3:
+						//left option
+						//create new restroom node at location
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Restroom");
+						break;
+					default:
+						//no option selected
+						currentState = editorStates.DOINGNOTHING;
+						break;
+				}
+				contextSelection = -1;
+				currentState = editorStates.DOINGNOTHING;
+				break;
+			case SHOWINGNODEMENU:
+				//TODO:
+				currentState = editorStates.DOINGNOTHING;
+				break;
+			default:
+				currentState = editorStates.DOINGNOTHING;
+				break;
 		}
 	}
 
@@ -540,58 +710,57 @@ public class MapEditorToolController
 		 * addingNeighbor or removingNeighbor booleans have been tagged true, and if so
 		 * we add/remove the currently clicked node from the original node's neighborlist,
 		 * and then update the lines by calling DrawToNeighbors.
+		 * TODO: update?
 		 */
-		if (addingNeighbor)
-		{
-			//add neighbor
-			currentNode.addNeighbor(linkedNode);
-			//add currentNode (not the node that has just been clicked) to the modifiedlist
-			if (!modifiedNodesList.contains(currentNode))
-			{
-				modifiedNodesList.add(currentNode);
-			}
-			addingNeighbor = false;
-			//redraw lines
-			drawToNeighbors(currentNode);
-		}
-		else if (removingNeighbor)
-		{
-			//remove neighbor
-			currentNode.removeNeighbor(linkedNode);
-			//add currentNode (not the node that has just been clicked) to the modifiedlist
-			if (!modifiedNodesList.contains(currentNode))
-			{
-				modifiedNodesList.add(currentNode);
-			}
-			removingNeighbor = false;
-			//redraw lines
-			drawToNeighbors(currentNode);
-		}
-		else
-		{
-			//modify text fields to display node info
-			nameField.setText(linkedNode.getData().get(0));
-			typeField.setText(linkedNode.getData().get(1));
-			xField.setText(Double.toString(linkedNode.getX()));
-			yField.setText(Double.toString(linkedNode.getY()));
+		switch(currentState){
+			case ADDINGNEIGHBOR:
+				//add neighbor
+				currentNode.addNeighbor(linkedNode);
+				//add currentNode (not the node that has just been clicked) to the modifiedlist
+				if (!modifiedNodesList.contains(currentNode))
+				{
+					modifiedNodesList.add(currentNode);
+				}
+				//redraw lines
+				drawToNeighbors(currentNode);
+				currentState = editorStates.DOINGNOTHING;
+				break;
+			case REMOVINGNEIGHBOR:
+				//remove neighbor
+				currentNode.removeNeighbor(linkedNode);
+				//add currentNode (not the node that has just been clicked) to the modifiedlist
+				if (!modifiedNodesList.contains(currentNode))
+				{
+					modifiedNodesList.add(currentNode);
+				}
+				//redraw lines
+				drawToNeighbors(currentNode);
+				currentState = editorStates.DOINGNOTHING;
+				break;
+			default:
+				//modify text fields to display node info
+				nameField.setText(linkedNode.getData().get(0));
+				typeField.setText(linkedNode.getData().get(1));
+				xField.setText(Double.toString(linkedNode.getX()));
+				yField.setText(Double.toString(linkedNode.getY()));
 
-			//set current node/button
-			currentNode = linkedNode;
+				//set current node/button
+				currentNode = linkedNode;
 
-			if(currentButton != null)
-			{
-				//TODO: set style for background-color using hex without copying everything?
-				//TODO: Just rying to setstyle for color made button change shape
-				currentButton.setId("node-button-unselected");
-			}
-			currentButton = nodeB;
-			nodeB.setId("node-button-selected");
+				if(currentButton != null)
+				{
+					//TODO: set style for background-color using hex without copying everything?
+					//TODO: Just rying to setstyle for color made button change shape
+					currentButton.setId("node-button-unselected");
+				}
+				currentButton = nodeB;
+				nodeB.setId("node-button-selected");
+				break;
 		}
-
 	}
 
 	/**
-	 * hide node details sidebar and deselect current node/button
+	 * Hide node details sidebar and deselect current node/button
 	 */
 	private void hideNodeDetails()
 	{
@@ -611,6 +780,7 @@ public class MapEditorToolController
 		yField.setText("");
 	}
 
+	//TODO: this entire function should be defunct by DnD
 	/**
 	 * Create a new node on the map. alternatively, cancel new node creation
 	 */
@@ -618,13 +788,13 @@ public class MapEditorToolController
 	{
 		if (newNodeButton.getText().equals("Add a New Node"))
 		{
-			makingNew = true;
+			currentState = editorStates.MAKINGNEWHALLWAY;
 			newNodeButton.setText("Cancel New Node Creation");
 			editingFloor.getChildren().add(canvas);
 		}
 		else
 		{
-			makingNew = false;
+			currentState = editorStates.DOINGNOTHING;
 			newNodeButton.setText("Add a New Node");
 		}
 	}
@@ -635,23 +805,17 @@ public class MapEditorToolController
 	 */
 	void modNodeLocation(ActionEvent event)
 	{
-		if (!modifyingLocation)
+		if (currentState != editorStates.MOVINGNODE)
 		{
 			clickModLocation.setText("Cancel");
 			//set booleans to track which state we are in right now
-			modifyingLocation = true;
-			addingNeighbor = false;
-			removingNeighbor = false;
-			makingNew = false;
+			currentState = editorStates.MOVINGNODE;
 		}
 		else
 		{
 			clickModLocation.setText("Modify Location by Click");
 			//set booleans to track which state we are in right now
-			modifyingLocation = false;
-			addingNeighbor = false;
-			removingNeighbor = false;
-			makingNew = false;
+			currentState = editorStates.DOINGNOTHING;
 		}
 	}
 
@@ -683,9 +847,11 @@ public class MapEditorToolController
                     toRedraw.add(n);
                 }
             }
+            //redraw all lines pointing to this node
             for(Node n: toRedraw){
                 drawToNeighbors(n);
             }
+            //redraw all lines coming out of this node
             drawToNeighbors(currentNode);
         }
         catch (NumberFormatException e)
@@ -724,9 +890,11 @@ public class MapEditorToolController
                         toRedraw.add(n);
                     }
                 }
+                //redraw all lines pointing to this node
                 for(Node n: toRedraw){
                     drawToNeighbors(n);
                 }
+                //redraw all lines coming out of this node
                 drawToNeighbors(currentNode);
             }
         } catch (NumberFormatException e){
@@ -735,6 +903,7 @@ public class MapEditorToolController
         }
     }
 
+    //TODO: update function to work with new database
 	@FXML
 	/**
 	 * update a node's Name string
@@ -763,6 +932,7 @@ public class MapEditorToolController
 	}
 
 
+	//TODO: make this function work with updated database
 	@FXML
 	/**
 	 * Push newly created nodes into the databasecontroller's node table.
@@ -772,7 +942,6 @@ public class MapEditorToolController
 	 *  - update all modified nodes that were loaded in from the database
 	 *  - insert all new neighbor relations that have been created
 	 *  - delete all neighbor relations that have been deleted
-	 * TODO: nodes loaded in from the table and modified should also be pushed.
 	 */
 	void pushChangesToDatabase(ActionEvent event)
 	{
@@ -949,7 +1118,7 @@ public class MapEditorToolController
 	/**
 	 * Continuously draw and update the line on the canvas so that the user can see
 	 * lines as they are adding connections.
-	 * TODO: Probably need to fix naming of function
+	 * TODO: possibly need to fix naming of function
 	 * @param event mouse event
 	 */
 	@FXML
@@ -962,28 +1131,33 @@ public class MapEditorToolController
 		//clear canvas
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		if(addingNeighbor){
+		switch(currentState){
+			case ADDINGNEIGHBOR:
+				//draw line
+				gc.setStroke(Color.BLACK);
+				gc.setLineWidth(LINEWIDTH);
+				gc.strokeLine(currentNode.getX(), currentNode.getY(), event.getX(), event.getY());
+				break;
+			case MAKINGNEWHALLWAY:
+				//draw circle
+				gc.setFill(Color.BLUE);
+				//circle drawing placement offset
+				gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
+				break;
+			//TODO: cases for making different kinds of nodes
 
-			//draw line
-			gc.setStroke(Color.BLACK);
-			gc.setLineWidth(LINEWIDTH);
-			gc.strokeLine(currentNode.getX(), currentNode.getY(), event.getX(), event.getY());
-		}
-		else if(makingNew){
-
-			//draw circle
-			gc.setFill(Color.BLUE);
-			//circle drawing placement offset
-			gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
-		}
-		else if(showingAddHereContext)
-		{
-			//TODO: anything?
-
-		}
-		else if (editingFloor.getChildren().contains(canvas))
-		{
-			((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
+			//TODO: do context menus need to do anything here?
+			case SHOWINGEMPTYMENU:
+				break;
+			case SHOWINGNODEMENU:
+				break;
+			default:
+				//remove canvas from scene if it is there but unneeded
+				if (editingFloor.getChildren().contains(canvas))
+				{
+					((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
+				}
+				break;
 		}
 	}
 
@@ -995,11 +1169,7 @@ public class MapEditorToolController
 	{
 		if (currentNode != null)//Don't do anything unless a node is selected
 		{
-			//set boolean to track state of editor
-			addingNeighbor = true;
-			removingNeighbor = false;
-			modifyingLocation = false;
-			makingNew = false;
+			currentState = editorStates.ADDINGNEIGHBOR;
 		}
 	}
 
@@ -1011,11 +1181,7 @@ public class MapEditorToolController
 	{
 		if (currentNode != null)  //Don't do anything unless a node is selected
 		{
-			//set boolean to track state of editor
-			removingNeighbor = true;
-			addingNeighbor = false;
-			modifyingLocation = false;
-			makingNew = false;
+			currentState = editorStates.REMOVINGNEIGHBOR;
 		}
 	}
 
@@ -1101,13 +1267,13 @@ public class MapEditorToolController
                     }
                 }
             }
-        }
 
-        //add node to deleteNodesList
-        deleteNodesList.add(currentNode);
-        ((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
-        //hide details view
-        hideNodeDetails();
+			//add node to deleteNodesList
+			deleteNodesList.add(currentNode);
+			((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+			//hide details view
+			hideNodeDetails();
+        }
     }
 
 }
