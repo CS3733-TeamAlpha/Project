@@ -692,18 +692,24 @@ public class MapEditorToolController
 					case 0:
 						//top option
 						System.out.println("top");
+						//TODO: set to proper state for whatever top option is
+						currentState = editorStates.DOINGNOTHING;
 						break;
 					case 1:
 						//right option
 						System.out.println("right");
+						currentState = editorStates.ADDINGNEIGHBOR;
 						break;
 					case 2:
 						//bottom option
 						System.out.println("bot");
+						currentState = editorStates.REMOVINGNEIGHBOR;
 						break;
 					case 3:
 						//left option
 						System.out.println("left");
+						deleteNode(null);
+						currentState = editorStates.DOINGNOTHING;
 						break;
 					default:
 						//no option selected
@@ -711,7 +717,6 @@ public class MapEditorToolController
 						break;
 				}
 				contextSelection = -1;
-				currentState = editorStates.DOINGNOTHING;
 				break;
 			default:
 				currentState = editorStates.DOINGNOTHING;
