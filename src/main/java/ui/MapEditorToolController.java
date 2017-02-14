@@ -94,13 +94,12 @@ public class MapEditorToolController extends AbstractController
 	@FXML
 	private Button removeConnectionButton;
 
-
-	@FXML
 	/**
-	 * Function used to either add a new node at the clicked location
+	 * Used to either add a new node at the clicked location
 	 * or move an existing node to the clicked location.
 	 * Choose which event to do based on makingNew or modifyingLocation bool
 	 */
+	@FXML
 	void addNodeHere(MouseEvent e)
 	{
 		if (e.isStillSincePress())
@@ -175,7 +174,6 @@ public class MapEditorToolController extends AbstractController
         removingNeighbor = false;
 
 	}
-
 
 	/**
 	 * Load all nodes from the databasecontroller's list of nodes onto our scene
@@ -296,10 +294,10 @@ public class MapEditorToolController extends AbstractController
 		}
 	}
 
-	@FXML
 	/**
 	 * modify a node's location on the map. alternately, cancel node location modification
 	 */
+	@FXML
 	void modNodeLocation(ActionEvent event)
 	{
 		if (!modifyingLocation)
@@ -322,10 +320,10 @@ public class MapEditorToolController extends AbstractController
 		}
 	}
 
-    @FXML
     /**
      * update a node's X coordinate, both visually and in the node's properties
      */
+	@FXML
     void updateNodeX(ActionEvent event)
     {
         try
@@ -339,17 +337,12 @@ public class MapEditorToolController extends AbstractController
             //for concurrentmodificationexception
             ArrayList<Node> toRedraw = new ArrayList<Node>();
             for(Node n: lineGroups.keySet()){
-                boolean has = false;
-                if(n.getNeighbors().contains(currentNode)){
-                    has = true;
-                }
-                if(has){
+                if(n.getNeighbors().contains(currentNode))
                     toRedraw.add(n);
-                }
             }
-            for(Node n: toRedraw){
+
+            for(Node n : toRedraw)
                 drawToNeighbors(n);
-            }
             drawToNeighbors(currentNode);
         }
         catch (NumberFormatException e)
@@ -359,10 +352,10 @@ public class MapEditorToolController extends AbstractController
         }
     }
 
-    @FXML
     /**
      * update a node's Y coordinate, both visually and in the node's properties
      */
+	@FXML
     void updateNodeY(ActionEvent event) {
         try
         {
@@ -377,17 +370,12 @@ public class MapEditorToolController extends AbstractController
                 //for concurrentmodificationexception
                 ArrayList<Node> toRedraw = new ArrayList<Node>();
                 for(Node n: lineGroups.keySet()){
-                    boolean has = false;
-                    if(n.getNeighbors().contains(currentNode)){
-                        has = true;
-                    }
-                    if(has){
+                    if(n.getNeighbors().contains(currentNode))
                         toRedraw.add(n);
-                    }
                 }
-                for(Node n: toRedraw){
+
+                for(Node n: toRedraw)
                     drawToNeighbors(n);
-                }
                 drawToNeighbors(currentNode);
             }
         } catch (NumberFormatException e){
@@ -396,10 +384,10 @@ public class MapEditorToolController extends AbstractController
         }
     }
 
-	@FXML
 	/**
 	 * update a node's Name string
 	 */
+	@FXML
 	void updateNodeData(ActionEvent event)
 	{
 		try
@@ -407,8 +395,6 @@ public class MapEditorToolController extends AbstractController
 			if (currentButton != null && currentNode != null)
 			{
 				currentNode.setName(nameField.getText());
-				//data.add(typeField.getText());
-				//track that this node has been modified
 				database.updateNode(currentNode);
 			}
 		} catch (NumberFormatException e)
@@ -418,13 +404,13 @@ public class MapEditorToolController extends AbstractController
 		}
 	}
 
-	@FXML
 	/**
 	 * Create lines from a node (source) to all of the node's neighbors.
 	 *
 	 * This will need to be called many times to properly and fully update drawn lines
 	 * because this only updates lines coming from a Node.
 	 */
+	@FXML
 	void drawToNeighbors(Node source)
 	{
 		// Remove all existing lines coming from source Node
@@ -433,10 +419,8 @@ public class MapEditorToolController extends AbstractController
 		{
 			ArrayList<Group> oldGroups = lineGroups.get(source);
 			for (Group g : oldGroups)
-			{
 				// Removes all lines from oldLines from the UI
 				((AnchorPane) g.getParent()).getChildren().remove(g);
-			}
 			lineGroups.remove(source);
 		}
 
@@ -458,7 +442,6 @@ public class MapEditorToolController extends AbstractController
 			//get difference in xy position
 			double diffY = neighbor.getY() - source.getY();
 			double diffX = neighbor.getX() - source.getX();
-
 
 			//we will use pathShift to place the line's arrow somewhere in the middle of the line.
 			//this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
@@ -493,10 +476,10 @@ public class MapEditorToolController extends AbstractController
 		lineGroups.put(source, groups);
 	}
 
-	@FXML
 	/**
 	 * Set controller to addingNeighbor state
 	 */
+	@FXML
 	void addNeighbor(ActionEvent event)
 	{
 		if (currentNode != null)//Don't do anything unless a node is selected
@@ -509,10 +492,10 @@ public class MapEditorToolController extends AbstractController
 		}
 	}
 
-	@FXML
 	/**
 	 * Set controller to removingNeighbor state
 	 */
+	@FXML
 	void removeNeighbor(ActionEvent event)
 	{
 		if (currentNode != null)  //Don't do anything unless a node is selected
@@ -525,20 +508,19 @@ public class MapEditorToolController extends AbstractController
 		}
 	}
 
-	@FXML
 	/**
 	 *  Go back to startup screen
 	 */
+	@FXML
 	void goBack()
 	{
-		//DatabaseController.initializeAllNodes();
 		Main.loadFXML("/fxml/Startup.fxml");
 	}
 
-    @FXML
     /**
      * Add the current node to the deleteNodesList to be deleted from the database
      */
+	@FXML
     void deleteNode(ActionEvent event) {
         if(currentNode != null)
         {
