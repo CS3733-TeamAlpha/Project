@@ -106,6 +106,53 @@ public class MapEditorToolController
 	private Canvas canvas;
 	private GraphicsContext gc;
 
+	//eventhandler for when the mouse is clicked on a node button
+	private EventHandler nodebuttonOnAction = new EventHandler<ActionEvent>()
+	{
+		@Override
+		public void handle(ActionEvent event)
+		{
+			showNodeDetails((Button)event.getSource());
+		}
+	};
+
+	//drageventhandler for when the mouse is dragged on a node button
+	private EventHandler nodebuttonMouseDrag = new EventHandler<MouseEvent>()
+	{
+		@Override
+		public void handle(MouseEvent e)
+		{
+			if(e.isSecondaryButtonDown())
+			{
+				currentState = editorStates.SHOWINGNODEMENU;
+				displayContextMenu(e);
+			}
+			else
+			{
+				currentState = editorStates.MOVINGNODE;
+				Button nodeB = (Button)e.getSource();
+				//move the node to match changes in the mouse movement
+				//as you drag
+				showNodeDetails(nodeB);
+				nodeB.setLayoutX(e.getX() - XOFFSET + nodeB.getLayoutX());
+				nodeB.setLayoutY(e.getY() - YOFFSET + nodeB.getLayoutY());
+				currentNode.setX(nodeB.getLayoutX() + XOFFSET);
+				currentNode.setY(nodeB.getLayoutY() + YOFFSET);
+				redrawAllNeighbors(currentNode);
+			}
+		}
+	};
+
+	//eventhandler for when the mouse is released after having clicked a node button
+	private EventHandler nodebuttonMouseReleased = new EventHandler<MouseEvent>()
+	{
+		@Override
+		public void handle(MouseEvent e)
+		{
+			releaseMouseFromNode(e);
+		}
+	};
+
 	static
 	{
 		//initialize connection and floor/node/provider lists right away
@@ -204,6 +251,7 @@ public class MapEditorToolController
 		});
 
 		//use same eventhandler for all images when mouse is released
+		//on release, we reset the image location and then make a new node
 		EventHandler releaseHandler = new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent e){
@@ -213,8 +261,10 @@ public class MapEditorToolController
 				i.setX(0);
 				i.setY(0);
 
-				//TODO: This is a hack because I can't seem to figure out how to get a drop event
-				//TODo: to fire while getting the right XY coordinates relative to the floorimage
+				//TODO: This is a hack
+				// because I can't seem to figure out how to get a drop event
+				// to fire while getting the right XY coordinates relative to the floorimage
+
 				//modify our XY values based on the image's current scroll and the
 				//dragged image's initial position on the screen
 
@@ -228,6 +278,7 @@ public class MapEditorToolController
 			}
 		};
 
+		//add the release handler to each image
 		hallwayImage.setOnMouseReleased(releaseHandler);
 		officeImage.setOnMouseReleased(releaseHandler);
 		elevatorImage.setOnMouseReleased(releaseHandler);
@@ -250,6 +301,7 @@ public class MapEditorToolController
 		CONTEXTMENU.setLayoutY(y);
 
 		//main radial arc, currently colored gray.
+		//TODO: convert color options to css for high contrast mode
 		Arc radialMenu = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 360);
 		radialMenu.setType(ArcType.OPEN);
 		radialMenu.setStrokeWidth(CONTEXTWIDTH);
@@ -259,6 +311,7 @@ public class MapEditorToolController
 		radialMenu.setOpacity(0.8);
 
 		//arc wedge will be used to indicate current selection
+		//TODO: convert color options to css for high contrast mode
 		SELECTIONWEDGE = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 0);
 		SELECTIONWEDGE.setType(ArcType.ROUND);
 		SELECTIONWEDGE.setStrokeWidth(CONTEXTWIDTH);
@@ -287,13 +340,14 @@ public class MapEditorToolController
 		split4.setStrokeWidth(2);
 
 		//TODO: probaby replace these with all images later
+		//4 options, whose contents will differ based on whether we are showing node menu or not
 		Circle option1 = null;
 		Circle option2 = null;
 		Circle option3 = null;
 		Circle option4 = null;
 		switch(currentState)
 		{
-			case SHOWINGEMPTYMENU:
+			case SHOWINGEMPTYMENU: //context menu for non-nodes
 
 				//TODO: image for a node instead of circle?
 				//Radius of circle is 13px as per css.
@@ -316,7 +370,7 @@ public class MapEditorToolController
 				option4 = new Circle(-CONTEXTRAD + CONTEXTWIDTH / 2, 0, 13);
 				option4.setFill(Color.BLUE);
 				break;
-			case SHOWINGNODEMENU:
+			case SHOWINGNODEMENU: //contextmenu for nodes
 				//TODO: replace all of these with appropriate icons/pictures
 
 				//node specific context menu
@@ -341,7 +395,6 @@ public class MapEditorToolController
 		CONTEXTMENU.getChildren().add(split2);
 		CONTEXTMENU.getChildren().add(split3);
 		CONTEXTMENU.getChildren().add(split4);
-		//TODO: check whether this is node contextmenu or not to decide what to add
 		CONTEXTMENU.getChildren().add(option1);
 		CONTEXTMENU.getChildren().add(option2);
 		CONTEXTMENU.getChildren().add(option3);
@@ -406,10 +459,10 @@ public class MapEditorToolController
 	/**
 	 * Function is fired when a drop action is detected, i.e. node is being moved or
 	 * new node is being made by drag and drop
+	 * @params x The x position of the node
+	 * @params y The y position of the node
 	 */
-	void dropNode(Double x, Double y) {
-		//TODO: all of these should be occuring on drop
-		//TODO: move this shit into a drop function, not click
+	private void dropNode(Double x, Double y) {
 		switch(currentState)
 		{
 			case MAKINGNEWHALLWAY:
@@ -444,13 +497,12 @@ public class MapEditorToolController
 	 */
 	void clickFloorImage(MouseEvent e)
 	{
-
 		hideNodeDetails();
 		//set currentState to  indicate we are no longer in special state
 		currentState = editorStates.DOINGNOTHING;
 	}
 
-	//TODO: allow specific node creation for each kind of node
+	//TODO: update to match refactored database
 	/**
 	 * Create a new node at given xy coordinates
 	 * @param x X coordinate of new node
@@ -459,7 +511,7 @@ public class MapEditorToolController
 	public void createNewNode(double x, double y, String type)
 	{
 		Node newNode = null;
-		//TODO: refactor on new node creation
+
 		if (newNodesList.size() == 0)
 		{
 			//if we haven't made any new nodes yet, call databasecontroller so that
@@ -487,47 +539,12 @@ public class MapEditorToolController
 		nodeB.setLayoutY(y - YOFFSET);
 
 		//on button click show node details on the righthand panel
-		nodeB.setOnMouseClicked(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent event)
-			{
-				showNodeDetails(nodeB);
-			}
-		});
-		//move the node when it is dragged
-		nodeB.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				if(e.isSecondaryButtonDown())
-				{
-					currentState = editorStates.SHOWINGNODEMENU;
-					displayContextMenu(e);
-				}
-				else
-				{
-					currentState = editorStates.MOVINGNODE;
-					//move the node to match changes in the mouse movement
-					//as you drag
-					showNodeDetails(nodeB);
-					nodeB.setLayoutX(e.getX() - XOFFSET + nodeB.getLayoutX());
-					nodeB.setLayoutY(e.getY() - YOFFSET + nodeB.getLayoutY());
-					currentNode.setX(nodeB.getLayoutX() + XOFFSET);
-					currentNode.setY(nodeB.getLayoutY() + YOFFSET);
-					redrawAllNeighbors(currentNode);
-				}
-			}
-		});
-		nodeB.setOnMouseReleased(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				releaseMouseFromNode(e);
-			}
-		});
+		nodeB.setOnAction(nodebuttonOnAction);
+		//move the node or show contextmenu on drag
+		nodeB.setOnMouseDragged(nodebuttonMouseDrag);
+		//handle when mouse is released after click on button
+		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
+
 		nodeButtonLinks.put(nodeB, newNode);
 		//add the new button to the scene
 		editingFloor.getChildren().add(1, nodeB);
@@ -811,47 +828,11 @@ public class MapEditorToolController
 		nodeB.setLayoutY(n.getY() - YOFFSET);
 
 		//on button click display the node's details
-		nodeB.setOnAction(new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				showNodeDetails(nodeB);
-			}
-		});
-		nodeB.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				if(e.isSecondaryButtonDown())
-				{
-					currentState = editorStates.SHOWINGNODEMENU;
-					displayContextMenu(e);
-				}
-				else
-				{
-					currentState = editorStates.MOVINGNODE;
-					//move the node to match changes in the mouse movement
-					//as you drag
-					showNodeDetails(nodeB);
-					nodeB.setLayoutX(e.getX() - XOFFSET + nodeB.getLayoutX());
-					nodeB.setLayoutY(e.getY() - YOFFSET + nodeB.getLayoutY());
-					currentNode.setX(nodeB.getLayoutX() + XOFFSET);
-					currentNode.setY(nodeB.getLayoutY() + YOFFSET);
-					redrawAllNeighbors(currentNode);
-				}
-			}
-		});
-
-		nodeB.setOnMouseReleased(new EventHandler<MouseEvent>()
-		{
-			 @Override
-			 public void handle(MouseEvent e)
-			 {
-				 releaseMouseFromNode(e);
-			 }
-		 });
+		nodeB.setOnAction(nodebuttonOnAction);
+		//move node or display contextmenu on drag
+		nodeB.setOnMouseDragged(nodebuttonMouseDrag);
+		//handle when mouse released
+		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
 		nodeButtonLinks.put(nodeB, n);
 		//add button to scene
 		editingFloor.getChildren().add(1, nodeB);
