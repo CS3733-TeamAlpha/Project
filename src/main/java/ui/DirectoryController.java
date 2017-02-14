@@ -293,7 +293,7 @@ public class DirectoryController
 
 	public void showStartup()
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		Main.loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
 }

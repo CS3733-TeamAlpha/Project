@@ -20,9 +20,7 @@ public class Main extends Application
 
 	@Override
 	public void start(Stage primaryStage) throws Exception
-	 {
-	 	//Font f = Font.loadFont(getClass().getResource("/fonts/GlacialIndifference-Regular.otf").toExternalForm());
-
+	{
 	 	Parent root = FXMLLoader.load(getClass().getResource(Paths.STARTUP_FXML));
 		stage = primaryStage;
 		primaryStage.setTitle("Faulkner Hospital Map");
