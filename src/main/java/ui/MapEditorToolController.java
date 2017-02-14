@@ -105,7 +105,7 @@ public class MapEditorToolController extends AbstractController
 	private TextField nameField;
 
 	@FXML
-	private TextField typeField;
+	private TextField typeField; //TODO: Turn this into a dropdown menu?
 
 	@FXML
 	private TextField xField;
@@ -510,10 +510,8 @@ public class MapEditorToolController extends AbstractController
 		{
 			if (currentButton != null && currentNode != null)
 			{
-				ArrayList<String> data = new ArrayList<String>();
-				data.add(nameField.getText());
-				data.add(typeField.getText());
-				currentNode.setData(data);
+				currentNode.setName(nameField.getText());
+				//data.add(typeField.getText());
 				//track that this node has been modified
 				if (!modifiedNodesList.contains(currentNode))
 				{
@@ -582,7 +580,7 @@ public class MapEditorToolController extends AbstractController
 		for (Node n : modifiedNodesList)
 		{
 			//initialize a collection of all neighbors for node N that the database knows about
-			Collection<Node> sourceNeighbors = DatabaseController.getNodeByID(n.getID()).getNeighbors();
+			Collection<Node> sourceNeighbors = database.getNodeByUUID(n.getID()).getNeighbors();
 			//get neighbors from node N as the editortool knows about
 			Collection<Node> modNeighbors = n.getNeighbors();
 
@@ -615,7 +613,7 @@ public class MapEditorToolController extends AbstractController
 			sourceNeighbors.removeAll(toDeleteSourceNeighbors);
 
             //insert new neighbor relations
-            for(Node modNeighbor: modNeighbors)
+            /*for(Node modNeighbor: modNeighbors)
             {
                  DatabaseController.insertNeighbor(n.getID(), modNeighbor.getID());
             }
@@ -623,14 +621,14 @@ public class MapEditorToolController extends AbstractController
             for(Node sourceNeighbor: sourceNeighbors)
             {
                   DatabaseController.delNeighbor(n.getID(), sourceNeighbor.getID());
-            }
+            }*/
         }
 
         //remove nodes from database
         for(Node n: deleteNodesList){
             //delete any neighbor relations coming from this node
-            DatabaseController.removeNeighborsFromID(n.getID());
-            DatabaseController.removeNode(n.getID());
+            //DatabaseController.removeNeighborsFromID(n.getID());
+           	database.deleteNodeByUUID(n.getID());
         }
     }
 
@@ -751,7 +749,7 @@ public class MapEditorToolController extends AbstractController
 	 */
 	void goBack()
 	{
-		DatabaseController.initializeAllNodes();
+		//DatabaseController.initializeAllNodes();
 		Main.loadFXML("/fxml/Startup.fxml");
 	}
 
@@ -792,7 +790,7 @@ public class MapEditorToolController extends AbstractController
                 }
             }
             //TODO: collapse this into a single function, completely duplicate and perhaps redundant code
-            for(Node n: DatabaseController.getAllNodes())
+            for(Node n : database.getAllNodes())
             {
                 boolean has = false;
                 if(n.getNeighbors().contains(currentNode)){
@@ -800,7 +798,7 @@ public class MapEditorToolController extends AbstractController
                 }
                 if(has)
                 {
-                    n.removeNeighbor(currentNode);
+                    n.delNeighbor(currentNode);
                     drawToNeighbors(n);
                     //indicate that this node has been modified
                     if (!modifiedNodesList.contains(n))
