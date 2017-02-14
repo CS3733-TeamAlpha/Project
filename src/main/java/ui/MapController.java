@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MapController
+public class MapController extends BaseController
 {
 	public ImageView floorImage;
 	private Graph graph;

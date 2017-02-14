@@ -5,7 +5,7 @@ import data.DatabaseController;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 
-public class StartupController
+public class StartupController extends BaseController
 {
 
 	public ImageView eyeImage;

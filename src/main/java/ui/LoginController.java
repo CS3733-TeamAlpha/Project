@@ -12,7 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 /**
  * Created by Ari on 2/7/17.
  */
-public class LoginController
+public class LoginController extends BaseController
 {
 	public Label resultText;
 	public ProgressIndicator progressIndicator;

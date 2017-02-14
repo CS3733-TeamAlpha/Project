@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DirectoryController
+public class DirectoryController extends BaseController
 {
 
 	//link buttons to node objects

@@ -2,7 +2,7 @@ package ui;
 
 import javafx.event.ActionEvent;
 
-public class AdminPageController
+public class AdminPageController extends BaseController
 {
 	public void initialize()
 	{

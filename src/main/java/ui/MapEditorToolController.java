@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 
 import static java.awt.SystemColor.window;
 
-public class MapEditorToolController
+public class MapEditorToolController extends BaseController
 {
 	//Arraylist of all lines drawn from a node to its neighbors
 	private HashMap<Node, ArrayList<Group>> lineGroups = new HashMap<Node, ArrayList<Group>>();
