@@ -1,34 +1,23 @@
 package ui;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
-import data.*;
-import javafx.stage.WindowEvent;
-import pathfinding.*;
+import pathfinding.ConcreteNode;
+import pathfinding.Node;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.ResourceBundle;
-
-import static java.awt.SystemColor.window;
 
 public class MapEditorToolController extends AbstractController
 {
@@ -38,21 +27,9 @@ public class MapEditorToolController extends AbstractController
 	//link buttons to node objects
 	private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
 
-	//arraylist of new nodes
-	//IMPORTANT: this list is distinct from the nodes in DatabaseController.nodeList
-	private ArrayList<Node> newNodesList = new ArrayList<Node>();
-
-    //arraylist of nodes to be deleted
-    private ArrayList<Node> deleteNodesList = new ArrayList<Node>();
-
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
-
-	//arraylist of nodes loaded by DatabaseController that have been modified
-	//we will use this array to check for any updates that need to be made
-	// to the database (DatabaseController.modifyXTable)
-	private ArrayList<Node> modifiedNodesList = new ArrayList<Node>();
 
 	//X and Y offsets, for button placement.
 	//TODO: fine tune offsets to make button placement visuals better
@@ -67,17 +44,10 @@ public class MapEditorToolController extends AbstractController
 
 	private int FLOORID = 3; //Default floor id for minimal application
 
-
-	static
-	{
-		//initialize connection and floor/node/provider lists right away
-		//DatabaseController will hold onto these lists
-	}
-
 	public MapEditorToolController()
 	{
 		//TODO: make editortool load all nodes without making everything static
-		//currently acheived by pressing a button
+		//currently achieved by pressing a button
 		// loadNodesFromDatabase();
 		super();
 	}
@@ -86,9 +56,7 @@ public class MapEditorToolController extends AbstractController
 	public void initialize()
 	{
 		if(Accessibility.isHighContrast())
-		{
 			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
-		}
 		loadNodesFromDatabase();
 	}
 
@@ -140,40 +108,20 @@ public class MapEditorToolController extends AbstractController
 			if (makingNew) //making a new button/node
 			{
 				Node newNode = null;
-				//TODO: Excess if/else can probably be deleted, it should be no longer necessary to specially generate new nodes
-				/*if (newNodesList.size() == 0)
-				{*/
-					//if we haven't made any new nodes yet, call databasecontroller so that
-					//we have a baseline nodeID to start with.
-					//This nodeID is going the be the greatest int nodeID in the existing nodes
-					//IMPORTANT: this doesn't actually add the new node to the database tables
-					newNode = new ConcreteNode();
-					newNode.setName("newNode");
-					newNode.setType(-1); //default
-					newNode.setX(e.getX());
-					newNode.setY(e.getY());
-					newNode.setFloor(FLOORID);
-				/*}
-				else
-				{
-					//otherwise use our own function to generate a new node.
-					newNode = editorGenerateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-				}*/
-				newNodesList.add(newNode);
+				newNode = new ConcreteNode();
+				newNode.setName("newNode");
+				newNode.setType(-1); //default
+				newNode.setX(e.getX());
+				newNode.setY(e.getY());
+				newNode.setFloor(FLOORID);
+				database.insertNode(newNode);
 				//make a new button to associate with the node
 				Button nodeB = new Button("+");
 				nodeB.setLayoutX(e.getX() - XOFFSET);
 				nodeB.setLayoutY(e.getY() - YOFFSET);
 
 				//on button click show node details on the righthand panel
-				nodeB.setOnAction(new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent event)
-					{
-						showNodeDetails(nodeB);
-					}
-				});
+				nodeB.setOnAction(event -> showNodeDetails(nodeB));
 				nodeButtonLinks.put(nodeB, newNode);
 
 				//add the new button to the scene
@@ -216,10 +164,7 @@ public class MapEditorToolController extends AbstractController
                     }
                     drawToNeighbors(currentNode);
 
-					if (!modifiedNodesList.contains(currentNode))
-					{
-						modifiedNodesList.add(currentNode);
-					}
+					database.updateNode(currentNode);
                 } else {
                     hideNodeDetails();
                     modifyingLocation = false;
@@ -263,44 +208,11 @@ public class MapEditorToolController extends AbstractController
 		nodeB.setLayoutY(n.getY() - YOFFSET);
 
 		//on button click display the node's details
-		nodeB.setOnAction(new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				showNodeDetails(nodeB);
-			}
-		});
+		nodeB.setOnAction(event -> showNodeDetails(nodeB));
 		nodeButtonLinks.put(nodeB, n);
 		//add button to scene
 		editingFloor.getChildren().add(1, nodeB);
 	}
-
-	/**
-	 * The editortool can generate its own new nodes once we have a
-	 * baseline nodeID to start counting up from
-	 *
-	 * @param name    node name, placeholder
-	 * @param type    node type, placeholder
-	 * @param x       node x coordinate
-	 * @param y       node y coordinate
-	 * @param floorid id of floor this node is on
-	 * @return a new Node object
-	 * @// TODO: 2/14/17 Delete this, it's no longer needed since the new database uses UUIDs. 
-	 */
-	/*private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid)
-	{
-		//add 1 to greatest node ID value, which should be last item in the list
-		String newID = newNodesList.get(newNodesList.size() - 1).getID() + 1; //Adding one to a string... ha, ha, ha. TODO: BURN THIS TO HELL
-
-		//initialize data
-		ArrayList<String> data = new ArrayList<String>();
-		data.add(name);
-		data.add(type);
-		//create new concrete node
-		Node newNode = new ConcreteNode(newID, data, x, y, DatabaseController.getFloorByID(floorid));
-		return newNode;
-	}*/
 
 	/**
 	 * display node details when a node's button is clicked.
@@ -326,11 +238,8 @@ public class MapEditorToolController extends AbstractController
 		{
 			//add neighbor
 			currentNode.addNeighbor(linkedNode);
-			//add currentNode (not the node that has just been clicked) to the modifiedlist
-			if (!modifiedNodesList.contains(currentNode))
-			{
-				modifiedNodesList.add(currentNode);
-			}
+			database.updateNode(currentNode);
+
 			addingNeighbor = false;
 			//redraw lines
 			drawToNeighbors(currentNode);
@@ -339,11 +248,8 @@ public class MapEditorToolController extends AbstractController
 		{
 			//remove neighbor
 			currentNode.delNeighbor(linkedNode);
-			//add currentNode (not the node that has just been clicked) to the modifiedlist
-			if (!modifiedNodesList.contains(currentNode))
-			{
-				modifiedNodesList.add(currentNode);
-			}
+			database.updateNode(currentNode);
+
 			removingNeighbor = false;
 			//redraw lines
 			drawToNeighbors(currentNode);
@@ -431,10 +337,7 @@ public class MapEditorToolController extends AbstractController
         {
             currentButton.setLayoutX(Double.parseDouble(xField.getText()));
             currentNode.setX(Double.parseDouble(xField.getText()));
-            //track that this node has been modified
-            if(!modifiedNodesList.contains(currentNode)){
-                modifiedNodesList.add(currentNode);
-            }
+            database.updateNode(currentNode);
 
             //redraw lines for any node that has currentNode as a neighbor
             //store nodes that need to be redrawn in a list as a workaround
@@ -472,10 +375,7 @@ public class MapEditorToolController extends AbstractController
             {
                 currentButton.setLayoutY(Double.parseDouble(yField.getText()));
                 currentNode.setY(Double.parseDouble(yField.getText()));
-                //track that this node has been modified
-                if(!modifiedNodesList.contains(currentNode)){
-                    modifiedNodesList.add(currentNode);
-                }
+                database.updateNode(currentNode); //TODO: meld multiple database update calls into one, that function is expensive!
 
                 //redraw lines for any node that has currentNode as a neighbor
                 //store nodes that need to be redrawn in a list as a workaround
@@ -514,10 +414,7 @@ public class MapEditorToolController extends AbstractController
 				currentNode.setName(nameField.getText());
 				//data.add(typeField.getText());
 				//track that this node has been modified
-				if (!modifiedNodesList.contains(currentNode))
-				{
-					modifiedNodesList.add(currentNode);
-				}
+				database.updateNode(currentNode);
 			}
 		} catch (NumberFormatException e)
 		{
@@ -525,113 +422,6 @@ public class MapEditorToolController extends AbstractController
 			System.out.println("Not a double");
 		}
 	}
-
-
-	@FXML
-	/**
-	 * Push newly created nodes into the databasecontroller's node table.
-	 *
-	 * This function will:
-	 *  - insert all newly created nodes into the database
-	 *  - update all modified nodes that were loaded in from the database
-	 *  - insert all new neighbor relations that have been created
-	 *  - delete all neighbor relations that have been deleted
-	 * TODO: nodes loaded in from the table and modified should also be pushed.
-	 */
-	void pushChangesToDatabase(ActionEvent event)
-	{
-		for (Node n : newNodesList)
-		{
-			//TODO: change types of things to be concretenode instead of node?
-			//sloppy to cast like this I assume
-			ConcreteNode newNode = (ConcreteNode) n;
-			database.insertNode(newNode);
-		}
-
-		//Update all nodes in the database.
-		//TODO: Preserve the sanctity of the cache, this "update" pattern might not work
-		for (Node node : modifiedNodesList)
-			database.updateNode(node);
-
-		//for each newly created node, insert it's neighbor relations into the table
-		/*for (Node n : newNodesList)
-		{
-			//Also has sloppy casting here
-			ConcreteNode newNode = (ConcreteNode) n;
-			for (Node neighborNode : newNode.getNeighbors())
-			{
-				//neighbor relation from newNode to neighborNode
-				DatabaseController.insertNeighbor(newNode, (ConcreteNode) neighborNode);
-			}
-		}*/
-
-		//TODO: ADD SOME SAUCE TO THIS SPAGHETTI
-		//reinitialize all nodes in the databasecontroller
-		//We are doing this because the nodes in modifiedNodesList reference the objects
-		//in databasecontroller.nodeList. This means that changes we made in the editor also have
-		//been changed in databasecontroller's nodeList. nodeList stores objects, but those objects
-		//don't directly affect the database's tables.
-
-		//THEREFORE: we reinitialize all nodes so that we have an accurate and updated picture
-		//of what nodes and neighbors are currently in the database
-		//DatabaseController.initializeAllNodes();
-
-		//for each node that has been modified
-		for (Node n : modifiedNodesList)
-		{
-			//initialize a collection of all neighbors for node N that the database knows about
-			Collection<Node> sourceNeighbors = database.getNodeByUUID(n.getID()).getNeighbors();
-			//get neighbors from node N as the editortool knows about
-			Collection<Node> modNeighbors = n.getNeighbors();
-
-			//arrays of nodes that will be used to store which nodes are common to both sourceNeighbors and modNeighbors
-			ArrayList<Node> toDeleteSourceNeighbors = new ArrayList<Node>();
-			ArrayList<Node> toDeleteModNeighbors = new ArrayList<Node>();
-
-			//for each neighbor editor knows about
-			for (Node modNeighbor : modNeighbors)
-			{
-				//for each neighbor database knows about
-				for (Node sourceNeighbor : sourceNeighbors)
-				{
-					//if ID is same, they are the same node.
-					if (sourceNeighbor.getID() == modNeighbor.getID())
-					{
-						//store the node in toDelete arrays, to indicate both source and mod
-						//know about this neighbor relationship
-						toDeleteModNeighbors.add(modNeighbor);
-						toDeleteSourceNeighbors.add(sourceNeighbor);
-					}
-				}
-			}
-
-			//remove all nodes that are common to mod and source.
-			//this will leave just the neighbor nodes that are different.
-			//any neighbor nodes in modNeighbors but not in source are newly created neighbors.
-			//any neighbor nodes in sourceNeighbors but not in mod are old neighbors that have been deleted.
-			modNeighbors.removeAll(toDeleteModNeighbors);
-			sourceNeighbors.removeAll(toDeleteSourceNeighbors);
-
-            //insert new neighbor relations
-            /*for(Node modNeighbor: modNeighbors)
-            {
-                 DatabaseController.insertNeighbor(n.getID(), modNeighbor.getID());
-            }
-            //remove all neighbor relations that have been removed by the editor
-            for(Node sourceNeighbor: sourceNeighbors)
-            {
-                  DatabaseController.delNeighbor(n.getID(), sourceNeighbor.getID());
-            }*/
-        }
-
-        //remove nodes from database
-        for(Node n: deleteNodesList){
-            //delete any neighbor relations coming from this node
-            //DatabaseController.removeNeighborsFromID(n.getID());
-           	database.deleteNodeByUUID(n.getID());
-        }
-    }
-
 
 	@FXML
 	/**
@@ -642,7 +432,6 @@ public class MapEditorToolController extends AbstractController
 	 */
 	void drawToNeighbors(Node source)
 	{
-
 		// Remove all existing lines coming from source Node
 		// Check if source has existing lines
 		if (lineGroups.containsKey(source))
@@ -682,11 +471,9 @@ public class MapEditorToolController extends AbstractController
 
 			//make a new triangle
 			Polygon arrowTriangle = new Polygon();
-			arrowTriangle.getPoints().addAll(new Double[]{
-					0.0, 0.0,
+			arrowTriangle.getPoints().addAll(0.0, 0.0,
 					-10.0, 10.0,
-					10.0, 10.0
-			});
+					10.0, 10.0);
 
 			//get angle the angle of the line we'll be making in degrees
 			double slopeAngle = Math.toDegrees(Math.atan2(diffY, diffX));
@@ -772,7 +559,8 @@ public class MapEditorToolController extends AbstractController
             }
 
             //redraw lines for any nodes that have the deleted node as a neighbor
-            for(Node n: newNodesList)
+			//TODO: Delete a lot of useless commented out code?
+            /*for(Node n: newNodesList)
             {
                 boolean has = false;
                 if(n.getNeighbors().contains(currentNode)){
@@ -783,55 +571,17 @@ public class MapEditorToolController extends AbstractController
                     n.delNeighbor(currentNode);
                     drawToNeighbors(n);
                     //indicate that this node has been modified
-                    if (!modifiedNodesList.contains(n))
-                    {
                         modifiedNodesList.add(n);
                     }
                 }
-            }
-            //TODO: collapse this into a single function, completely duplicate and perhaps redundant code
-            for(Node n : database.getAllNodes())
-            {
-                boolean has = false;
-                if(n.getNeighbors().contains(currentNode)){
-                    has = true;
-                }
-                if(has)
-                {
-                    n.delNeighbor(currentNode);
-                    drawToNeighbors(n);
-                    //indicate that this node has been modified
-                    if (!modifiedNodesList.contains(n))
-                    {
-                        modifiedNodesList.add(n);
-                    }
-                }
-            }
-            //TODO: collapse this into a single function, completely duplicate and perhaps redundant code
-            for(Node n: modifiedNodesList)
-            {
-                boolean has = false;
-                if(n.getNeighbors().contains(currentNode)){
-                    has = true;
-                }
-                if(has)
-                {
-                    n.delNeighbor(currentNode);
-                    drawToNeighbors(n);
-                    //indicate that this node has been modified
-                    if (!modifiedNodesList.contains(n))
-                    {
-                        modifiedNodesList.add(n);
-                    }
-                }
-            }
+            }*/
+			database.deleteNodeByUUID(currentNode.getID());
+        	((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+        	//hide details view
+        	hideNodeDetails();
         }
 
-        //add node to deleteNodesList
-        deleteNodesList.add(currentNode);
-        ((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
-        //hide details view
-        hideNodeDetails();
+
     }
 
 }

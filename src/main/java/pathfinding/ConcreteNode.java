@@ -88,7 +88,8 @@ public class ConcreteNode implements Node
 	@Override
 	public void addProvider(String newProvider)
 	{
-		providers.add(newProvider);
+		if (!providers.contains(newProvider))
+			providers.add(newProvider);
 	}
 
 	@Override
@@ -100,7 +101,8 @@ public class ConcreteNode implements Node
 	@Override
 	public void addService(String newService)
 	{
-		services.add(newService);
+		if (!services.contains(newService))
+			services.add(newService);
 	}
 
 	@Override
@@ -112,7 +114,8 @@ public class ConcreteNode implements Node
 	@Override
 	public void addNeighbor(Node newNeighbor)
 	{
-		neighbors.add(newNeighbor);
+		if (!neighbors.contains(newNeighbor))
+			neighbors.add(newNeighbor);
 	}
 
 	@Override
