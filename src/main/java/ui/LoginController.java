@@ -6,6 +6,7 @@ import data.DatabaseController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -17,6 +18,8 @@ public class LoginController
 	public ProgressIndicator progressIndicator;
 	public Button cancelButton;
 	public Button loginButton;
+	public Pane thinBar;
+	public Pane thickBar;
 	@FXML
 	private TextField usernameField;
 
@@ -70,7 +73,7 @@ public class LoginController
 			new Thread(() ->
 			{
 				DatabaseController.initializeAll();
-				Main.loadFXML(Paths.MAP_EDITOR_FXML);
+				Main.loadFXML(Paths.ADMIN_PAGE_FXML);
 			}).start();
 		}
 		else
