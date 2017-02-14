@@ -133,12 +133,12 @@ public class MapController
 
 	public void showDirectory()
 	{
-		Main.loadFXML("/fxml/Directory.fxml");
+		Main.loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML("/fxml/Startup.fxml");
+		Main.loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void findDirectionsTo(){
