@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
@@ -574,7 +575,6 @@ public class MapEditorToolController extends AbstractController
 		//THEREFORE: we reinitialize all nodes so that we have an accurate and updated picture
 		//of what nodes and neighbors are currently in the database
 		//DatabaseController.initializeAllNodes();
-		database.reloadCache();
 
 		//for each node that has been modified
 		for (Node n : modifiedNodesList)

@@ -91,9 +91,9 @@ public class ProviderBox extends HBox
 		titlesField.setText(provider.getTitle());
 		for(Node n:provider.getLocations()){
 			HBox box = new HBox();
-			//Label label = new Label(n.getData().get(0));
+			Label label = new Label(n.getData().get(0));
 			Button button = new Button("X");
-			//box.getChildren().addAll(label,button);
+			box.getChildren().addAll(label,button);
 			locationsVBox.getChildren().add(0,box);
 		}
 	}
