@@ -70,11 +70,7 @@ public class LoginController
 			resultText.setText("Logging in...");
 			resultText.setVisible(true);
 
-			new Thread(() ->
-			{
-				DatabaseController.initializeAll();
-				Main.loadFXML(Paths.ADMIN_PAGE_FXML);
-			}).start();
+			new Thread(() -> Main.loadFXML(Paths.ADMIN_PAGE_FXML)).start();
 		}
 		else
 		{

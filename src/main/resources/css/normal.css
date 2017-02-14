@@ -27,11 +27,19 @@
     -fx-font-size: 40pt;
 }
 
-.bh-admin-button, .bh-admin-button:hover
+.bh-admin-button
 {
     -fx-background-color: #eee;
-    -fx-border-color: #666;
+    -fx-border-width: 0px;
     -fx-text-fill: #333;
-    -fx-font-size: 10pt;
+    -fx-background-radius: 0px;
     -fx-focus-traversable: false;
+    -fx-font-family: "Glacial Indifference";
+    -fx-font-size: 30pt;
+}
+
+.bh-admin-box
+{
+    -fx-border-color: black;
+    -fx-border-width: 1px;
 }
