@@ -27,7 +27,7 @@ public class ConcreteNode implements Node
 		building = "00000000-0000-0000-0000-000000000000";
 		x = 0;
 		y = 0;
-		type = 0;
+		type = -1;
 		floor = 1;
 	}
 

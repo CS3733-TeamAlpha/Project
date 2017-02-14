@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 
 import static java.awt.SystemColor.window;
 
-public class MapEditorToolController
+public class MapEditorToolController extends AbstractController
 {
 	//Arraylist of all lines drawn from a node to its neighbors
 	private HashMap<Node, ArrayList<Group>> lineGroups = new HashMap<Node, ArrayList<Group>>();
@@ -78,6 +78,7 @@ public class MapEditorToolController
 		//TODO: make editortool load all nodes without making everything static
 		//currently acheived by pressing a button
 		// loadNodesFromDatabase();
+		super();
 	}
 
 	@FXML
@@ -87,10 +88,6 @@ public class MapEditorToolController
 		{
 			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
 		}
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
 		loadNodesFromDatabase();
 	}
 
@@ -142,19 +139,25 @@ public class MapEditorToolController
 			if (makingNew) //making a new button/node
 			{
 				Node newNode = null;
-				if (newNodesList.size() == 0)
-				{
+				//TODO: Excess if/else can probably be deleted, it should be no longer necessary to specially generate new nodes
+				/*if (newNodesList.size() == 0)
+				{*/
 					//if we haven't made any new nodes yet, call databasecontroller so that
 					//we have a baseline nodeID to start with.
 					//This nodeID is going the be the greatest int nodeID in the existing nodes
 					//IMPORTANT: this doesn't actually add the new node to the database tables
-					newNode = DatabaseController.generateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-				}
+					newNode = new ConcreteNode();
+					newNode.setName("newNode");
+					newNode.setType(-1); //default
+					newNode.setX(e.getX());
+					newNode.setY(e.getY());
+					newNode.setFloor(FLOORID);
+				/*}
 				else
 				{
 					//otherwise use our own function to generate a new node.
 					newNode = editorGenerateNewNode("newNode", "default", e.getX(), e.getY(), FLOORID);
-				}
+				}*/
 				newNodesList.add(newNode);
 				//make a new button to associate with the node
 				Button nodeB = new Button("+");
@@ -238,7 +241,7 @@ public class MapEditorToolController
 	 */
 	public void loadNodesFromDatabase()
 	{
-		for (Node n : DatabaseController.getAllNodes())
+		for (Node n : database.getAllNodes())
 		{
 			loadNode(n);
 			drawToNeighbors(n);
@@ -282,8 +285,9 @@ public class MapEditorToolController
 	 * @param y       node y coordinate
 	 * @param floorid id of floor this node is on
 	 * @return a new Node object
+	 * @// TODO: 2/14/17 Delete this, it's no longer needed since the new database uses UUIDs. 
 	 */
-	private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid)
+	/*private Node editorGenerateNewNode(String name, String type, double x, double y, int floorid)
 	{
 		//add 1 to greatest node ID value, which should be last item in the list
 		String newID = newNodesList.get(newNodesList.size() - 1).getID() + 1; //Adding one to a string... ha, ha, ha. TODO: BURN THIS TO HELL
@@ -295,7 +299,7 @@ public class MapEditorToolController
 		//create new concrete node
 		Node newNode = new ConcreteNode(newID, data, x, y, DatabaseController.getFloorByID(floorid));
 		return newNode;
-	}
+	}*/
 
 	/**
 	 * display node details when a node's button is clicked.
@@ -346,8 +350,8 @@ public class MapEditorToolController
 		else
 		{
 			//modify text fields to display node info
-			nameField.setText(linkedNode.getData().get(0));
-			typeField.setText(linkedNode.getData().get(1));
+			nameField.setText(linkedNode.getName());//getData().get(0));
+			typeField.setText(Integer.toString(linkedNode.getType()));//getData().get(1)); //TODO: Write type enum and list of associated strings
 			xField.setText(Double.toString(linkedNode.getX()));
 			yField.setText(Double.toString(linkedNode.getY()));
 
@@ -542,14 +546,16 @@ public class MapEditorToolController
 			//TODO: change types of things to be concretenode instead of node?
 			//sloppy to cast like this I assume
 			ConcreteNode newNode = (ConcreteNode) n;
-			DatabaseController.insertNode(newNode);
+			database.insertNode(newNode);
 		}
 
-		//modifyNodes will update Node tables for all nodes in the list
-		DatabaseController.modifyNodes(modifiedNodesList);
+		//Update all nodes in the database.
+		//TODO: Preserve the sanctity of the cache, this "update" pattern might not work
+		for (Node node : modifiedNodesList)
+			database.updateNode(node);
 
 		//for each newly created node, insert it's neighbor relations into the table
-		for (Node n : newNodesList)
+		/*for (Node n : newNodesList)
 		{
 			//Also has sloppy casting here
 			ConcreteNode newNode = (ConcreteNode) n;
@@ -558,7 +564,7 @@ public class MapEditorToolController
 				//neighbor relation from newNode to neighborNode
 				DatabaseController.insertNeighbor(newNode, (ConcreteNode) neighborNode);
 			}
-		}
+		}*/
 
 		//TODO: ADD SOME SAUCE TO THIS SPAGHETTI
 		//reinitialize all nodes in the databasecontroller
@@ -569,7 +575,8 @@ public class MapEditorToolController
 
 		//THEREFORE: we reinitialize all nodes so that we have an accurate and updated picture
 		//of what nodes and neighbors are currently in the database
-		DatabaseController.initializeAllNodes();
+		//DatabaseController.initializeAllNodes();
+		database.reloadCache();
 
 		//for each node that has been modified
 		for (Node n : modifiedNodesList)

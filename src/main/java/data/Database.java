@@ -223,6 +223,8 @@ public class Database
 		//This function is expensive because it has to delete all edges where this node is the start, and all provider
 		// & service records. Then it has to go back and re-insert them. There might be a more efficient way to do this,
 		//but this method works for now. I suspect that going through to see what needs updating is less efficient anyways
+
+		//TODO: HOLY MOTHER OF CTHULHU, MAKE THIS FUNCTION FAST AGAIN! USE UPDATE!
 		try
 		{
 			//Update edges
