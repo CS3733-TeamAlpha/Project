@@ -62,7 +62,7 @@ public class ConcreteNode implements Node
 	}
 
 	/**
-	 * uses the law of cosines to calculate the angle between 3 nodes, the first being the node
+	 * uses BLACK MAGIC to calculate the angle between 3 nodes, the first being the node
 	 * that this method is called on. Doesn't actually return the angle; returns an approximate
 	 * direction
 	 * @param pivot the second node in a set of three nodes
