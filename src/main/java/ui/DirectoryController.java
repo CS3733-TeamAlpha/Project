@@ -192,7 +192,7 @@ public class DirectoryController extends AbstractController
 		{
 			HBox innerH = new HBox();
 			Label locL = new Label();
-			locL.setText("ID:"+n.getID()+": "+n.getData().get(0));
+			locL.setText("ID:"+n.getID()+": "+n.getName());
 			Button xBut = new Button("X");
 			xBut.setOnAction(new EventHandler<ActionEvent>()
 			{
