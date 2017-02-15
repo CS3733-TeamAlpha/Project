@@ -545,6 +545,10 @@ public class MapEditorToolController
 		//handle when mouse is released after click on button
 		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
 
+		currentNode = newNode;
+		currentButton.setId("node-button-unselected");
+		currentButton = nodeB;
+		currentButton.setId("node-button-selected");
 		nodeButtonLinks.put(nodeB, newNode);
 		//add the new button to the scene
 		editingFloor.getChildren().add(1, nodeB);
@@ -566,7 +570,7 @@ public class MapEditorToolController
 		if(e.isSecondaryButtonDown())
 		{
 			if(currentButton != null){ //radial context menu for node options
-				currentState = editorStates.SHOWINGNODEMENU;
+				//currentState = editorStates.SHOWINGNODEMENU;
 				mainScroll.setPannable(false);
 			} else { //radial context menu for adding nodes
 				currentState = editorStates.SHOWINGEMPTYMENU;
@@ -735,6 +739,7 @@ public class MapEditorToolController
 				}
 				contextSelection = -1;
 				break;
+
 			default:
 				currentState = editorStates.DOINGNOTHING;
 				break;
@@ -896,6 +901,7 @@ public class MapEditorToolController
 				//redraw lines
 				drawToNeighbors(currentNode);
 				currentState = editorStates.DOINGNOTHING;
+				currentNode = linkedNode;
 				break;
 			case REMOVINGNEIGHBOR:
 				//remove neighbor
@@ -971,6 +977,7 @@ public class MapEditorToolController
 		}
 	}
 
+	//TODO: defunct function?
 	@FXML
 	/**
 	 * modify a node's location on the map. alternately, cancel node location modification
