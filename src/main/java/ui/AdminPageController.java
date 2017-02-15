@@ -1,10 +1,8 @@
 package ui;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.
 
-import java.util.Optional;
 
 public class AdminPageController extends BaseController
 {
@@ -57,6 +55,6 @@ public class AdminPageController extends BaseController
 
 	public void logout(ActionEvent actionEvent)
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 }

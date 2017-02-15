@@ -1,5 +1,6 @@
 package ui;
 
+import data.Database;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -14,6 +15,21 @@ abstract class BaseController
 	private static Stage stage;
 	private boolean currentSceneSupportsHC = true;
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML};
+	protected static Database database;
+
+	static
+	{
+		database = null;
+	}
+
+	public BaseController()
+	{
+		if (database == null)
+		{
+			database = new Database("FHAlpha");
+			ProviderBox.database = database;
+		}
+	}
 
 	public abstract void initialize();
 
@@ -44,8 +60,7 @@ abstract class BaseController
 		updateCSS();
 	}
 
-
-	public void updateCSS()
+	protected void updateCSS()
 	{
 		if(currentSceneSupportsHC && Accessibility.isHighContrast())
 		{
@@ -56,8 +71,6 @@ abstract class BaseController
 			disableHighContrastCss();
 		}
 	}
-
-
 
 	private void disableHighContrastCss()
 	{
