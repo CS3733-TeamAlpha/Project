@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -79,9 +80,19 @@ public class MapEditorToolController extends BaseController
 	private int contextSelection = -1; //default to -1, no context menu option selected
 
 
+	private String BUILDINGID = "00000000-0000-0000-0000-000000000000";
 	private int FLOORID = 3; //Default floor id for minimal application
 	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
 	//TODO: should nodes be able to be moved to different floor? probably not
+
+	private Image floor1Image = new Image(Paths.FLOOR1_NORMAL);
+	private Image floor2Image = new Image(Paths.FLOOR2_NORMAL);
+	private Image floor3Image = new Image(Paths.FLOOR3_NORMAL);
+	private Image floor4Image = new Image(Paths.FLOOR4_NORMAL);
+	private Image floor5Image = new Image(Paths.FLOOR5_NORMAL);
+	private Image floor6Image = new Image(Paths.FLOOR6_NORMAL);
+	private Image floor7Image = new Image(Paths.FLOOR7_NORMAL);
+
 
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
@@ -146,6 +157,8 @@ public class MapEditorToolController extends BaseController
 	{
 		if(Accessibility.isHighContrast())
 			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
+
+		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();
 
 		//TODO: Load in image for a specific floor and determine canvas size
@@ -163,8 +176,41 @@ public class MapEditorToolController extends BaseController
 		gc = canvas.getGraphicsContext2D();
 		editingFloor.getChildren().add(1, canvas);
 
+		//style up/down buttons
+		upFloor.setId("upbuttonTriangle");
+		downFloor.setId("downbuttonTriangle");
+
+		//set the floorImage imageview to display the correct floor's image.
+		//TODO: make this work with multiple buildings
+		setFloorImage(FLOORID);
+
 		//set up event handlers for drag and drop images
 		setupImageEventHandlers();
+	}
+
+	/**
+	 * Set the floorImage imageview object to display the image of
+	 * a specific floor.
+	 * Currently only works based on floor, not building
+	 * @param floor The floor to display
+	 */
+	private void setFloorImage(int floor)
+	{
+		if(floor == 1){
+			floorImage.setImage(floor1Image);
+		} else if(floor == 2){
+			floorImage.setImage(floor2Image);
+		} else if(floor == 3){
+			floorImage.setImage(floor3Image);
+		} else if(floor == 4){
+			floorImage.setImage(floor4Image);
+		} else if(floor == 5){
+			floorImage.setImage(floor5Image);
+		} else if(floor == 6){
+			floorImage.setImage(floor6Image);
+		} else if(floor == 7){
+			floorImage.setImage(floor7Image);
+		}
 	}
 
 	/**
@@ -424,6 +470,16 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	private VBox dndContainer;
 
+
+	@FXML
+	private Button upFloor;
+
+	@FXML
+	private Button downFloor;
+
+	@FXML
+	private Label currentFloorLabel;
+
 	@FXML
 	/**
 	 * Function is fired when a drop action is detected, i.e. node is being moved or
@@ -471,6 +527,40 @@ public class MapEditorToolController extends BaseController
 		currentState = editorStates.DOINGNOTHING;
 	}
 
+	@FXML
+	/**
+	 * Change the current floor to increment up by 1.
+	 * Prevent going down if floor is already 1.
+	 * TODO: Make the min floor change depending on current building (iteration 3)
+	 */
+	void goDownFloor(ActionEvent event) {
+		if(FLOORID > 1){
+			//remove all buttons and lines on the current floor
+			purgeButtonsAndLines();
+			FLOORID--;
+			loadNodesFromDatabase();
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(FLOORID);
+		}
+	}
+
+	@FXML
+	/**
+	 * Change the current floor to increment down by 1.
+	 * Prevent going up if floor is already 7.
+	 * TODO: Make the max floor change depending on current building (iteration 3)
+	 */
+	void goUpFloor(ActionEvent event) {
+		if(FLOORID < 7){
+			//remove all buttons and lines on the current floor
+			purgeButtonsAndLines();
+			FLOORID++;
+			loadNodesFromDatabase();
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(FLOORID);
+		}
+	}
+
 	//TODO: update to match refactored database
 	/**
 	 * Create a new node at given xy coordinates
@@ -485,6 +575,7 @@ public class MapEditorToolController extends BaseController
 		newNode.setX(x);
 		newNode.setY(y);
 		newNode.setFloor(FLOORID);
+		newNode.setBuilding(BUILDINGID);
 
 		database.insertNode(newNode);
 
@@ -505,7 +596,10 @@ public class MapEditorToolController extends BaseController
 		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
 
 		currentNode = newNode;
-		currentButton.setId("node-button-unselected");
+		if(currentButton != null)
+		{
+			currentButton.setId("node-button-unselected");
+		}
 		currentButton = nodeB;
 		currentButton.setId("node-button-selected");
 		nodeButtonLinks.put(nodeB, newNode);
@@ -762,10 +856,35 @@ public class MapEditorToolController extends BaseController
 	 */
 	public void loadNodesFromDatabase()
 	{
-		for (Node n : database.getAllNodes())
+		for (Node n : database.getNodesInBuildingFloor(BUILDINGID, FLOORID))
 			loadNode(n);
-		for (Node n : database.getAllNodes())
+		for (Node n : database.getNodesInBuildingFloor(BUILDINGID, FLOORID))
 			drawToNeighbors(n);
+	}
+
+	/**
+	 * Hide all node buttons for the current floor, in preperation for changing floors.
+	 */
+	private void purgeButtonsAndLines()
+	{
+		for(Button b: nodeButtonLinks.keySet())
+		{
+			Node linkedNode = nodeButtonLinks.get(b);
+			if(lineGroups.containsKey(linkedNode))
+			{
+				for (Group g : lineGroups.get(linkedNode))
+				{
+					System.out.println("stuff");
+					// Removes all lines from oldLines from the UI
+					((AnchorPane) g.getParent()).getChildren().remove(g);
+				}
+				lineGroups.remove(linkedNode);
+			}
+			//remove this button from the UI
+			((AnchorPane) b.getParent()).getChildren().remove(b);
+		}
+		//clear all entries in nodeButtonLinks
+		nodeButtonLinks.clear();
 	}
 
 	/**
@@ -821,17 +940,25 @@ public class MapEditorToolController extends BaseController
 			case ADDINGNEIGHBOR:
 				//add neighbor
 				currentNode.addNeighbor(linkedNode);
+				linkedNode.addNeighbor(currentNode);
 				//update currentNode (not the node that has just been clicked)
 				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
+				drawToNeighbors(linkedNode);
 				currentState = editorStates.DOINGNOTHING;
 				currentNode = linkedNode;
 				break;
 			case REMOVINGNEIGHBOR:
 				//remove neighbor
 				currentNode.delNeighbor(linkedNode);
+				//remove neighbor relation from linked node, if valid
+				if(linkedNode.getNeighbors().contains(currentNode))
+				{
+					linkedNode.delNeighbor(currentNode);
+					drawToNeighbors(linkedNode);
+				}
 				//update currentNode (not the node that has just been clicked)
 				database.updateNode(currentNode);
 
@@ -1212,6 +1339,7 @@ public class MapEditorToolController extends BaseController
 
 			database.deleteNodeByUUID(currentNode.getID());
         	((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+        	nodeButtonLinks.remove(currentButton);
         	//hide details view
         	hideNodeDetails();
         }
