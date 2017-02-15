@@ -6,12 +6,10 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class ConcreteGraphTest
-{
+public class ConcreteGraphTest {
 
 	@Test
-	public void findPath() throws Exception
-	{
+	public void findPath() throws Exception {
 		ConcreteNode[] straightNodes = new ConcreteNode[100];
 		ConcreteNode[][] gridNodes = new ConcreteNode[100][100];
 
@@ -24,8 +22,7 @@ public class ConcreteGraphTest
 				gridNodes[i][j] = new ConcreteNode();
 
 		//Create a simple straightshot array of nodes to idiot-test the pathfinding
-		for (int i = 0; i < straightNodes.length; i++)
-		{
+		for (int i = 0; i < straightNodes.length; i++) {
 			straightNodes[i].setX(i);
 			if (i > 0)
 				straightNodes[i].addNeighbor(straightNodes[i - 1]);
@@ -34,10 +31,8 @@ public class ConcreteGraphTest
 		}
 
 		//Create a more complicated grid of nodes to check for actual pathfinding ability where many choices exist
-		for (int i = 0; i < 100; i++)
-		{
-			for (int j = 0; j < 100; j++)
-			{
+		for (int i = 0; i < 100; i++) {
+			for (int j = 0; j < 100; j++) {
 				gridNodes[i][j].setX(i);
 				gridNodes[i][j].setY(j);
 				if (i > 0)
@@ -74,6 +69,34 @@ public class ConcreteGraphTest
 		ArrayList<Node> orderedSolution = graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]);
 		assertNotNull(orderedSolution);
 		for (int i = 0; i < 100; i++)
-			assertEquals(orderedSolution.get(i), straightNodes[99-i]);
+			assertEquals(orderedSolution.get(i), straightNodes[99 - i]);
+	}
+
+	@Test
+	public void textDirect()
+	{
+		ConcreteNode oneN = new ConcreteNode(); oneN.setX(50); oneN.setY(50);
+		ConcreteNode twoN = new ConcreteNode(); twoN.setX(45); twoN.setY(60);
+		ConcreteNode threeN = new ConcreteNode(); threeN.setX(38); threeN.setY(40);
+		ConcreteNode fourN = new ConcreteNode(); fourN.setX(38); fourN.setY(20);
+		ConcreteNode fiveN = new ConcreteNode(); fiveN.setX(60); fiveN.setY(25);
+		ConcreteNode sixN = new ConcreteNode(); sixN.setX(90); sixN.setY(7);
+		oneN.addNeighbor(twoN);
+		twoN.addNeighbor(oneN);
+		twoN.addNeighbor(threeN);
+		threeN.addNeighbor(fourN);
+		threeN.addNeighbor(twoN);
+		fourN.addNeighbor(fiveN);
+		fourN.addNeighbor(threeN);
+		fiveN.addNeighbor(sixN);
+		fiveN.addNeighbor(fourN);
+		sixN.addNeighbor(fiveN);
+		ConcreteGraph test = new ConcreteGraph();
+		ArrayList<String> directions = test.textDirect(oneN, sixN, 5);
+		int i;
+		for (i = 0; i < directions.size(); i++)
+		{
+			System.out.println(directions.get(i));
+		}
 	}
 }
