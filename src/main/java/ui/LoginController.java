@@ -10,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 /**
  * Created by Ari on 2/7/17.
  */
-public class LoginController
+public class LoginController extends BaseController
 {
 	public Label resultText;
 	public ProgressIndicator progressIndicator;
@@ -39,7 +39,7 @@ public class LoginController
 
 	public void showStartup()
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void login()
@@ -68,7 +68,7 @@ public class LoginController
 			resultText.setText("Logging in...");
 			resultText.setVisible(true);
 
-			new Thread(() -> Main.loadFXML(Paths.ADMIN_PAGE_FXML)).start();
+			new Thread(() ->loadFXML(Paths.ADMIN_PAGE_FXML)).start();
 		}
 		else
 		{

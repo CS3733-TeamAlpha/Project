@@ -6,7 +6,8 @@ import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
 
-public class AdminPageController
+
+public class AdminPageController extends BaseController
 {
 	public void initialize()
 	{
@@ -15,12 +16,12 @@ public class AdminPageController
 
 	public void editDirectory(ActionEvent actionEvent)
 	{
-		Main.loadFXML(Paths.DIRECTORY_FXML);
+		loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void editMap(ActionEvent actionEvent)
 	{
-		Main.loadFXML(Paths.MAP_EDITOR_FXML);
+		loadFXML(Paths.MAP_EDITOR_FXML);
 	}
 
 	public void changePassword(ActionEvent actionEvent)
@@ -57,6 +58,6 @@ public class AdminPageController
 
 	public void logout(ActionEvent actionEvent)
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 }
