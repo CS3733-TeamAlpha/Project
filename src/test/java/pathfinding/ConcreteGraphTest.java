@@ -10,7 +10,7 @@ public class ConcreteGraphTest
 {
 
 	@Test
-	public void findPath() throws Exception
+	public void findPath()
 	{
 		ConcreteNode[] straightNodes = new ConcreteNode[100];
 		ConcreteNode[][] gridNodes = new ConcreteNode[100][100];
