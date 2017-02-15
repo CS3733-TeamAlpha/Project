@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -709,6 +710,31 @@ public class Database
 			System.out.println("Error trying to load pathable nodes!");
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Gets the providers associated with the associated Node
+	 * @param nodeName Name of the service to search for
+	 * @return An ArrayList of Strings containing all associated providers
+	 */
+	public LinkedList<String> getAssocProviders(String nodeName)
+	{
+		LinkedList<String> assocProvs = new LinkedList<>();
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM Services WHERE name=?");
+			pstmt.setString(1, nodeName);
+			ResultSet results = pstmt.executeQuery();
+			if (results.next())
+				assocProvs.add(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get service location!");
+			e.printStackTrace();
+		}
+
+		return assocProvs;
 	}
 
 
