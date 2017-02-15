@@ -74,36 +74,29 @@ public class ConcreteGraphTest {
 
 	@Test
 	public void textDirect() {
-		ConcreteNode oneN = new ConcreteNode();
-		oneN.setX(50);
-		oneN.setY(50);
-		ConcreteNode twoN = new ConcreteNode();
-		twoN.setX(60);
-		twoN.setY(50);
-		ConcreteNode threeN = new ConcreteNode();
-		threeN.setX(60);
-		threeN.setY(40);
-		ConcreteNode fourN = new ConcreteNode();
-		fourN.setX(70);
-		fourN.setY(40);
-		ConcreteNode fiveN = new ConcreteNode();
-		fiveN.setX(70);
-		fiveN.setY(60);
-		ConcreteNode sixN = new ConcreteNode();
-		sixN.setX(75);
-		sixN.setY(60);
-		oneN.addNeighbor(twoN);
-		twoN.addNeighbor(oneN);
-		twoN.addNeighbor(threeN);
-		threeN.addNeighbor(fourN);
-		threeN.addNeighbor(twoN);
-		fourN.addNeighbor(fiveN);
-		fourN.addNeighbor(threeN);
-		fiveN.addNeighbor(sixN);
-		fiveN.addNeighbor(fourN);
-		sixN.addNeighbor(fiveN);
+		ConcreteNode[] testNodes = new ConcreteNode[6];
+		for (int i = 0; i < testNodes.length; i++)
+			testNodes[i] = new ConcreteNode();
+		for (int i = 0; i < testNodes.length; i++) {
+			if (i > 0)
+				testNodes[i].addNeighbor(testNodes[i - 1]);
+			if (i < testNodes.length - 1)
+				testNodes[i].addNeighbor(testNodes[i + 1]);
+		}
+		testNodes[0].setX(50);
+		testNodes[0].setY(50);
+		testNodes[1].setX(60);
+		testNodes[1].setY(50);
+		testNodes[2].setX(60);
+		testNodes[2].setY(40);
+		testNodes[3].setX(70);
+		testNodes[3].setY(40);
+		testNodes[4].setX(70);
+		testNodes[4].setY(60);
+		testNodes[5].setX(75);
+		testNodes[5].setY(60);
 		ConcreteGraph test = new ConcreteGraph();
-		ArrayList<String> directions = test.textDirect(oneN, sixN, 5);
+		ArrayList<String> directions = test.textDirect(testNodes[0], testNodes[5], 5);
 		assertEquals("Walk 50 feet", directions.get(1));
 		assertEquals("Walk 100 feet", directions.get(7));
 		assertEquals("Turn left, then", directions.get(6));
