@@ -1,23 +1,15 @@
 package ui;
 
-import data.DatabaseController;
 import data.Provider;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import pathfinding.Node;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,10 +48,6 @@ public class DirectoryController extends BaseController
 
 	public void initialize()
 	{
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
 		loadProvidersFromDatabase();
 	}
 
@@ -68,26 +56,29 @@ public class DirectoryController extends BaseController
 	 */
 	public void loadProvidersFromDatabase()
 	{
-		for (Provider p : DatabaseController.getAllProviders())
+		for (String providerName : database.getProviders())
 		{
+			//Assemble providers into provider classes. This is a temporary workaround so that database changes can be
+			//pushed as soon as possible; the Provider class is slated for removal.
+			//TODO: Make DirectoryController and related class no longer use class Provider
+			Provider p = new Provider(database.getProviderUUID(providerName),
+					providerName.split(",")[1].split(";")[0], 	//fname
+					providerName.split(",")[0],						//lname
+					providerName.split(";")[1],						//titles. String.split is magical
+					database.getProviderLocations(database.getProviderUUID(providerName)));
 			loadProvider(p);
 		}
 	}
 
 	public void addNewProvider(){
 		Provider newP = null;
-		if(newProviderList.size() == 0){
-			newP = DatabaseController.generateNewProvider("FName", "LName", "Title");
-		} else {
-			newP = generateNewProvider();
-		}
+		newP = generateNewProvider();
 		loadProvider(newP);
 	}
 
 	public Provider generateNewProvider()
 	{
-		int newID = newProviderList.get(newProviderList.size()-1).getID()+1;
-		return new Provider(newID, "FName", "LName", "Title");
+		return new Provider(java.util.UUID.randomUUID().toString(), "FName", "LName", "Title", new ArrayList<Node>());
 	}
 
 	public void loadProvider(Provider p)
@@ -95,46 +86,33 @@ public class DirectoryController extends BaseController
 		//ProviderBox pb = new ProviderBox();
 		HBox newH = new HBox();
 		Button deleteBut = new Button("X");
-		deleteBut.setOnAction(new EventHandler<ActionEvent>()
+		deleteBut.setOnAction(event ->
 		{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				deleteProviderList.add(p);
-				((VBox) newH.getParent()).getChildren().remove(newH);
-			}
+			deleteProviderList.add(p);
+			((VBox) newH.getParent()).getChildren().remove(newH);
 		});
 		TextField fname = new TextField();
 		fname.setText(p.getfName());
-		fname.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event)
-			{
-				if(!modifiedProvidersList.contains(p)){
-					modifiedProvidersList.add(p);
-				}
+		fname.setOnAction(event ->
+		{
+			if(!modifiedProvidersList.contains(p)){
+				modifiedProvidersList.add(p);
 			}
 		});
 		TextField lname = new TextField();
 		lname.setText(p.getlName());
-		lname.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event)
-			{
-				if(!modifiedProvidersList.contains(p)){
-					modifiedProvidersList.add(p);
-				}
+		lname.setOnAction(event ->
+		{
+			if(!modifiedProvidersList.contains(p)){
+				modifiedProvidersList.add(p);
 			}
 		});
 		TextField title = new TextField();
 		title.setText(p.getTitle());
-		title.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event)
-			{
-				if(!modifiedProvidersList.contains(p)){
-					modifiedProvidersList.add(p);
-				}
+		title.setOnAction(event ->
+		{
+			if(!modifiedProvidersList.contains(p)){
+				modifiedProvidersList.add(p);
 			}
 		});
 		VBox newV = new VBox();
@@ -142,49 +120,40 @@ public class DirectoryController extends BaseController
 		////////////////////
 
 		ChoiceBox locationSelector = new ChoiceBox();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		ArrayList<Node> nodes = database.getAllNodes();
 		ArrayList<String> nodeNames = new ArrayList<String>();
 		for(Node n: nodes)
-		{
-			nodeNames.add(Integer.toString(n.getID())+":"+n.getData().get(0));
-		}
+			nodeNames.add(n.getID() + ":" +n.getName()); //this used to be n.getData().get(0) with an int->string id tacked on
+
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 
 		Button addBut = new Button("Add Location");
-		addBut.setOnAction(new EventHandler<ActionEvent>()
+		addBut.setOnAction(event ->
 		{
-			@Override
-			public void handle(ActionEvent event)
+			String s = locationSelector.getValue().toString();
+
+			int idIndex = s.indexOf(":");
+			s = s.substring(0, idIndex);
+
+			if(database.getNodeByUUID(s) != null)
 			{
-				String s = locationSelector.getValue().toString();
+					String nodeID = s; //TODO: Eliminate this
 
-				int idIndex = s.indexOf(":");
-				s = s.substring(0, idIndex);
-
-				if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
-				{
-						int nodeID = Integer.parseInt(s);
-
-						Node n = DatabaseController.getNodeByID(nodeID);
-						p.addLocation(n);
-						HBox innerH = new HBox();
-						Label locL = new Label();
-						locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
-						Button xBut = new Button("X");
-						xBut.setOnAction(new EventHandler<ActionEvent>()
-						{
-							@Override
-							public void handle(ActionEvent event)
-							{
-								((VBox) innerH.getParent()).getChildren().remove(innerH);
-								if(!modifiedProvidersList.contains(p)){
-									modifiedProvidersList.add(p);
-								}
-							}
-						});
-						innerH.getChildren().addAll(locL, xBut);
-						newV.getChildren().add(innerH);
-				}
+					Node n = database.getNodeByUUID(nodeID);
+					p.addLocation(n);
+					HBox innerH = new HBox();
+					Label locL = new Label();
+					locL.setText("ID:" + n.getID() + ": " + n.getName()); //used to be .getData().get(0)
+					Button xBut = new Button("X");
+					xBut.setOnAction(event1 ->
+					{
+						((VBox) innerH.getParent()).getChildren().remove(innerH);
+						if(!modifiedProvidersList.contains(p)){
+							modifiedProvidersList.add(p);
+						}
+					});
+					innerH.getChildren().addAll(locL, xBut);
+					newV.getChildren().add(innerH);
 			}
 		});
 		newLocH.getChildren().addAll(locationSelector, addBut);
@@ -193,7 +162,7 @@ public class DirectoryController extends BaseController
 		{
 			HBox innerH = new HBox();
 			Label locL = new Label();
-			locL.setText("ID:"+n.getID()+": "+n.getData().get(0));
+			locL.setText("ID:"+n.getID()+": "+n.getName());
 			Button xBut = new Button("X");
 			xBut.setOnAction(new EventHandler<ActionEvent>()
 			{
@@ -222,6 +191,12 @@ public class DirectoryController extends BaseController
 		//TODO:
 	}
 
+	/**
+	 * Pushes changes to the database. There's a good chance that this function is heavily bugged as a result of the
+	 * database changeover; obviously it will be a hotspot for future development. This is due to the entirely new
+	 * model that the new database runs under: the new database maintains tight control of its nodes and expects to
+	 * recieve updates accordingly. It does not give as easily to the changeset model presented here.
+	 */
 	public void pushChangesToDatabase(){
 		for(Provider thisProvider: modifiedProvidersList){
 			HBox hb = boxProviderLinks.get(thisProvider);
@@ -234,47 +209,44 @@ public class DirectoryController extends BaseController
 			TextField ln = (TextField)hb.getChildren().get(3);
 			thisProvider.setTitle(ln.getText());
 			System.out.println(thisProvider.getID()+ thisProvider.getfName()+thisProvider.getlName()+thisProvider.getTitle());
-			if(DatabaseController.getProviderByID(thisProvider.getID()) == null)
-			{
-				DatabaseController.insertProvider(thisProvider);
-			}
-			else
-			{
-				DatabaseController.modifyProviderTable(thisProvider);
-			}
 
-			ArrayList<Integer> pbIDs = new ArrayList<Integer>();
-			ArrayList<Integer> oldIDs = new ArrayList<Integer>();
+			//Automatically inserts non-existent providers where necessary.
+			for (Node node : thisProvider.getLocations())
+				database.updateNode(node); //*Might* cause a few interesting bugs. TODO: Investigate?
+
+			ArrayList<String> pbIDs = new ArrayList<String>();
+			ArrayList<String> oldIDs = new ArrayList<String>();
 
 			for(Node loc: thisProvider.getLocations())
 			{
 				pbIDs.add(loc.getID());
 			}
-			DatabaseController.initializeAllProviders();
-			for(Node n: DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
+			for(Node n : database.getProviderLocations(thisProvider.getID())) //DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
 			{
 				oldIDs.add(n.getID());
+
 			}
-			for(int i: pbIDs){
+			/* TODO: Can probably be deleted, the updateNode() function should've automagically taken care of it
+			for(String i: pbIDs){
 				if(!oldIDs.contains(i))
 				{
 					DatabaseController.insertOffice(thisProvider.getID(), i);
 				}
 			}
-			for(int i: oldIDs){
+			for(String i: oldIDs){
 				if(!pbIDs.contains(i))
 				{
 					DatabaseController.removeOffice(thisProvider.getID(), i);
 				}
-			}
+			}*/
 
 		}
 
 		for(Provider p: deleteProviderList)
 		{
-			DatabaseController.removeOfficeByProvider(p.getID());
-			DatabaseController.removeProvider(p.getID());
+			database.deleteProvider(p.getID());
 		}
+		/* TODO: Can probably be deleted, the updateNode() function should've automagically taken care of it.
 		for(Provider p: newProviderList)
 		{
 			System.out.println("Pls");
@@ -283,6 +255,7 @@ public class DirectoryController extends BaseController
 				DatabaseController.insertOffice(p.getID(), n.getID());
 			}
 		}
+		*/
 	}
 
 

@@ -2,8 +2,6 @@ package ui;
 
 import data.AdminFileStorage;
 import data.AdminStorage;
-import data.DatabaseController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -70,11 +68,7 @@ public class LoginController extends BaseController
 			resultText.setText("Logging in...");
 			resultText.setVisible(true);
 
-			new Thread(() ->
-			{
-				DatabaseController.initializeAll();
-				loadFXML(Paths.ADMIN_PAGE_FXML);
-			}).start();
+			new Thread(() ->loadFXML(Paths.ADMIN_PAGE_FXML)).start();
 		}
 		else
 		{
