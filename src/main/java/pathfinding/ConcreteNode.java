@@ -2,115 +2,259 @@ package pathfinding;
 
 import java.util.Collection;
 import java.util.ArrayList;
-import data.Floor;
+import java.util.UUID;
 
 public class ConcreteNode implements Node
 {
-	private ArrayList<String> data; // name, type
+	private ArrayList<String> providers;
+	private ArrayList<String> services;
 	private ArrayList<Node> neighbors;
-	private Floor onFloor;
+	private String id;
+	private String name;
+	private String building;
 	private double x;
 	private double y;
-	private int nodeID; //unique
+	private int type; //TODO: Create a better type field, probably an enum
+	private int floor;
 
 	public ConcreteNode()
 	{
-		data = new ArrayList<String>();
-		neighbors = new ArrayList<Node>();
+		providers = new ArrayList<>();
+		services = new ArrayList<>();
+		neighbors = new ArrayList<>();
+		id = UUID.randomUUID().toString();
+		name = "noname";
+		building = "00000000-0000-0000-0000-000000000000";
+		x = 0;
+		y = 0;
+		type = -1;
+		floor = 1;
 	}
 
-	public ConcreteNode (int ID, ArrayList<String> newData, double newX, double newY, Floor flr)
+	public ConcreteNode(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
 	{
-		nodeID = ID;
-		data = newData;
-		neighbors = new ArrayList<Node>();
-		x = newX;
-		y = newY;
-		onFloor = flr;
+		providers = new ArrayList<>();
+		services = new ArrayList<>();
+		neighbors = new ArrayList<>();
+		id = newID;
+		name = newName;
+		building = newBuilding;
+		x = newPosX;
+		y = newPosY;
+		type = newType;
+		floor = newFloor;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Calculate distance to another node using simple pythagorean theorem
+	 *
+	 * @param node Second node
+	 * @return Distance
 	 */
-	public boolean containsData(String data)
-	{
-		return this.data.contains(data);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addData(Collection<String> newData)
-	{
-		data.addAll(newData);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public double distance(Node node)
 	{
-		return Math.sqrt(Math.pow(x - node.getX(), 2) + Math.pow(y - node.getY(), 2));
+		return distance(node.getX(), node.getY());
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Calculate distance from node to given coordinates
+	 *
+	 * @param nodeX X coordinate
+	 * @param nodeY Y coordinate
+	 * @return Distance to node
 	 */
+	@Override
 	public double distance(double nodeX, double nodeY)
 	{
+
 		return Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
 	}
 
-
-	public Collection<Node> getNeighbors()
+	@Override
+	public boolean equals(Node node)
 	{
-		return neighbors;
+		return id.equals(node.getID()) &&
+				name.equals(node.getName()) &&
+				building.equals(node.getBuilding()) &&
+				x == node.getX() &&
+				y == node.getY() &&
+				type == node.getType() &&
+				floor == node.getFloor();
 	}
 
-	public void addNeighbors(Collection<Node> newNeighbors)
+	/**
+	 * {@inheritDoc}
+	 */
+	public String angle(Node pivot, Node dest)
 	{
-		neighbors.addAll(newNeighbors);
+		double angle;
+		// Google atan2 if you want to understand this; I sure don't
+		double aX = this.x - pivot.getX();
+		double aY = this.y - pivot.getY();
+		double bX = dest.getX() - pivot.getX();
+		double bY = dest.getY() - pivot.getY();
+		double thetaA = Math.atan2(aY, aX);
+		double thetaB = Math.atan2(bY, bX);
+		double angleRad = (thetaB - thetaA);
+		angle = (angleRad*180/Math.PI);
+		if (angle < 0)
+			angle += 360;
+		if (0 <= angle && angle < 60) //TODO: can this be done with switch statements?
+			return "Sharp right";
+		else if (60 <= angle && angle < 120)
+			return "Turn right";
+		else if (120 <= angle && angle < 180)
+			return "Bear right";
+		else if (180 <= angle && angle < 240)
+			return "Bear left";
+		else if (240 <= angle && angle < 300)
+			return "Turn left";
+		else if (300 <= angle && angle < 360)
+			return "Sharp left";
+		else return null;
 	}
 
+	/*Getters and setters*/
+
+	@Override
+	public void addProvider(String newProvider)
+	{
+		if (!providers.contains(newProvider))
+			providers.add(newProvider);
+	}
+
+	@Override
+	public void delProvider(String oldProvider)
+	{
+		providers.remove(oldProvider);
+	}
+
+	@Override
+	public void addService(String newService)
+	{
+		if (!services.contains(newService))
+			services.add(newService);
+	}
+
+	@Override
+	public void delService(String oldService)
+	{
+		services.remove(oldService);
+	}
+
+	@Override
 	public void addNeighbor(Node newNeighbor)
 	{
-		neighbors.add(newNeighbor);
+		if (!neighbors.contains(newNeighbor))
+			neighbors.add(newNeighbor);
 	}
 
-	public void removeNeighbor(Node oldNeighbor)
+	@Override
+	public void delNeighbor(Node oldNeighbor)
 	{
-		if (neighbors.contains(oldNeighbor)) {
-			neighbors.remove(oldNeighbor);
-		}
+		neighbors.remove(oldNeighbor);
 	}
 
-	public Floor getOnFloor(){ return onFloor; }
-
-	public void setOnFloor(Floor flr){ onFloor = flr; }
-
-	public int getID(){ return nodeID; }
-
-	public ArrayList<String> getData(){ return data; }
-
-	public double getX()
+	@Override
+	public void setID(String newID)
 	{
-		return x;
+		id = newID;
 	}
 
-	public double getY()
+	@Override
+	public void setName(String newName)
 	{
-		return y;
+		name = newName;
 	}
 
+	@Override
+	public void setBuilding(String newBuilding)
+	{
+		building = newBuilding;
+	}
+
+	@Override
 	public void setX(double newX)
 	{
 		x = newX;
 	}
 
+	@Override
 	public void setY(double newY)
 	{
 		y = newY;
 	}
 
-	public void setData(ArrayList<String> newData){ data = newData; }
+	@Override
+	public void setType(int newType)
+	{
+		type = newType;
+	}
+
+	@Override
+	public void setFloor(int newFloor)
+	{
+		floor = newFloor;
+	}
+
+	@Override
+	public ArrayList<String> getProviders()
+	{
+		return providers;
+	}
+
+	@Override
+	public ArrayList<String> getServices()
+	{
+		return services;
+	}
+
+	@Override
+	public Collection<Node> getNeighbors()
+	{
+		return neighbors;
+	}
+
+	@Override
+	public String getID()
+	{
+		return id;
+	}
+
+	@Override
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
+	public String getBuilding()
+	{
+		return building;
+	}
+
+	@Override
+	public double getX()
+	{
+		return x;
+	}
+
+	@Override
+	public double getY()
+	{
+		return y;
+	}
+
+	@Override
+	public int getType()
+	{
+		return type;
+	}
+
+	@Override
+	public int getFloor()
+	{
+		return floor;
+	}
 }

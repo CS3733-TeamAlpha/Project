@@ -9,3 +9,4 @@ build/
 FHAlpha/
 derby.log
 TestFHAlpha/
+junit_testing_db
