@@ -61,6 +61,42 @@ public class ConcreteNode implements Node
 		return Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
 	}
 
+	/**
+	 * uses the law of cosines to calculate the angle between 3 nodes, the first being the node
+	 * that this method is called on. Doesn't actually return the angle; returns an approximate
+	 * direction
+	 * @param pivot the second node in a set of three nodes
+	 * @param dest the third node in a set of three nodes
+	 */
+	public String angle(Node pivot, Node dest)
+	{
+		double angle;
+		// Google atan2 if you want to understand this; I sure don't
+		double aX = this.x - pivot.getX();
+		double aY = this.y - pivot.getY();
+		double bX = dest.getX() - pivot.getX();
+		double bY = dest.getY() - pivot.getY();
+		double thetaA = Math.atan2(aY, aX);
+		double thetaB = Math.atan2(bY, bX);
+		double angleRad = (thetaB - thetaA);
+		angle = (angleRad*180/Math.PI);
+		if (angle < 0)
+			angle += 360;
+		if (0 <= angle && angle < 60) //TODO: can this be done with switch statements?
+			return "Sharp right";
+		else if (60 <= angle && angle < 120)
+			return "Turn right";
+		else if (120 <= angle && angle < 180)
+			return "Bear right";
+		else if (180 <= angle && angle < 240)
+			return "Bear left";
+		else if (240 <= angle && angle < 300)
+			return "Turn left";
+		else if (300 <= angle && angle < 360)
+			return "Sharp left";
+		else return null;
+	}
+
 
 	public Collection<Node> getNeighbors()
 	{

@@ -49,4 +49,5 @@ public interface Node
 	void setY(double newY);
 	ArrayList<String> getData();
 	void setData(ArrayList<String> newData);
+	String angle(Node pivot, Node dest);
 }

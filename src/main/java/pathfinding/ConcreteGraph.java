@@ -99,4 +99,37 @@ public class ConcreteGraph implements Graph {
 			return 0;
 		}
 	}
+
+	/**
+	 * returns an arraylist of all the textual directions, in string form, to get from one node to another.
+	 * assumes a path exists
+	 * @param scaleFactor this is how we'll convert coordinates to feet
+	 */
+	//TODO: edge cases like only two nodes
+	//TODO: test
+	public ArrayList<String> textDirect(Node start, Node end, int scaleFactor)
+	{
+		int i;
+		ArrayList<Node> path = findPath(start, end);
+		int size = path.size();
+		Node hold;
+		for (int j = 0; j < size/2; j++)
+		{
+			hold = path.get(j);
+			path.set(j, path.get(size-1 - j));
+			path.set(size-1 - j, hold);
+		}
+		if (path == null)
+		    return null;
+		ArrayList<String> temp = new ArrayList<>();
+		temp.add(path.get(0).angle(path.get(0), path.get(1)) +", then");
+		for (i = 0; i < path.size() - 2; i++)
+		{
+			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
+			temp.add(path.get(i).angle(path.get(i+1), path.get(i+2)) + ", then");
+		}
+		temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
+		temp.add("You have reached your destination!");
+		return temp;
+	}
 }
