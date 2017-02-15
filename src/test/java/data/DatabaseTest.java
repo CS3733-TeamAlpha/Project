@@ -3,289 +3,301 @@ package data;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pathfinding.ConcreteNode;
-import pathfinding.Node;
+import pathfinding.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.UUID;
 
-import static java.sql.DriverManager.println;
 import static org.junit.Assert.*;
 
 public class DatabaseTest
 {
+	private static final String TEST_DB = "junit_testing_db";
 
-	ArrayList<Node> ndL = new ArrayList<Node>();
-	ArrayList<Provider> pvdL = new ArrayList<Provider>();
-	ArrayList<Floor> flL = new ArrayList<Floor>();
+	Database database;
 
 	@Before
-	public void setUp()
+	public void setUp() throws Exception
 	{
-		ndL.clear();
-		pvdL.clear();
-		flL.clear();
-		//DatabaseController.createConnection();
-
-		DatabaseController.createTestConnection();
-		droptablesForShittyTesting();
-		DatabaseController.initializeProviderTable();
-		DatabaseController.initializeFloorTable();
-		DatabaseController.initializeNodeTable();
-		DatabaseController.initializeOfficeTable();
-		DatabaseController.initializeNeighborTable();
-
-		Floor fl1 = new Floor(03, "defaultFloor", 3);
-		ConcreteNode n001 = new ConcreteNode(001, new ArrayList<>(Arrays.asList("Room001", "room")), 1, 1, fl1);
-		ConcreteNode n002 = new ConcreteNode(002, new ArrayList<>(Arrays.asList("Room002", "room")), 2, 2, fl1);
-		ConcreteNode n003 = new ConcreteNode(003, new ArrayList<>(Arrays.asList("Room003", "room")), 3, 3, fl1);
-		Provider p111 = new Provider(111, "Donald", "Trump", "");
-		Provider p222 = new Provider(222, "Barack", "Obama", "");
-		n001.addNeighbor(n002);
-		n002.addNeighbor(n001);
-		p111.addLocation(n003);
-		flL.add(fl1);
-		ndL.add(n001);
-		ndL.add(n002);
-		ndL.add(n003);
-		pvdL.add(p111);
-		pvdL.add(p222);
-
-		testInsert();
+		database = new Database(TEST_DB);
 	}
 
 	@After
-	public void shutdown(){
-		DatabaseController.shutdownTest();
+	public void tearDown() throws Exception
+	{
+		database.disconnect();
+
+		//Delete the test database, stored in a folder $TEST_DB
+		//deleteFolder(TEST_DB);
+	}
+
+	/**
+	 * Recursively deletes a folder, because java is stupid and `rm -rf $fname` isn't platform independent.
+	 * @param fname
+	 */
+	private void deleteFolder(String fname)
+	{
+		File folder = new File(fname);
+		for (String s : folder.list())
+		{
+			File curFile = new File(folder.getPath(), s);
+			if (curFile.isDirectory())
+				deleteFolder(curFile.getPath());
+			curFile.delete();
+		}
+		folder.delete();
 	}
 
 	@Test
-	public void testInsert()
+	public void testConnection()
 	{
-		DatabaseController.insertFloor(03, "defaultFloor", 3);
-		DatabaseController.insertNode(001, "Room001", "room", 1, 1, 03);
-		DatabaseController.insertNode(002, "Room002", "room", 2, 2, 03);
-		DatabaseController.insertNode(003, "Room003", "room", 3, 3, 03);
-		DatabaseController.insertProvider(111, "Donald", "Trump", "");
-		DatabaseController.insertProvider(222, "Barack", "Obama", "");
-		DatabaseController.insertNeighbor(001, 002);
-		DatabaseController.insertNeighbor(002, 001);
-		DatabaseController.insertOffice(111, 003);
-
+		assertTrue(database.isConnected());
 	}
 
 	@Test
-	public void testInitialization()
+	public void testInsertAndRetrieval()
 	{
+		Node testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
+				"Test Node", "00000000-0000-0000-0000-000000000000", 1, 2, 3, 1701);
 
-		droptablesForShittyTesting();
-
-		DatabaseController.initializeProviderTable();
-		DatabaseController.initializeFloorTable();
-		DatabaseController.initializeNodeTable();
-		DatabaseController.initializeOfficeTable();
-		DatabaseController.initializeNeighborTable();
-		testInsert();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
-
-		for (int i = 0; i < flL.size(); i++)
-		{
-			compareFloor(flL.get(i), DatabaseController.getAllFloors().get(i));
-		}
-
-		//for(int i=0;i<ndL.size();i++){
-		//TODO: Why is data coming in this order?
-		compareNode(ndL.get(0), DatabaseController.getAllNodes().get(2));
-		compareNode(ndL.get(1), DatabaseController.getAllNodes().get(0));
-		compareNode(ndL.get(2), DatabaseController.getAllNodes().get(1));
-		//}
-		//for(int i=0;i<pvdL.size();i++){
-		//TODO: why is data coming in this order?
-		compareProvider(pvdL.get(0), DatabaseController.getAllProviders().get(1));
-		compareProvider(pvdL.get(1), DatabaseController.getAllProviders().get(0));
-		//}
-
+		database.insertNode(testNode); //Insert the node...
+		database.disconnect();
+		database.connect();
+		Node retNode = database.getNodeByUUID(testNode.getID());
+		assertTrue(testNode.equals(retNode));
+		database.deleteNodeByUUID(retNode.getID());
 	}
 
 	@Test
-	public void testGets()
+	public void testDelete()
 	{
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
-
-		compareNode(DatabaseController.getNodeByID(001), ndL.get(0));
-		compareNode(DatabaseController.getNodeByID(002), ndL.get(1));
-
-		compareProvider(DatabaseController.getProviderByID(111), pvdL.get(0));
-
-		compareProvider(DatabaseController.getProvidersByFullName("Donald", "Trump").get(0), pvdL.get(0));
-
-		compareFloor(DatabaseController.getFloorByID(03), flL.get(0));
-
-		compareNode(DatabaseController.getNearestNode(DatabaseController.getNodeByID(001)), ndL.get(1));
+		ConcreteNode testNode = new ConcreteNode();
+		database.insertNode(testNode);
+		assertNotNull(database.getNodeByUUID(testNode.getID()));
+		database.deleteNodeByUUID(testNode.getID());
+		assertNull(database.getNodeByUUID(testNode.getID()));
 	}
 
 	@Test
-	public void testProviderAtNode()
+	public void testLinkage()
 	{
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
+		//Stolen from pathfinding integration test
+		ConcreteNode[][] gridNodes = new ConcreteNode[10][10];
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				gridNodes[i][j] = new ConcreteNode();
 
-		compareProvider(DatabaseController.getProvidersAtNode(003).get(0), pvdL.get(0));
-		compareNode(DatabaseController.getProviderNodes(111).get(0), ndL.get(2));
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				if (i > 0)
+					gridNodes[i][j].addNeighbor(gridNodes[i-1][j]);
+				if (i < 9)
+					gridNodes[i][j].addNeighbor(gridNodes[i+1][j]);
+				if (j > 0)
+					gridNodes[i][j].addNeighbor(gridNodes[i][j-1]);
+				if (j < 9)
+					gridNodes[i][j].addNeighbor(gridNodes[i][j+1]);
+			}
+		}
+
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				database.insertNode(gridNodes[i][j]);
+
+		database.disconnect();
+		database.connect();
+
+		//Now get all those nodes back out again
+		Node[][] testNodes = new ConcreteNode[10][10];
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				testNodes[i][j] = database.getNodeByUUID(gridNodes[i][j].getID());
+				assertNotNull(testNodes[i][j]);
+			}
+		}
+
+		//Verify the integrity of the node grid just retrieved
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				if (i > 0)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i-1][j]));
+				if (i < 9)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i+1][j]));
+				if (j > 0)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i][j-1]));
+				if (j < 9)
+					assertTrue(gridNodes[i][j].getNeighbors().contains(gridNodes[i][j+1]));
+			}
+		}
+
+		//And finally clean up, we don't want a ton of spare nodes hanging around in the database
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				database.deleteNodeByUUID(testNodes[i][j].getID());
 	}
 
 	@Test
-	public void testRemoves()
+	public void testGetByFloor()
 	{
-		DatabaseController.removeOfficeByProvider(111);
-		DatabaseController.removeAllNeighborsByID(001);
-		DatabaseController.removeNode(001);
-		DatabaseController.removeProvider(111);
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
+		//Create some nodes on 10 different floors
+		ConcreteNode[] nodes = new ConcreteNode[50];
+		for (int i = 0; i < nodes.length; i++)
+		{
+			nodes[i] = new ConcreteNode();
+			nodes[i].setFloor(i / 5);
+			database.insertNode(nodes[i]);
+		}
 
-		assertNotEquals(DatabaseController.getAllProviders().size(), pvdL.size());
-		assertNotEquals(DatabaseController.getAllNodes().size(), ndL.size());
+		//Get nodes by floor now
+		for (int i = 0; i < 10; i++)
+		{
+			ArrayList<Node> ret = database.getNodesByFloor(i);
+			assertNotNull(ret);
+			assertEquals(5, ret.size());
+
+			//Make sure that the expected nodes were returned
+			for (Node node : nodes)
+			{
+				if (node.getFloor() == i)
+					assertTrue(ret.contains(node));
+			}
+		}
+
+		//And now clean up
+		for (ConcreteNode node : nodes)
+			database.deleteNodeByUUID(node.getID());
 	}
 
 	@Test
-	public void testNullGets()
+	public void testGetByBuilding()
 	{
-		assertNull(DatabaseController.getFloorByID(123456));
-		assertNull(DatabaseController.getNodeByID(987654));
-		assertNull(DatabaseController.getProviderByID(765484));
-		assertNull(DatabaseController.makeNodeByID(123456));
-		assertNull(DatabaseController.makeProviderByID(123456));
-		assertNull(DatabaseController.makeFloorByID(123456));
+		//Create a new building with random UUID
+		database.insertBuilding(UUID.randomUUID().toString(), "Starfleet Headquarters");
 
+		//Verify that the building was actually inserted
+		final String uuid = database.getBuildingUUID("Starfleet Headquarters");
+		assertEquals(36, uuid.length());
+		assertEquals(1, database.getBuildings().size());
+
+		//Verify that we can't get a bad building
+		assertTrue(database.getBuildingUUID("Dominion Headquarters").isEmpty());
+
+		//Now add some nodes to Starfleet Headquarters
+		ConcreteNode[] nodes = new ConcreteNode[5];
+		for (Node node : nodes)
+		{
+			node = new ConcreteNode();
+			node.setFloor(1701);
+			node.setBuilding(uuid);
+			database.insertNode(node);
+		}
+
+		//Try getting those nodes out again and verify situations that do and don't work
+		assertEquals(5, database.getNodesInBuildingFloor(uuid, 1701).size()); //Correct uuid, correct floor
+		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1702).size()); //Correct uuid, incorrect floor
+		assertEquals(0, database.getNodesInBuildingFloor("00", 1701).size()); //Incorrect uuid, correct floor
+		assertEquals(0, database.getNodesInBuildingFloor("00", 1702).size()); //Incorrect uuid, incorrect floor
+
+		//And clean up the database by deleting the whole building!
+		database.deleteBuilding(uuid);
+		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1701).size());
 	}
 
-
-	//compare contents of floor
-	public void compareFloor(Floor e, Floor a)
+	@Test
+	public void testUpdateNode()
 	{
-		assertEquals(e.getID(), a.getID());
-		assertEquals(e.getLevel(), a.getLevel());
-		assertEquals(e.getName(), a.getName());
+		//Create a pair of unlinked nodes, put them in the database. Create a 1->2 edge between them, insert the edge,
+		//shutdown the database, restart it, and grab the two nodes out again. Verify that they're still connected.
+		Node node1 = new ConcreteNode();
+		Node node2 = new ConcreteNode();
+		database.insertNode(node1);
+		database.insertNode(node2);
+		node1.addNeighbor(node2);
+
+		database.updateNode(node1);
+		database.disconnect(); //Clears the node cache
+		database.connect();
+
+		Node testNode1 = database.getNodeByUUID(node1.getID());
+		Node testNode2 = database.getNodeByUUID(node2.getID());
+		assertTrue(testNode1.getNeighbors().contains(testNode2));
+
+		//Clean up
+		database.deleteNodeByUUID(testNode1.getID());
+		database.deleteNodeByUUID(testNode2.getID());
 	}
 
-	//compare contents of node
-	public void compareNode(Node e, Node a)
+	@Test
+	public void testProviderOperations()
 	{
-		assertEquals(e.getID(), a.getID());
-		assertEquals(e.getData(), a.getData());
-		//TODO: proper neighbor testing?
-		compareFloor(e.getOnFloor(), a.getOnFloor());
-		assertEquals(e.getX(), a.getX(), 0.001);
-		assertEquals(e.getY(), a.getY(), 0.001);
+		//Create a test node with a test provider, put it in the database.
+		ConcreteNode node = new ConcreteNode();
+		node.addProvider("Picard, Jean-Luc; Captain");
+		database.insertNode(node);
+		final String provID = database.getProviderUUID("Picard, Jean-Luc; Captain");
+
+		//Reload from the database
+		database.disconnect();
+		database.connect();
+
+		//Verify the presence of a provider
+		assertEquals(1, database.getProviders().size());
+
+		//Add a second provider to the node and verify the transaction
+		node.addProvider("Sisko, Benjamin; Captain");
+		database.updateNode(node);
+		assertEquals(2, database.getProviders().size());
+
+		//Delete picard and verify his deletion
+		node.delProvider("Picard, Jean-Luc; Captain");
+		database.deleteProvider(provID);
+		assertEquals(1, database.getProviders().size());
+
+		//Clean up
+		database.deleteNodeByUUID(node.getID());
+		database.deleteProvider(database.getProviderUUID("Sisko, Benjamin; Captain"));
+		assertEquals(0, database.getProviders().size());
 	}
 
-	//check that nodes aren't equal. for now just assert that IDs are different
-	public void compareNodeFail(Node e, Node a)
+	@Test
+	public void testServices()
 	{
-		assertNotEquals(e.getID(), a.getID());
+		//Create a test node with a service, put it in the database
+		ConcreteNode node = new ConcreteNode();
+		node.addService("tenforward");
+		database.insertNode(node);
+		assertEquals(1, database.getServices().size());
+
+		node.addService("quarks");
+		database.updateNode(node);
+		assertEquals(2, database.getServices().size());
+
+		node.delService("quarks");
+		database.updateNode(node);
+		assertEquals(1, database.getServices().size());
+
+		//Verify that two nodes can have a service by the same name - nodes and services are 1-1
+		//This could cause issues with getting a service's location, but that's a problem for another (edge-casey) time.
+		ConcreteNode node2 = new ConcreteNode();
+		node2.addService("tenforward");
+		database.insertNode(node2);
+		assertEquals(2, database.getServices().size());
+
+		//Verify that deleting a node deletes its service
+		database.deleteNodeByUUID(node2.getID());
+		assertEquals(1, database.getServices().size());
+
+		//Verify location finding
+		assertEquals(node, database.getServiceLocation("tenforward"));
+
+		//Clean up
+		database.deleteNodeByUUID(node.getID());
 	}
-
-	//compare contents of provider
-	public void compareProvider(Provider e, Provider a)
-	{
-		assertEquals(e.getID(), a.getID());
-		assertEquals(e.getfName(), a.getfName());
-		assertEquals(e.getlName(), a.getlName());
-		for (int i = 0; i < e.getLocations().size(); i++)
-		{
-			compareNode(e.getLocations().get(i), a.getLocations().get(i));
-		}
-	}
-
-	//check that providers aren't equal. for now just assert that IDs are different
-	public void compareProviderFail(Provider e, Provider a)
-	{
-		assertNotEquals(e.getID(), a.getID());
-	}
-
-	private static void droptablesForShittyTesting()
-	{
-		Connection connection = null;
-		Statement stmt = null;
-		try
-		{
-			String DB_URL = "jdbc:derby:TestFHAlpha;create=true";
-			Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-			//Get a connection
-			connection = DriverManager.getConnection(DB_URL);
-		} catch (Exception except)
-		{
-			except.printStackTrace();
-			//remove this piece
-			println("error here");
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Provider");
-			System.out.println("Provider table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Node");
-			System.out.println("Node table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Office");
-			System.out.println("Office table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Neighbor");
-			System.out.println("Neighbor table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-		try
-		{
-			stmt = connection.createStatement();
-			// Drop the UnpaidOrder table.
-			stmt.execute("DROP TABLE Floor");
-			System.out.println("Floor table dropped.");
-		} catch (SQLException ex)
-		{
-			// No need to report an error.
-			// The table simply did not exist.
-		}
-	}
-
-
 }

@@ -1,11 +1,8 @@
 package ui;
 
-import data.DatabaseController;
+import data.Database;
 import data.Provider;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -19,13 +16,14 @@ import pathfinding.Node;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Ari on 2/8/17.
- */
 public class ProviderBox extends HBox
 {
+	//Terrible, disgusting hack to grand ProviderBox access to the database BECAUSE JAVA IS STUPID AND DOESN'T ALLOW FOR
+	//MULTIPLE INHERITANCE! F*** YOU, JAVA, I'M LEAVING YOU FOR C++ AFTER THIS!
+	//Basically, the AbstractController class will inject the right database object into this. Gah!
+	static Database database = null;
 
-	private Provider provider;
+	private Provider provider; //TODO: EXTERMINATE
 	@FXML
 	private TextField firstNameField;
 	@FXML
@@ -40,7 +38,7 @@ public class ProviderBox extends HBox
 
 	public ProviderBox(){
 		super();
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ProviderBox.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Paths.PROVIDER_BOX_FXML));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		try {
@@ -49,10 +47,10 @@ public class ProviderBox extends HBox
 			throw new RuntimeException(exception);
 		}
 
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
+		ArrayList<Node> nodes = database.getAllNodes();
 		ArrayList<String> nodeNames = new ArrayList<String>();
 		for(Node n: nodes){
-			nodeNames.add(n.getData().get(0));
+			nodeNames.add(n.getName());
 		}
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 	}
@@ -67,9 +65,9 @@ public class ProviderBox extends HBox
 	protected void addLocation(){
 		String s = locationSelector.getValue().toString();  //might be broken
 		Node toAdd = null;
-		for(Node n: DatabaseController.getAllNodes()){
-			if(n.getData().get(0).equals(s)){
-				toAdd = n;
+		for(Node n: database.getAllNodes()){
+			if(n.getName().equals(s)){
+				toAdd = n; //TODO: Jesus christ, this can be sped up.
 			}
 		}
 		provider.addLocation(toAdd);
@@ -94,7 +92,7 @@ public class ProviderBox extends HBox
 		titlesField.setText(provider.getTitle());
 		for(Node n:provider.getLocations()){
 			HBox box = new HBox();
-			Label label = new Label(n.getData().get(0));
+			Label label = new Label(n.getName());
 			Button button = new Button("X");
 			box.getChildren().addAll(label,button);
 			locationsVBox.getChildren().add(0,box);
