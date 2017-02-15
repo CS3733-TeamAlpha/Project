@@ -76,11 +76,11 @@ public class ConcreteGraphTest {
 	public void textDirect()
 	{
 		ConcreteNode oneN = new ConcreteNode(); oneN.setX(50); oneN.setY(50);
-		ConcreteNode twoN = new ConcreteNode(); twoN.setX(45); twoN.setY(60);
-		ConcreteNode threeN = new ConcreteNode(); threeN.setX(38); threeN.setY(40);
-		ConcreteNode fourN = new ConcreteNode(); fourN.setX(38); fourN.setY(20);
-		ConcreteNode fiveN = new ConcreteNode(); fiveN.setX(60); fiveN.setY(25);
-		ConcreteNode sixN = new ConcreteNode(); sixN.setX(90); sixN.setY(7);
+		ConcreteNode twoN = new ConcreteNode(); twoN.setX(60); twoN.setY(50);
+		ConcreteNode threeN = new ConcreteNode(); threeN.setX(60); threeN.setY(40);
+		ConcreteNode fourN = new ConcreteNode(); fourN.setX(70); fourN.setY(40);
+		ConcreteNode fiveN = new ConcreteNode(); fiveN.setX(70); fiveN.setY(60);
+		ConcreteNode sixN = new ConcreteNode(); sixN.setX(75); sixN.setY(60);
 		oneN.addNeighbor(twoN);
 		twoN.addNeighbor(oneN);
 		twoN.addNeighbor(threeN);
@@ -93,10 +93,9 @@ public class ConcreteGraphTest {
 		sixN.addNeighbor(fiveN);
 		ConcreteGraph test = new ConcreteGraph();
 		ArrayList<String> directions = test.textDirect(oneN, sixN, 5);
-		int i;
-		for (i = 0; i < directions.size(); i++)
-		{
-			System.out.println(directions.get(i));
-		}
+		assertEquals("Walk 50 feet", directions.get(1));
+		assertEquals("Walk 100 feet", directions.get(7));
+		assertEquals("Turn left, then", directions.get(6));
+		assertEquals("You have reached your destination!", directions.get(10));
 	}
 }
