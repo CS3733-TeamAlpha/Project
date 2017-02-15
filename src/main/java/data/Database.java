@@ -60,6 +60,7 @@ public class Database
 	{
 		try
 		{
+			DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 			connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
 			statement = connection.createStatement();
 			connected = true;
