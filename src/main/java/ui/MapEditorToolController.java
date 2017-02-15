@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class MapEditorToolController extends AbstractController
+import static java.awt.SystemColor.window;
+
+public class MapEditorToolController extends BaseController
 {
 	//Arraylist of all lines drawn from a node to its neighbors
 	private HashMap<Node, ArrayList<Group>> lineGroups = new HashMap<Node, ArrayList<Group>>();
@@ -1183,7 +1185,7 @@ public class MapEditorToolController extends AbstractController
 	@FXML
 	void goBack()
 	{
-		Main.loadFXML(Paths.ADMIN_PAGE_FXML);
+		loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
     /**

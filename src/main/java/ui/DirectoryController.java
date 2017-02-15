@@ -13,7 +13,7 @@ import pathfinding.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DirectoryController extends AbstractController
+public class DirectoryController extends BaseController
 {
 
 	//link buttons to node objects
@@ -261,12 +261,12 @@ public class DirectoryController extends AbstractController
 
 	public void showMap()
 	{
-		Main.loadFXML(Paths.MAP_FXML);
+		loadFXML(Paths.MAP_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML(Paths.ADMIN_PAGE_FXML);
+		loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
 }
