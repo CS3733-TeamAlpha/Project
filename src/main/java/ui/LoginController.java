@@ -2,8 +2,6 @@ package ui;
 
 import data.AdminFileStorage;
 import data.AdminStorage;
-import data.DatabaseController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;

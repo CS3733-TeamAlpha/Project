@@ -1,11 +1,10 @@
 package ui;
 
 import javafx.event.ActionEvent;
-import data.DatabaseController;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 
-public class StartupController
+public class StartupController extends AbstractController
 {
 
 	public ImageView eyeImage;
@@ -20,13 +19,11 @@ public class StartupController
 
 	public void showMap()
 	{
-		DatabaseController.initializeAll();
 		Main.loadFXML(Paths.MAP_FXML);
 	}
 
 	public void showDirectory()
 	{
-		DatabaseController.initializeAll();
 		Main.loadFXML(Paths.DIRECTORY_FXML);
 	}
 
@@ -43,7 +40,6 @@ public class StartupController
 
 	public void resetData(ActionEvent e)
 	{
-		DatabaseController.resetData();
 	}
 
 	private void updateLowerImages()

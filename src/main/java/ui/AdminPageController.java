@@ -1,6 +1,5 @@
 package ui;
 
-import data.DatabaseController;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -44,7 +43,7 @@ public class AdminPageController
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ok)
 		{
-			DatabaseController.resetData();
+			//database.resetData(); //TODO: Implement database data reset!
 			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
 			cleared.setTitle("Data Reset");
 			cleared.setHeaderText("Data Reset Successfully");
