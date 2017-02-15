@@ -73,14 +73,25 @@ public class ConcreteGraphTest {
 	}
 
 	@Test
-	public void textDirect()
-	{
-		ConcreteNode oneN = new ConcreteNode(); oneN.setX(50); oneN.setY(50);
-		ConcreteNode twoN = new ConcreteNode(); twoN.setX(60); twoN.setY(50);
-		ConcreteNode threeN = new ConcreteNode(); threeN.setX(60); threeN.setY(40);
-		ConcreteNode fourN = new ConcreteNode(); fourN.setX(70); fourN.setY(40);
-		ConcreteNode fiveN = new ConcreteNode(); fiveN.setX(70); fiveN.setY(60);
-		ConcreteNode sixN = new ConcreteNode(); sixN.setX(75); sixN.setY(60);
+	public void textDirect() {
+		ConcreteNode oneN = new ConcreteNode();
+		oneN.setX(50);
+		oneN.setY(50);
+		ConcreteNode twoN = new ConcreteNode();
+		twoN.setX(60);
+		twoN.setY(50);
+		ConcreteNode threeN = new ConcreteNode();
+		threeN.setX(60);
+		threeN.setY(40);
+		ConcreteNode fourN = new ConcreteNode();
+		fourN.setX(70);
+		fourN.setY(40);
+		ConcreteNode fiveN = new ConcreteNode();
+		fiveN.setX(70);
+		fiveN.setY(60);
+		ConcreteNode sixN = new ConcreteNode();
+		sixN.setX(75);
+		sixN.setY(60);
 		oneN.addNeighbor(twoN);
 		twoN.addNeighbor(oneN);
 		twoN.addNeighbor(threeN);
