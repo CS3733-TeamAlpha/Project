@@ -115,19 +115,24 @@ public class ConcreteGraph implements Graph
 	//TODO: test
 	public ArrayList<String> textDirect(Node start, Node end, int scaleFactor)
 	{
-		int i;
 		ArrayList<Node> path = findPath(start, end);
-		if (path == null)
-			return null;
-		ArrayList<String> temp = new ArrayList<String>();
-		temp.add(path.get(0).angle(path.get(0), path.get(1)) + ", then");
-		for (i = 0; i < path.size() - 2; i++)
+		Node hold;
+		for (int j = 0; j < path.size()/2; j++)
 		{
-
-			temp.add("Walk " + scaleFactor * path.get(i).distance(path.get(i + 1)) + " feet");
-			temp.add(path.get(i).angle(path.get(i + 1), path.get(i + 2)));
+			hold = path.get(j);
+			path.set(j, path.get(path.size()-1 - j));
+			path.set(path.size()-1 - j, hold);
 		}
-		temp.add("Walk " + scaleFactor * path.get(i + 1).distance(path.get(i + 2)) + " feet");
+		if (path == null)
+		    return null;
+		ArrayList<String> temp = new ArrayList<>();
+		temp.add(path.get(0).angle(path.get(0), path.get(1)) +", then"); //this doesn't actually work but we don't know how to fix it yet
+		for (int i = 0; i < path.size() - 2; i++)
+		{
+			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
+			temp.add(path.get(i).angle(path.get(i+1), path.get(i+2)) + ", then");
+		}
+		temp.add("Walk " + Math.round(scaleFactor*path.get(path.size()-2).distance(path.get(path.size()-1))) + " feet");
 		temp.add("You have reached your destination!");
 		return temp;
 	}
