@@ -45,6 +45,12 @@ CREATE TABLE Buildings
   name VARCHAR(128)
 );
 
+CREATE TABLE Logins
+(
+  username VARCHAR(64) UNIQUE NOT NULL,
+  password VARCHAR(64) NOT NULL
+);
+
 --Delete all nodes in the building if the building gets deleted
 ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE;
 INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'default');

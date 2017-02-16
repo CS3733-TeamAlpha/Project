@@ -4,6 +4,7 @@ import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
+import javax.xml.transform.Result;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
@@ -15,7 +16,7 @@ import java.util.UUID;
 /**
  * Class for database access using java derby.
  */
-public class Database
+public class Database implements AdminStorage
 {
 	//Constants
 	private static final String DB_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -733,31 +734,83 @@ public class Database
 	}
 
 	/**
-	 * Gets the providers associated with the associated Node
-	 *
-	 * @param nodeName Name of the service to search for
-	 * @return An ArrayList of Strings containing all associated providers
+	 * Gets a user's password in hashed form
+	 * @param username Username to get password for
+	 * @return Hashed password
 	 */
-	public LinkedList<String> getAssocProviders(String nodeName)
+	public String getHashedPassword(String username)
 	{
-		LinkedList<String> assocProvs = new LinkedList<>();
+		String password = "";
 		try
 		{
-			PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM Services WHERE name=?");
-			pstmt.setString(1, nodeName);
+			PreparedStatement pstmt = connection.prepareStatement("SELECT password FROM Logins WHERE name=?");
+			pstmt.setString(1, username);
 			ResultSet results = pstmt.executeQuery();
 			if (results.next())
-				assocProvs.add(results.getString(1));
-
+				password = results.getString(1);
 		} catch (SQLException e)
 		{
-			System.out.println("Error trying to get service location!");
+			System.out.printf("Error trying to get hashed password!");
 			e.printStackTrace();
 		}
-
-		return assocProvs;
+		return password;
 	}
 
+	/**
+	 * Insert a new username+password combo or update an existing username's password.
+	 * @param username Username to insert or update associated password for
+	 * @param hashed Password to insert or update
+	 */
+	public void storeHashedPassword(String username, String hashed)
+	{
+		try
+		{
+			PreparedStatement insertNew = connection.prepareStatement("INSERT INTO Logins VALUES(?, ?)");
+			insertNew.setString(1, username);
+		} catch (SQLException e)
+		{
+			if (e.getSQLState().equals("23505")) //Unique constraint violated, we need to update the record instead
+			{
+				//Nested try/catch? Disgusting...
+				try
+				{
+					PreparedStatement updateOld = connection.prepareStatement("UPDATE Logins SET password=? WHERE username=?");
+					updateOld.setString(1, hashed);
+					updateOld.setString(2, username);
+					updateOld.execute();
+				} catch (SQLException e1)
+				{
+					System.out.println("Error trying to update username+hash!");
+					e1.printStackTrace();
+				}
+
+			}
+			else
+			{
+				System.out.println("Error trying to insert username+password into database!");
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * Deletes the entire database record for a provided username.
+	 * @param username Username to delete username+password combo for.
+	 */
+	public void deleteAccount(String username)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Logins WHERE username=?");
+			pstmt.setString(1, username);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete user " + username + "!");
+			e.printStackTrace();
+		}
+	}
 
 	/*Misc getters and setters*/
 
