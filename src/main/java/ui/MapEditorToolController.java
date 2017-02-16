@@ -13,9 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
@@ -85,14 +83,21 @@ public class MapEditorToolController extends BaseController
 	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
 	//TODO: should nodes be able to be moved to different floor? probably not
 
-	private Image floor1Image = new Image(Paths.FLOOR1_NORMAL);
-	private Image floor2Image = new Image(Paths.FLOOR2_NORMAL);
-	private Image floor3Image = new Image(Paths.FLOOR3_NORMAL);
-	private Image floor4Image = new Image(Paths.FLOOR4_NORMAL);
-	private Image floor5Image = new Image(Paths.FLOOR5_NORMAL);
-	private Image floor6Image = new Image(Paths.FLOOR6_NORMAL);
-	private Image floor7Image = new Image(Paths.FLOOR7_NORMAL);
+	private ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
+	private ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
+	private ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
+	private ProxyImage f4ImageProxy = new ProxyImage(Paths.FLOOR4_NORMAL);
+	private ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
+	private ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
+	private ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
 
+	private ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
+	private ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
+	private ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
+	private ProxyImage removeNeighborImageProxy = new ProxyImage(Paths.REMOVENEIGHBOR);
+	private ProxyImage doctorImageProxy = new ProxyImage(Paths.DOCTORICON);
+	private ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
+	private ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
 
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
@@ -197,19 +202,19 @@ public class MapEditorToolController extends BaseController
 	private void setFloorImage(int floor)
 	{
 		if(floor == 1){
-			floorImage.setImage(floor1Image);
+			floorImage.setImage(f1ImageProxy.getFXImage());
 		} else if(floor == 2){
-			floorImage.setImage(floor2Image);
+			floorImage.setImage(f2ImageProxy.getFXImage());
 		} else if(floor == 3){
-			floorImage.setImage(floor3Image);
+			floorImage.setImage(f3ImageProxy.getFXImage());
 		} else if(floor == 4){
-			floorImage.setImage(floor4Image);
+			floorImage.setImage(f4ImageProxy.getFXImage());
 		} else if(floor == 5){
-			floorImage.setImage(floor5Image);
+			floorImage.setImage(f5ImageProxy.getFXImage());
 		} else if(floor == 6){
-			floorImage.setImage(floor6Image);
+			floorImage.setImage(f6ImageProxy.getFXImage());
 		} else if(floor == 7){
-			floorImage.setImage(floor7Image);
+			floorImage.setImage(f7ImageProxy.getFXImage());
 		}
 	}
 
@@ -220,6 +225,11 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void setupImageEventHandlers()
 	{
+		//set the imaveview objects to use the correct images
+		officeImage.setImage(doctorImageProxy.getFXImage());
+		restroomImage.setImage(restroomImageProxy.getFXImage());
+		elevatorImage.setImage(elevatorImageProxy.getFXImage());
+
 		//For each image, set OnMouseDragged to change currentstate and
 		//modify the images' XY coordinates
 		//Any additional functionality that we want while dragging an image would go here
@@ -323,7 +333,7 @@ public class MapEditorToolController extends BaseController
 		radialMenu.setStroke(Color.GRAY);
 		radialMenu.setStrokeType(StrokeType.INSIDE);
 		radialMenu.setFill(null);
-		radialMenu.setOpacity(0.8);
+		radialMenu.setOpacity(0.95);
 
 		//arc wedge will be used to indicate current selection
 		//TODO: convert color options to css for high contrast mode
@@ -356,47 +366,66 @@ public class MapEditorToolController extends BaseController
 
 		//TODO: probaby replace these with all images later
 		//4 options, whose contents will differ based on whether we are showing node menu or not
-		Circle option1 = null;
-		Circle option2 = null;
-		Circle option3 = null;
-		Circle option4 = null;
+		ImageView option1 = null;
+		ImageView option2 = null;
+		ImageView option3 = null;
+		ImageView option4 = null;
+
+		//offsets from the center of the images
+		double imageOffsetY = -100;
+		double imageOffsetX = -100;
+
 		switch(currentState)
 		{
+
 			case SHOWINGEMPTYMENU: //context menu for non-nodes
 
-				//TODO: image for a node instead of circle?
-				//Radius of circle is 13px as per css.
-				option1 = new Circle(CONTEXTRAD - CONTEXTWIDTH / 2, 0, 13);
-				//TODO: decide on new node color?
-				option1.setFill(Color.GREENYELLOW);
-
-				//TODO: replace with provider image
-				//Radius of circle is 13px as per css.
-				option2 = new Circle(0, CONTEXTRAD - CONTEXTWIDTH / 2, 13);
-				option2.setFill(Color.RED);
-
-				//TODO: replace with Elevator image
-				//Radius of circle is 13px as per css.
-				option3 = new Circle(0, -CONTEXTRAD + CONTEXTWIDTH / 2, 13);
-				option3.setFill(Color.WHITE);
-
-				//TODO: replace with restroom image
-				//Radius of circle is 13px as per css.
-				option4 = new Circle(-CONTEXTRAD + CONTEXTWIDTH / 2, 0, 13);
-				option4.setFill(Color.BLUE);
+				option1 = new ImageView(addNeighborImageProxy.getFXImage());
+				option1.setScaleX(0.15);
+				option1.setScaleY(0.15);
+				option1.setX(imageOffsetX + CONTEXTRAD - CONTEXTWIDTH / 2);
+				option1.setY(imageOffsetY);
+				option2 = new ImageView(doctorImageProxy.getFXImage());
+				option2.setScaleX(0.15);
+				option2.setScaleY(0.15);
+				option2.setX(imageOffsetX);
+				option2.setY(imageOffsetY + CONTEXTRAD - CONTEXTWIDTH / 2);
+				option3 = new ImageView(restroomImageProxy.getFXImage());
+				option3.setScaleX(0.15);
+				option3.setScaleY(0.15);
+				option3.setX(imageOffsetX - CONTEXTRAD + CONTEXTWIDTH / 2);
+				option3.setY(imageOffsetY);
+				option4 = new ImageView(elevatorImageProxy.getFXImage());
+				option4.setScaleX(0.15);
+				option4.setScaleY(0.15);
+				option4.setX(imageOffsetX);
+				option4.setY(imageOffsetY - CONTEXTRAD + CONTEXTWIDTH / 2);
 				break;
 			case SHOWINGNODEMENU: //contextmenu for nodes
 				//TODO: replace all of these with appropriate icons/pictures
 
 				//node specific context menu
-				option1 = new Circle(CONTEXTRAD - CONTEXTWIDTH / 2, 0, 13);
-				option1.setFill(Color.BLACK);
-				option2 = new Circle(0, CONTEXTRAD - CONTEXTWIDTH / 2, 13);
-				option2.setFill(Color.BLACK);
-				option3 = new Circle(0, -CONTEXTRAD + CONTEXTWIDTH / 2, 13);
-				option3.setFill(Color.BLACK);
-				option4 = new Circle(-CONTEXTRAD + CONTEXTWIDTH / 2, 0, 13);
-				option4.setFill(Color.BLACK);
+
+				option1 = new ImageView(addNeighborImageProxy.getFXImage());
+				option1.setScaleX(0.15);
+				option1.setScaleY(0.15);
+				option1.setX(imageOffsetX + CONTEXTRAD - CONTEXTWIDTH / 2);
+				option1.setY(imageOffsetY);
+				option2 = new ImageView(removeNeighborImageProxy.getFXImage());
+				option2.setScaleX(0.15);
+				option2.setScaleY(0.15);
+				option2.setX(imageOffsetX);
+				option2.setY(imageOffsetY + CONTEXTRAD - CONTEXTWIDTH / 2);
+				option3 = new ImageView(removeNodeImageProxy.getFXImage());
+				option3.setScaleX(0.15);
+				option3.setScaleY(0.15);
+				option3.setX(imageOffsetX - CONTEXTRAD + CONTEXTWIDTH / 2);
+				option3.setY(imageOffsetY);
+				option4 = new ImageView(chainImageProxy.getFXImage());
+				option4.setScaleX(0.15);
+				option4.setScaleY(0.15);
+				option4.setX(imageOffsetX);
+				option4.setY(imageOffsetY - CONTEXTRAD + CONTEXTWIDTH / 2);
 				break;
 			default:
 				break;
@@ -492,19 +521,19 @@ public class MapEditorToolController extends BaseController
 		{
 			case MAKINGNEWHALLWAY:
 				//create a new hallway node
-				createNewNode(x, y, "Hallway");
+				createNewNode(x, y, 0);
 				break;
 			case MAKINGNEWOFFICE:
 				//create a new office node
-				createNewNode(x, y,  "Office");
+				createNewNode(x, y,  1);
 				break;
 			case MAKINGNEWELEVATOR:
 				//create a new elevator node
-				createNewNode(x, y, "Elevator");
+				createNewNode(x, y, 2);
 				break;
 			case MAKINGNEWRESTROOM:
 				//create a new restroom node
-				createNewNode(x, y, "Restroom");
+				createNewNode(x, y, 3);
 				break;
 			default:
 				//default case, hide node details
@@ -567,7 +596,7 @@ public class MapEditorToolController extends BaseController
 	 * @param x X coordinate of new node
 	 * @param y Y coordinate of new node
 	 */
-	public void createNewNode(double x, double y, String type)
+	public void createNewNode(double x, double y, int type)
 	{
 		Node newNode = new ConcreteNode();
 		newNode.setName("New " + type);
@@ -576,6 +605,7 @@ public class MapEditorToolController extends BaseController
 		newNode.setY(y);
 		newNode.setFloor(FLOORID);
 		newNode.setBuilding(BUILDINGID);
+		newNode.setType(type);
 
 		database.insertNode(newNode);
 
@@ -602,12 +632,41 @@ public class MapEditorToolController extends BaseController
 		}
 		currentButton = nodeB;
 		currentButton.setId("node-button-selected");
+		setButtonImage(nodeB, type);
 		nodeButtonLinks.put(nodeB, newNode);
 		//add the new button to the scene
 		editingFloor.getChildren().add(1, nodeB);
 
 		//reset current state to doingnothing
 		currentState = editorStates.DOINGNOTHING;
+	}
+
+	private void setButtonImage(Button b, int type)
+	{
+		if(type == 1)
+		{
+			ImageView buttonImage = new ImageView(doctorImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 2)
+		{
+			ImageView buttonImage = new ImageView(elevatorImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 3)
+		{
+			ImageView buttonImage = new ImageView(restroomImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 0)
+		{
+		}
 	}
 
 	/**
@@ -820,22 +879,22 @@ public class MapEditorToolController extends BaseController
 					case 0:
 						//top option
 						//create new elevator node at location
-						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Elevator");
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), 2);
 						break;
 					case 1:
 						//right option
 						//create new hallway node at location
-						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Hallway");
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), 0);
 						break;
 					case 2:
 						//bottom option
 						//create new office node at location
-						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Office");
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), 1);
 						break;
 					case 3:
 						//left option
 						//create new restroom node at location
-						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), "Restroom");
+						createNewNode(CONTEXTMENU.getLayoutX(), CONTEXTMENU.getLayoutY(), 3);
 						break;
 					default:
 						//no option selected
@@ -910,6 +969,7 @@ public class MapEditorToolController extends BaseController
 		nodeB.setOnMouseDragged(nodebuttonMouseDrag);
 		//handle when mouse released
 		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
+		setButtonImage(nodeB, n.getType());
 		nodeButtonLinks.put(nodeB, n);
 		//add button to scene
 		editingFloor.getChildren().add(1, nodeB);
