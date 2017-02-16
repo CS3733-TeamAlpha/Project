@@ -34,7 +34,7 @@
                   <Font size="43.0" />
                </font>
             </Button>
-            <Button layoutX="438.0" layoutY="346.0" mnemonicParsing="false" onAction="#showDirectory" prefHeight="103.0" prefWidth="420.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="Edit Directory">
+            <Button layoutX="438.0" layoutY="346.0" mnemonicParsing="false" onAction="#showDirectory" prefHeight="103.0" prefWidth="420.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="View Directory">
                <font>
                   <Font size="47.0" />
                </font>
@@ -44,12 +44,12 @@
                   <Font name="Glacial Indifference Regular" size="59.0" />
                </font>
             </Label>
-            <ImageView fx:id="eyeImage" fitHeight="31.0" fitWidth="34.0" layoutX="1190.0" layoutY="552.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#toggleHighContrast">
+            <ImageView fx:id="eyeImage" fitHeight="31.0" fitWidth="34.0" layoutX="1190.0" layoutY="552.0" onMouseClicked="#toggleHighContrast" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/eye.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="lockImage" fitHeight="37.0" fitWidth="31.0" layoutX="1235.0" layoutY="548.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#showLogin">
+            <ImageView fx:id="lockImage" fitHeight="37.0" fitWidth="31.0" layoutX="1235.0" layoutY="548.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/lock.png" />
                </image>
