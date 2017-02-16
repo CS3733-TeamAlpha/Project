@@ -4,13 +4,11 @@ import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -19,7 +17,6 @@ import java.util.UUID;
 public class Database implements AdminStorage
 {
 	//Constants
-	private static final String DB_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 
 	private String dbName;
@@ -45,7 +42,7 @@ public class Database implements AdminStorage
 		connected = false;
 		statement = null;
 		connection = null;
-		nodeCache = new Hashtable<String, Node>();
+		nodeCache = new Hashtable<>();
 
 		checkExist = null;
 		insertNode = null;
@@ -58,7 +55,7 @@ public class Database implements AdminStorage
 	 * Connects to the database name specified at construction. If the database cannot be found, it is created.
 	 *
 	 * @return Success of database connection.
-	 * @// TODO: 2/9/17 Delete printlns
+	 * TODO: 2/9/17 Delete printlns
 	 */
 	public boolean connect()
 	{
@@ -314,7 +311,7 @@ public class Database implements AdminStorage
 	 */
 	public ArrayList<Node> getAllNodes()
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		for (String s : nodeCache.keySet())
 			ret.add(nodeCache.get(s));
 		return ret;
@@ -364,7 +361,7 @@ public class Database implements AdminStorage
 	 */
 	public ArrayList<Node> getNodesByFloor(int floor)
 	{
-		ArrayList<Node> retlist = new ArrayList<Node>();
+		ArrayList<Node> retlist = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE floor=" + floor);
@@ -440,7 +437,7 @@ public class Database implements AdminStorage
 	 */
 	public ArrayList<Node> getNodesInBuildingFloor(String buildingUUID, int floor)
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM Nodes WHERE building=? AND floor=?");
@@ -539,7 +536,7 @@ public class Database implements AdminStorage
 	 */
 	public ArrayList<String> getProviders()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> ret = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT name FROM Providers");
@@ -562,7 +559,7 @@ public class Database implements AdminStorage
 	 */
 	public ArrayList<Node> getProviderLocations(String providerUUID)
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM DoctorOffices WHERE provider_uuid=?");
@@ -669,7 +666,7 @@ public class Database implements AdminStorage
 	 */
 	public ArrayList<String> getServices()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> ret = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT name FROM Services");
@@ -743,7 +740,7 @@ public class Database implements AdminStorage
 		String password = "";
 		try
 		{
-			PreparedStatement pstmt = connection.prepareStatement("SELECT password FROM Logins WHERE name=?");
+			PreparedStatement pstmt = connection.prepareStatement("SELECT password FROM Logins WHERE username=?");
 			pstmt.setString(1, username);
 			ResultSet results = pstmt.executeQuery();
 			if (results.next())
