@@ -1,6 +1,5 @@
 package ui;
 
-import data.AdminFileStorage;
 import data.AdminStorage;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -24,16 +23,12 @@ public class LoginController extends BaseController
 	@FXML
 	private PasswordField passwordField;
 
-	private AdminStorage adminStorage;
-
 	public LoginController()
 	{
-		adminStorage = new AdminFileStorage();
 	}
 
 	public void initialize()
 	{
-		adminStorage = new AdminFileStorage();
 		usernameField.requestFocus();
 	}
 
@@ -51,24 +46,17 @@ public class LoginController extends BaseController
 
 		boolean success;
 
-		String storedHash = adminStorage.getHashedPassword(usernameField.getText());
+		String storedHash = database.getHashedPassword(usernameField.getText());
 
-		if(storedHash == null)
-		{
-			success = false;
-		}
-		else
-		{
-			success = BCrypt.checkpw(passwordField.getText(), storedHash);
-		}
+		success = storedHash != null && BCrypt.checkpw(passwordField.getText(), storedHash);
 
-		if(success)
+		if (success)
 		{
 			progressIndicator.setVisible(true);
 			resultText.setText("Logging in...");
 			resultText.setVisible(true);
 
-			new Thread(() ->loadFXML(Paths.ADMIN_PAGE_FXML)).start();
+			new Thread(() -> loadFXML(Paths.ADMIN_PAGE_FXML)).start();
 		}
 		else
 		{
@@ -91,7 +79,7 @@ public class LoginController extends BaseController
 		else
 		{
 			String hashed = BCrypt.hashpw(passwordField.getText(), BCrypt.gensalt());
-			adminStorage.storeHashedPassword(usernameField.getText(), hashed);
+			database.storeHashedPassword(usernameField.getText(), hashed);
 			System.out.println("Password stored");
 		}
 	}
