@@ -34,4 +34,37 @@
     -fx-text-fill: #333;
     -fx-font-size: 10pt;
     -fx-focus-traversable: false;
+    -fx-font-family: "Glacial Indifference";
+    -fx-font-size: 30pt;
+}
+
+#node-button-unselected
+{
+    -fx-background-radius: 5em;
+    -fx-min-width: 13px;
+    -fx-min-height: 13px;
+    -fx-max-width: 13px;
+    -fx-max-height: 13px;
+    -fx-background-color: #00ff00;
+}
+
+#node-button-selected
+{
+    -fx-background-radius: 5em;
+    -fx-min-width: 13px;
+    -fx-min-height: 13px;
+    -fx-max-width: 13px;
+    -fx-max-height: 13px;
+    -fx-background-color: #0000ff;
+}
+
+#upbuttonTriangle
+{
+    -fx-shape: "M 0,1 L 1,1 .5,0 Z";
+    -fx-background-color: skyblue, black;
+}
+#downbuttonTriangle
+{
+    -fx-shape: "M 0,-1 L 1,-1 .5,0 Z";
+    -fx-background-color: skyblue, black;
 }

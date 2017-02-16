@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.AdminPageController">
+   <children>
+       <Pane prefHeight="115.0" styleClass="bh-white" VBox.vgrow="NEVER">
+           <children>
+               <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                   <image>
+                       <Image url="@../images/BWHlogo.gif" />
+                   </image>
+               </ImageView>
+           </children>
+       </Pane>
+       <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" VBox.vgrow="NEVER" />
+      <BorderPane VBox.vgrow="ALWAYS">
+         <center>
+            <FlowPane maxHeight="500.0" maxWidth="1050.0" prefHeight="200.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox prefWidth="500.0" styleClass="bh-admin-box">
+                     <children>
+                        <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#editDirectory">
+                           <image>
+                              <Image url="@../images/directory.png" />
+                           </image>
+                        </ImageView>
+                        <Button mnemonicParsing="false" onAction="#editDirectory" prefHeight="99.0" prefWidth="402.0" styleClass="bh-admin-button" text="Edit Directory">
+                           <font>
+                              <Font name="Glacial Indifference Regular" size="30.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                     <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </FlowPane.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                     <children>
+                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#editMap">
+                           <image>
+                              <Image url="@../images/floor1_preview.png" />
+                           </image>
+                        </ImageView>
+                        <Button mnemonicParsing="false" onAction="#editMap" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Edit Map" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                     <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </FlowPane.margin>
+                  </HBox>
+                  <HBox layoutX="15.0" layoutY="137.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                     <children>
+                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#changePassword">
+                           <image>
+                              <Image url="@../images/lock_large.png" />
+                           </image>
+                        </ImageView>
+                        <Button mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                     <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </FlowPane.margin>
+                  </HBox>
+                  <HBox layoutX="540.0" layoutY="142.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                     <children>
+                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#factoryReset">
+                           <image>
+                              <Image url="@../images/warning.png" />
+                           </image>
+                        </ImageView>
+                        <Button mnemonicParsing="false" onAction="#factoryReset" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Factory Reset" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </FlowPane.margin>
+                  </HBox>
+                  <HBox layoutX="15.0" layoutY="259.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                     <children>
+                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#logout">
+                           <image>
+                              <Image url="@../images/logout.png" />
+                           </image>
+                        </ImageView>
+                        <Button mnemonicParsing="false" onAction="#logout" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Logout" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                     <FlowPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </FlowPane.margin>
+                  </HBox>
+               </children>
+            </FlowPane>
+         </center>
+         <top>
+            <Label text="Administrator Panel" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="62.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets bottom="15.0" top="15.0" />
+               </BorderPane.margin>
+            </Label>
+         </top>
+      </BorderPane>
+   </children>
+
+</VBox>

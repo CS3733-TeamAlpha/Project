@@ -1,27 +1,25 @@
 package ui;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.stage.Stage;
-import data.*;
-import pathfinding.*;
+import pathfinding.ConcreteGraph;
+import pathfinding.Graph;
+import pathfinding.Node;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 
-public class MapController
+public class MapController extends BaseController
 {
 	public ImageView floorImage;
 	private Graph graph;
@@ -49,16 +47,19 @@ public class MapController
 	private AnchorPane imgAnchor;
 
 
-	public MapController() {}
+	public MapController()
+	{
+		super();
+	}
 
 	public void initialize()
 	{
 		hideRoomInfo();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
-		kiosk = DatabaseController.getNodeByID(9);
+		ArrayList<Node> nodes = database.getAllNodes();
+		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
 		for (Node n:nodes)
 		{
-			if(!n.getData().get(1).equals("Hallway"))
+			if(n.getType() != 0) //If n isn't a hallway node... TODO: Create node type enumeration
 			{
 				Button b = new Button("+");
 				b.setLayoutX(n.getX());
@@ -120,8 +121,8 @@ public class MapController
 			roomviewSplit.setDividerPositions(.75);
 			roomInfoShown = true;
 		}
-		roomName.setText(n.getData().get(0));
-		roomDescription.setText(n.getData().get(1));
+		roomName.setText(n.getName());
+		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 
 	public void hideRoomInfo()
@@ -133,12 +134,12 @@ public class MapController
 
 	public void showDirectory()
 	{
-		Main.loadFXML("/fxml/Directory.fxml");
+		loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML("/fxml/Startup.fxml");
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void findDirectionsTo(){

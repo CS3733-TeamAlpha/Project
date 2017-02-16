@@ -3,14 +3,17 @@ package pathfinding;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class ConcreteGraph implements Graph {
+public class ConcreteGraph implements Graph
+{
 
 	/**
 	 * {@inheritDoc}
+	 *
 	 * @implNote This implementation returns an ArrayList.
 	 * @// TODO: 2/6/17 Implement straight-shot optimization for traversing multiple floors
 	 */
-	public ArrayList<Node> findPath(Node start, Node end) {
+	public ArrayList<Node> findPath(Node start, Node end)
+	{
 		if (start == null || end == null)
 			return null; //idiot check
 
@@ -85,13 +88,15 @@ public class ConcreteGraph implements Graph {
 		ASTNode parent;
 		Node node;
 
-		ASTNode(Node newNode, double newG) {
+		ASTNode(Node newNode, double newG)
+		{
 			f = 0;
 			g = newG;
 			node = newNode;
 		}
 
-		public int compareTo(ASTNode node) {
+		public int compareTo(ASTNode node)
+		{
 			if (f < node.f)
 				return -1;
 			if (f > node.f)
@@ -103,6 +108,7 @@ public class ConcreteGraph implements Graph {
 	/**
 	 * returns an arraylist of all the textual directions, in string form, to get from one node to another.
 	 * assumes a path exists
+	 *
 	 * @param scaleFactor this is how we'll convert coordinates to feet
 	 */
 	//TODO: edge cases like only two nodes

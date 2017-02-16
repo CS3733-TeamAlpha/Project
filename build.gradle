@@ -29,16 +29,18 @@ repositories {
 dependencies {
     //TODO: Find a better way to organize these dependencies!
     compile(
-            [group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'],
-            [group: 'org.apache.derby', name: 'derbyclient', version: '10.13.1.1'],
-            [group: 'org.apache.derby', name: 'derbytools', version: '10.13.1.1'],
+            [group: 'org.wildfly.swarm', name: 'javafx', version: '2017.2.0'],
+            [group: 'org.apache.derby', name: 'derby', version: '10.11.1.1'],
+            [group: 'org.apache.derby', name: 'derbyclient', version: '10.11.1.1'],
+            [group: 'org.apache.derby', name: 'derbytools', version: '10.11.1.1'],
             [group: 'org.mindrot', name: 'jbcrypt', version: '0.4-atlassian-1']
     )
     testCompile(
+            [group: 'org.wildfly.swarm', name: 'javafx', version: '2017.2.0'],
             [group: 'junit', name: 'junit', version: '4.11'],
-            [group: 'org.apache.derby', name: 'derby', version: '10.13.1.1'],
-            [group: 'org.apache.derby', name: 'derbyclient', version: '10.13.1.1'],
-            [group: 'org.apache.derby', name: 'derbytools', version: '10.13.1.1'],
+            [group: 'org.apache.derby', name: 'derby', version: '10.11.1.1'],
+            [group: 'org.apache.derby', name: 'derbyclient', version: '10.11.1.1'],
+            [group: 'org.apache.derby', name: 'derbytools', version: '10.11.1.1'],
             [group: 'org.mindrot', name: 'jbcrypt', version: '0.4-atlassian-1']
     )
 }
