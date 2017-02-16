@@ -1,6 +1,6 @@
 package pathfinding;
 
-        import org.junit.Test;
+import org.junit.Test;
 
 public class TextualDirectionsTest {
 

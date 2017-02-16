@@ -19,7 +19,7 @@ import pathfinding.Node;
 
 import java.util.ArrayList;
 
-public class MapController extends AbstractController
+public class MapController extends BaseController
 {
 	public ImageView floorImage;
 	private Graph graph;
@@ -134,12 +134,12 @@ public class MapController extends AbstractController
 
 	public void showDirectory()
 	{
-		Main.loadFXML(Paths.DIRECTORY_FXML);
+		loadFXML(Paths.DIRECTORY_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML(Paths.STARTUP_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 	public void findDirectionsTo(){

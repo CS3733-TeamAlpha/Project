@@ -13,16 +13,16 @@ public class Accessibility
 		return highContrast;
 	}
 
-	public static void setHighContrast(boolean highContrast)
+	public static void setHighContrast(boolean highContrast, BaseController controller)
 	{
 		Accessibility.highContrast = highContrast;
-		Main.updateCSS();
+		controller.updateCSS();
 	}
 
-	public static void toggleHighContrast()
+	public static void toggleHighContrast(BaseController controller)
 	{
 		highContrast = !highContrast;
-		Main.updateCSS();
+		controller.updateCSS();
 	}
 
 }

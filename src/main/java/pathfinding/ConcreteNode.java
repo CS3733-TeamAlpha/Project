@@ -1,7 +1,7 @@
 package pathfinding;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 public class ConcreteNode implements Node
@@ -97,7 +97,7 @@ public class ConcreteNode implements Node
 		double thetaA = Math.atan2(aY, aX);
 		double thetaB = Math.atan2(bY, bX);
 		double angleRad = (thetaB - thetaA);
-		angle = (angleRad*180/Math.PI);
+		angle = (angleRad * 180 / Math.PI);
 		if (angle < 0)
 			angle += 360;
 		if (0 <= angle && angle < 60) //TODO: can this be done with switch statements?
