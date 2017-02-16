@@ -35,6 +35,7 @@ public class Database
 
 	/**
 	 * Construct a new database object that will connect to the named database and immediately initiate the connection
+	 *
 	 * @param name Path to database to connect to.
 	 */
 	public Database(String name)
@@ -54,8 +55,9 @@ public class Database
 
 	/**
 	 * Connects to the database name specified at construction. If the database cannot be found, it is created.
+	 *
 	 * @return Success of database connection.
-	 * @// TODO: 2/9/17 Delete printlns 
+	 * @// TODO: 2/9/17 Delete printlns
 	 */
 	public boolean connect()
 	{
@@ -134,6 +136,7 @@ public class Database
 	 * that all nodes MUST have a valid building UUID linked in the Buildings table. Otherwise, a constraint violation
 	 * exception will be raised and the node will not be inserted. For testing purposes, a "default" building and
 	 * default node building UUID of 00000000-0000-0000-0000-000000000000 are included.
+	 *
 	 * @param node Node object to insert.
 	 */
 	public void insertNode(Node node)
@@ -218,6 +221,7 @@ public class Database
 	 * Updates a node in the database. Use whenever modifications are made outside the database. Be warned, this is an
 	 * expensive function to call. Note that it does NOT delete orphan providers, you'll need to explicitly call
 	 * deleteProvider() for that.
+	 *
 	 * @param node Node to be updated
 	 */
 	public void updateNode(Node node)
@@ -288,6 +292,7 @@ public class Database
 
 	/**
 	 * Gets a node by its UUID. Returns null if that node didn't exist.
+	 *
 	 * @param uuid UUID of node to be returned.
 	 * @return Node if node found, null otherwise.
 	 */
@@ -303,6 +308,7 @@ public class Database
 	/**
 	 * Compatibilty hack for DirectoryController
 	 * TODO: EXTERMINATE
+	 *
 	 * @return ArrayList of all nodes in the database.
 	 */
 	public ArrayList<Node> getAllNodes()
@@ -315,6 +321,7 @@ public class Database
 
 	/**
 	 * Deletes the node of the given UUID. Also cascade deletes anything associated with this node as well.
+	 *
 	 * @param uuid UUID of node to delete.
 	 */
 	public void deleteNodeByUUID(String uuid)
@@ -326,7 +333,7 @@ public class Database
 			//Needed because there can be no FOREIGN KEY constraint on the edges dst column. If there were, it would
 			//not allow for delayed adding of nodes to the database (either that or a ton of constraint violation errors
 			//would be generated).
-			statement.execute("DELETE FROM Edges WHERE dst='" + uuid +"'");
+			statement.execute("DELETE FROM Edges WHERE dst='" + uuid + "'");
 
 			//That should've performed a cascade delete on the database, so now we just need to remove cache
 			//references to this node, which should run in O(n) time, unfortunately.
@@ -350,6 +357,7 @@ public class Database
 
 	/**
 	 * Get all nodes on a given floor.
+	 *
 	 * @param floor Floor to get from.
 	 * @return ArrayList of nodes found on the provided. ArrayList is empty if no nodes can be found.
 	 */
@@ -376,6 +384,7 @@ public class Database
 
 	/**
 	 * Gets the UUID of a given building using its name
+	 *
 	 * @param name Name of the building to find
 	 * @return 36-char UUID if found, otherwise an empty string.
 	 */
@@ -402,6 +411,7 @@ public class Database
 
 	/**
 	 * Adds a new building to the database.
+	 *
 	 * @param uuid UUID of building. Recommended to use java.util.UUID.randomUUID().toString()
 	 * @param name Name of building.
 	 */
@@ -422,8 +432,9 @@ public class Database
 
 	/**
 	 * Gets all nodes on a given floor of a given building.
+	 *
 	 * @param buildingUUID UUID of building to grab from. If the UUID is not known, use getBuildingUUID.
-	 * @param floor Floor number as an int.
+	 * @param floor        Floor number as an int.
 	 * @return ArrayList of nodes found on this floor. If no nodes could be found, the array is empty. Never returns null.
 	 */
 	public ArrayList<Node> getNodesInBuildingFloor(String buildingUUID, int floor)
@@ -450,6 +461,7 @@ public class Database
 
 	/**
 	 * Gets an ArrayList of building names
+	 *
 	 * @return ArrayList of building names. Who'd have thought?
 	 */
 	public ArrayList<String> getBuildings()
@@ -476,6 +488,7 @@ public class Database
 	/**
 	 * Deletes an entire building using a UUID. WARNING: THIS WILL CASCADE DELETE ALL NODES IN THE BUILDING, THEIR FLOORS,
 	 * PROVIDERS, ETC. USE WITH EXTREME CAUTION!
+	 *
 	 * @param uuid UUID of building to delete.
 	 */
 	public void deleteBuilding(String uuid)
@@ -494,6 +507,7 @@ public class Database
 
 	/**
 	 * Gets the UUID of a provider by name.
+	 *
 	 * @param name Name of a UUID. Should include title information.
 	 * @return 36-char UUID.
 	 */
@@ -519,6 +533,7 @@ public class Database
 
 	/**
 	 * Gets a list of all provider names
+	 *
 	 * @return ArrayList of names
 	 */
 	public ArrayList<String> getProviders()
@@ -540,6 +555,7 @@ public class Database
 
 	/**
 	 * Returns all of a provider's offices
+	 *
 	 * @param providerUUID UUID of provider
 	 * @return ArrayList of nodes that the provider has an office at
 	 */
@@ -566,8 +582,9 @@ public class Database
 	/**
 	 * Deletes a provider and any associated offices that provider may have. Deleting the provider from all nodes and calling
 	 * updateNode() *might* not be good enough.
+	 *
 	 * @param uuid UUID of provider to delete.
-	 * TODO: Factor out these deleteX functions into a common deleteByUUID() function?
+	 *             TODO: Factor out these deleteX functions into a common deleteByUUID() function?
 	 */
 	public void deleteProvider(String uuid)
 	{
@@ -599,8 +616,9 @@ public class Database
 
 	/**
 	 * Rename a provider with a given UUID.
+	 *
 	 * @param newName New name for provider. Format 'lname, fname; titles'
-	 * @param uuid UUID of provider to modify
+	 * @param uuid    UUID of provider to modify
 	 */
 	public void renameProvider(String newName, String uuid)
 	{
@@ -619,6 +637,7 @@ public class Database
 
 	/**
 	 * Get the location of a named service as a node
+	 *
 	 * @param name Name of the service to search for
 	 * @return A node object if the service is found, null otherwise.
 	 */
@@ -644,6 +663,7 @@ public class Database
 
 	/**
 	 * Returns a list of all services in the database.
+	 *
 	 * @return ArrayList of strings of services.
 	 */
 	public ArrayList<String> getServices()
@@ -714,6 +734,7 @@ public class Database
 
 	/**
 	 * Gets the providers associated with the associated Node
+	 *
 	 * @param nodeName Name of the service to search for
 	 * @return An ArrayList of Strings containing all associated providers
 	 */
@@ -740,8 +761,9 @@ public class Database
 
 	/*Misc getters and setters*/
 
-   /**
+	/**
 	 * Returns whether this database is connected or not.
+	 *
 	 * @return Connection status.
 	 */
 	public boolean isConnected()
