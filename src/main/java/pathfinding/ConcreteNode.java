@@ -100,7 +100,7 @@ public class ConcreteNode implements Node
 		angle = (angleRad * 180 / Math.PI);
 		if (angle < 0)
 			angle += 360;
-		if (0 <= angle && angle < 60) //TODO: can this be done with switch statements?
+		if (0 <= angle && angle < 60)
 			return "Sharp left";
 		else if (60 <= angle && angle < 120)
 			return "Turn left";
