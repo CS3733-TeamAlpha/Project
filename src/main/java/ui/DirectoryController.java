@@ -57,8 +57,8 @@ public class DirectoryController extends BaseController
 	{
 		for (String providerName : database.getProviders())
 		{
-			System.out.println("Database returned " + providerName);
 			Provider p = new Provider(providerName, database.getProviderUUID(providerName));
+			p.locations.addAll(database.getProviderLocations(p.uuid));
 			loadProvider(p);
 		}
 	}
@@ -85,7 +85,6 @@ public class DirectoryController extends BaseController
 		fname.textProperty().addListener(event ->
 		{
 			if(!modifiedProvidersList.contains(p)){
-				System.out.println("Modifying node '" + p.name + "'");
 				modifiedProvidersList.add(p);
 			}
 		});
@@ -93,10 +92,8 @@ public class DirectoryController extends BaseController
 		lname.setText(p.name.split(",")[0]);
 		lname.textProperty().addListener(event ->
 		{
-			if(!modifiedProvidersList.contains(p)){
-				System.out.println("Modifying node '" + p.name + "'");
+			if(!modifiedProvidersList.contains(p))
 				modifiedProvidersList.add(p);
-			}
 		});
 		TextField title = new TextField();
 		title.setText(p.name.split(";")[1]);
@@ -148,6 +145,7 @@ public class DirectoryController extends BaseController
 
 		newLocH.getChildren().addAll(locationSelector, addBut);
 		newV.getChildren().add(newLocH);
+
 		for(Node n: p.locations)
 		{
 			HBox innerH = new HBox();
@@ -166,19 +164,13 @@ public class DirectoryController extends BaseController
 		}
 		newH.getChildren().addAll(deleteBut, fname, lname, title, newV);
 		boxProviderLinks.put(p, newH);
-		//add button to scene
-		//TODO: set editingFloor to the correct panel name
 		scrollContents.getChildren().add(newH);
 	}
 
 	public void pushChangesToDatabase()
 	{
-		System.out.println("New providers: " + newProviderList.size());
-		System.out.println("Modified providers: " + modifiedProvidersList.size());
-		System.out.println("Deleted providers: " + deleteProviderList.size());
 		for (Provider provider : newProviderList)
 		{
-			System.out.println("Trying to add provider '" + provider.name + "'");
 			database.addProvider(provider.name);
 			provider.uuid = database.getProviderUUID(provider.name); //what?
 			for (Node node : provider.locations)
@@ -195,7 +187,6 @@ public class DirectoryController extends BaseController
 			TextField fn = (TextField)hb.getChildren().get(1);
 			TextField ln = (TextField)hb.getChildren().get(2);
 			String newName = ln.getText() + " ," + fn.getText() + "; " + title.getText();
-			System.out.println("Renaming provider '" + thisProvider.name + "' to '" + newName + "'");
 
 			//First go through each node in the list and remove this provider from it
 			for (Node node : thisProvider.locations)
@@ -218,10 +209,7 @@ public class DirectoryController extends BaseController
 		modifiedProvidersList.clear();
 
 		for(Provider p: deleteProviderList)
-		{
-			System.out.println("Deleting provider '" + p.name + "'");
 			database.deleteProvider(p.uuid);
-		}
 		deleteProviderList.clear();
 	}
 
