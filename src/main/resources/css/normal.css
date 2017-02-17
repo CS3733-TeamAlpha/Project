@@ -76,3 +76,9 @@
     -fx-shape: "M 0,-1 L 1,-1 .5,0 Z";
     -fx-background-color: skyblue, black;
 }
+#roomLabel
+{
+-fx-font: 15px GlacialIndifference;
+-fx-stroke: red;
+-fx-stroke-width: 100;
+}
