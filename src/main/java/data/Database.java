@@ -321,6 +321,40 @@ public class Database implements AdminStorage, Searchable
 	}
 
 	/**
+	 * Gets a node by its XY coordinates and floor.
+	 * This is used for connecting elevators to each other. We assume elevators have
+	 * the exact same XY coordinates.
+	 *
+	 * @param x X coordinate of node to search for
+	 * @param y Y coordinate of node to search for
+	 * @param floor Floor on which the search node should reside
+	 * @return
+	 */
+	public Node getElevatorNodeByFloorCoordinates(double x, double y, int floor)
+	{
+		Node ret = null;
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM Nodes WHERE posX = ? AND posY = ? AND floor = ?");
+			pstmt.setDouble(1, x);
+			pstmt.setDouble(2, y);
+			pstmt.setInt(3, floor);
+
+			ResultSet results = pstmt.executeQuery();
+
+			if (results.next())
+				ret = nodeCache.get(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to retrieve node from database.");
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+	/**
 	 * Compatibilty hack for DirectoryController
 	 * TODO: EXTERMINATE
 	 *

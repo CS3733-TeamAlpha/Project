@@ -108,6 +108,7 @@ public class MapEditorToolController extends BaseController
 	private ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
 	private ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
 	private ProxyImage removeNeighborImageProxy = new ProxyImage(Paths.REMOVENEIGHBOR);
+	private ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
 	private ProxyImage doctorImageProxy = new ProxyImage(Paths.DOCTORICON);
 	private ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
 	private ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
@@ -280,6 +281,7 @@ public class MapEditorToolController extends BaseController
 	private void setupImageEventHandlers()
 	{
 		//set the imaveview objects to use the correct images
+		hallwayImage.setImage(hallwayImageProxy.getFXImage());
 		officeImage.setImage(doctorImageProxy.getFXImage());
 		restroomImage.setImage(restroomImageProxy.getFXImage());
 		elevatorImage.setImage(elevatorImageProxy.getFXImage());
@@ -651,7 +653,51 @@ public class MapEditorToolController extends BaseController
 	 * TODO: Make the min floor change depending on current building (iteration 3)
 	 */
 	void goDownFloor(ActionEvent event) {
-		if(FLOORID > 1){
+		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
+		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
+		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID > 1 &&
+				currentNode != null && currentNode.getType() == 2)
+		{
+			//find the lower elevator node and connect to it if it exists
+			Node lowerNode = null;
+			lowerNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID-1);
+			if(lowerNode != null)
+			{
+				currentNode.addNeighbor(lowerNode);
+				lowerNode.addNeighbor(currentNode);
+				//update currentnode and linked node since both had neighbor added
+				database.updateNode(lowerNode);
+				database.updateNode(currentNode);
+				currentState = editorStates.DOINGNOTHING;
+				System.out.println("Connected down");
+			}
+			currentState = editorStates.DOINGNOTHING;
+		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID > 1 &&
+				currentNode != null && currentNode.getType() == 2)
+		{
+			//get the lower elevator node and remove it from neighbor if it exists
+			Node lowerNode = null;
+			lowerNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID-1);
+			if(lowerNode != null)
+			{
+				currentNode.delNeighbor(lowerNode);
+				//remove neighbor relation from linked node, if valid
+				if (lowerNode.getNeighbors().contains(currentNode))
+				{
+					lowerNode.delNeighbor(currentNode);
+					drawToNeighbors(lowerNode);
+					//if linked node also had neighbor, update the change
+					database.updateNode(lowerNode);
+				}
+				//update currentNode (not the node that has just been clicked)
+				database.updateNode(currentNode);
+
+				//redraw lines
+				drawToNeighbors(currentNode);
+			}
+			currentState = editorStates.DOINGNOTHING;
+		}
+		else if(FLOORID > 1){
 			//remove all buttons and lines on the current floor
 			purgeButtonsAndLines();
 			FLOORID--;
@@ -667,8 +713,53 @@ public class MapEditorToolController extends BaseController
 	 * Prevent going up if floor is already 7.
 	 * TODO: Make the max floor change depending on current building (iteration 3)
 	 */
-	void goUpFloor(ActionEvent event) {
-		if(FLOORID < 7){
+	void goUpFloor(ActionEvent event)
+	{
+		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
+		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
+		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < 7 &&
+				currentNode != null && currentNode.getType() == 2)
+		{
+			//get the upper elevator node and connect if it exists
+			Node upperNode = null;
+			upperNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID+1);
+			if(upperNode != null)
+			{
+				currentNode.addNeighbor(upperNode);
+				upperNode.addNeighbor(currentNode);
+				//update currentnode and linked node since both had neighbor added
+				database.updateNode(upperNode);
+				database.updateNode(currentNode);
+				System.out.println("Connected up");
+			}
+			currentState = editorStates.DOINGNOTHING;
+		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < 7 &&
+				currentNode != null && currentNode.getType() == 2)
+		{
+			//get the upper elevator node and remove it from neighbor if it exists
+			Node upperNode = null;
+			upperNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID+1);
+			if(upperNode != null)
+			{
+				currentNode.delNeighbor(upperNode);
+				//remove neighbor relation from linked node, if valid
+				if (upperNode.getNeighbors().contains(currentNode))
+				{
+					upperNode.delNeighbor(currentNode);
+					drawToNeighbors(upperNode);
+					//if linked node also had neighbor, update the change
+					database.updateNode(upperNode);
+				}
+				//update currentNode (not the node that has just been clicked)
+				database.updateNode(currentNode);
+
+				//redraw lines
+				drawToNeighbors(currentNode);
+			}
+			currentState = editorStates.DOINGNOTHING;
+		}
+		else if(FLOORID < 7)
+		{
 			//remove all buttons and lines on the current floor
 			purgeButtonsAndLines();
 			FLOORID++;
