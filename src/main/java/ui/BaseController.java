@@ -14,7 +14,7 @@ abstract class BaseController
 {
 	private static Stage stage;
 	private boolean currentSceneSupportsHC = true;
-	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML};
+	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.DIRECTORY2_FXML};
 	protected static Database database;
 
 	// Make proxyimages to store floor pictures
