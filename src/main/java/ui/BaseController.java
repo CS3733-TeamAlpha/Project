@@ -26,6 +26,13 @@ abstract class BaseController
 	ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
 	ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
 
+	ProxyImage f1ContrastProxy = new ProxyImage(Paths.FLOOR1_CONTRAST);
+	ProxyImage f2ContrastProxy = new ProxyImage(Paths.FLOOR2_CONTRAST);
+	ProxyImage f3ContrastProxy = new ProxyImage(Paths.FLOOR3_CONTRAST);
+	ProxyImage f4ContrastProxy = new ProxyImage(Paths.FLOOR4_CONTRAST);
+	ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
+	ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
+	ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
 
 
 	static
