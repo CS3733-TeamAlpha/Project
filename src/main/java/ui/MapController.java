@@ -90,7 +90,7 @@ public class MapController extends BaseController
 		{
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
 
-			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 1);
+			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 0.1);
 			StringBuilder build = new StringBuilder();
 			for(String sentence : textDirections)
 			{
