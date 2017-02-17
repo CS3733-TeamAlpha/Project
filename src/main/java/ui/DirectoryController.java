@@ -57,9 +57,7 @@ public class DirectoryController extends BaseController
 	{
 		for (String providerName : database.getProviders())
 		{
-			//Assemble providers into provider classes. This is a temporary workaround so that database changes can be
-			//pushed as soon as possible; the Provider class is slated for removal.
-			//TODO: Make DirectoryController and related class no longer use class Provider
+			System.out.println("Database returned " + providerName);
 			Provider p = new Provider(providerName, database.getProviderUUID(providerName));
 			loadProvider(p);
 		}
@@ -82,8 +80,10 @@ public class DirectoryController extends BaseController
 			deleteProviderList.add(p);
 			((VBox) newH.getParent()).getChildren().remove(newH);
 		});
+		System.out.println("Parsing name " + p.name);
 		TextField fname = new TextField();
 		fname.setText(p.name.split(";")[0].split(",")[1]);
+		System.out.println("Setting fname to " + fname.getText());
 		fname.textProperty().addListener(event ->
 		{
 			System.out.println("fname Registered event");
@@ -94,6 +94,7 @@ public class DirectoryController extends BaseController
 		});
 		TextField lname = new TextField();
 		lname.setText(p.name.split(",")[0]);
+		System.out.println("Setting lname to " + lname.getText());
 		lname.textProperty().addListener(event ->
 		{
 			System.out.println("lname Registered event");
@@ -104,6 +105,7 @@ public class DirectoryController extends BaseController
 		});
 		TextField title = new TextField();
 		title.setText(p.name.split(";")[1]);
+		System.out.println("Setting title to " + title.getText());
 		title.textProperty().addListener(event ->
 		{
 			System.out.println("title Registered event");
@@ -208,9 +210,9 @@ public class DirectoryController extends BaseController
 
 		for(Provider thisProvider: modifiedProvidersList){
 			HBox hb = boxProviderLinks.get(thisProvider);
-			TextField title = (TextField)hb.getChildren().get(1);
-			TextField fn = (TextField)hb.getChildren().get(2);
-			TextField ln = (TextField)hb.getChildren().get(3);
+			TextField title = (TextField)hb.getChildren().get(3);
+			TextField fn = (TextField)hb.getChildren().get(1);
+			TextField ln = (TextField)hb.getChildren().get(2);
 			String newName = ln.getText() + " ," + fn.getText() + "; " + title.getText();
 			System.out.println("Renaming provider '" + thisProvider.name + "' to '" + newName + "'");
 
