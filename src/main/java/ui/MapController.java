@@ -23,12 +23,11 @@ import java.util.HashMap;
 
 public class MapController extends BaseController
 {
+	public static final int PATH_LINE_OFFSET = 0;
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
-
-
 
 	private Node selected;
 	private Node kiosk;
@@ -66,7 +65,7 @@ public class MapController extends BaseController
 	public void initialize()
 	{
 		hideRoomInfo();
-		ArrayList<Node> nodes = database.getAllNodes();
+		//ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
 		graph = new ConcreteGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
@@ -96,10 +95,10 @@ public class MapController extends BaseController
 					Line line = new Line();
 					System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
 					System.out.println(path.get(i+1).getID());
-					line.setStartX(path.get(i).getX()+15); //plus 15 to center on button
-					line.setStartY(path.get(i).getY()+15);
-					line.setEndX(path.get(i+1).getX()+15);
-					line.setEndY(path.get(i+1).getY()+15);
+					line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
+					line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
+					line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
+					line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 					line.setStrokeWidth(10);
 					line.setStroke(Color.BLUE);
 					editingFloor.getChildren().add(1,line);
@@ -284,14 +283,7 @@ public class MapController extends BaseController
 
 		setButtonImage(nodeB, n.getType());
 
-		nodeB.setOnAction(new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				showRoomInfo(n);
-			}
-		});
+		nodeB.setOnAction(event -> showRoomInfo(n));
 		//add button to scene
 		editingFloor.getChildren().add(1, nodeB);
 	}
