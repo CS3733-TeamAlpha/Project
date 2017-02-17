@@ -1,5 +1,6 @@
 package ui;
 
+import data.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -62,6 +63,7 @@ public class MapEditorToolController extends BaseController
 		MAKINGNEWOFFICE,   //making office type node
 		MAKINGNEWELEVATOR, //making elevator type node
 		MAKINGNEWRESTROOM, //making restroom type node
+		CHAINADDING,       //chain add hallways to a given node
 		ADDINGNEIGHBOR,    //currently adding neighbor
 		REMOVINGNEIGHBOR,  //currently removing neighbor
 		MOVINGNODE,        //currently moving node
@@ -551,9 +553,38 @@ public class MapEditorToolController extends BaseController
 	 */
 	void clickFloorImage(MouseEvent e)
 	{
-		hideNodeDetails();
-		//set currentState to  indicate we are no longer in special state
-		currentState = editorStates.DOINGNOTHING;
+		if(e.isSecondaryButtonDown())
+		{
+			currentState = editorStates.DOINGNOTHING;
+		} else
+		{
+			switch (currentState)
+			{
+				case CHAINADDING:
+					//create a new hallway node and connect it to the "current" node
+					//then update current
+					Node oldNode = currentNode;
+					createNewNode(e.getX(), e.getY(), 0);
+					//currentNode is now the new node
+					oldNode.addNeighbor(currentNode);
+					currentNode.addNeighbor(oldNode);
+
+					//update currentnode and linked node since both had neighbor added
+					database.updateNode(oldNode);
+					database.updateNode(currentNode);
+
+					//draw connecting lines
+					drawToNeighbors(currentNode);
+					drawToNeighbors(oldNode);
+
+					break;
+				default:
+					hideNodeDetails();
+					//set currentState to  indicate we are no longer in special state
+					currentState = editorStates.DOINGNOTHING;
+					break;
+			}
+		}
 	}
 
 	@FXML
@@ -638,7 +669,11 @@ public class MapEditorToolController extends BaseController
 		editingFloor.getChildren().add(1, nodeB);
 
 		//reset current state to doingnothing
-		currentState = editorStates.DOINGNOTHING;
+		//exception: if we are chainadding, don't set to doingnothing
+		if(currentState != editorStates.CHAINADDING)
+		{
+			currentState = editorStates.DOINGNOTHING;
+		}
 	}
 
 	private void setButtonImage(Button b, int type)
@@ -825,7 +860,7 @@ public class MapEditorToolController extends BaseController
 						//top option
 						System.out.println("top");
 						//TODO: set to proper state for whatever top option is
-						currentState = editorStates.DOINGNOTHING;
+						currentState = editorStates.CHAINADDING;
 						break;
 					case 1:
 						//right option
@@ -852,6 +887,7 @@ public class MapEditorToolController extends BaseController
 				break;
 
 			default:
+				database.updateNode(currentNode);
 				currentState = editorStates.DOINGNOTHING;
 				break;
 		}
@@ -1001,7 +1037,8 @@ public class MapEditorToolController extends BaseController
 				//add neighbor
 				currentNode.addNeighbor(linkedNode);
 				linkedNode.addNeighbor(currentNode);
-				//update currentNode (not the node that has just been clicked)
+				//update currentnode and linked node since both had neighbor added
+				database.updateNode(linkedNode);
 				database.updateNode(currentNode);
 
 				//redraw lines
@@ -1018,6 +1055,8 @@ public class MapEditorToolController extends BaseController
 				{
 					linkedNode.delNeighbor(currentNode);
 					drawToNeighbors(linkedNode);
+					//if linked node also had neighbor, update the change
+					database.updateNode(linkedNode);
 				}
 				//update currentNode (not the node that has just been clicked)
 				database.updateNode(currentNode);
@@ -1313,6 +1352,7 @@ public class MapEditorToolController extends BaseController
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 		switch(currentState){
+			case CHAINADDING:
 			case ADDINGNEIGHBOR:
 				//draw line
 				gc.setStroke(Color.BLACK);
