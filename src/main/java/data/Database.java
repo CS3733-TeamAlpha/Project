@@ -884,14 +884,13 @@ public class Database implements AdminStorage, Searchable
 	}
 
 	@Override
-	public ArrayList<SearchResult> getResultsForSeach(String searchText)
+	public ArrayList<SearchResult> getResultsForSearch(String searchText)
 	{
 		try
 		{
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			searchText = searchText.replace("%", "");
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Services WHERE name LIKE ?" +
-					"UNION SELECT Name FROM Nodes WHERE Name LIKE ?");
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Nodes WHERE NAME LIKE ? UNION " +
+					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?");
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();

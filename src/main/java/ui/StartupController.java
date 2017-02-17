@@ -32,8 +32,7 @@ public class StartupController extends BaseController
 
 		searchBox.textProperty().addListener(((observable, oldValue, newValue) ->
 		{
-			System.out.println("Search box width: " + searchBox.getWidth());
-			ArrayList<SearchResult> results = searchable.getResultsForSeach(newValue);
+			ArrayList<SearchResult> results = searchable.getResultsForSearch(newValue);
 			contextMenu.getItems().remove(0, contextMenu.getItems().size());
 			for(SearchResult result : results)
 			{
@@ -41,7 +40,6 @@ public class StartupController extends BaseController
 				contextMenu.getItems().add(item);
 			}
 
-			System.out.println("Context menu width: " + contextMenu.getWidth());
 			if(newValue.length() == 0)
 			{
 				contextMenu.hide();
