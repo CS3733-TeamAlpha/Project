@@ -21,9 +21,11 @@ import java.util.ArrayList;
 
 public class MapController extends BaseController
 {
-	public ImageView floorImage;
+	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
+
+
 
 	private Node selected;
 	private Node kiosk;
@@ -49,6 +51,8 @@ public class MapController extends BaseController
 	private Button downFloor;
 	@FXML
 	private Label currentFloorLabel;
+	@FXML
+	private ImageView floorImage;
 
 
 	public MapController()
@@ -69,7 +73,7 @@ public class MapController extends BaseController
 				b.setLayoutX(n.getX());
 				b.setLayoutY(n.getY());
 				imgAnchor.getChildren().add(1, b);
-				b.setOnAction(new EventHandler<ActionEvent>()
+				b.setOnAction(new EventHandler<ActionEvent>() //not a typo btw
 				{
 					@Override
 					public void handle(ActionEvent event)
@@ -183,6 +187,66 @@ public class MapController extends BaseController
 			//loadNodesFromDatabase();
 			//currentFloorLabel.setText(Integer.toString(FLOORID));
 			//setFloorImage(FLOORID);
+		}
+	}
+
+	/**
+	 * Set the floorImage imageview object to display the image of
+	 * a specific floor.
+	 * Currently only works based on floor, not building
+	 * @param floor The floor to display
+	 */
+	private void setFloorImage(int floor)
+	{
+		if(Accessibility.isHighContrast())
+		{
+			if (floor == 1)
+			{
+				floorImage.setImage(f1ContrastProxy.getFXImage());
+			} else if (floor == 2)
+			{
+				floorImage.setImage(f2ContrastProxy.getFXImage());
+			} else if (floor == 3)
+			{
+				floorImage.setImage(f3ContrastProxy.getFXImage());
+			} else if (floor == 4)
+			{
+				floorImage.setImage(f4ContrastProxy.getFXImage());
+			} else if (floor == 5)
+			{
+				floorImage.setImage(f5ContrastProxy.getFXImage());
+			} else if (floor == 6)
+			{
+				floorImage.setImage(f6ContrastProxy.getFXImage());
+			} else if (floor == 7)
+			{
+				floorImage.setImage(f7ContrastProxy.getFXImage());
+			}
+		}
+		else
+		{
+			if (floor == 1)
+			{
+				floorImage.setImage(f1ImageProxy.getFXImage());
+			} else if (floor == 2)
+			{
+				floorImage.setImage(f2ImageProxy.getFXImage());
+			} else if (floor == 3)
+			{
+				floorImage.setImage(f3ImageProxy.getFXImage());
+			} else if (floor == 4)
+			{
+				floorImage.setImage(f4ImageProxy.getFXImage());
+			} else if (floor == 5)
+			{
+				floorImage.setImage(f5ImageProxy.getFXImage());
+			} else if (floor == 6)
+			{
+				floorImage.setImage(f6ImageProxy.getFXImage());
+			} else if (floor == 7)
+			{
+				floorImage.setImage(f7ImageProxy.getFXImage());
+			}
 		}
 	}
 

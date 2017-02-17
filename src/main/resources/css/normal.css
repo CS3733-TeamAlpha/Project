@@ -41,6 +41,11 @@
     -fx-prompt-text-fill: gray;
 }
 
+.menu-item .label
+{
+    -fx-font-size: 13pt;
+}
+
 #node-button-unselected
 {
     -fx-background-radius: 5em;

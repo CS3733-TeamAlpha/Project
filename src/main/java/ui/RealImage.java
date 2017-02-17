@@ -36,16 +36,16 @@ public class RealImage implements Image {
 	}
 
 	private void loadFromDisk(String fileName) {
-		System.out.println("Loading " + fileName);
-
-		// Load image from filename to img
-		try {
-
-			System.out.println(fileName);
-			img = ImageIO.read(getClass().getResource(fileName).openStream());
-		} catch (IOException e) {
-			System.out.println(fileName);
-			e.printStackTrace();
+		if (img == null) { // Only load image if it isn't loaded yet
+			// Load image from filename to img
+			System.out.println("Loading " + fileName); // Let us know we're loading
+			try {
+				System.out.println(fileName);
+				img = ImageIO.read(getClass().getResource(fileName).openStream());
+			} catch (IOException e) {
+				System.out.println(fileName);
+				e.printStackTrace();
+			}
 		}
 
 	}
