@@ -18,6 +18,7 @@ import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
 import pathfinding.Node;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,6 +28,8 @@ public class MapController extends BaseController
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
+	private boolean pathGoesDown = false;
+	private boolean pathGoesUp = false;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
 	private Node selected;
@@ -100,7 +103,12 @@ public class MapController extends BaseController
 					line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
 					line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 					line.setStrokeWidth(10);
-					line.setStroke(Color.BLUE);
+					// Change color for line if it is high contrast
+					if (Accessibility.isHighContrast()) {
+						line.setStroke(Color.WHITE);
+					} else {
+						line.setStroke(Color.BLUE);
+					}
 					editingFloor.getChildren().add(1,line);
 					currentPath.add(line);
 				}
@@ -143,13 +151,23 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
-		if(FLOORID > 1){
-			//remove all buttons and lines on the current floor
-			purgeButtons();
-			FLOORID--;
-			loadNodesFromDatabase();
-			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+		//If the path goes down, make the button jump straight to bottom floor
+		if (pathGoesDown) { //TODO make this stuff
+
+		} else {
+			if (FLOORID > 1) {
+				//remove all buttons and lines on the current floor
+				purgeButtons();
+				FLOORID--;
+				loadNodesFromDatabase();
+				currentFloorLabel.setText(Integer.toString(FLOORID));
+				setFloorImage(FLOORID);
+				//Delete line
+				for (Line l: currentPath) {
+					editingFloor.getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
 		}
 	}
 
@@ -160,13 +178,22 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor(ActionEvent event) {
-		if(FLOORID < 7){
-			//remove all buttons and lines on the current floor
-			purgeButtons();
-			FLOORID++;
-			loadNodesFromDatabase();
-			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+		if (pathGoesUp) { //TODO make this stuff
+
+		} else {
+			if (FLOORID < 7) {
+				//remove all buttons and lines on the current floor
+				purgeButtons();
+				FLOORID++;
+				loadNodesFromDatabase();
+				currentFloorLabel.setText(Integer.toString(FLOORID));
+				setFloorImage(FLOORID);
+				//Delete line
+				for (Line l: currentPath) {
+					editingFloor.getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
 		}
 	}
 
@@ -266,26 +293,46 @@ public class MapController extends BaseController
 	 * @param n the node to load into the scene
 	 * TODO: Stole this from map editor, may want to fix
 	 */
-	private void loadNode(Node n)
+	private void loadNode(Node n, ArrayList<LabelThingy> thingies)
 	{
-		//new button
-		Button nodeB = new Button();
+		if(n.getType() != 0)
+		{
+			//new button
+			Button nodeB = new Button();
 
-		//experimental style changes to make the button a circle
-		nodeB.setId("node-button-unselected");
+			//experimental style changes to make the button a circle
+			nodeB.setId("node-button-unselected");
 
-		//add node to nodeButtons
-		nodeButtons.put(nodeB, n);
+			//add node to nodeButtons
+			nodeButtons.put(nodeB, n);
 
-		//set button XY coordinates
-		nodeB.setLayoutX(n.getX() - XOFFSET);
-		nodeB.setLayoutY(n.getY() - YOFFSET);
+			//set button XY coordinates
+			nodeB.setLayoutX(n.getX() - XOFFSET);
+			nodeB.setLayoutY(n.getY() - YOFFSET);
 
-		setButtonImage(nodeB, n.getType());
+			setButtonImage(nodeB, n.getType());
+			if (n.getType() == 1)
+			{
+				Label roomLabel = new Label(n.getName());
+				roomLabel.setLayoutX(nodeB.getLayoutX() - 10);
+				roomLabel.setLayoutY(nodeB.getLayoutY() - 25);
+				roomLabel.setId("roomLabel");
+				editingFloor.getChildren().add(1, roomLabel);
+			}
 
-		nodeB.setOnAction(event -> showRoomInfo(n));
-		//add button to scene
-		editingFloor.getChildren().add(1, nodeB);
+			nodeB.setOnAction(event -> showRoomInfo(n));
+			//add button to scene
+			editingFloor.getChildren().add(1, nodeB);
+		}
+	}
+
+	private void addLabels(LabelThingy thingy)
+	{
+		Label roomLabel = new Label(thingy.text);
+		roomLabel.setLayoutX(thingy.x-10);
+		roomLabel.setLayoutY(thingy.y-35);
+		roomLabel.setId("roomLabel");
+		editingFloor.getChildren().add(1, roomLabel);
 	}
 
 	/**
@@ -294,8 +341,16 @@ public class MapController extends BaseController
 	 */
 	public void loadNodesFromDatabase()
 	{
-		for (Node n : database.getNodesInBuildingFloor(BUILDINGID, FLOORID))
-			loadNode(n);
+		ArrayList<LabelThingy> points = new ArrayList<>();
+
+		ArrayList<Node> nodesInBuildingFloor = database.getNodesInBuildingFloor(BUILDINGID, FLOORID);
+		for (Node n : nodesInBuildingFloor)
+			loadNode(n, points);
+
+		for(LabelThingy thingy : points)
+		{
+			addLabels(thingy);
+		}
 	}
 
 	/**
@@ -314,4 +369,11 @@ public class MapController extends BaseController
 		nodeButtons.clear();
 	}
 
+
+	class LabelThingy
+	{
+		int displayX, displayY;
+		int x, y;
+		String text = "";
+	}
 }

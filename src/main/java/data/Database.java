@@ -259,7 +259,7 @@ public class Database implements AdminStorage
 			for (String prv : node.getProviders()) //Is this dupe'd code? why yes, yes it is!
 			{
 				String prvUUID = getProviderUUID(prv);
-				if (prvUUID.length() != 36)
+				if (prvUUID.isEmpty())
 				{
 					//Provider does not exist
 					prvUUID = UUID.randomUUID().toString();
