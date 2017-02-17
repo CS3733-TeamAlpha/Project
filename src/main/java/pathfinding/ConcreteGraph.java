@@ -137,7 +137,7 @@ public class ConcreteGraph implements Graph
 		{
 			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
 			if (path.get(i).getFloor() != path.get(i+1).getFloor())
-				temp.add("Take the elevator to floor" + path.get(i+1).getFloor() + ", then");
+				temp.add("Take the elevator to floor " + path.get(i+1).getFloor() + ", then");
 			else
 			temp.add(path.get(i).angle(path.get(i+1), path.get(i+2)) + ", then");
 		}
