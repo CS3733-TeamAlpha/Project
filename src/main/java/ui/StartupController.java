@@ -1,7 +1,6 @@
 package ui;
 
 import data.SearchResult;
-import data.Searchable;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -17,11 +16,9 @@ public class StartupController extends BaseController
 	private ContextMenu contextMenu;
 	public TextField searchBox;
 
-	private Searchable searchable;
-
 	public StartupController()
 	{
-		searchable = database;
+
 	}
 
 	public void initialize()
@@ -32,7 +29,7 @@ public class StartupController extends BaseController
 
 		searchBox.textProperty().addListener(((observable, oldValue, newValue) ->
 		{
-			ArrayList<SearchResult> results = searchable.getResultsForSearch(newValue);
+			ArrayList<SearchResult> results = database.getResultsForSearch(newValue, true);
 			contextMenu.getItems().remove(0, contextMenu.getItems().size());
 			for(SearchResult result : results)
 			{

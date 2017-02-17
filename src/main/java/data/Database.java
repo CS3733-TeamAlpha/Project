@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for database access using java derby.
  */
-public class Database implements AdminStorage, Searchable
+public class Database implements AdminStorage
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
@@ -319,6 +319,40 @@ public class Database implements AdminStorage, Searchable
 			return nodeCache.get(uuid);
 
 		return null;
+	}
+
+	/**
+	 * Gets a node by its XY coordinates and floor.
+	 * This is used for connecting elevators to each other. We assume elevators have
+	 * the exact same XY coordinates.
+	 *
+	 * @param x X coordinate of node to search for
+	 * @param y Y coordinate of node to search for
+	 * @param floor Floor on which the search node should reside
+	 * @return
+	 */
+	public Node getElevatorNodeByFloorCoordinates(double x, double y, int floor)
+	{
+		Node ret = null;
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM Nodes WHERE posX = ? AND posY = ? AND floor = ?");
+			pstmt.setDouble(1, x);
+			pstmt.setDouble(2, y);
+			pstmt.setInt(3, floor);
+
+			ResultSet results = pstmt.executeQuery();
+
+			if (results.next())
+				ret = nodeCache.get(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to retrieve node from database.");
+			e.printStackTrace();
+		}
+
+		return ret;
 	}
 
 	/**
@@ -863,7 +897,6 @@ public class Database implements AdminStorage, Searchable
 
 				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
 			}
-			System.out.println(nodeCache);
 
 		} catch (SQLException e)
 		{
@@ -884,14 +917,13 @@ public class Database implements AdminStorage, Searchable
 		return connected;
 	}
 
-	@Override
-	public ArrayList<SearchResult> getResultsForSearch(String searchText)
+	public ArrayList<SearchResult> getResultsForSearch(String searchText, boolean top6)
 	{
 		try
 		{
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
 			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Nodes WHERE NAME LIKE ? UNION " +
-					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?");
+					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
@@ -901,6 +933,7 @@ public class Database implements AdminStorage, Searchable
 				res.displayText = results.getString("Name");
 				searchResults.add(res);
 			}
+
 			return searchResults;
 
 		} catch (SQLException e)

@@ -27,6 +27,8 @@ class Paths
 	public static final String FLOOR6_CONTRAST = "/Floors/floor6Contrast.png";
 	public static final String FLOOR7_CONTRAST = "/Floors/floor7Contrast.png";
 
+
+	public static final String HALLWAYICON = "/images/nodeIcon.png";
 	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
 	public static final String DOCTORICON = "/images/DoctorIcon2.png";
 	public static final String RESTROOMICON = "/images/UniRestroomIcon.png";
