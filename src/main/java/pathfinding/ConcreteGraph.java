@@ -120,7 +120,7 @@ public class ConcreteGraph implements Graph
 	 */
 	//TODO: edge cases like only two nodes
 	//TODO: test
-	public ArrayList<String> textDirect(Node start, Node end, int scaleFactor)
+	public ArrayList<String> textDirect(Node start, Node end, double scaleFactor)
 	{
 		ArrayList<Node> path = findPath(start, end);
 		Node hold;
