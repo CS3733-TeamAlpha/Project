@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 
 public class StartupController extends BaseController
 {
-
+	public ImageView searchImage;
 	public ImageView eyeImage;
 	public ImageView lockImage;
 	public ContextMenu contextMenu;
