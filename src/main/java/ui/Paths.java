@@ -62,4 +62,5 @@ class Paths
 	public static ProxyImage doctorImageProxy = new ProxyImage(Paths.DOCTORICON);
 	public static ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
 	public static ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
+	public static ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
 }

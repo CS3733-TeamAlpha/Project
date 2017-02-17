@@ -3,6 +3,7 @@ package ui;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -18,12 +19,14 @@ import pathfinding.Graph;
 import pathfinding.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapController extends BaseController
 {
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
+	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
 
 
@@ -44,7 +47,7 @@ public class MapController extends BaseController
 	@FXML
 	private Label roomDescription;
 	@FXML
-	private AnchorPane imgAnchor;
+	private AnchorPane editingFloor;
 	@FXML
 	private Button upFloor;
 	@FXML
@@ -75,7 +78,7 @@ public class MapController extends BaseController
 				Button b = new Button("+");
 				b.setLayoutX(n.getX());
 				b.setLayoutY(n.getY());
-				imgAnchor.getChildren().add(1, b);
+				editingFloor.getChildren().add(1, b);
 				b.setOnAction(new EventHandler<ActionEvent>() //not a typo btw
 				{
 					@Override
@@ -121,7 +124,7 @@ public class MapController extends BaseController
 					line.setEndY(path.get(i+1).getY()+15);
 					line.setStrokeWidth(10);
 					line.setStroke(Color.BLUE);
-					imgAnchor.getChildren().add(1,line);
+					editingFloor.getChildren().add(1,line);
 					currentPath.add(line);
 				}
 			}
@@ -160,14 +163,14 @@ public class MapController extends BaseController
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
-	 * TODO: Make the min floor change depending on current building (iteration 3)
+	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
 		if(FLOORID > 1){
 			//remove all buttons and lines on the current floor
-			//purgeButtonsAndLines();
+			purgeButtons();
 			FLOORID--;
-			//loadNodesFromDatabase();
+			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(FLOORID);
 		}
@@ -177,15 +180,14 @@ public class MapController extends BaseController
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
-	 * TODO: Make the max floor change depending on current building (iteration 3)
-	 * TODO: Make them actually work
+	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor(ActionEvent event) {
 		if(FLOORID < 7){
 			//remove all buttons and lines on the current floor
-			//purgeButtonsAndLines();
+			purgeButtons();
 			FLOORID++;
-			//loadNodesFromDatabase();
+			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(FLOORID);
 		}
@@ -196,6 +198,7 @@ public class MapController extends BaseController
 	 * a specific floor.
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
+	 * TODO: Stole this from map editor, may want to fix
 	 */
 	private void setFloorImage(int floor)
 	{
@@ -249,6 +252,87 @@ public class MapController extends BaseController
 				floorImage.setImage(f7ImageProxy.getFXImage());
 			}
 		}
+	}
+
+	// TODO: Stole this from map editor, may want to fix
+	private void setButtonImage(Button b, int type)
+	{
+		if(type == 1)
+		{
+			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 2)
+		{
+			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 3)
+		{
+			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 0)
+		{
+		}
+	}
+
+	/**
+	 * Create a button on the scene and associate it with a node
+	 *
+	 * @param n the node to load into the scene
+	 * TODO: Stole this from map editor, may want to fix
+	 */
+	private void loadNode(Node n)
+	{
+		//new button
+		Button nodeB = new Button();
+
+		//experimental style changes to make the button a circle
+		nodeB.setId("node-button-unselected");
+
+		//add node to nodeButtons
+		nodeButtons.put(nodeB, n);
+
+		//set button XY coordinates
+		nodeB.setLayoutX(n.getX() - XOFFSET);
+		nodeB.setLayoutY(n.getY() - YOFFSET);
+
+		setButtonImage(nodeB, n.getType());
+		//add button to scene
+		editingFloor.getChildren().add(1, nodeB);
+	}
+
+	/**
+	 * Load all nodes from the databasecontroller's list of nodes onto our scene
+	 * TODO: Stole this from map editor, may want to fix
+	 */
+	public void loadNodesFromDatabase()
+	{
+		for (Node n : database.getNodesInBuildingFloor(BUILDINGID, FLOORID))
+			loadNode(n);
+	}
+
+	/**
+	 * Hide all node buttons for the current floor, in preperation for changing floors.
+	 */
+	private void purgeButtons()
+	{
+		for(Button b: nodeButtons.keySet())
+		{
+			Node linkedNode = nodeButtons.get(b);
+
+			//remove this button from the UI
+			((AnchorPane) b.getParent()).getChildren().remove(b);
+		}
+		//clear all entries in nodeButtonLinks
+		nodeButtons.clear();
 	}
 
 }

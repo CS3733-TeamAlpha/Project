@@ -43,18 +43,13 @@ public class MapEditorToolController extends BaseController
 	Arc SELECTIONWEDGE = new Arc();
 
 
-	//define widths for circles/lines that the canvas will draw
-	double CIRCLEWIDTH = 13.0;
-	double LINEWIDTH = 2.5;
+
 
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
 
-	//X and Y offsets, for button placement.
-	//TODO: fine tune offsets to make button placement visuals better
-	private double XOFFSET = CIRCLEWIDTH/2;
-	private double YOFFSET = CIRCLEWIDTH/2;
+
 
 
 	//enums to indicate current state
@@ -81,19 +76,11 @@ public class MapEditorToolController extends BaseController
 	private int contextSelection = -1; //default to -1, no context menu option selected
 
 
-	private String BUILDINGID = "00000000-0000-0000-0000-000000000000";
+
 
 	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
 	//TODO: should nodes be able to be moved to different floor? probably not
 
-	private ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
-	private ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
-	private ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
-	private ProxyImage removeNeighborImageProxy = new ProxyImage(Paths.REMOVENEIGHBOR);
-	private ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
-	private ProxyImage doctorImageProxy = new ProxyImage(Paths.DOCTORICON);
-	private ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
-	private ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
 
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
@@ -263,10 +250,10 @@ public class MapEditorToolController extends BaseController
 	private void setupImageEventHandlers()
 	{
 		//set the imaveview objects to use the correct images
-		hallwayImage.setImage(hallwayImageProxy.getFXImage());
-		officeImage.setImage(doctorImageProxy.getFXImage());
-		restroomImage.setImage(restroomImageProxy.getFXImage());
-		elevatorImage.setImage(elevatorImageProxy.getFXImage());
+		hallwayImage.setImage(Paths.hallwayImageProxy.getFXImage());
+		officeImage.setImage(Paths.doctorImageProxy.getFXImage());
+		restroomImage.setImage(Paths.restroomImageProxy.getFXImage());
+		elevatorImage.setImage(Paths.elevatorImageProxy.getFXImage());
 
 		//For each image, set OnMouseDragged to change currentstate and
 		//modify the images' XY coordinates
@@ -418,22 +405,22 @@ public class MapEditorToolController extends BaseController
 
 			case SHOWINGEMPTYMENU: //context menu for non-nodes
 
-				option1 = new ImageView(addNeighborImageProxy.getFXImage());
+				option1 = new ImageView(Paths.addNeighborImageProxy.getFXImage());
 				option1.setScaleX(0.15);
 				option1.setScaleY(0.15);
 				option1.setX(imageOffsetX + CONTEXTRAD - CONTEXTWIDTH / 2);
 				option1.setY(imageOffsetY);
-				option2 = new ImageView(doctorImageProxy.getFXImage());
+				option2 = new ImageView(Paths.doctorImageProxy.getFXImage());
 				option2.setScaleX(0.15);
 				option2.setScaleY(0.15);
 				option2.setX(imageOffsetX);
 				option2.setY(imageOffsetY + CONTEXTRAD - CONTEXTWIDTH / 2);
-				option3 = new ImageView(restroomImageProxy.getFXImage());
+				option3 = new ImageView(Paths.restroomImageProxy.getFXImage());
 				option3.setScaleX(0.15);
 				option3.setScaleY(0.15);
 				option3.setX(imageOffsetX - CONTEXTRAD + CONTEXTWIDTH / 2);
 				option3.setY(imageOffsetY);
-				option4 = new ImageView(elevatorImageProxy.getFXImage());
+				option4 = new ImageView(Paths.elevatorImageProxy.getFXImage());
 				option4.setScaleX(0.15);
 				option4.setScaleY(0.15);
 				option4.setX(imageOffsetX);
@@ -444,22 +431,22 @@ public class MapEditorToolController extends BaseController
 
 				//node specific context menu
 
-				option1 = new ImageView(addNeighborImageProxy.getFXImage());
+				option1 = new ImageView(Paths.addNeighborImageProxy.getFXImage());
 				option1.setScaleX(0.15);
 				option1.setScaleY(0.15);
 				option1.setX(imageOffsetX + CONTEXTRAD - CONTEXTWIDTH / 2);
 				option1.setY(imageOffsetY);
-				option2 = new ImageView(removeNeighborImageProxy.getFXImage());
+				option2 = new ImageView(Paths.removeNeighborImageProxy.getFXImage());
 				option2.setScaleX(0.15);
 				option2.setScaleY(0.15);
 				option2.setX(imageOffsetX);
 				option2.setY(imageOffsetY + CONTEXTRAD - CONTEXTWIDTH / 2);
-				option3 = new ImageView(removeNodeImageProxy.getFXImage());
+				option3 = new ImageView(Paths.removeNodeImageProxy.getFXImage());
 				option3.setScaleX(0.15);
 				option3.setScaleY(0.15);
 				option3.setX(imageOffsetX - CONTEXTRAD + CONTEXTWIDTH / 2);
 				option3.setY(imageOffsetY);
-				option4 = new ImageView(chainImageProxy.getFXImage());
+				option4 = new ImageView(Paths.chainImageProxy.getFXImage());
 				option4.setScaleX(0.15);
 				option4.setScaleY(0.15);
 				option4.setX(imageOffsetX);
@@ -810,21 +797,21 @@ public class MapEditorToolController extends BaseController
 	{
 		if(type == 1)
 		{
-			ImageView buttonImage = new ImageView(doctorImageProxy.getFXImage());
+			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
 		}
 		else if(type == 2)
 		{
-			ImageView buttonImage = new ImageView(elevatorImageProxy.getFXImage());
+			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
 		}
 		else if(type == 3)
 		{
-			ImageView buttonImage = new ImageView(restroomImageProxy.getFXImage());
+			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
