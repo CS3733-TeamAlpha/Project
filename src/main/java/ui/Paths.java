@@ -3,7 +3,6 @@ package ui;
 class Paths
 {
 
-
 	public static final String LOGIN_FXML = "/fxml/Login.fxml";
 	public static final String DIRECTORY_FXML = "/fxml/Directory.fxml";
 	public static final String MAP_FXML = "/fxml/Map.fxml";

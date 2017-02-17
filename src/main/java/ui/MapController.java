@@ -85,10 +85,8 @@ public class MapController extends BaseController
 		}
 		graph = new ConcreteGraph();
 
-		if(Accessibility.isHighContrast())
-		{
-			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
-		}
+
+		setFloorImage(FLOORID);
 
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
@@ -165,10 +163,10 @@ public class MapController extends BaseController
 		if(FLOORID > 1){
 			//remove all buttons and lines on the current floor
 			//purgeButtonsAndLines();
-			//FLOORID--;
+			FLOORID--;
 			//loadNodesFromDatabase();
-			//currentFloorLabel.setText(Integer.toString(FLOORID));
-			//setFloorImage(FLOORID);
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(FLOORID);
 		}
 	}
 
@@ -183,10 +181,10 @@ public class MapController extends BaseController
 		if(FLOORID < 7){
 			//remove all buttons and lines on the current floor
 			//purgeButtonsAndLines();
-			//FLOORID++;
+			FLOORID++;
 			//loadNodesFromDatabase();
-			//currentFloorLabel.setText(Integer.toString(FLOORID));
-			//setFloorImage(FLOORID);
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(FLOORID);
 		}
 	}
 
