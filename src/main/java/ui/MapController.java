@@ -62,37 +62,15 @@ public class MapController extends BaseController
 	{
 		super();
 	}
-
+	
 	public void initialize()
 	{
 		hideRoomInfo();
 		ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
-		for (Node n:nodes)
-		{
-			System.out.println(n.getFloor());
-			System.out.println(n.getBuilding());
-			System.out.println("_");
-			if(n.getType() != 0) //If n isn't a hallway node... TODO: Create node type enumeration
-			{
-				Button b = new Button("+");
-				b.setLayoutX(n.getX());
-				b.setLayoutY(n.getY());
-				editingFloor.getChildren().add(1, b);
-				b.setOnAction(new EventHandler<ActionEvent>() //not a typo btw
-				{
-					@Override
-					public void handle(ActionEvent event)
-					{
-						showRoomInfo(n);
-					}
-				});
-			}
-		}
 		graph = new ConcreteGraph();
-
-
-		setFloorImage(FLOORID);
+		loadNodesFromDatabase(); //Get nodes in from database
+		setFloorImage(FLOORID); //Set image of floor
 
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
