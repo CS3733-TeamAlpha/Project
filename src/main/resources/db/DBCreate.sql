@@ -5,7 +5,7 @@ CREATE TABLE Nodes
   posY DOUBLE NOT NULL,
   type INTEGER, --can be an enum in java?  //options are service, provider, hallway
   floor INTEGER NOT NULL,
-  building VARCHAR(36) NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
+  building VARCHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
   name VARCHAR(128)
 );
 
@@ -54,12 +54,3 @@ CREATE TABLE Logins
 --Delete all nodes in the building if the building gets deleted
 ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE;
 INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'default');
-
-CREATE TABLE AdminAccounts
-(
-  username VARCHAR(36) PRIMARY KEY NOT NULL,
-  password VARCHAR(60) NOT NULL
-);
-
-INSERT INTO Nodes VALUES('00000000-0000-0000-0000-000000000090', 'Vascular Surgery  ', 'Practice',1032, 888 , 5);
-INSERT INTO Nodes VALUES('00000000-0000-0000-0000-000000000091', 'Volunteer Services', 'Service',1000, 750 , 3);

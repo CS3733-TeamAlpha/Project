@@ -52,4 +52,13 @@ class Paths
 	public static ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
 	public static ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
 	public static ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
+
+	// Make proxyimages for icons
+	public static ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
+	public static ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
+	public static ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
+	public static ProxyImage removeNeighborImageProxy = new ProxyImage(Paths.REMOVENEIGHBOR);
+	public static ProxyImage doctorImageProxy = new ProxyImage(Paths.DOCTORICON);
+	public static ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
+	public static ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
 }

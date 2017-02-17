@@ -23,7 +23,7 @@ public class ProviderBox extends HBox
 	//Basically, the AbstractController class will inject the right database object into this. Gah!
 	static Database database = null;
 
-	private Provider provider; //TODO: EXTERMINATE
+	private Provider provider;
 	@FXML
 	private TextField firstNameField;
 	@FXML
@@ -34,7 +34,6 @@ public class ProviderBox extends HBox
 	private ChoiceBox locationSelector;
 	@FXML
 	private VBox locationsVBox;
-
 
 	public ProviderBox(){
 		super();
@@ -55,11 +54,6 @@ public class ProviderBox extends HBox
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 	}
 
-	//public ProviderBox(Provider p){
-	//	this();
-	//	provider = p;
-	//	refreshBox();
-	//}
 
 	@FXML
 	protected void addLocation(){

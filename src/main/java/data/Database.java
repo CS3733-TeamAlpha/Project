@@ -863,7 +863,6 @@ public class Database implements AdminStorage, Searchable
 
 				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
 			}
-			System.out.println(nodeCache);
 
 		} catch (SQLException e)
 		{

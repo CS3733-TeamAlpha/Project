@@ -94,7 +94,7 @@ public class DirectoryController extends BaseController
 		});
 		TextField lname = new TextField();
 		lname.setText(p.name.split(",")[0]);
-		lname.setOnAction(event ->
+		lname.textProperty().addListener(event ->
 		{
 			System.out.println("lname Registered event");
 			if(!modifiedProvidersList.contains(p)){
@@ -104,7 +104,7 @@ public class DirectoryController extends BaseController
 		});
 		TextField title = new TextField();
 		title.setText(p.name.split(";")[1]);
-		title.setOnAction(event ->
+		title.textProperty().addListener(event ->
 		{
 			System.out.println("title Registered event");
 			if(!modifiedProvidersList.contains(p)){
@@ -133,6 +133,7 @@ public class DirectoryController extends BaseController
 
 			int idIndex = s.indexOf(":");
 			s = s.substring(0, idIndex);
+			System.out.println("Trying to add location " + s);
 
 			if(database.getNodeByUUID(s) != null)
 			{
@@ -155,6 +156,7 @@ public class DirectoryController extends BaseController
 				});
 				innerH.getChildren().addAll(locL, xBut);
 				newV.getChildren().add(innerH);
+				modifiedProvidersList.add(p);
 			}
 		});
 
