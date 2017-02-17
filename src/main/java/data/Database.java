@@ -953,7 +953,7 @@ public class Database implements AdminStorage
 		runScript(DB_DROP_ALL);
 		runScript(DB_CREATE_SQL);
 		runScript(DB_INSERT_SQL);
-		runScript(DB_INSERT_EDGES);
+		//runScript(DB_INSERT_EDGES);
 
 		reloadCache();
 	}
