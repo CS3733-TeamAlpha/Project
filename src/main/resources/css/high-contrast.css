@@ -26,7 +26,37 @@
     -fx-border-color: white;
 }
 
+.line
+{
+    -fx-stroke: white;
+}
+
 .hc-invisible
 {
     visibility: hidden;
+}
+
+
+#node-button-unselected
+{
+    -fx-background-radius: 5em;
+    -fx-min-width: 13px;
+    -fx-min-height: 13px;
+    -fx-max-width: 13px;
+    -fx-max-height: 13px;
+    -fx-background-color: #00ff00;
+    -fx-text-fill: null;
+    -fx-border-color: null;
+}
+
+#node-button-selected
+{
+    -fx-background-radius: 5em;
+    -fx-min-width: 13px;
+    -fx-min-height: 13px;
+    -fx-max-width: 13px;
+    -fx-max-height: 13px;
+    -fx-background-color: #0000ff;
+    -fx-text-fill: null;
+    -fx-border-color: null;
 }

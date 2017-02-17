@@ -18,6 +18,14 @@ class Paths
 	public static final String FLOOR6_NORMAL = "/Floors/floor6ColorSchemeNoLines.png";
 	public static final String FLOOR7_NORMAL = "/Floors/floor7ColorSchemeNoLines.png";
 
+	public static final String FLOOR1_CONTRAST = "/Floors/floor1Contrast.png";
+	public static final String FLOOR2_CONTRAST = "/Floors/floor2Contrast.png";
+	public static final String FLOOR3_CONTRAST = "/Floors/floor3Contrast.png";
+	public static final String FLOOR4_CONTRAST = "/Floors/floor4Contrast.png";
+	public static final String FLOOR5_CONTRAST = "/Floors/floor5Contrast.png";
+	public static final String FLOOR6_CONTRAST = "/Floors/floor6Contrast.png";
+	public static final String FLOOR7_CONTRAST = "/Floors/floor7Contrast.png";
+
 	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
 	public static final String DOCTORICON = "/images/DoctorIcon2.png";
 	public static final String RESTROOMICON = "/images/UniRestroomIcon.png";
