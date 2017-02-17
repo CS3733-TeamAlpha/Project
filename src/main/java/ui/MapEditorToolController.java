@@ -85,14 +85,6 @@ public class MapEditorToolController extends BaseController
 	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
 	//TODO: should nodes be able to be moved to different floor? probably not
 
-	private ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
-	private ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
-	private ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
-	private ProxyImage f4ImageProxy = new ProxyImage(Paths.FLOOR4_NORMAL);
-	private ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
-	private ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
-	private ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
-
 	private ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
 	private ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
 	private ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
