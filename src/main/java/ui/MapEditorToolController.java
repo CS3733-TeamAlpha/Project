@@ -13,6 +13,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -56,6 +57,24 @@ public class MapEditorToolController extends BaseController
 	private double YOFFSET = CIRCLEWIDTH/2;
 
 
+	// Make proxyimages to store floor pictures
+	ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
+	ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
+	ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
+	ProxyImage f4ImageProxy = new ProxyImage(Paths.FLOOR4_NORMAL);
+	ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
+	ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
+	ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
+
+	ProxyImage f1ContrastProxy = new ProxyImage(Paths.FLOOR1_CONTRAST);
+	ProxyImage f2ContrastProxy = new ProxyImage(Paths.FLOOR2_CONTRAST);
+	ProxyImage f3ContrastProxy = new ProxyImage(Paths.FLOOR3_CONTRAST);
+	ProxyImage f4ContrastProxy = new ProxyImage(Paths.FLOOR4_CONTRAST);
+	ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
+	ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
+	ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
+
+
 	//enums to indicate current state
 	private enum editorStates {
 		DOINGNOTHING,
@@ -82,7 +101,6 @@ public class MapEditorToolController extends BaseController
 
 	private String BUILDINGID = "00000000-0000-0000-0000-000000000000";
 
-	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
 	//TODO: should nodes be able to be moved to different floor? probably not
 
 	private ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
@@ -154,8 +172,6 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	public void initialize()
 	{
-		if(Accessibility.isHighContrast())
-			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
 
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();
@@ -170,6 +186,14 @@ public class MapEditorToolController extends BaseController
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent e){
 				clickFloorImage(e);
+			}
+		});
+		canvas.setOnMousePressed(new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent e){
+				if(e.isSecondaryButtonDown() && currentState == editorStates.CHAINADDING)
+				{
+					currentState = editorStates.DOINGNOTHING;
+				}
 			}
 		});
 		gc = canvas.getGraphicsContext2D();
@@ -195,20 +219,55 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void setFloorImage(int floor)
 	{
-		if(floor == 1){
-			floorImage.setImage(f1ImageProxy.getFXImage());
-		} else if(floor == 2){
-			floorImage.setImage(f2ImageProxy.getFXImage());
-		} else if(floor == 3){
-			floorImage.setImage(f3ImageProxy.getFXImage());
-		} else if(floor == 4){
-			floorImage.setImage(f4ImageProxy.getFXImage());
-		} else if(floor == 5){
-			floorImage.setImage(f5ImageProxy.getFXImage());
-		} else if(floor == 6){
-			floorImage.setImage(f6ImageProxy.getFXImage());
-		} else if(floor == 7){
-			floorImage.setImage(f7ImageProxy.getFXImage());
+		if(Accessibility.isHighContrast())
+		{
+			if (floor == 1)
+			{
+				floorImage.setImage(f1ContrastProxy.getFXImage());
+			} else if (floor == 2)
+			{
+				floorImage.setImage(f2ContrastProxy.getFXImage());
+			} else if (floor == 3)
+			{
+				floorImage.setImage(f3ContrastProxy.getFXImage());
+			} else if (floor == 4)
+			{
+				floorImage.setImage(f4ContrastProxy.getFXImage());
+			} else if (floor == 5)
+			{
+				floorImage.setImage(f5ContrastProxy.getFXImage());
+			} else if (floor == 6)
+			{
+				floorImage.setImage(f6ContrastProxy.getFXImage());
+			} else if (floor == 7)
+			{
+				floorImage.setImage(f7ContrastProxy.getFXImage());
+			}
+		}
+		else
+		{
+			if (floor == 1)
+			{
+				floorImage.setImage(f1ImageProxy.getFXImage());
+			} else if (floor == 2)
+			{
+				floorImage.setImage(f2ImageProxy.getFXImage());
+			} else if (floor == 3)
+			{
+				floorImage.setImage(f3ImageProxy.getFXImage());
+			} else if (floor == 4)
+			{
+				floorImage.setImage(f4ImageProxy.getFXImage());
+			} else if (floor == 5)
+			{
+				floorImage.setImage(f5ImageProxy.getFXImage());
+			} else if (floor == 6)
+			{
+				floorImage.setImage(f6ImageProxy.getFXImage());
+			} else if (floor == 7)
+			{
+				floorImage.setImage(f7ImageProxy.getFXImage());
+			}
 		}
 	}
 
@@ -539,44 +598,49 @@ public class MapEditorToolController extends BaseController
 		currentState = editorStates.DOINGNOTHING;
 	}
 
+	/**
+	 * Floor image is rightclicked, only useful for stopping chain adding
+	 * @param event
+	 */
+	@FXML
+	void rightclickFloorImage(ContextMenuEvent event) {
+		System.out.println("fuckinghas;dflkj");
+		currentState = editorStates.DOINGNOTHING;
+	}
+
 	@FXML
 	/**
 	 * Floor image clicked, hide node details.
 	 */
 	void clickFloorImage(MouseEvent e)
 	{
-		if(e.isSecondaryButtonDown())
+		switch (currentState)
 		{
-			currentState = editorStates.DOINGNOTHING;
-		} else
-		{
-			switch (currentState)
-			{
-				case CHAINADDING:
-					//create a new hallway node and connect it to the "current" node
-					//then update current
-					Node oldNode = currentNode;
-					createNewNode(e.getX(), e.getY(), 0);
-					//currentNode is now the new node
-					oldNode.addNeighbor(currentNode);
-					currentNode.addNeighbor(oldNode);
+			case CHAINADDING:
+				//create a new hallway node and connect it to the "current" node
+				//then update current
+				Node oldNode = currentNode;
+				createNewNode(e.getX(), e.getY(), 0);
+				//currentNode is now the new node
+				oldNode.addNeighbor(currentNode);
+				currentNode.addNeighbor(oldNode);
 
-					//update currentnode and linked node since both had neighbor added
-					database.updateNode(oldNode);
-					database.updateNode(currentNode);
+				//update currentnode and linked node since both had neighbor added
+				database.updateNode(oldNode);
+				database.updateNode(currentNode);
 
-					//draw connecting lines
-					drawToNeighbors(currentNode);
-					drawToNeighbors(oldNode);
+				//draw connecting lines
+				drawToNeighbors(currentNode);
+				drawToNeighbors(oldNode);
 
-					break;
-				default:
-					hideNodeDetails();
-					//set currentState to  indicate we are no longer in special state
-					currentState = editorStates.DOINGNOTHING;
-					break;
-			}
+				break;
+			default:
+				hideNodeDetails();
+				//set currentState to  indicate we are no longer in special state
+				currentState = editorStates.DOINGNOTHING;
+				break;
 		}
+
 	}
 
 	@FXML
@@ -879,7 +943,10 @@ public class MapEditorToolController extends BaseController
 				break;
 
 			default:
-				database.updateNode(currentNode);
+				if(currentNode != null)
+				{
+					database.updateNode(currentNode);
+				}
 				currentState = editorStates.DOINGNOTHING;
 				break;
 		}
@@ -961,7 +1028,6 @@ public class MapEditorToolController extends BaseController
 			{
 				for (Group g : lineGroups.get(linkedNode))
 				{
-					System.out.println("stuff");
 					// Removes all lines from oldLines from the UI
 					((AnchorPane) g.getParent()).getChildren().remove(g);
 				}
@@ -1098,46 +1164,6 @@ public class MapEditorToolController extends BaseController
 		typeField.setText("");
 		xField.setText("");
 		yField.setText("");
-	}
-
-	//TODO: this entire function should be defunct by DnD
-	/**
-	 * Create a new node on the map. alternatively, cancel new node creation
-	 */
-	public void addNewNodeClicked()
-	{
-		if (newNodeButton.getText().equals("Add a New Node"))
-		{
-			currentState = editorStates.MAKINGNEWHALLWAY;
-			newNodeButton.setText("Cancel New Node Creation");
-			editingFloor.getChildren().add(canvas);
-		}
-		else
-		{
-			currentState = editorStates.DOINGNOTHING;
-			newNodeButton.setText("Add a New Node");
-		}
-	}
-
-	/**
-	 * modify a node's location on the map. alternately, cancel node location modification
-	 * TODO: defunct function?
-	 */
-	@FXML
-	void modNodeLocation(ActionEvent event)
-	{
-		if (currentState != editorStates.MOVINGNODE)
-		{
-			clickModLocation.setText("Cancel");
-			//set booleans to track which state we are in right now
-			currentState = editorStates.MOVINGNODE;
-		}
-		else
-		{
-			clickModLocation.setText("Modify Location by Click");
-			//set booleans to track which state we are in right now
-			currentState = editorStates.DOINGNOTHING;
-		}
 	}
 
     /**
@@ -1283,6 +1309,10 @@ public class MapEditorToolController extends BaseController
 
 			Line line = new Line();
 			line.setStrokeWidth(LINEWIDTH);
+			if(Accessibility.isHighContrast())
+			{
+				line.setStroke(Color.WHITE);
+			}
 			line.setStartX(source.getX());
 			line.setStartY(source.getY());
 			line.setEndX(neighbor.getX());
