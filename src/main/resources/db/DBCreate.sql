@@ -5,7 +5,7 @@ CREATE TABLE Nodes
   posY DOUBLE NOT NULL,
   type INTEGER, --can be an enum in java?  //options are service, provider, hallway
   floor INTEGER NOT NULL,
-  building VARCHAR(36) NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
+  building VARCHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
   name VARCHAR(128)
 );
 
