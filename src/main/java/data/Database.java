@@ -865,7 +865,14 @@ public class Database implements AdminStorage
 			//Now link nodes together using the hashmap to speed things up:
 			results = statement.executeQuery("SELECT * FROM Edges");
 			while (results.next())
-				nodeCache.get(results.getString(1)).addNeighbor(nodeCache.get(results.getString(2)));
+			{
+				Node src = nodeCache.get(results.getString(1));
+				Node dst = nodeCache.get(results.getString(2));
+				if (src == null || dst == null)
+					System.out.println("DATABASE TRYING TO CONNECT NULL NODE(S)!");
+				else
+					src.addNeighbor(dst);
+			}
 
 			//Load service info
 			results = statement.executeQuery("SELECT * FROM Services");

@@ -61,7 +61,7 @@ public class MapController extends BaseController
 	{
 		super();
 	}
-	
+
 	public void initialize()
 	{
 		hideRoomInfo();
