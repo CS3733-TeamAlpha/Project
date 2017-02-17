@@ -18,7 +18,8 @@ public class Database implements AdminStorage
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
-	private static final String DB_INSERT_SQL = "/db/DBCreate.sql";
+	private static final String DB_DROP_ALL = "/db/DBDropAll.sql";
+	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 
 	private String dbName;
 	private boolean connected;
@@ -121,6 +122,7 @@ public class Database implements AdminStorage
 					//to begin with though...
 				}
 			}, "UTF-8");
+
 		} catch (IOException e)
 		{
 			System.out.println("Couldn't find database creation script... that's an error.");
@@ -943,5 +945,44 @@ public class Database implements AdminStorage
 		}
 
 		return null;
+	}
+
+	public void resetDatabase()
+	{
+		try
+		{
+			//http://apache-database.10148.n7.nabble.com/run-script-from-java-w-ij-td100234.html
+			ij.runScript(connection, getClass().getResource(DB_DROP_ALL).openStream(), "UTF-8", new OutputStream()
+			{
+				@Override
+				public void write(int i) throws IOException
+				{
+					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
+					//to begin with though...
+				}
+			}, "UTF-8");
+			ij.runScript(connection, getClass().getResource(DB_CREATE_SQL).openStream(), "UTF-8", new OutputStream()
+			{
+				@Override
+				public void write(int i) throws IOException
+				{
+					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
+					//to begin with though...
+				}
+			}, "UTF-8");
+			ij.runScript(connection, getClass().getResource(DB_INSERT_SQL).openStream(), "UTF-8", new OutputStream()
+			{
+				@Override
+				public void write(int i) throws IOException
+				{
+					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
+					//to begin with though...
+				}
+			}, "UTF-8");
+		} catch (IOException e)
+		{
+			System.out.println("Couldn't find database creation script... that's an error.");
+			e.printStackTrace();
+		}
 	}
 }

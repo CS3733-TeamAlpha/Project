@@ -1108,6 +1108,7 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void loadNode(Node n)
 	{
+		System.out.println("nodeloaded");
 		//new button
 		Button nodeB = new Button();
 
