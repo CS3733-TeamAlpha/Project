@@ -1,44 +1,90 @@
 package ui;
 
-import javafx.event.ActionEvent;
-import data.DatabaseController;
+import data.SearchResult;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 
-public class StartupController
+import java.util.ArrayList;
+
+public class StartupController extends BaseController
 {
+	public ImageView eyeImage;
+	public ImageView lockImage;
+	private ContextMenu contextMenu;
+	public TextField searchBox;
 
-	public StartupController(){}
+	public StartupController()
+	{
+
+	}
 
 	public void initialize()
 	{
+		updateLowerImages();
+		contextMenu = new ContextMenu();
+		contextMenu.setMaxWidth(searchBox.getWidth());
+
+		searchBox.textProperty().addListener(((observable, oldValue, newValue) ->
+		{
+			ArrayList<SearchResult> results = database.getResultsForSearch(newValue, true);
+			contextMenu.getItems().remove(0, contextMenu.getItems().size());
+			for(SearchResult result : results)
+			{
+				MenuItem item = new MenuItem(result.displayText);
+				contextMenu.getItems().add(item);
+			}
+
+			if(newValue.length() == 0)
+			{
+				contextMenu.hide();
+			}
+			else if(!contextMenu.isShowing())
+			{
+				contextMenu.show(searchBox, Side.BOTTOM, 0, 0);
+				contextMenu.setMinWidth(searchBox.getWidth());
+			}
+		}));
 	}
 
 	public void showMap()
 	{
-		DatabaseController.initializeAll();
-		Main.loadFXML("/fxml/Map.fxml");
+		loadFXML(Paths.MAP_FXML);
 	}
 
-	public void showDirectory()
+	public void ShowDirectory()
 	{
-		DatabaseController.initializeAll();
-		Main.loadFXML("/fxml/Directory.fxml");
+		loadFXML(Paths.DIRECTORY2_FXML);
 	}
 
 	public void showLogin()
 	{
-		//TODO: load up login instead of going straight to the editor tool
-		DatabaseController.initializeAll();
-		Main.loadFXML("/fxml/MapEditorTool.fxml");
-
+		loadFXML(Paths.LOGIN_FXML);
 	}
 
-	public void toggleHighContrast(ActionEvent actionEvent)
+	public void toggleHighContrast()
 	{
-		Accessibility.toggleHighContrast();
-		Main.toggleHighContrast();
+		Accessibility.toggleHighContrast(this);
+		updateLowerImages();
 	}
 
-	public void resetData(ActionEvent e){
-		DatabaseController.resetData();
+	private void updateLowerImages()
+	{
+		/*if(Accessibility.isHighContrast())
+		{
+			ColorAdjust white = new ColorAdjust();
+			white.setBrightness(1);
+			eyeImage.setEffect(white);
+			lockImage.setEffect(white);
+		}
+		else
+		{
+			ColorAdjust white = new ColorAdjust();
+			white.setBrightness(0.3);
+			eyeImage.setEffect(white);
+			lockImage.setEffect(white);
+		}*/
 	}
 }

@@ -1,27 +1,18 @@
 package ui;
 
-import data.DatabaseController;
 import data.Provider;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import pathfinding.Node;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
-public class DirectoryController
+public class DirectoryController extends BaseController
 {
 
 	//link buttons to node objects
@@ -56,10 +47,6 @@ public class DirectoryController
 
 	public void initialize()
 	{
-		DatabaseController.createConnection();
-		DatabaseController.initializeAllFloors();
-		DatabaseController.initializeAllNodes();
-		DatabaseController.initializeAllProviders();
 		loadProvidersFromDatabase();
 	}
 
@@ -68,232 +55,172 @@ public class DirectoryController
 	 */
 	public void loadProvidersFromDatabase()
 	{
-		for (Provider p : DatabaseController.getAllProviders())
+		for (String providerName : database.getProviders())
 		{
+			Provider p = new Provider(providerName, database.getProviderUUID(providerName));
+			p.locations.addAll(database.getProviderLocations(p.uuid));
 			loadProvider(p);
 		}
 	}
 
 	public void addNewProvider(){
-		Provider newP = null;
-		if(newProviderList.size() == 0){
-			newP = DatabaseController.generateNewProvider("FName", "LName", "Title");
-		} else {
-			newP = generateNewProvider();
-		}
-		loadProvider(newP);
+		Provider newProvider = new Provider("Last Name, First Name; Title", UUID.randomUUID().toString());
+		newProviderList.add(newProvider);
+		loadProvider(newProvider);
 	}
 
-	public Provider generateNewProvider()
-	{
-		int newID = newProviderList.get(newProviderList.size()-1).getID()+1;
-		return new Provider(newID, "FName", "LName", "Title");
-	}
 
 	public void loadProvider(Provider p)
 	{
 		//ProviderBox pb = new ProviderBox();
 		HBox newH = new HBox();
 		Button deleteBut = new Button("X");
-		deleteBut.setOnAction(new EventHandler<ActionEvent>()
+		deleteBut.setOnAction(event ->
 		{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				deleteProviderList.add(p);
-				((VBox) newH.getParent()).getChildren().remove(newH);
-			}
+			deleteProviderList.add(p);
+			((VBox) newH.getParent()).getChildren().remove(newH);
 		});
 		TextField fname = new TextField();
-		fname.setText(p.getfName());
-		fname.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event)
-			{
-				if(!modifiedProvidersList.contains(p)){
-					modifiedProvidersList.add(p);
-				}
+		fname.setText(p.name.split(";")[0].split(",")[1]);
+		fname.textProperty().addListener(event ->
+		{
+			if(!modifiedProvidersList.contains(p)){
+				modifiedProvidersList.add(p);
 			}
 		});
 		TextField lname = new TextField();
-		lname.setText(p.getlName());
-		lname.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event)
-			{
-				if(!modifiedProvidersList.contains(p)){
-					modifiedProvidersList.add(p);
-				}
-			}
+		lname.setText(p.name.split(",")[0]);
+		lname.textProperty().addListener(event ->
+		{
+			if(!modifiedProvidersList.contains(p))
+				modifiedProvidersList.add(p);
 		});
 		TextField title = new TextField();
-		title.setText(p.getTitle());
-		title.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event)
-			{
-				if(!modifiedProvidersList.contains(p)){
-					modifiedProvidersList.add(p);
-				}
-			}
+		title.setText(p.name.split(";")[1]);
+		title.textProperty().addListener(event ->
+		{
+			if(!modifiedProvidersList.contains(p))
+				modifiedProvidersList.add(p);
 		});
 		VBox newV = new VBox();
 		HBox newLocH = new HBox();
 		////////////////////
 
 		ChoiceBox locationSelector = new ChoiceBox();
-		ArrayList<Node> nodes = DatabaseController.getAllNodes();
-		ArrayList<String> nodeNames = new ArrayList<String>();
+		ArrayList<Node> nodes = database.getAllNodes();
+		ArrayList<String> nodeNames = new ArrayList<>();
 		for(Node n: nodes)
-		{
-			nodeNames.add(Integer.toString(n.getID())+":"+n.getData().get(0));
-		}
+			nodeNames.add(n.getID() + ":" +n.getName());
+
 		locationSelector.setItems(FXCollections.observableArrayList(nodeNames.toArray()));
 
+		//Location stuff
 		Button addBut = new Button("Add Location");
-		addBut.setOnAction(new EventHandler<ActionEvent>()
+		addBut.setOnAction(event ->
 		{
-			@Override
-			public void handle(ActionEvent event)
+			String s = locationSelector.getValue().toString();
+
+			int idIndex = s.indexOf(":");
+			s = s.substring(0, idIndex);
+
+			if(database.getNodeByUUID(s) != null)
 			{
-				String s = locationSelector.getValue().toString();
-
-				int idIndex = s.indexOf(":");
-				s = s.substring(0, idIndex);
-
-				if(DatabaseController.getNodeByID(Integer.parseInt(s)) != null)
+				Node n = database.getNodeByUUID(s);
+				p.locations.add(n);
+				HBox innerH = new HBox();
+				Label locL = new Label();
+				locL.setText("ID:" + n.getID() + ": " + n.getName()); //used to be .getData().get(0)
+				Button xBut = new Button("X");
+				xBut.setOnAction(event1 ->
 				{
-						int nodeID = Integer.parseInt(s);
-
-						Node n = DatabaseController.getNodeByID(nodeID);
-						p.addLocation(n);
-						HBox innerH = new HBox();
-						Label locL = new Label();
-						locL.setText("ID:" + n.getID() + ": " + n.getData().get(0));
-						Button xBut = new Button("X");
-						xBut.setOnAction(new EventHandler<ActionEvent>()
-						{
-							@Override
-							public void handle(ActionEvent event)
-							{
-								((VBox) innerH.getParent()).getChildren().remove(innerH);
-								if(!modifiedProvidersList.contains(p)){
-									modifiedProvidersList.add(p);
-								}
-							}
-						});
-						innerH.getChildren().addAll(locL, xBut);
-						newV.getChildren().add(innerH);
-				}
+					((VBox) innerH.getParent()).getChildren().remove(innerH);
+					if(!modifiedProvidersList.contains(p))
+						modifiedProvidersList.add(p);
+				});
+				innerH.getChildren().addAll(locL, xBut);
+				newV.getChildren().add(innerH);
+				modifiedProvidersList.add(p);
 			}
 		});
+
 		newLocH.getChildren().addAll(locationSelector, addBut);
 		newV.getChildren().add(newLocH);
-		for(Node n: p.getLocations())
+
+		for(Node n: p.locations)
 		{
 			HBox innerH = new HBox();
 			Label locL = new Label();
-			locL.setText("ID:"+n.getID()+": "+n.getData().get(0));
+			locL.setText("ID:"+n.getID()+": "+n.getName());
 			Button xBut = new Button("X");
-			xBut.setOnAction(new EventHandler<ActionEvent>()
+			xBut.setOnAction(event ->
 			{
-				@Override
-				public void handle(ActionEvent event)
-				{
-					p.removeLocation(n);
-					((VBox) innerH.getParent()).getChildren().remove(innerH);
-					if(!modifiedProvidersList.contains(p)){
-						modifiedProvidersList.add(p);
-					}
-				}
+				p.locations.remove(n);
+				((VBox) innerH.getParent()).getChildren().remove(innerH);
+				if(!modifiedProvidersList.contains(p))
+					modifiedProvidersList.add(p);
 			});
 			innerH.getChildren().addAll(locL, xBut);
 			newV.getChildren().add(innerH);
 		}
 		newH.getChildren().addAll(deleteBut, fname, lname, title, newV);
 		boxProviderLinks.put(p, newH);
-		//add button to scene
-		//TODO: set editingFloor to the correct panel name
 		scrollContents.getChildren().add(newH);
 	}
 
-	public void createNewProvider()
+	public void pushChangesToDatabase()
 	{
-		//TODO:
-	}
+		for (Provider provider : newProviderList)
+		{
+			database.addProvider(provider.name);
+			provider.uuid = database.getProviderUUID(provider.name); //what?
+			for (Node node : provider.locations)
+			{
+				node.addProvider(provider.name);
+				database.updateNode(node);
+			}
+		}
+		newProviderList.clear();
 
-	public void pushChangesToDatabase(){
 		for(Provider thisProvider: modifiedProvidersList){
 			HBox hb = boxProviderLinks.get(thisProvider);
-			//Provider thisProvider = boxProviderLinks.get(hb);
+			TextField title = (TextField)hb.getChildren().get(3);
+			TextField fn = (TextField)hb.getChildren().get(1);
+			TextField ln = (TextField)hb.getChildren().get(2);
+			String newName = ln.getText() + " ," + fn.getText() + "; " + title.getText();
 
-			TextField tit = (TextField)hb.getChildren().get(1);
-			thisProvider.setfName(tit.getText());
-			TextField fn = (TextField)hb.getChildren().get(2);
-			thisProvider.setlName(fn.getText());
-			TextField ln = (TextField)hb.getChildren().get(3);
-			thisProvider.setTitle(ln.getText());
-			System.out.println(thisProvider.getID()+ thisProvider.getfName()+thisProvider.getlName()+thisProvider.getTitle());
-			if(DatabaseController.getProviderByID(thisProvider.getID()) == null)
-			{
-				DatabaseController.insertProvider(thisProvider);
-			}
-			else
-			{
-				DatabaseController.modifyProviderTable(thisProvider);
-			}
+			//First go through each node in the list and remove this provider from it
+			for (Node node : thisProvider.locations)
+				node.delProvider(thisProvider.name);
 
-			ArrayList<Integer> pbIDs = new ArrayList<Integer>();
-			ArrayList<Integer> oldIDs = new ArrayList<Integer>();
+			//Rename the provider...
+			database.renameProvider(newName, thisProvider.uuid);
 
-			for(Node loc: thisProvider.getLocations())
-			{
-				pbIDs.add(loc.getID());
-			}
-			DatabaseController.initializeAllProviders();
-			for(Node n: DatabaseController.getProviderByID(thisProvider.getID()).getLocations())
-			{
-				oldIDs.add(n.getID());
-			}
-			for(int i: pbIDs){
-				if(!oldIDs.contains(i))
-				{
-					DatabaseController.insertOffice(thisProvider.getID(), i);
-				}
-			}
-			for(int i: oldIDs){
-				if(!pbIDs.contains(i))
-				{
-					DatabaseController.removeOffice(thisProvider.getID(), i);
-				}
-			}
+			//Now re-add the provider to all nodes
+			for (Node node : thisProvider.locations)
+				node.addProvider(newName);
 
+			//Rename the provider's name according to this thing
+			thisProvider.name = newName;
+
+			//And finally update the nodes
+			for (Node node : thisProvider.locations)
+				database.updateNode(node);
 		}
+		modifiedProvidersList.clear();
 
 		for(Provider p: deleteProviderList)
-		{
-			DatabaseController.removeOfficeByProvider(p.getID());
-			DatabaseController.removeProvider(p.getID());
-		}
-		for(Provider p: newProviderList)
-		{
-			System.out.println("Pls");
-			DatabaseController.insertProvider(p);
-			for(Node n: p.getLocations()){
-				DatabaseController.insertOffice(p.getID(), n.getID());
-			}
-		}
+			database.deleteProvider(p.uuid);
+		deleteProviderList.clear();
 	}
-
 
 	public void showMap()
 	{
-		Main.loadFXML("/fxml/Map.fxml");
+		loadFXML(Paths.MAP_FXML);
 	}
 
 	public void showStartup()
 	{
-		Main.loadFXML("/fxml/Startup.fxml");
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 }

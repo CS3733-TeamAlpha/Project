@@ -1,0 +1,120 @@
+package ui;
+
+import data.Database;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+/**
+ * Created by Ari on 2/14/17.
+ */
+abstract class BaseController
+{
+	private static Stage stage;
+	private boolean currentSceneSupportsHC = true;
+	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.DIRECTORY2_FXML};
+	protected static Database database;
+
+	// Make proxyimages to store floor pictures
+	ProxyImage f1ImageProxy = Paths.f1ImageProxy;
+	ProxyImage f2ImageProxy = Paths.f2ImageProxy;
+	ProxyImage f3ImageProxy = Paths.f3ImageProxy;
+	ProxyImage f4ImageProxy = Paths.f4ImageProxy;
+	ProxyImage f5ImageProxy = Paths.f5ImageProxy;
+	ProxyImage f6ImageProxy = Paths.f6ImageProxy;
+	ProxyImage f7ImageProxy = Paths.f7ImageProxy;
+
+	ProxyImage f1ContrastProxy = Paths.f1ContrastProxy;
+	ProxyImage f2ContrastProxy = Paths.f2ContrastProxy;
+	ProxyImage f3ContrastProxy = Paths.f3ContrastProxy;
+	ProxyImage f4ContrastProxy = Paths.f4ContrastProxy;
+	ProxyImage f5ContrastProxy = Paths.f5ContrastProxy;
+	ProxyImage f6ContrastProxy = Paths.f6ContrastProxy;
+	ProxyImage f7ContrastProxy = Paths.f7ContrastProxy;
+
+	int FLOORID = 3; //Default floor id for minimal application
+	String BUILDINGID = "00000000-0000-0000-0000-000000000000";
+
+	//define widths for circles/lines that the canvas will draw
+	double CIRCLEWIDTH = 13.0;
+	double LINEWIDTH = 2.5;
+
+	//X and Y offsets, for button placement.
+	//TODO: fine tune offsets to make button placement visuals better
+	double XOFFSET = CIRCLEWIDTH/2;
+	double YOFFSET = CIRCLEWIDTH/2;
+
+	static
+	{
+		database = null;
+	}
+
+	public BaseController()
+	{
+		if (database == null)
+		{
+			database = new Database("FHAlpha");
+			ProviderBox.database = database;
+		}
+	}
+
+	public abstract void initialize();
+
+	public static void setStage(Stage s){
+		stage = s;
+	}
+	protected void loadFXML(String path)
+	{
+		Parent root = null;
+		try
+		{
+			root = FXMLLoader.load(Main.class.getResource(path));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		stage.getScene().setRoot(root);
+
+		//Update the high contrast option
+		currentSceneSupportsHC = true;
+		for(int i = 0; i < highContrastBlackList.length; i++)
+		{
+			if(highContrastBlackList[i].equals(path))
+			{
+				currentSceneSupportsHC = false;
+			}
+		}
+		updateCSS();
+	}
+
+	protected void updateCSS()
+	{
+		if(currentSceneSupportsHC && Accessibility.isHighContrast())
+		{
+			enableHighContrastCss();
+		}
+		else
+		{
+			disableHighContrastCss();
+		}
+	}
+
+	private void disableHighContrastCss()
+	{
+		if(stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
+		{
+			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
+		}
+	}
+
+	private void enableHighContrastCss()
+	{
+		if(! stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
+		{
+			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
+		}
+	}
+
+}
