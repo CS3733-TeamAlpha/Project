@@ -294,32 +294,35 @@ public class MapController extends BaseController
 	 */
 	private void loadNode(Node n)
 	{
-		//new button
-		Button nodeB = new Button();
-
-		//experimental style changes to make the button a circle
-		nodeB.setId("node-button-unselected");
-
-		//add node to nodeButtons
-		nodeButtons.put(nodeB, n);
-
-		//set button XY coordinates
-		nodeB.setLayoutX(n.getX() - XOFFSET);
-		nodeB.setLayoutY(n.getY() - YOFFSET);
-
-		setButtonImage(nodeB, n.getType());
-		if (n.getType() == 1)
+		if(n.getType() != 0)
 		{
-			Label roomLabel = new Label(n.getName());
-			roomLabel.setLayoutX(nodeB.getLayoutX()-10);
-			roomLabel.setLayoutY(nodeB.getLayoutY()-25);
-			roomLabel.setId("roomLabel");
-			editingFloor.getChildren().add(1, roomLabel);
-		}
+			//new button
+			Button nodeB = new Button();
 
-		nodeB.setOnAction(event -> showRoomInfo(n));
-		//add button to scene
-		editingFloor.getChildren().add(1, nodeB);
+			//experimental style changes to make the button a circle
+			nodeB.setId("node-button-unselected");
+
+			//add node to nodeButtons
+			nodeButtons.put(nodeB, n);
+
+			//set button XY coordinates
+			nodeB.setLayoutX(n.getX() - XOFFSET);
+			nodeB.setLayoutY(n.getY() - YOFFSET);
+
+			setButtonImage(nodeB, n.getType());
+			if (n.getType() == 1)
+			{
+				Label roomLabel = new Label(n.getName());
+				roomLabel.setLayoutX(nodeB.getLayoutX() - 10);
+				roomLabel.setLayoutY(nodeB.getLayoutY() - 25);
+				roomLabel.setId("roomLabel");
+				editingFloor.getChildren().add(1, roomLabel);
+			}
+
+			nodeB.setOnAction(event -> showRoomInfo(n));
+			//add button to scene
+			editingFloor.getChildren().add(1, nodeB);
+		}
 	}
 
 	/**
