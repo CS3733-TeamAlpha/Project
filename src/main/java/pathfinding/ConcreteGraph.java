@@ -133,7 +133,6 @@ public class ConcreteGraph implements Graph
 		if (path == null)
 		    return null;
 		ArrayList<String> temp = new ArrayList<>();
-		temp.add(path.get(0).angle(path.get(0), path.get(1)) +", then"); //this doesn't actually work but we don't know how to fix it yet
 		for (int i = 0; i < path.size() - 2; i++)
 		{
 			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
