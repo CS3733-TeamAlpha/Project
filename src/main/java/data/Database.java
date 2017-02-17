@@ -737,6 +737,8 @@ public class Database implements AdminStorage
 		{
 			PreparedStatement insertNew = connection.prepareStatement("INSERT INTO Logins VALUES(?, ?)");
 			insertNew.setString(1, username);
+			insertNew.setString(2, hashed);
+			insertNew.execute();
 		} catch (SQLException e)
 		{
 			if (e.getSQLState().equals("23505")) //Unique constraint violated, we need to update the record instead
