@@ -79,6 +79,5 @@
 #roomLabel
 {
 -fx-font: 15px GlacialIndifference;
--fx-stroke: red;
--fx-stroke-width: 100;
+-fx-background-color: white;
 }

@@ -220,7 +220,7 @@ public class DirectoryController extends BaseController
 
 	public void showStartup()
 	{
-		loadFXML(Paths.ADMIN_PAGE_FXML);
+		loadFXML(Paths.STARTUP_FXML);
 	}
 
 }

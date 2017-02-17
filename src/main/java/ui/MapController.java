@@ -18,15 +18,19 @@ import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
 import pathfinding.Node;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapController extends BaseController
 {
 	public static final int PATH_LINE_OFFSET = 0;
+	public Label textDirectionsLabel;
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
+	private boolean pathGoesDown = false;
+	private boolean pathGoesUp = false;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
 	private Node selected;
@@ -82,8 +86,19 @@ public class MapController extends BaseController
 
 	public void showRoomInfo(Node n)
 	{
-		if(findingDirections){
+		if(findingDirections)
+		{
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
+
+			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 1);
+			StringBuilder build = new StringBuilder();
+			for(String sentence : textDirections)
+			{
+				build.append(sentence);
+				build.append("\n");
+			}
+			textDirectionsLabel.setText(build.toString());
+
 			if(path == null){
 				System.out.println("No path found");
 			}else
@@ -96,6 +111,22 @@ public class MapController extends BaseController
 				}
 				for (int i = 0; i < path.size()-1; i++)
 				{
+					Line line = new Line();
+					System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
+					System.out.println(path.get(i+1).getID());
+					line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
+					line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
+					line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
+					line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
+					line.setStrokeWidth(10);
+					// Change color for line if it is high contrast
+					if (Accessibility.isHighContrast()) {
+						line.setStroke(Color.WHITE);
+					} else {
+						line.setStroke(Color.BLUE);
+					}
+					editingFloor.getChildren().add(1,line);
+					currentPath.add(line);
 					if(path.get(i).getFloor() == FLOORID)
 					{
 						Line line = new Line();
@@ -172,6 +203,23 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
+		//If the path goes down, make the button jump straight to bottom floor
+		if (pathGoesDown) { //TODO make this stuff
+
+		} else {
+			if (FLOORID > 1) {
+				//remove all buttons and lines on the current floor
+				purgeButtons();
+				FLOORID--;
+				loadNodesFromDatabase();
+				currentFloorLabel.setText(Integer.toString(FLOORID));
+				setFloorImage(FLOORID);
+				//Delete line
+				for (Line l: currentPath) {
+					editingFloor.getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
 		if(currentPath.size() != 0){
 			for(Line l: currentPath){
 				((AnchorPane) l.getParent()).getChildren().remove(l);
@@ -322,7 +370,7 @@ public class MapController extends BaseController
 	 * @param n the node to load into the scene
 	 * TODO: Stole this from map editor, may want to fix
 	 */
-	private void loadNode(Node n)
+	private void loadNode(Node n, ArrayList<LabelThingy> thingies)
 	{
 		if(n.getType() != 0)
 		{
@@ -355,14 +403,31 @@ public class MapController extends BaseController
 		}
 	}
 
+	private void addLabels(LabelThingy thingy)
+	{
+		Label roomLabel = new Label(thingy.text);
+		roomLabel.setLayoutX(thingy.x-10);
+		roomLabel.setLayoutY(thingy.y-35);
+		roomLabel.setId("roomLabel");
+		editingFloor.getChildren().add(1, roomLabel);
+	}
+
 	/**
 	 * Load all nodes from the databasecontroller's list of nodes onto our scene
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	public void loadNodesFromDatabase()
 	{
-		for (Node n : database.getNodesInBuildingFloor(BUILDINGID, FLOORID))
-			loadNode(n);
+		ArrayList<LabelThingy> points = new ArrayList<>();
+
+		ArrayList<Node> nodesInBuildingFloor = database.getNodesInBuildingFloor(BUILDINGID, FLOORID);
+		for (Node n : nodesInBuildingFloor)
+			loadNode(n, points);
+
+		for(LabelThingy thingy : points)
+		{
+			addLabels(thingy);
+		}
 	}
 
 	/**
@@ -381,4 +446,11 @@ public class MapController extends BaseController
 		nodeButtons.clear();
 	}
 
+
+	class LabelThingy
+	{
+		int displayX, displayY;
+		int x, y;
+		String text = "";
+	}
 }
