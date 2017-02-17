@@ -67,6 +67,9 @@ public class MapController extends BaseController
 		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
 		for (Node n:nodes)
 		{
+			System.out.println(n.getFloor());
+			System.out.println(n.getBuilding());
+			System.out.println("_");
 			if(n.getType() != 0) //If n isn't a hallway node... TODO: Create node type enumeration
 			{
 				Button b = new Button("+");

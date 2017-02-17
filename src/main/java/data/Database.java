@@ -122,6 +122,7 @@ public class Database implements AdminStorage
 					//to begin with though...
 				}
 			}, "UTF-8");
+
 		} catch (IOException e)
 		{
 			System.out.println("Couldn't find database creation script... that's an error.");
