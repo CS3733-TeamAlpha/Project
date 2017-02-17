@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for database access using java derby.
  */
-public class Database implements AdminStorage
+public class Database implements AdminStorage, Searchable
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
@@ -862,6 +862,7 @@ public class Database implements AdminStorage
 
 				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
 			}
+			System.out.println(nodeCache);
 
 		} catch (SQLException e)
 		{
@@ -880,5 +881,34 @@ public class Database implements AdminStorage
 	public boolean isConnected()
 	{
 		return connected;
+	}
+
+	@Override
+	public ArrayList<SearchResult> getResultsForSeach(String searchText)
+	{
+		try
+		{
+			ArrayList<SearchResult> searchResults = new ArrayList<>();
+			searchText = searchText.replace("%", "");
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Services WHERE name LIKE ?" +
+					"UNION SELECT Name FROM Nodes WHERE Name LIKE ?");
+			pstmt.setString(1, "%" + searchText + "%");
+			pstmt.setString(2, "%" + searchText + "%");
+			ResultSet results = pstmt.executeQuery();
+			while(results.next())
+			{
+				SearchResult res = new SearchResult();
+				res.displayText = results.getString("Name");
+				searchResults.add(res);
+			}
+			return searchResults;
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to get service location!");
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

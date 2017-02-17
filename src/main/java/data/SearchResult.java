@@ -2,9 +2,9 @@ package data;
 
 public class SearchResult
 {
-	String displayText;
-	String id;
-	SearchType searchType;
+	public String displayText;
+	public String id;
+	public SearchType searchType;
 }
 
 enum SearchType
