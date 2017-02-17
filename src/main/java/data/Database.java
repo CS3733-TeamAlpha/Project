@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for database access using java derby.
  */
-public class Database
+public class Database implements AdminStorage
 {
 	//Constants
 	private static final String DB_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -123,8 +123,6 @@ public class Database
 			System.out.println("Couldn't find database creation script... that's an error.");
 			e.printStackTrace();
 		}
-
-
 	}
 
 	/**
@@ -720,5 +718,66 @@ public class Database
 	public boolean isConnected()
 	{
 		return connected;
+	}
+
+	@Override
+	public String getHashedPassword(String username)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT password FROM AdminAccounts WHERE username=?");
+			pstmt.setString(1, username);
+			ResultSet results = pstmt.executeQuery();
+			if(results.next())
+			{
+				return results.getString("password");
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public void storeHashedPassword(String username, String hash)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("UPDATE OR INSERT INTO AdminAccounts VALUES(?, ?)");
+			pstmt.setString(1, username);
+			pstmt.setString(2, hash);
+			boolean result = pstmt.execute();
+			if(!result)
+			{
+				System.err.println("Error storing password");
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void deleteAccount(String username)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM AdminAccounts WHERE username=?");
+			pstmt.setString(1, username);
+			boolean result = pstmt.execute();
+			if(!result)
+				System.err.println("Warning: tried to delete non-existent account " + username);
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

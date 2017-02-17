@@ -10,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 /**
  * Created by Ari on 2/7/17.
  */
-public class LoginController
+public class LoginController extends AbstractController
 {
 	public Label resultText;
 	public ProgressIndicator progressIndicator;
@@ -28,12 +28,11 @@ public class LoginController
 
 	public LoginController()
 	{
-		adminStorage = new AdminFileStorage();
 	}
 
 	public void initialize()
 	{
-		adminStorage = new AdminFileStorage();
+		adminStorage = database;
 		usernameField.requestFocus();
 	}
 

@@ -48,3 +48,9 @@ CREATE TABLE Buildings
 --Delete all nodes in the building if the building gets deleted
 ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE;
 INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'default');
+
+CREATE TABLE AdminAccounts
+(
+  username VARCHAR(36) PRIMARY KEY NOT NULL,
+  password VARCHAR(60) NOT NULL
+);

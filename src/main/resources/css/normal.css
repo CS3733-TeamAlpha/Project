@@ -4,11 +4,6 @@
     src: url('../fonts/GlacialIndifference-Regular.otf');
 }
 
-.label, .bh-button
-{
-    -fx-font-family: "Glacial Indifference";
-}
-
 .bh-accent
 {
     -fx-background-color: #0066b6;
@@ -19,12 +14,16 @@
     -fx-background-color: white;
 }
 
-.bh-button, .bh-button:hover
+.bh-button
 {
-    -fx-border-color: #0066b6;
     -fx-background-color: white;
     -fx-focus-traversable: false;
-    -fx-font-size: 40pt;
+    -fx-cursor: hand;
+}
+
+.bh-button:pressed
+{
+    -fx-background-color: #aaa;
 }
 
 .bh-admin-button, .bh-admin-button:hover
@@ -32,10 +31,14 @@
     -fx-background-color: #eee;
     -fx-border-color: #666;
     -fx-text-fill: #333;
-    -fx-font-size: 10pt;
     -fx-focus-traversable: false;
     -fx-font-family: "Glacial Indifference";
     -fx-font-size: 30pt;
+}
+
+.text-field:focused, .text-field
+{
+    -fx-prompt-text-fill: gray;
 }
 
 #node-button-unselected
