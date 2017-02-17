@@ -36,6 +36,10 @@ public class MapController extends BaseController
 	private Node selected;
 	private Node kiosk;
 	boolean findingDirections = false;
+	boolean multifloorDirections = false;
+	boolean pathingUp = false;
+	boolean pathingDown = false;
+	int targetFloor = -1;
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
@@ -107,22 +111,34 @@ public class MapController extends BaseController
 				}
 				for (int i = 0; i < path.size()-1; i++)
 				{
-					Line line = new Line();
-					System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
-					System.out.println(path.get(i+1).getID());
-					line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
-					line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
-					line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
-					line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
-					line.setStrokeWidth(10);
-					// Change color for line if it is high contrast
-					if (Accessibility.isHighContrast()) {
-						line.setStroke(Color.WHITE);
-					} else {
-						line.setStroke(Color.BLUE);
+
+					if(path.get(i).getFloor() == FLOORID)
+					{
+						Line line = new Line();
+						System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
+						System.out.println(path.get(i+1).getID());
+						line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
+						line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
+						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
+						line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
+						line.setStrokeWidth(10);
+						// Change color for line if it is high contrast
+						if (Accessibility.isHighContrast()) {
+							line.setStroke(Color.WHITE);
+						} else {
+							line.setStroke(Color.BLUE);
+						}
+						editingFloor.getChildren().add(1,line);
+						currentPath.add(line);
 					}
-					editingFloor.getChildren().add(1,line);
-					currentPath.add(line);
+				}
+
+				if(n.getFloor() > kiosk.getFloor()){
+					targetFloor = n.getFloor();
+					pathingUp = true;
+				} else if (n.getFloor() < kiosk.getFloor()){
+					targetFloor = n.getFloor();
+					pathingDown = true;
 				}
 			}
 			findingDirections = false;
@@ -152,8 +168,21 @@ public class MapController extends BaseController
 	}
 
 	public void findDirectionsTo(){
+		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
 		showRoomInfo(selected);
+	}
+
+	/**
+	 * jump directly to the target floor
+	 */
+	void jumpFloor(int floor)
+	{
+		purgeButtons();
+		FLOORID = floor;
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
+		setFloorImage(FLOORID);
 	}
 
 	@FXML
@@ -163,23 +192,26 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
-		//If the path goes down, make the button jump straight to bottom floor
-		if (pathGoesDown) { //TODO make this stuff
-
-		} else {
-			if (FLOORID > 1) {
-				//remove all buttons and lines on the current floor
-				purgeButtons();
-				FLOORID--;
-				loadNodesFromDatabase();
-				currentFloorLabel.setText(Integer.toString(FLOORID));
-				setFloorImage(FLOORID);
-				//Delete line
-				for (Line l: currentPath) {
-					editingFloor.getChildren().remove(l);
-				}
-				currentPath.clear();
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
 			}
+			currentPath.clear();
+		}
+		if(pathingUp || pathingDown){
+			jumpFloor(targetFloor);
+			pathingDown = false;
+			pathingUp = false;
+			findingDirections = true;
+			showRoomInfo(selected);
+		}
+		else if(FLOORID > 1){
+			//remove all buttons and lines on the current floor
+			purgeButtons();
+			FLOORID--;
+			loadNodesFromDatabase();
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(FLOORID);
 		}
 	}
 
@@ -189,23 +221,27 @@ public class MapController extends BaseController
 	 * Prevent going up if floor is already 7.
 	 * TODO: Stole this from map editor, may want to fix
 	 */
-	void goUpFloor(ActionEvent event) {
-		if (pathGoesUp) { //TODO make this stuff
-
-		} else {
-			if (FLOORID < 7) {
-				//remove all buttons and lines on the current floor
-				purgeButtons();
-				FLOORID++;
-				loadNodesFromDatabase();
-				currentFloorLabel.setText(Integer.toString(FLOORID));
-				setFloorImage(FLOORID);
-				//Delete line
-				for (Line l: currentPath) {
-					editingFloor.getChildren().remove(l);
-				}
-				currentPath.clear();
+	void goUpFloor (ActionEvent event){
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
 			}
+			currentPath.clear();
+		}
+		if(pathingUp || pathingDown){
+			jumpFloor(targetFloor);
+			pathingDown = false;
+			pathingUp = false;
+			findingDirections = true;
+			showRoomInfo(selected);
+		}
+		else if(FLOORID < 7){
+			//remove all buttons and lines on the current floor
+			purgeButtons();
+			FLOORID++;
+			loadNodesFromDatabase();
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(FLOORID);
 		}
 	}
 
