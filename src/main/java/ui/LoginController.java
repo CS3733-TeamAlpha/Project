@@ -1,6 +1,5 @@
 package ui;
 
-import data.AdminStorage;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -45,10 +44,8 @@ public class LoginController extends BaseController
 		cancelButton.setDisable(true);
 
 		boolean success;
-
 		String storedHash = database.getHashedPassword(usernameField.getText());
-
-		success = storedHash != null && BCrypt.checkpw(passwordField.getText(), storedHash);
+		success = !storedHash.isEmpty() && BCrypt.checkpw(passwordField.getText(), storedHash);
 
 		if (success)
 		{
