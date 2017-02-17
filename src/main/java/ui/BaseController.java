@@ -35,6 +35,16 @@ abstract class BaseController
 	ProxyImage f7ContrastProxy = Paths.f7ContrastProxy;
 
 	int FLOORID = 3; //Default floor id for minimal application
+	String BUILDINGID = "00000000-0000-0000-0000-000000000000";
+
+	//define widths for circles/lines that the canvas will draw
+	double CIRCLEWIDTH = 13.0;
+	double LINEWIDTH = 2.5;
+
+	//X and Y offsets, for button placement.
+	//TODO: fine tune offsets to make button placement visuals better
+	double XOFFSET = CIRCLEWIDTH/2;
+	double YOFFSET = CIRCLEWIDTH/2;
 
 	static
 	{
