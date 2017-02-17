@@ -133,12 +133,21 @@ public class MapController extends BaseController
 					}
 				}
 
-				if(n.getFloor() > kiosk.getFloor()){
-					targetFloor = n.getFloor();
-					pathingUp = true;
-				} else if (n.getFloor() < kiosk.getFloor()){
-					targetFloor = n.getFloor();
-					pathingDown = true;
+				if(!pathingUp && !pathingDown)
+				{
+					if (n.getFloor() > kiosk.getFloor())
+					{
+						targetFloor = n.getFloor();
+						pathingUp = true;
+					} else if (n.getFloor() < kiosk.getFloor())
+					{
+						targetFloor = n.getFloor();
+						pathingDown = true;
+					}
+				} else
+				{
+					pathingUp = false;
+					pathingDown = false;
 				}
 			}
 			findingDirections = false;
@@ -200,8 +209,6 @@ public class MapController extends BaseController
 		}
 		if(pathingUp || pathingDown){
 			jumpFloor(targetFloor);
-			pathingDown = false;
-			pathingUp = false;
 			findingDirections = true;
 			showRoomInfo(selected);
 		}
@@ -230,8 +237,6 @@ public class MapController extends BaseController
 		}
 		if(pathingUp || pathingDown){
 			jumpFloor(targetFloor);
-			pathingDown = false;
-			pathingUp = false;
 			findingDirections = true;
 			showRoomInfo(selected);
 		}
