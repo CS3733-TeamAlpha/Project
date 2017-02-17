@@ -17,7 +17,6 @@ import java.util.UUID;
 public class Database implements AdminStorage
 {
 	//Constants
-	private static final String DB_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 
 	private String dbName;
@@ -34,6 +33,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Construct a new database object that will connect to the named database and immediately initiate the connection
+	 *
 	 * @param name Path to database to connect to.
 	 */
 	public Database(String name)
@@ -42,7 +42,7 @@ public class Database implements AdminStorage
 		connected = false;
 		statement = null;
 		connection = null;
-		nodeCache = new Hashtable<String, Node>();
+		nodeCache = new Hashtable<>();
 
 		checkExist = null;
 		insertNode = null;
@@ -53,13 +53,15 @@ public class Database implements AdminStorage
 
 	/**
 	 * Connects to the database name specified at construction. If the database cannot be found, it is created.
+	 *
 	 * @return Success of database connection.
-	 * @// TODO: 2/9/17 Delete printlns 
+	 * TODO: 2/9/17 Delete printlns
 	 */
 	public boolean connect()
 	{
 		try
 		{
+			DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 			connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
 			statement = connection.createStatement();
 			connected = true;
@@ -130,6 +132,7 @@ public class Database implements AdminStorage
 	 * that all nodes MUST have a valid building UUID linked in the Buildings table. Otherwise, a constraint violation
 	 * exception will be raised and the node will not be inserted. For testing purposes, a "default" building and
 	 * default node building UUID of 00000000-0000-0000-0000-000000000000 are included.
+	 *
 	 * @param node Node object to insert.
 	 */
 	public void insertNode(Node node)
@@ -214,6 +217,7 @@ public class Database implements AdminStorage
 	 * Updates a node in the database. Use whenever modifications are made outside the database. Be warned, this is an
 	 * expensive function to call. Note that it does NOT delete orphan providers, you'll need to explicitly call
 	 * deleteProvider() for that.
+	 *
 	 * @param node Node to be updated
 	 */
 	public void updateNode(Node node)
@@ -284,6 +288,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Gets a node by its UUID. Returns null if that node didn't exist.
+	 *
 	 * @param uuid UUID of node to be returned.
 	 * @return Node if node found, null otherwise.
 	 */
@@ -299,11 +304,12 @@ public class Database implements AdminStorage
 	/**
 	 * Compatibilty hack for DirectoryController
 	 * TODO: EXTERMINATE
+	 *
 	 * @return ArrayList of all nodes in the database.
 	 */
 	public ArrayList<Node> getAllNodes()
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		for (String s : nodeCache.keySet())
 			ret.add(nodeCache.get(s));
 		return ret;
@@ -311,6 +317,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Deletes the node of the given UUID. Also cascade deletes anything associated with this node as well.
+	 *
 	 * @param uuid UUID of node to delete.
 	 */
 	public void deleteNodeByUUID(String uuid)
@@ -322,7 +329,7 @@ public class Database implements AdminStorage
 			//Needed because there can be no FOREIGN KEY constraint on the edges dst column. If there were, it would
 			//not allow for delayed adding of nodes to the database (either that or a ton of constraint violation errors
 			//would be generated).
-			statement.execute("DELETE FROM Edges WHERE dst='" + uuid +"'");
+			statement.execute("DELETE FROM Edges WHERE dst='" + uuid + "'");
 
 			//That should've performed a cascade delete on the database, so now we just need to remove cache
 			//references to this node, which should run in O(n) time, unfortunately.
@@ -346,12 +353,13 @@ public class Database implements AdminStorage
 
 	/**
 	 * Get all nodes on a given floor.
+	 *
 	 * @param floor Floor to get from.
 	 * @return ArrayList of nodes found on the provided. ArrayList is empty if no nodes can be found.
 	 */
 	public ArrayList<Node> getNodesByFloor(int floor)
 	{
-		ArrayList<Node> retlist = new ArrayList<Node>();
+		ArrayList<Node> retlist = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE floor=" + floor);
@@ -372,6 +380,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Gets the UUID of a given building using its name
+	 *
 	 * @param name Name of the building to find
 	 * @return 36-char UUID if found, otherwise an empty string.
 	 */
@@ -398,6 +407,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Adds a new building to the database.
+	 *
 	 * @param uuid UUID of building. Recommended to use java.util.UUID.randomUUID().toString()
 	 * @param name Name of building.
 	 */
@@ -418,13 +428,14 @@ public class Database implements AdminStorage
 
 	/**
 	 * Gets all nodes on a given floor of a given building.
+	 *
 	 * @param buildingUUID UUID of building to grab from. If the UUID is not known, use getBuildingUUID.
-	 * @param floor Floor number as an int.
+	 * @param floor        Floor number as an int.
 	 * @return ArrayList of nodes found on this floor. If no nodes could be found, the array is empty. Never returns null.
 	 */
 	public ArrayList<Node> getNodesInBuildingFloor(String buildingUUID, int floor)
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM Nodes WHERE building=? AND floor=?");
@@ -446,6 +457,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Gets an ArrayList of building names
+	 *
 	 * @return ArrayList of building names. Who'd have thought?
 	 */
 	public ArrayList<String> getBuildings()
@@ -472,6 +484,7 @@ public class Database implements AdminStorage
 	/**
 	 * Deletes an entire building using a UUID. WARNING: THIS WILL CASCADE DELETE ALL NODES IN THE BUILDING, THEIR FLOORS,
 	 * PROVIDERS, ETC. USE WITH EXTREME CAUTION!
+	 *
 	 * @param uuid UUID of building to delete.
 	 */
 	public void deleteBuilding(String uuid)
@@ -489,7 +502,30 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * Add a bare provider to the database, unassociated with any node. A UUID is automatically generated for it.
+	 * @param name Name of the provider to add, in the form of 'lastName, firstName; titles'.
+	 */
+	public void addProvider(String name)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?)");
+			pstmt.setString(1, UUID.randomUUID().toString());
+			pstmt.setString(2, name);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			if (!e.getSQLState().equals("23505")) //unique constraint violation
+			{
+				System.out.println("Error trying to add provider to database!");
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * Gets the UUID of a provider by name.
+	 *
 	 * @param name Name of a UUID. Should include title information.
 	 * @return 36-char UUID.
 	 */
@@ -515,11 +551,12 @@ public class Database implements AdminStorage
 
 	/**
 	 * Gets a list of all provider names
+	 *
 	 * @return ArrayList of names
 	 */
 	public ArrayList<String> getProviders()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> ret = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT name FROM Providers");
@@ -536,12 +573,13 @@ public class Database implements AdminStorage
 
 	/**
 	 * Returns all of a provider's offices
+	 *
 	 * @param providerUUID UUID of provider
 	 * @return ArrayList of nodes that the provider has an office at
 	 */
 	public ArrayList<Node> getProviderLocations(String providerUUID)
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM DoctorOffices WHERE provider_uuid=?");
@@ -562,8 +600,9 @@ public class Database implements AdminStorage
 	/**
 	 * Deletes a provider and any associated offices that provider may have. Deleting the provider from all nodes and calling
 	 * updateNode() *might* not be good enough.
+	 *
 	 * @param uuid UUID of provider to delete.
-	 * TODO: Factor out these deleteX functions into a common deleteByUUID() function?
+	 *             TODO: Factor out these deleteX functions into a common deleteByUUID() function?
 	 */
 	public void deleteProvider(String uuid)
 	{
@@ -595,8 +634,9 @@ public class Database implements AdminStorage
 
 	/**
 	 * Rename a provider with a given UUID.
+	 *
 	 * @param newName New name for provider. Format 'lname, fname; titles'
-	 * @param uuid UUID of provider to modify
+	 * @param uuid    UUID of provider to modify
 	 */
 	public void renameProvider(String newName, String uuid)
 	{
@@ -615,6 +655,7 @@ public class Database implements AdminStorage
 
 	/**
 	 * Get the location of a named service as a node
+	 *
 	 * @param name Name of the service to search for
 	 * @return A node object if the service is found, null otherwise.
 	 */
@@ -640,11 +681,12 @@ public class Database implements AdminStorage
 
 	/**
 	 * Returns a list of all services in the database.
+	 *
 	 * @return ArrayList of strings of services.
 	 */
 	public ArrayList<String> getServices()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> ret = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT name FROM Services");
@@ -657,6 +699,87 @@ public class Database implements AdminStorage
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	/**
+	 * Gets a user's password in hashed form
+	 * @param username Username to get password for
+	 * @return Hashed password
+	 */
+	public String getHashedPassword(String username)
+	{
+		String password = "";
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("SELECT password FROM Logins WHERE username=?");
+			pstmt.setString(1, username);
+			ResultSet results = pstmt.executeQuery();
+			if (results.next())
+				password = results.getString(1);
+		} catch (SQLException e)
+		{
+			System.out.printf("Error trying to get hashed password!");
+			e.printStackTrace();
+		}
+		return password;
+	}
+
+	/**
+	 * Insert a new username+password combo or update an existing username's password.
+	 * @param username Username to insert or update associated password for
+	 * @param hashed Password to insert or update
+	 */
+	public void storeHashedPassword(String username, String hashed)
+	{
+		try
+		{
+			PreparedStatement insertNew = connection.prepareStatement("INSERT INTO Logins VALUES(?, ?)");
+			insertNew.setString(1, username);
+			insertNew.setString(2, hashed);
+			insertNew.execute();
+		} catch (SQLException e)
+		{
+			if (e.getSQLState().equals("23505")) //Unique constraint violated, we need to update the record instead
+			{
+				//Nested try/catch? Disgusting...
+				try
+				{
+					PreparedStatement updateOld = connection.prepareStatement("UPDATE Logins SET password=? WHERE username=?");
+					updateOld.setString(1, hashed);
+					updateOld.setString(2, username);
+					updateOld.execute();
+				} catch (SQLException e1)
+				{
+					System.out.println("Error trying to update username+hash!");
+					e1.printStackTrace();
+				}
+
+			}
+			else
+			{
+				System.out.println("Error trying to insert username+password into database!");
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * Deletes the entire database record for a provided username.
+	 * @param username Username to delete username+password combo for.
+	 */
+	public void deleteAccount(String username)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Logins WHERE username=?");
+			pstmt.setString(1, username);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete user " + username + "!");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -708,76 +831,15 @@ public class Database implements AdminStorage
 		}
 	}
 
-
 	/*Misc getters and setters*/
 
-   /**
+	/**
 	 * Returns whether this database is connected or not.
+	 *
 	 * @return Connection status.
 	 */
 	public boolean isConnected()
 	{
 		return connected;
-	}
-
-	@Override
-	public String getHashedPassword(String username)
-	{
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("SELECT password FROM AdminAccounts WHERE username=?");
-			pstmt.setString(1, username);
-			ResultSet results = pstmt.executeQuery();
-			if(results.next())
-			{
-				return results.getString("password");
-			}
-			else
-			{
-				return null;
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@Override
-	public void storeHashedPassword(String username, String hash)
-	{
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("UPDATE OR INSERT INTO AdminAccounts VALUES(?, ?)");
-			pstmt.setString(1, username);
-			pstmt.setString(2, hash);
-			boolean result = pstmt.execute();
-			if(!result)
-			{
-				System.err.println("Error storing password");
-			}
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void deleteAccount(String username)
-	{
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM AdminAccounts WHERE username=?");
-			pstmt.setString(1, username);
-			boolean result = pstmt.execute();
-			if(!result)
-				System.err.println("Warning: tried to delete non-existent account " + username);
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
 	}
 }

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapEditorToolController">
    <children>
@@ -30,6 +31,13 @@
             <Pane pickOnBounds="false" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back" />
+                  <Button fx:id="upFloor" layoutX="23.0" layoutY="77.0" mnemonicParsing="false" onAction="#goUpFloor" />
+                  <Button fx:id="downFloor" layoutX="23.0" layoutY="134.0" mnemonicParsing="false" onAction="#goDownFloor" />
+                  <Label fx:id="currentFloorLabel" layoutX="24.0" layoutY="103.0" text="3">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
                </children>
             </Pane>
          </children>

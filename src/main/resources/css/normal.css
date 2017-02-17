@@ -60,3 +60,14 @@
     -fx-max-height: 13px;
     -fx-background-color: #0000ff;
 }
+
+#upbuttonTriangle
+{
+    -fx-shape: "M 0,1 L 1,1 .5,0 Z";
+    -fx-background-color: skyblue, black;
+}
+#downbuttonTriangle
+{
+    -fx-shape: "M 0,-1 L 1,-1 .5,0 Z";
+    -fx-background-color: skyblue, black;
+}

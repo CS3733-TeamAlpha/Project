@@ -3,7 +3,7 @@ CREATE TABLE Nodes
   node_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   posX DOUBLE NOT NULL,
   posY DOUBLE NOT NULL,
-  type INTEGER, --can be an enum in java?
+  type INTEGER, --can be an enum in java?  //options are service, provider, hallway
   floor INTEGER NOT NULL,
   building VARCHAR(36) NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
   name VARCHAR(128)
@@ -43,6 +43,12 @@ CREATE TABLE Buildings
 (
   building_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   name VARCHAR(128)
+);
+
+CREATE TABLE Logins
+(
+  username VARCHAR(64) UNIQUE NOT NULL,
+  password VARCHAR(64) NOT NULL
 );
 
 --Delete all nodes in the building if the building gets deleted
