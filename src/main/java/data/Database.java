@@ -18,6 +18,7 @@ public class Database implements AdminStorage, Searchable
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
+	private static final String DB_INSERT_SQL = "/db/DBCreate.sql";
 
 	private String dbName;
 	private boolean connected;
