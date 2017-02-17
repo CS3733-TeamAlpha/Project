@@ -44,7 +44,7 @@ public class AdminPageController extends BaseController
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ok)
 		{
-			//database.resetData(); //TODO: Implement database data reset!
+			database.resetDatabase();
 			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
 			cleared.setTitle("Data Reset");
 			cleared.setHeaderText("Data Reset Successfully");
