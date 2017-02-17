@@ -40,9 +40,9 @@ public class ConcreteGraph implements Graph
 
 				//Straight shot optimization -- if curNode isn't on the same floor as start or end, this node must be
 				//on a different floor than curNode. Otherwise, skip.
-				if ((curNode.node.getFloor() != start.getFloor() || curNode.node.getFloor() != end.getFloor())
-						&& expTempNode.getFloor() == curNode.node.getFloor())
-					continue;
+				//if ((curNode.node.getFloor() != start.getFloor() || curNode.node.getFloor() != end.getFloor())
+				//		&& expTempNode.getFloor() == curNode.node.getFloor())
+				//	continue;
 
 				//Check to see if we've found the end node yet
 				if (expTempNode == end)
