@@ -87,6 +87,7 @@ public class DirectoryController extends BaseController
 		fname.setOnAction(event ->
 		{
 			if(!modifiedProvidersList.contains(p)){
+				System.out.println("Modifying node '" + p.name + "'");
 				modifiedProvidersList.add(p);
 			}
 		});
@@ -95,6 +96,7 @@ public class DirectoryController extends BaseController
 		lname.setOnAction(event ->
 		{
 			if(!modifiedProvidersList.contains(p)){
+				System.out.println("Modifying node '" + p.name + "'");
 				modifiedProvidersList.add(p);
 			}
 		});
@@ -103,6 +105,7 @@ public class DirectoryController extends BaseController
 		title.setOnAction(event ->
 		{
 			if(!modifiedProvidersList.contains(p)){
+				System.out.println("Modifying node '" + p.name + "'");
 				modifiedProvidersList.add(p);
 			}
 		});
@@ -141,6 +144,7 @@ public class DirectoryController extends BaseController
 				{
 					((VBox) innerH.getParent()).getChildren().remove(innerH);
 					if(!modifiedProvidersList.contains(p)){
+						System.out.println("Modifying node '" + p.name + "'");
 						modifiedProvidersList.add(p);
 					}
 				});
@@ -162,6 +166,7 @@ public class DirectoryController extends BaseController
 				p.locations.remove(n);
 				((VBox) innerH.getParent()).getChildren().remove(innerH);
 				if(!modifiedProvidersList.contains(p)){
+					System.out.println("Modifying node '" + p.name + "'");
 					modifiedProvidersList.add(p);
 				}
 			});
@@ -177,6 +182,9 @@ public class DirectoryController extends BaseController
 
 	public void pushChangesToDatabase()
 	{
+		System.out.println("New providers: " + newProviderList.size());
+		System.out.println("Modified providers: " + modifiedProvidersList.size());
+		System.out.println("Deleted providers: " + deleteProviderList.size());
 		for (Provider provider : newProviderList)
 		{
 			System.out.println("Trying to add provider '" + provider.name + "'");
@@ -188,10 +196,10 @@ public class DirectoryController extends BaseController
 				database.updateNode(node);
 			}
 		}
+		newProviderList.clear();
 
 		for(Provider thisProvider: modifiedProvidersList){
 			HBox hb = boxProviderLinks.get(thisProvider);
-			//Provider thisProvider = boxProviderLinks.get(hb);
 			TextField title = (TextField)hb.getChildren().get(1);
 			TextField fn = (TextField)hb.getChildren().get(2);
 			TextField ln = (TextField)hb.getChildren().get(3);
@@ -216,9 +224,14 @@ public class DirectoryController extends BaseController
 			for (Node node : thisProvider.locations)
 				database.updateNode(node);
 		}
+		modifiedProvidersList.clear();
 
 		for(Provider p: deleteProviderList)
+		{
+			System.out.println("Deleting provider '" + p.name + "'");
 			database.deleteProvider(p.uuid);
+		}
+		deleteProviderList.clear();
 	}
 
 	public void showMap()
