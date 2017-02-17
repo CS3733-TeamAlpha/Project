@@ -34,6 +34,7 @@ abstract class BaseController
 	ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
 	ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
 
+	int FLOORID = 3; //Default floor id for minimal application
 
 	static
 	{
