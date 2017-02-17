@@ -80,13 +80,10 @@ public class DirectoryController extends BaseController
 			deleteProviderList.add(p);
 			((VBox) newH.getParent()).getChildren().remove(newH);
 		});
-		System.out.println("Parsing name " + p.name);
 		TextField fname = new TextField();
 		fname.setText(p.name.split(";")[0].split(",")[1]);
-		System.out.println("Setting fname to " + fname.getText());
 		fname.textProperty().addListener(event ->
 		{
-			System.out.println("fname Registered event");
 			if(!modifiedProvidersList.contains(p)){
 				System.out.println("Modifying node '" + p.name + "'");
 				modifiedProvidersList.add(p);
@@ -94,10 +91,8 @@ public class DirectoryController extends BaseController
 		});
 		TextField lname = new TextField();
 		lname.setText(p.name.split(",")[0]);
-		System.out.println("Setting lname to " + lname.getText());
 		lname.textProperty().addListener(event ->
 		{
-			System.out.println("lname Registered event");
 			if(!modifiedProvidersList.contains(p)){
 				System.out.println("Modifying node '" + p.name + "'");
 				modifiedProvidersList.add(p);
@@ -105,14 +100,10 @@ public class DirectoryController extends BaseController
 		});
 		TextField title = new TextField();
 		title.setText(p.name.split(";")[1]);
-		System.out.println("Setting title to " + title.getText());
 		title.textProperty().addListener(event ->
 		{
-			System.out.println("title Registered event");
-			if(!modifiedProvidersList.contains(p)){
-				System.out.println("Modifying node '" + p.name + "'");
+			if(!modifiedProvidersList.contains(p))
 				modifiedProvidersList.add(p);
-			}
 		});
 		VBox newV = new VBox();
 		HBox newLocH = new HBox();
@@ -130,18 +121,14 @@ public class DirectoryController extends BaseController
 		Button addBut = new Button("Add Location");
 		addBut.setOnAction(event ->
 		{
-			System.out.println("addbut Registered event");
 			String s = locationSelector.getValue().toString();
 
 			int idIndex = s.indexOf(":");
 			s = s.substring(0, idIndex);
-			System.out.println("Trying to add location " + s);
 
 			if(database.getNodeByUUID(s) != null)
 			{
-				String nodeID = s; //TODO: Eliminate this
-
-				Node n = database.getNodeByUUID(nodeID);
+				Node n = database.getNodeByUUID(s);
 				p.locations.add(n);
 				HBox innerH = new HBox();
 				Label locL = new Label();
@@ -149,12 +136,9 @@ public class DirectoryController extends BaseController
 				Button xBut = new Button("X");
 				xBut.setOnAction(event1 ->
 				{
-					System.out.println("xbut Registered event");
 					((VBox) innerH.getParent()).getChildren().remove(innerH);
-					if(!modifiedProvidersList.contains(p)){
-						System.out.println("Modifying node '" + p.name + "'");
+					if(!modifiedProvidersList.contains(p))
 						modifiedProvidersList.add(p);
-					}
 				});
 				innerH.getChildren().addAll(locL, xBut);
 				newV.getChildren().add(innerH);
@@ -172,13 +156,10 @@ public class DirectoryController extends BaseController
 			Button xBut = new Button("X");
 			xBut.setOnAction(event ->
 			{
-				System.out.println("xbut2 Registered event");
 				p.locations.remove(n);
 				((VBox) innerH.getParent()).getChildren().remove(innerH);
-				if(!modifiedProvidersList.contains(p)){
-					System.out.println("Modifying node '" + p.name + "'");
+				if(!modifiedProvidersList.contains(p))
 					modifiedProvidersList.add(p);
-				}
 			});
 			innerH.getChildren().addAll(locL, xBut);
 			newV.getChildren().add(innerH);
