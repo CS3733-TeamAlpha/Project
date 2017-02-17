@@ -18,6 +18,7 @@ import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
 import pathfinding.Node;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -266,7 +267,7 @@ public class MapController extends BaseController
 	 * @param n the node to load into the scene
 	 * TODO: Stole this from map editor, may want to fix
 	 */
-	private void loadNode(Node n)
+	private void loadNode(Node n, ArrayList<LabelThingy> thingies)
 	{
 		//new button
 		Button nodeB = new Button();
@@ -281,19 +282,50 @@ public class MapController extends BaseController
 		nodeB.setLayoutX(n.getX() - XOFFSET);
 		nodeB.setLayoutY(n.getY() - YOFFSET);
 
-		setButtonImage(nodeB, n.getType());
 		if (n.getType() == 1)
 		{
-			Label roomLabel = new Label(n.getName());
-			roomLabel.setLayoutX(nodeB.getLayoutX()-10);
-			roomLabel.setLayoutY(nodeB.getLayoutY()-25);
-			roomLabel.setId("roomLabel");
-			editingFloor.getChildren().add(1, roomLabel);
+			boolean changed = false;
+			for(LabelThingy thingy : thingies)
+			{
+				if(thingy.x == n.getX() && thingy.y == n.getY())
+				{
+					changed = true;
+					if(!thingy.text.isEmpty())
+					{
+						thingy.text += ", ";
+					}
+					thingy.text += n.getName().trim();
+				}
+			}
+
+			if(!changed)
+			{
+				System.out.println("Added label");
+				LabelThingy temp = new LabelThingy();
+				temp.x = (int)n.getX();
+				temp.y = (int)n.getY();
+				temp.displayX = (int)nodeB.getLayoutX();
+				temp.displayY = (int)nodeB.getLayoutY();
+				temp.text = n.getName().trim();
+				thingies.add(temp);
+			}
 		}
+
+
+		setButtonImage(nodeB, n.getType());
 
 		nodeB.setOnAction(event -> showRoomInfo(n));
 		//add button to scene
 		editingFloor.getChildren().add(1, nodeB);
+	}
+
+	private void addLabels(LabelThingy thingy)
+	{
+		Label roomLabel = new Label(thingy.text);
+		roomLabel.setLayoutX(thingy.x-10);
+		roomLabel.setLayoutY(thingy.y-35);
+		roomLabel.setId("roomLabel");
+		editingFloor.getChildren().add(1, roomLabel);
 	}
 
 	/**
@@ -302,8 +334,16 @@ public class MapController extends BaseController
 	 */
 	public void loadNodesFromDatabase()
 	{
-		for (Node n : database.getNodesInBuildingFloor(BUILDINGID, FLOORID))
-			loadNode(n);
+		ArrayList<LabelThingy> points = new ArrayList<>();
+
+		ArrayList<Node> nodesInBuildingFloor = database.getNodesInBuildingFloor(BUILDINGID, FLOORID);
+		for (Node n : nodesInBuildingFloor)
+			loadNode(n, points);
+
+		for(LabelThingy thingy : points)
+		{
+			addLabels(thingy);
+		}
 	}
 
 	/**
@@ -322,4 +362,11 @@ public class MapController extends BaseController
 		nodeButtons.clear();
 	}
 
+
+	class LabelThingy
+	{
+		int displayX, displayY;
+		int x, y;
+		String text = "";
+	}
 }
