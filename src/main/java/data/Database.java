@@ -20,6 +20,7 @@ public class Database implements AdminStorage
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 	private static final String DB_DROP_ALL = "/db/DBDropAll.sql";
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
+	private static final String DB_INSERT_EDGES = "/db/InsertEdges.sql";
 
 	private String dbName;
 	private boolean connected;
@@ -949,28 +950,20 @@ public class Database implements AdminStorage
 
 	public void resetDatabase()
 	{
+		runScript(DB_DROP_ALL);
+		runScript(DB_CREATE_SQL);
+		runScript(DB_INSERT_SQL);
+		runScript(DB_INSERT_EDGES);
+
+		reloadCache();
+	}
+
+	private void runScript(String filepath)
+	{
 		try
 		{
 			//http://apache-database.10148.n7.nabble.com/run-script-from-java-w-ij-td100234.html
-			ij.runScript(connection, getClass().getResource(DB_DROP_ALL).openStream(), "UTF-8", new OutputStream()
-			{
-				@Override
-				public void write(int i) throws IOException
-				{
-					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
-					//to begin with though...
-				}
-			}, "UTF-8");
-			ij.runScript(connection, getClass().getResource(DB_CREATE_SQL).openStream(), "UTF-8", new OutputStream()
-			{
-				@Override
-				public void write(int i) throws IOException
-				{
-					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
-					//to begin with though...
-				}
-			}, "UTF-8");
-			ij.runScript(connection, getClass().getResource(DB_INSERT_SQL).openStream(), "UTF-8", new OutputStream()
+			ij.runScript(connection, getClass().getResource(filepath).openStream(), "UTF-8", new OutputStream()
 			{
 				@Override
 				public void write(int i) throws IOException
