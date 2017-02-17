@@ -111,39 +111,28 @@ public class MapController extends BaseController
 				}
 				for (int i = 0; i < path.size()-1; i++)
 				{
-					Line line = new Line();
-					System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
-					System.out.println(path.get(i+1).getID());
-					line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
-					line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
-					line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
-					line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
-					line.setStrokeWidth(10);
-					// Change color for line if it is high contrast
-					if (Accessibility.isHighContrast()) {
-						line.setStroke(Color.WHITE);
-					} else {
-						line.setStroke(Color.BLUE);
-					}
-					editingFloor.getChildren().add(1,line);
-					currentPath.add(line);
+
 					if(path.get(i).getFloor() == FLOORID)
 					{
 						Line line = new Line();
-						System.out.println("Line from " + path.get(i).getX() + ", " + path.get(i).getY() + " to " + path.get(i + 1).getX() + ", " + path.get(i + 1).getY());
-						System.out.println(path.get(i + 1).getID());
-						line.setStartX(path.get(i).getX() + PATH_LINE_OFFSET); //plus 15 to center on button
-						line.setStartY(path.get(i).getY() + PATH_LINE_OFFSET);
-						line.setEndX(path.get(i + 1).getX() + PATH_LINE_OFFSET);
-						line.setEndY(path.get(i + 1).getY() + PATH_LINE_OFFSET);
+						System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
+						System.out.println(path.get(i+1).getID());
+						line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
+						line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
+						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
+						line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 						line.setStrokeWidth(10);
-						line.setStroke(Color.BLUE);
-						editingFloor.getChildren().add(1, line);
+						// Change color for line if it is high contrast
+						if (Accessibility.isHighContrast()) {
+							line.setStroke(Color.WHITE);
+						} else {
+							line.setStroke(Color.BLUE);
+						}
+						editingFloor.getChildren().add(1,line);
 						currentPath.add(line);
 					}
 				}
 
-				System.out.println(n.getFloor());
 				if(n.getFloor() > kiosk.getFloor()){
 					targetFloor = n.getFloor();
 					pathingUp = true;
@@ -203,23 +192,6 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
-		//If the path goes down, make the button jump straight to bottom floor
-		if (pathGoesDown) { //TODO make this stuff
-
-		} else {
-			if (FLOORID > 1) {
-				//remove all buttons and lines on the current floor
-				purgeButtons();
-				FLOORID--;
-				loadNodesFromDatabase();
-				currentFloorLabel.setText(Integer.toString(FLOORID));
-				setFloorImage(FLOORID);
-				//Delete line
-				for (Line l: currentPath) {
-					editingFloor.getChildren().remove(l);
-				}
-				currentPath.clear();
-			}
 		if(currentPath.size() != 0){
 			for(Line l: currentPath){
 				((AnchorPane) l.getParent()).getChildren().remove(l);
@@ -249,8 +221,7 @@ public class MapController extends BaseController
 	 * Prevent going up if floor is already 7.
 	 * TODO: Stole this from map editor, may want to fix
 	 */
-	void goUpFloor(ActionEvent event) {
-		System.out.println("goup"+targetFloor);
+	void goUpFloor (ActionEvent event){
 		if(currentPath.size() != 0){
 			for(Line l: currentPath){
 				((AnchorPane) l.getParent()).getChildren().remove(l);
