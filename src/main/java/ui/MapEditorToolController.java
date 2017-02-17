@@ -55,7 +55,7 @@ public class MapEditorToolController extends BaseController
 	//TODO: fine tune offsets to make button placement visuals better
 	private double XOFFSET = CIRCLEWIDTH/2;
 	private double YOFFSET = CIRCLEWIDTH/2;
-	
+
 
 
 	//enums to indicate current state
@@ -86,13 +86,13 @@ public class MapEditorToolController extends BaseController
 
 	//TODO: should nodes be able to be moved to different floor? probably not
 
-	private ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
-	private ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
-	private ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
-	private ProxyImage removeNeighborImageProxy = new ProxyImage(Paths.REMOVENEIGHBOR);
-	private ProxyImage doctorImageProxy = new ProxyImage(Paths.DOCTORICON);
-	private ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
-	private ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
+	private ProxyImage removeNodeImageProxy = Paths.removeNodeImageProxy;
+	private ProxyImage chainImageProxy = Paths.chainImageProxy;
+	private ProxyImage addNeighborImageProxy = Paths.addNeighborImageProxy;
+	private ProxyImage removeNeighborImageProxy = Paths.removeNeighborImageProxy;
+	private ProxyImage doctorImageProxy = Paths.doctorImageProxy;
+	private ProxyImage restroomImageProxy = Paths.restroomImageProxy;
+	private ProxyImage elevatorImageProxy = Paths.elevatorImageProxy;
 
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
