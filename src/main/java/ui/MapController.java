@@ -25,6 +25,7 @@ import java.util.HashMap;
 public class MapController extends BaseController
 {
 	public static final int PATH_LINE_OFFSET = 0;
+	public Label textDirectionsLabel;
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
@@ -81,8 +82,19 @@ public class MapController extends BaseController
 
 	public void showRoomInfo(Node n)
 	{
-		if(findingDirections){
+		if(findingDirections)
+		{
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
+
+			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 1);
+			StringBuilder build = new StringBuilder();
+			for(String sentence : textDirections)
+			{
+				build.append(sentence);
+				build.append("\n");
+			}
+			textDirectionsLabel.setText(build.toString());
+
 			if(path == null){
 				System.out.println("No path found");
 			}else

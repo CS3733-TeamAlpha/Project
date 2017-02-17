@@ -101,17 +101,17 @@ public class ConcreteNode implements Node
 		if (angle < 0)
 			angle += 360;
 		if (0 <= angle && angle < 60) //TODO: can this be done with switch statements?
-			return "Sharp right";
-		else if (60 <= angle && angle < 120)
-			return "Turn right";
-		else if (120 <= angle && angle < 180)
-			return "Bear right";
-		else if (180 <= angle && angle < 240)
-			return "Bear left";
-		else if (240 <= angle && angle < 300)
-			return "Turn left";
-		else if (300 <= angle && angle < 360)
 			return "Sharp left";
+		else if (60 <= angle && angle < 120)
+			return "Turn left";
+		else if (120 <= angle && angle < 180)
+			return "Bear left";
+		else if (180 <= angle && angle < 240)
+			return "Bear right";
+		else if (240 <= angle && angle < 300)
+			return "Turn right";
+		else if (300 <= angle && angle < 360)
+			return "Sharp right";
 		else return null;
 	}
 
