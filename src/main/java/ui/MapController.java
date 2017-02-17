@@ -283,6 +283,15 @@ public class MapController extends BaseController
 		nodeB.setLayoutY(n.getY() - YOFFSET);
 
 		setButtonImage(nodeB, n.getType());
+
+		nodeB.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent event)
+			{
+				showRoomInfo(n);
+			}
+		});
 		//add button to scene
 		editingFloor.getChildren().add(1, nodeB);
 	}
