@@ -862,6 +862,7 @@ public class Database implements AdminStorage
 
 				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
 			}
+			System.out.println(nodeCache);
 
 		} catch (SQLException e)
 		{
