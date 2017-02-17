@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.DirectoryController">
+    <children>
+        <ToolBar prefHeight="40.0" prefWidth="1280.0" styleClass="pane">
+            <items>
+                <Button mnemonicParsing="false" onAction="#showMap" text="Map" translateX="30.0" />
+                <Button mnemonicParsing="false" onAction="#showStartup" text="Home" translateX="80.0" />
+            </items>
+        </ToolBar>
+        <ScrollPane fx:id="directoryScroll" layoutY="81.0" prefHeight="550.0" prefWidth="1280.0">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="1272.0" styleClass="pane">
+                    <children>
+                        <VBox fx:id="scrollContents" disable="true" prefWidth="1276.0" />
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
+        <Label disable="true" layoutX="26.0" layoutY="44.0" text="First Name">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label disable="true" layoutX="171.0" layoutY="46.0" text="Last Name">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label disable="true" layoutX="321.0" layoutY="47.0" text="Titles">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label disable="true" layoutX="440.0" layoutY="45.0" text="Locations">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+    </children>
+</Pane>
