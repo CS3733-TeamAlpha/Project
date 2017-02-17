@@ -504,6 +504,28 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * Add a bare provider to the database, unassociated with any node. A UUID is automatically generated for it.
+	 * @param name Name of the provider to add, in the form of 'lastName, firstName; titles'.
+	 */
+	public void addProvider(String name)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?)");
+			pstmt.setString(1, UUID.randomUUID().toString());
+			pstmt.setString(2, name);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			if (!e.getSQLState().equals("23505")) //unique constraint violation
+			{
+				System.out.println("Error trying to add provider to database!");
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * Gets the UUID of a provider by name.
 	 *
 	 * @param name Name of a UUID. Should include title information.
@@ -682,55 +704,6 @@ public class Database implements AdminStorage
 	}
 
 	/**
-	 * Loads all nodes in the database into the cache, links them together, and loads service + provider info. Note that
-	 * this function will also invalidate any nodes you've already grabbed, so you'll want to make sure that you re-get
-	 * locally stored nodes after calling this function...
-	 */
-	public void reloadCache()
-	{
-		//No need to clear the hash table, it's a hash table... it doesn't have duplicate entries...
-		try
-		{
-			//First load all nodes, sans neighbor relation information
-			ResultSet results = statement.executeQuery("SELECT * FROM Nodes");
-			while (results.next())
-			{
-				Node node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
-						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
-				nodeCache.put(node.getID(), node);
-			}
-
-			//Now link nodes together using the hashmap to speed things up:
-			results = statement.executeQuery("SELECT * FROM Edges");
-			while (results.next())
-				nodeCache.get(results.getString(1)).addNeighbor(nodeCache.get(results.getString(2)));
-
-			//Load service info
-			results = statement.executeQuery("SELECT * FROM Services");
-			while (results.next())
-				nodeCache.get(results.getString(1)).addService(results.getString(2));
-
-			//Load provider info
-			results = statement.executeQuery("SELECT * FROM DoctorOffices");
-			PreparedStatement getName = connection.prepareStatement("SELECT Name FROM Providers WHERE provider_uuid=?");
-			while (results.next())
-			{
-				//Get a provider name from a UUID. Fun!
-				getName.setString(1, results.getString(1));
-				ResultSet nset = getName.executeQuery();
-				nset.next();
-
-				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
-			}
-
-		} catch (SQLException e)
-		{
-			System.out.println("Error trying to load pathable nodes!");
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Gets a user's password in hashed form
 	 * @param username Username to get password for
 	 * @return Hashed password
@@ -805,6 +778,55 @@ public class Database implements AdminStorage
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to delete user " + username + "!");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Loads all nodes in the database into the cache, links them together, and loads service + provider info. Note that
+	 * this function will also invalidate any nodes you've already grabbed, so you'll want to make sure that you re-get
+	 * locally stored nodes after calling this function...
+	 */
+	public void reloadCache()
+	{
+		//No need to clear the hash table, it's a hash table... it doesn't have duplicate entries...
+		try
+		{
+			//First load all nodes, sans neighbor relation information
+			ResultSet results = statement.executeQuery("SELECT * FROM Nodes");
+			while (results.next())
+			{
+				Node node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
+						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
+				nodeCache.put(node.getID(), node);
+			}
+
+			//Now link nodes together using the hashmap to speed things up:
+			results = statement.executeQuery("SELECT * FROM Edges");
+			while (results.next())
+				nodeCache.get(results.getString(1)).addNeighbor(nodeCache.get(results.getString(2)));
+
+			//Load service info
+			results = statement.executeQuery("SELECT * FROM Services");
+			while (results.next())
+				nodeCache.get(results.getString(1)).addService(results.getString(2));
+
+			//Load provider info
+			results = statement.executeQuery("SELECT * FROM DoctorOffices");
+			PreparedStatement getName = connection.prepareStatement("SELECT Name FROM Providers WHERE provider_uuid=?");
+			while (results.next())
+			{
+				//Get a provider name from a UUID. Fun!
+				getName.setString(1, results.getString(1));
+				ResultSet nset = getName.executeQuery();
+				nset.next();
+
+				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
+			}
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to load pathable nodes!");
 			e.printStackTrace();
 		}
 	}
