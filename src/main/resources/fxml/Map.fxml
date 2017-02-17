@@ -39,7 +39,6 @@
                         <Font size="26.0" />
                      </font>
                   </Label>
-                  <Button layoutX="160.0" layoutY="10.0" mnemonicParsing="false" onAction="#showStartup" text="Done" />
                   </children>
               </Pane>
           </children>
