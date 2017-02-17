@@ -57,6 +57,24 @@ public class MapEditorToolController extends BaseController
 	private double YOFFSET = CIRCLEWIDTH/2;
 
 
+	// Make proxyimages to store floor pictures
+	ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
+	ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
+	ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
+	ProxyImage f4ImageProxy = new ProxyImage(Paths.FLOOR4_NORMAL);
+	ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
+	ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
+	ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
+
+	ProxyImage f1ContrastProxy = new ProxyImage(Paths.FLOOR1_CONTRAST);
+	ProxyImage f2ContrastProxy = new ProxyImage(Paths.FLOOR2_CONTRAST);
+	ProxyImage f3ContrastProxy = new ProxyImage(Paths.FLOOR3_CONTRAST);
+	ProxyImage f4ContrastProxy = new ProxyImage(Paths.FLOOR4_CONTRAST);
+	ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
+	ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
+	ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
+
+
 	//enums to indicate current state
 	private enum editorStates {
 		DOINGNOTHING,
