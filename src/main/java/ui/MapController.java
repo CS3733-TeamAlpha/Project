@@ -147,6 +147,6 @@ public class MapController extends BaseController
 		showRoomInfo(selected);
 	}
 
-	
+
 
 }
