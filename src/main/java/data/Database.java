@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for database access using java derby.
  */
-public class Database implements AdminStorage, Searchable
+public class Database implements AdminStorage
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
@@ -884,14 +884,13 @@ public class Database implements AdminStorage, Searchable
 		return connected;
 	}
 
-	@Override
-	public ArrayList<SearchResult> getResultsForSearch(String searchText)
+	public ArrayList<SearchResult> getResultsForSearch(String searchText, boolean top6)
 	{
 		try
 		{
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
 			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Nodes WHERE NAME LIKE ? UNION " +
-					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?");
+					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
@@ -901,6 +900,7 @@ public class Database implements AdminStorage, Searchable
 				res.displayText = results.getString("Name");
 				searchResults.add(res);
 			}
+
 			return searchResults;
 
 		} catch (SQLException e)
