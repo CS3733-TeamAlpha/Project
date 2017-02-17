@@ -45,6 +45,8 @@ public class AdminPageController extends BaseController
 		if(result.get() == ok)
 		{
 			database.resetDatabase();
+			database.reloadCache();
+
 			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
 			cleared.setTitle("Data Reset");
 			cleared.setHeaderText("Data Reset Successfully");
