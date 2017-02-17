@@ -1,5 +1,7 @@
 package ui;
 
+import javafx.embed.swing.SwingFXUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,6 +25,10 @@ public class RealImage implements Image {
 		return img;
 	}
 
+	javafx.scene.image.Image getFXImage(){
+		return SwingFXUtils.toFXImage(img, null);
+	}
+
 	@Override
 	public void display() {
 		System.out.println("Displaying " + fileName);
@@ -34,8 +40,12 @@ public class RealImage implements Image {
 
 		// Load image from filename to img
 		try {
-			img = ImageIO.read(new File(fileName));
+
+			System.out.println(fileName);
+			img = ImageIO.read(getClass().getResource(fileName).openStream());
 		} catch (IOException e) {
+			System.out.println(fileName);
+			e.printStackTrace();
 		}
 
 	}

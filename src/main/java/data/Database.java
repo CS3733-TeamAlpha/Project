@@ -229,6 +229,25 @@ public class Database implements AdminStorage
 		//TODO: HOLY MOTHER OF CTHULHU, MAKE THIS FUNCTION FAST AGAIN! USE UPDATE!
 		try
 		{
+			//Update the node
+			PreparedStatement updateNode = connection.prepareStatement("UPDATE Nodes " +
+					"SET posX = ?," +
+					"	posY = ?," +
+					"	type = ?," +
+					"	floor = ?," +
+					"	building = ?," +
+					"	name = ?" +
+					"WHERE node_uuid = ?");
+
+			updateNode.setDouble(1, node.getX());
+			updateNode.setDouble(2, node.getY());
+			updateNode.setInt(3, node.getType());
+			updateNode.setInt(4, node.getFloor());
+			updateNode.setString(5, node.getBuilding());
+			updateNode.setString(6, node.getName());
+			updateNode.setString(7, node.getID());
+			updateNode.execute();
+
 			//Update edges
 			PreparedStatement delOld = connection.prepareStatement("DELETE FROM Edges WHERE src=?");
 			delOld.setString(1, node.getID());
