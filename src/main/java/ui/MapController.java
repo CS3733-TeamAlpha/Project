@@ -28,6 +28,8 @@ public class MapController extends BaseController
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
+	private boolean pathGoesDown = false;
+	private boolean pathGoesUp = false;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
 	private Node selected;
@@ -101,7 +103,12 @@ public class MapController extends BaseController
 					line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
 					line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 					line.setStrokeWidth(10);
-					line.setStroke(Color.BLUE);
+					// Change color for line if it is high contrast
+					if (Accessibility.isHighContrast()) {
+						line.setStroke(Color.WHITE);
+					} else {
+						line.setStroke(Color.BLUE);
+					}
 					editingFloor.getChildren().add(1,line);
 					currentPath.add(line);
 				}
@@ -144,13 +151,23 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
-		if(FLOORID > 1){
-			//remove all buttons and lines on the current floor
-			purgeButtons();
-			FLOORID--;
-			loadNodesFromDatabase();
-			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+		//If the path goes down, make the button jump straight to bottom floor
+		if (pathGoesDown) { //TODO make this stuff
+
+		} else {
+			if (FLOORID > 1) {
+				//remove all buttons and lines on the current floor
+				purgeButtons();
+				FLOORID--;
+				loadNodesFromDatabase();
+				currentFloorLabel.setText(Integer.toString(FLOORID));
+				setFloorImage(FLOORID);
+				//Delete line
+				for (Line l: currentPath) {
+					editingFloor.getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
 		}
 	}
 
@@ -161,13 +178,22 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor(ActionEvent event) {
-		if(FLOORID < 7){
-			//remove all buttons and lines on the current floor
-			purgeButtons();
-			FLOORID++;
-			loadNodesFromDatabase();
-			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+		if (pathGoesUp) { //TODO make this stuff
+
+		} else {
+			if (FLOORID < 7) {
+				//remove all buttons and lines on the current floor
+				purgeButtons();
+				FLOORID++;
+				loadNodesFromDatabase();
+				currentFloorLabel.setText(Integer.toString(FLOORID));
+				setFloorImage(FLOORID);
+				//Delete line
+				for (Line l: currentPath) {
+					editingFloor.getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
 		}
 	}
 
@@ -269,54 +295,35 @@ public class MapController extends BaseController
 	 */
 	private void loadNode(Node n, ArrayList<LabelThingy> thingies)
 	{
-		//new button
-		Button nodeB = new Button();
-
-		//experimental style changes to make the button a circle
-		nodeB.setId("node-button-unselected");
-
-		//add node to nodeButtons
-		nodeButtons.put(nodeB, n);
-
-		//set button XY coordinates
-		nodeB.setLayoutX(n.getX() - XOFFSET);
-		nodeB.setLayoutY(n.getY() - YOFFSET);
-
-		if (n.getType() == 1)
+		if(n.getType() != 0)
 		{
-			boolean changed = false;
-			for(LabelThingy thingy : thingies)
+			//new button
+			Button nodeB = new Button();
+
+			//experimental style changes to make the button a circle
+			nodeB.setId("node-button-unselected");
+
+			//add node to nodeButtons
+			nodeButtons.put(nodeB, n);
+
+			//set button XY coordinates
+			nodeB.setLayoutX(n.getX() - XOFFSET);
+			nodeB.setLayoutY(n.getY() - YOFFSET);
+
+			setButtonImage(nodeB, n.getType());
+			if (n.getType() == 1)
 			{
-				if(thingy.x == n.getX() && thingy.y == n.getY())
-				{
-					changed = true;
-					if(!thingy.text.isEmpty())
-					{
-						thingy.text += ", ";
-					}
-					thingy.text += n.getName().trim();
-				}
+				Label roomLabel = new Label(n.getName());
+				roomLabel.setLayoutX(nodeB.getLayoutX() - 10);
+				roomLabel.setLayoutY(nodeB.getLayoutY() - 25);
+				roomLabel.setId("roomLabel");
+				editingFloor.getChildren().add(1, roomLabel);
 			}
 
-			if(!changed)
-			{
-				System.out.println("Added label");
-				LabelThingy temp = new LabelThingy();
-				temp.x = (int)n.getX();
-				temp.y = (int)n.getY();
-				temp.displayX = (int)nodeB.getLayoutX();
-				temp.displayY = (int)nodeB.getLayoutY();
-				temp.text = n.getName().trim();
-				thingies.add(temp);
-			}
+			nodeB.setOnAction(event -> showRoomInfo(n));
+			//add button to scene
+			editingFloor.getChildren().add(1, nodeB);
 		}
-
-
-		setButtonImage(nodeB, n.getType());
-
-		nodeB.setOnAction(event -> showRoomInfo(n));
-		//add button to scene
-		editingFloor.getChildren().add(1, nodeB);
 	}
 
 	private void addLabels(LabelThingy thingy)
