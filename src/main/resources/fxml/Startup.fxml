@@ -84,6 +84,11 @@
                                     <Font name="Glacial Indifference Regular" size="33.0" />
                                  </font>
                               </Button>
+                              <Button mnemonicParsing="false" onAction="#ShowDirectory" styleClass="bh-button" stylesheets="@../css/normal.css" text="View Directory">
+                                 <font>
+                                    <Font name="Glacial Indifference Regular" size="33.0" />
+                                 </font>
+                              </Button>
                            </children>
                            <opaqueInsets>
                               <Insets />

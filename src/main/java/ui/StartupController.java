@@ -54,6 +54,11 @@ public class StartupController extends BaseController
 		loadFXML(Paths.MAP_FXML);
 	}
 
+	public void ShowDirectory()
+	{
+		loadFXML(Paths.DIRECTORY2_FXML);
+	}
+
 	public void showLogin()
 	{
 		loadFXML(Paths.LOGIN_FXML);
