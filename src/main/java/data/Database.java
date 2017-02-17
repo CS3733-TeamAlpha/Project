@@ -229,6 +229,25 @@ public class Database implements AdminStorage, Searchable
 		//TODO: HOLY MOTHER OF CTHULHU, MAKE THIS FUNCTION FAST AGAIN! USE UPDATE!
 		try
 		{
+			//Update the node
+			PreparedStatement updateNode = connection.prepareStatement("UPDATE Nodes " +
+					"SET posX = ?," +
+					"	posY = ?," +
+					"	type = ?," +
+					"	floor = ?," +
+					"	building = ?," +
+					"	name = ?" +
+					"WHERE node_uuid = ?");
+
+			updateNode.setDouble(1, node.getX());
+			updateNode.setDouble(2, node.getY());
+			updateNode.setInt(3, node.getType());
+			updateNode.setInt(4, node.getFloor());
+			updateNode.setString(5, node.getBuilding());
+			updateNode.setString(6, node.getName());
+			updateNode.setString(7, node.getID());
+			updateNode.execute();
+
 			//Update edges
 			PreparedStatement delOld = connection.prepareStatement("DELETE FROM Edges WHERE src=?");
 			delOld.setString(1, node.getID());
@@ -654,6 +673,26 @@ public class Database implements AdminStorage, Searchable
 	}
 
 	/**
+	 * You win, Andrew. This function will create an office for a provider.
+	 * @param provUUID UUID of provider to give location to
+	 * @param nodeUUID UUID of node that provider is located at
+	 */
+	public void addProviderLocation(String provUUID, String nodeUUID)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO DoctorOffices VALUES(?, ?)");
+			pstmt.setString(1, provUUID);
+			pstmt.setString(2, nodeUUID);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to add provider location!");
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Get the location of a named service as a node
 	 *
 	 * @param name Name of the service to search for
@@ -823,6 +862,7 @@ public class Database implements AdminStorage, Searchable
 
 				nodeCache.get(results.getString(2)).addProvider(nset.getString(1));
 			}
+			System.out.println(nodeCache);
 
 		} catch (SQLException e)
 		{

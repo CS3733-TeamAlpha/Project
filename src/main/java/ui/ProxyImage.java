@@ -1,17 +1,28 @@
 package ui;
 
-/**
- * Created by Sam on 2/15/2017.
- */
+import java.awt.image.BufferedImage;
+
+
 public class ProxyImage implements Image {
 
 	private RealImage realImage;
 	private String fileName;
 
-	public ProxyImage (String fileName) {
+	public ProxyImage (String fileName)
+	{
 		this.fileName = fileName;
+		realImage = new RealImage(fileName);
 	}
 
+	public Image getRealImage()
+	{
+		return this.realImage;
+	}
+
+	public javafx.scene.image.Image getFXImage()
+	{
+		return this.realImage.getFXImage();
+	}
 
 	// Display image from associated file, create object for RealImage if necessary
 	@Override

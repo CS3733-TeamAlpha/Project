@@ -18,5 +18,11 @@ class Paths
 	public static final String FLOOR6_NORMAL = "/Floors/floor6ColorSchemeNoLines.png";
 	public static final String FLOOR7_NORMAL = "/Floors/floor7ColorSchemeNoLines.png";
 
-
+	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
+	public static final String DOCTORICON = "/images/DoctorIcon2.png";
+	public static final String RESTROOMICON = "/images/UniRestroomIcon.png";
+	public static final String ADDNODE = "/images/addNodeSmall.png";
+	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
+	public static final String REMOVENODE = "/images/removeNodeSmall.png";
+	public static final String CHAINNODES = "/images/chainNodeSmall.png";
 }

@@ -36,8 +36,6 @@ public class MapController extends BaseController
 	@FXML
 	private ScrollPane scroller;
 	@FXML
-	private Button directoryButton;
-	@FXML
 	private VBox roomInfo;
 	@FXML
 	private Label roomName;
@@ -45,6 +43,12 @@ public class MapController extends BaseController
 	private Label roomDescription;
 	@FXML
 	private AnchorPane imgAnchor;
+	@FXML
+	private Button upFloor;
+	@FXML
+	private Button downFloor;
+	@FXML
+	private Label currentFloorLabel;
 
 
 	public MapController()
@@ -81,6 +85,10 @@ public class MapController extends BaseController
 		{
 			floorImage.setImage(new Image(Accessibility.HIGH_CONTRAST_MAP_PATH));
 		}
+
+		//style up/down buttons
+		upFloor.setId("upbuttonTriangle");
+		downFloor.setId("downbuttonTriangle");
 	}
 
 	public void showRoomInfo(Node n)
@@ -132,10 +140,6 @@ public class MapController extends BaseController
 		selected = null;
 	}
 
-	public void showDirectory()
-	{
-		loadFXML(Paths.DIRECTORY_FXML);
-	}
 
 	public void showStartup()
 	{
@@ -145,6 +149,41 @@ public class MapController extends BaseController
 	public void findDirectionsTo(){
 		findingDirections = true;
 		showRoomInfo(selected);
+	}
+
+	@FXML
+	/**
+	 * Change the current floor to increment up by 1.
+	 * Prevent going down if floor is already 1.
+	 * TODO: Make the min floor change depending on current building (iteration 3)
+	 */
+	void goDownFloor(ActionEvent event) {
+		if(FLOORID > 1){
+			//remove all buttons and lines on the current floor
+			//purgeButtonsAndLines();
+			//FLOORID--;
+			//loadNodesFromDatabase();
+			//currentFloorLabel.setText(Integer.toString(FLOORID));
+			//setFloorImage(FLOORID);
+		}
+	}
+
+	@FXML
+	/**
+	 * Change the current floor to increment down by 1.
+	 * Prevent going up if floor is already 7.
+	 * TODO: Make the max floor change depending on current building (iteration 3)
+	 * TODO: Make them actually work
+	 */
+	void goUpFloor(ActionEvent event) {
+		if(FLOORID < 7){
+			//remove all buttons and lines on the current floor
+			//purgeButtonsAndLines();
+			//FLOORID++;
+			//loadNodesFromDatabase();
+			//currentFloorLabel.setText(Integer.toString(FLOORID));
+			//setFloorImage(FLOORID);
+		}
 	}
 
 }

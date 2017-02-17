@@ -17,6 +17,17 @@ abstract class BaseController
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML};
 	protected static Database database;
 
+	// Make proxyimages to store floor pictures
+	ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
+	ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
+	ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
+	ProxyImage f4ImageProxy = new ProxyImage(Paths.FLOOR4_NORMAL);
+	ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
+	ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
+	ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
+
+	int FLOORID = 3; //Default floor id for minimal application
+
 	static
 	{
 		database = null;
