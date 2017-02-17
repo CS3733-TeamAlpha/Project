@@ -26,7 +26,7 @@ abstract class BaseController
 	ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
 	ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
 
-
+	int FLOORID = 3; //Default floor id for minimal application
 
 	static
 	{
