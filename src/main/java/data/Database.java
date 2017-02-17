@@ -20,7 +20,8 @@ public class Database implements AdminStorage
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 	private static final String DB_DROP_ALL = "/db/DBDropAll.sql";
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
-	private static final String DB_INSERT_EDGES = "/db/InsertEdges.sql";
+	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
+	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
 
 	private String dbName;
 	private boolean connected;
@@ -111,24 +112,7 @@ public class Database implements AdminStorage
 	 */
 	private void initTables()
 	{
-		try
-		{
-			//http://apache-database.10148.n7.nabble.com/run-script-from-java-w-ij-td100234.html
-			ij.runScript(connection, getClass().getResource(DB_CREATE_SQL).openStream(), "UTF-8", new OutputStream()
-			{
-				@Override
-				public void write(int i) throws IOException
-				{
-					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
-					//to begin with though...
-				}
-			}, "UTF-8");
-
-		} catch (IOException e)
-		{
-			System.out.println("Couldn't find database creation script... that's an error.");
-			e.printStackTrace();
-		}
+		runScript(DB_CREATE_SQL);
 	}
 
 	/**
@@ -952,6 +936,8 @@ public class Database implements AdminStorage
 	{
 		runScript(DB_DROP_ALL);
 		runScript(DB_CREATE_SQL);
+		runScript(DB_INSERT_NODES);
+		runScript(DB_INSERT_EDGES);
 		runScript(DB_INSERT_SQL);
 		//runScript(DB_INSERT_EDGES);
 
