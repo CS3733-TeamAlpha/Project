@@ -60,3 +60,8 @@
     -fx-text-fill: null;
     -fx-border-color: null;
 }
+#roomLabel
+{
+-fx-font: 15px GlacialIndifference;
+-fx-background-color: black;
+}
