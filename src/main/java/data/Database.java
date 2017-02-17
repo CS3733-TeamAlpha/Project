@@ -654,6 +654,26 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * You win, Andrew. This function will create an office for a provider.
+	 * @param provUUID UUID of provider to give location to
+	 * @param nodeUUID UUID of node that provider is located at
+	 */
+	public void addProviderLocation(String provUUID, String nodeUUID)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO DoctorOffices VALUES(?, ?)");
+			pstmt.setString(1, provUUID);
+			pstmt.setString(2, nodeUUID);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to add provider location!");
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Get the location of a named service as a node
 	 *
 	 * @param name Name of the service to search for
