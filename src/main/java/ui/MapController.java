@@ -284,11 +284,11 @@ public class MapController extends BaseController
 		setButtonImage(nodeB, n.getType());
 		if (n.getType() == 1)
 		{
-			Label please = new Label(n.getName());
-			please.setLayoutX(nodeB.getLayoutX()-10);
-			please.setLayoutY(nodeB.getLayoutY()-25);
-			please.setId("roomLabel");
-			editingFloor.getChildren().add(1, please);
+			Label roomLabel = new Label(n.getName());
+			roomLabel.setLayoutX(nodeB.getLayoutX()-10);
+			roomLabel.setLayoutY(nodeB.getLayoutY()-25);
+			roomLabel.setId("roomLabel");
+			editingFloor.getChildren().add(1, roomLabel);
 		}
 
 		nodeB.setOnAction(event -> showRoomInfo(n));
