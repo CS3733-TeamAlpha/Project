@@ -2,6 +2,8 @@ package ui;
 
 class Paths
 {
+
+
 	public static final String LOGIN_FXML = "/fxml/Login.fxml";
 	public static final String DIRECTORY_FXML = "/fxml/Directory.fxml";
 	public static final String MAP_FXML = "/fxml/Map.fxml";
@@ -33,4 +35,21 @@ class Paths
 	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
 	public static final String CHAINNODES = "/images/chainNodeSmall.png";
+
+	// Make proxyimages to store floor pictures
+	public static ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
+	public static ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
+	public static ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
+	public static ProxyImage f4ImageProxy = new ProxyImage(Paths.FLOOR4_NORMAL);
+	public static ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
+	public static ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
+	public static ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
+
+	public static ProxyImage f1ContrastProxy = new ProxyImage(Paths.FLOOR1_CONTRAST);
+	public static ProxyImage f2ContrastProxy = new ProxyImage(Paths.FLOOR2_CONTRAST);
+	public static ProxyImage f3ContrastProxy = new ProxyImage(Paths.FLOOR3_CONTRAST);
+	public static ProxyImage f4ContrastProxy = new ProxyImage(Paths.FLOOR4_CONTRAST);
+	public static ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
+	public static ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
+	public static ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
 }
