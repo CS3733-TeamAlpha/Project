@@ -82,7 +82,6 @@ public class MapEditorToolController extends BaseController
 
 	private String BUILDINGID = "00000000-0000-0000-0000-000000000000";
 
-	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
 	//TODO: should nodes be able to be moved to different floor? probably not
 
 	private ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);

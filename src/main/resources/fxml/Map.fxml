@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapController">
+<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapController">
    <items>
       <StackPane alignment="TOP_CENTER">
           <children>
@@ -26,8 +31,14 @@
               </ScrollPane>
               <Pane pickOnBounds="false">
                   <children>
-                      <Button fx:id="directoryButton" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#showDirectory" text="Directory" />
-                  <Button layoutX="160.0" layoutY="10.0" mnemonicParsing="false" onAction="#showStartup" text="Done" />
+                  <Button layoutX="14.0" layoutY="7.0" mnemonicParsing="false" onAction="#showStartup" text="&lt; Back" />
+                  <Button fx:id="upFloor" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" onAction="#goUpFloor" />
+                  <Button fx:id="downFloor" layoutX="14.0" layoutY="143.0" mnemonicParsing="false" onAction="#goDownFloor" />
+                  <Label fx:id="currentFloorLabel" layoutX="17.0" layoutY="105.0" text="3">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
                   </children>
               </Pane>
           </children>
