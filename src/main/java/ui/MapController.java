@@ -64,6 +64,7 @@ public class MapController extends BaseController
 	@FXML
 	private ImageView floorImage;
 
+	ArrayList<Label> loadedLabels = new ArrayList<>();
 
 	public MapController()
 	{
@@ -361,11 +362,31 @@ public class MapController extends BaseController
 			setButtonImage(nodeB, n.getType());
 			if (n.getType() == 1)
 			{
-				Label roomLabel = new Label(n.getName());
-				roomLabel.setLayoutX(nodeB.getLayoutX() - 10);
-				roomLabel.setLayoutY(nodeB.getLayoutY() - 25);
-				roomLabel.setId("roomLabel");
-				editingFloor.getChildren().add(1, roomLabel);
+				boolean changed = false;
+				for(LabelThingy thingy : thingies)
+				{
+					if(thingy.x == n.getX() && thingy.y == n.getY())
+					{
+						changed = true;
+						if(!thingy.text.isEmpty())
+						{
+							thingy.text += ", ";
+						}
+						thingy.text += n.getName().trim();
+					}
+				}
+
+				if(!changed)
+				{
+					System.out.println("Added label");
+					LabelThingy temp = new LabelThingy();
+					temp.x = (int)n.getX();
+					temp.y = (int)n.getY();
+					temp.displayX = (int)nodeB.getLayoutX();
+					temp.displayY = (int)nodeB.getLayoutY();
+					temp.text = n.getName().trim();
+					thingies.add(temp);
+				}
 			}
 
 			nodeB.setOnAction(event -> showRoomInfo(n));
@@ -381,6 +402,7 @@ public class MapController extends BaseController
 		roomLabel.setLayoutY(thingy.y-35);
 		roomLabel.setId("roomLabel");
 		editingFloor.getChildren().add(1, roomLabel);
+		loadedLabels.add(roomLabel);
 	}
 
 	/**
@@ -415,6 +437,12 @@ public class MapController extends BaseController
 		}
 		//clear all entries in nodeButtonLinks
 		nodeButtons.clear();
+
+		for(Label l : loadedLabels)
+		{
+			((AnchorPane) l.getParent()).getChildren().remove(l);
+		}
+		loadedLabels.clear();
 	}
 
 
