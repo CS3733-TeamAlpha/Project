@@ -65,3 +65,8 @@
 -fx-font: 15px GlacialIndifference;
 -fx-background-color: black;
 }
+
+.hc-black
+{
+    -fx-background-color: black;
+}

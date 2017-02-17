@@ -51,7 +51,7 @@
                      <children>
                         <VBox alignment="CENTER" fillWidth="false" spacing="15.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Label text="Find Directions" textFill="WHITE">
+                              <Label text="Directions Kiosk" textFill="WHITE">
                                  <font>
                                     <Font name="Glacial Indifference Regular" size="96.0" />
                                  </font>

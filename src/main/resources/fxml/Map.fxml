@@ -57,9 +57,9 @@
                </font>
             </Label>
             <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" prefHeight="93.0" prefWidth="315.0" text="Find Directions" />
-            <ScrollPane prefHeight="344.0" prefWidth="315.0">
+            <ScrollPane prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">
                <content>
-                  <Label fx:id="textDirectionsLabel" />
+                  <Label fx:id="textDirectionsLabel" styleClass="hc-black" />
                </content></ScrollPane>
          </children></VBox>
    </items>
