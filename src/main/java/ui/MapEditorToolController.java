@@ -126,6 +126,15 @@ public class MapEditorToolController extends BaseController
 		}
 	};
 
+	public EventHandler nodebuttonMouseMoved = new EventHandler<MouseEvent>()
+	{
+		@Override
+		public void handle(MouseEvent e)
+		{
+			redrawCanvasBugfix(e);
+		}
+	};
+
 	static
 	{
 		//initialize connection and floor/node/provider lists right away
@@ -772,6 +781,8 @@ public class MapEditorToolController extends BaseController
 		nodeB.setOnMouseDragged(nodebuttonMouseDrag);
 		//handle when mouse is released after click on button
 		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
+		//fix bug with moving over node
+		nodeB.setOnMouseMoved(nodebuttonMouseMoved);
 
 		currentNode = newNode;
 		if(currentButton != null)
@@ -1108,7 +1119,6 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void loadNode(Node n)
 	{
-		System.out.println("nodeloaded");
 		//new button
 		Button nodeB = new Button();
 
@@ -1125,6 +1135,8 @@ public class MapEditorToolController extends BaseController
 		nodeB.setOnMouseDragged(nodebuttonMouseDrag);
 		//handle when mouse released
 		nodeB.setOnMouseReleased(nodebuttonMouseReleased);
+		//fix bug with moving over node
+		nodeB.setOnMouseMoved(nodebuttonMouseMoved);
 		setButtonImage(nodeB, n.getType());
 		nodeButtonLinks.put(nodeB, n);
 		//add button to scene
@@ -1417,6 +1429,44 @@ public class MapEditorToolController extends BaseController
 		//store the array of lines for this source node into the hashmap
 		//to be used to delete all lines later when redrawing
 		lineGroups.put(source, groups);
+	}
+
+	/**
+	 * bugfix function for when moving mouse over node while adding neighbor
+	 * @param e
+	 */
+	void redrawCanvasBugfix(MouseEvent e)
+	{
+		//add canvas back if it has previously been removed
+		if(!editingFloor.getChildren().contains(canvas)){
+			editingFloor.getChildren().add(1, canvas);
+		}
+		//clear canvas
+		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+		Button draggedOver = (Button)e.getSource();
+
+		switch(currentState){
+			case CHAINADDING:
+			case ADDINGNEIGHBOR:
+				//draw line
+				gc.setStroke(Color.BLACK);
+				gc.setLineWidth(LINEWIDTH);
+				gc.strokeLine(currentNode.getX(), currentNode.getY(), draggedOver.getLayoutX()+e.getX(),
+						draggedOver.getLayoutY()+e.getY());
+				break;
+			case SHOWINGEMPTYMENU:
+				break;
+			case SHOWINGNODEMENU:
+				break;
+			default:
+				//remove canvas from scene if it is there but unneeded
+				if (editingFloor.getChildren().contains(canvas))
+				{
+					((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
+				}
+				break;
+		}
 	}
 
 	/**

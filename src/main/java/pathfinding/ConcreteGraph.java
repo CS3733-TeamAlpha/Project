@@ -38,6 +38,12 @@ public class ConcreteGraph implements Graph
 				if (closedList.contains(expTempNode))
 					continue; //Don't explore nodes that have already been explored
 
+				//Straight shot optimization -- if curNode isn't on the same floor as start or end, this node must be
+				//on a different floor than curNode. Otherwise, skip.
+				if ((curNode.node.getFloor() != start.getFloor() || curNode.node.getFloor() != end.getFloor())
+						&& expTempNode.getFloor() == curNode.node.getFloor())
+					continue;
+
 				//Check to see if we've found the end node yet
 				if (expTempNode == end)
 				{
@@ -77,7 +83,8 @@ public class ConcreteGraph implements Graph
 		//Backtrack from the end node, assembling an ordered list as we go
 		ArrayList<Node> path = new ArrayList<Node>();
 		for (ASTNode node = astEnd; node != null; node = node.parent)
-			path.add(node.node);
+			if (node.node.getFloor() == start.getFloor() || node.node.getFloor() == end.getFloor())
+				path.add(node.node);
 		return path;
 	}
 

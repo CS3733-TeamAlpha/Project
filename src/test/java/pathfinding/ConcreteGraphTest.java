@@ -74,33 +74,26 @@ public class ConcreteGraphTest {
 	}
 
 	@Test
-	public void textDirect() {
-		ConcreteNode[] testNodes = new ConcreteNode[6];
-		for (int i = 0; i < testNodes.length; i++)
-			testNodes[i] = new ConcreteNode();
-		for (int i = 0; i < testNodes.length; i++) {
-			if (i > 0)
-				testNodes[i].addNeighbor(testNodes[i - 1]);
-			if (i < testNodes.length - 1)
-				testNodes[i].addNeighbor(testNodes[i + 1]);
+	public void straitShotOptimization()
+	{
+		//Straight shot optimization test - test to make sure that intermediate floors are skipped
+		ConcreteNode[] nodes = new ConcreteNode[3];
+		for (int i = 0; i < nodes.length; i++)
+		{
+			nodes[i] = new ConcreteNode();
+			nodes[i].setFloor(i);
 		}
-		testNodes[0].setX(50);
-		testNodes[0].setY(50);
-		testNodes[1].setX(60);
-		testNodes[1].setY(50);
-		testNodes[2].setX(60);
-		testNodes[2].setY(40);
-		testNodes[3].setX(70);
-		testNodes[3].setY(40);
-		testNodes[4].setX(70);
-		testNodes[4].setY(60);
-		testNodes[5].setX(75);
-		testNodes[5].setY(60);
-		ConcreteGraph test = new ConcreteGraph();
-		ArrayList<String> directions = test.textDirect(testNodes[0], testNodes[5], 5);
-		assertEquals("Walk 50 feet", directions.get(1));
-		assertEquals("Walk 100 feet", directions.get(7));
-		assertEquals("Turn left, then", directions.get(6));
-		assertEquals("You have reached your destination!", directions.get(10));
+
+		for (int i = 0; i < nodes.length - 1; i++)
+		{
+			if (i > 0)
+				nodes[i].addNeighbor(nodes[i-1]);
+			if (i < nodes.length - 1)
+				nodes[i].addNeighbor(nodes[i+1]);
+		}
+
+		ConcreteGraph graph = new ConcreteGraph();
+		ArrayList<Node> path = graph.findPath(nodes[0], nodes[nodes.length-1]);
+		assertEquals(2, path.size());
 	}
 }
