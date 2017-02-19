@@ -981,9 +981,7 @@ public class Database implements AdminStorage
 				public void write(int i) throws IOException
 				{
 					if(showOutput)
-					{
 						System.out.write(i);
-					}
 				}
 			}, "UTF-8");
 		} catch (IOException e)
