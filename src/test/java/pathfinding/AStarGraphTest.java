@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class ConcreteGraphTest {
+public class AStarGraphTest
+{
 
 	@Test
 	public void findPath()
@@ -47,7 +48,7 @@ public class ConcreteGraphTest {
 			}
 		}
 
-		Graph graph = new ConcreteGraph();
+		Graph graph = new AStarGraph();
 
 		//Straight shot pathing test
 		assertNotNull(graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]));
@@ -94,7 +95,7 @@ public class ConcreteGraphTest {
 				nodes[i].addNeighbor(nodes[i+1]);
 		}
 
-		ConcreteGraph graph = new ConcreteGraph();
+		AStarGraph graph = new AStarGraph();
 		ArrayList<Node> path = graph.findPath(nodes[0], nodes[nodes.length-1]);
 		assertEquals(2, path.size());
 	}

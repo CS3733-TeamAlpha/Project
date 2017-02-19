@@ -70,8 +70,8 @@ public class TextualDirectionsTest
 		testNodes[5].setX(75);
 		testNodes[5].setY(60);
 
-		ConcreteGraph test = new ConcreteGraph();
-		ArrayList<String> directions = test.textDirect(testNodes[0], testNodes[5], 5);
+		ArrayList<Node> path = (new AStarGraph()).findPath(testNodes[0], testNodes[5]);
+		ArrayList<String> directions = TextualDirections.getDirections(path, 5);
 		for (String s : directions)
 			System.out.println(s);
 		assertEquals("Walk 50 feet", directions.get(0));

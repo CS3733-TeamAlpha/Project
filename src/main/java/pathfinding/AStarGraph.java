@@ -3,14 +3,10 @@ package pathfinding;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class ConcreteGraph implements Graph
+public class AStarGraph implements Graph
 {
-
 	/**
 	 * {@inheritDoc}
-	 *
-	 * @implNote This implementation returns an ArrayList.
-	 * @// TODO: 2/6/17 Implement straight-shot optimization for traversing multiple floors
 	 */
 	public ArrayList<Node> findPath(Node start, Node end)
 	{
@@ -118,39 +114,5 @@ public class ConcreteGraph implements Graph
 				return 1;
 			return 0;
 		}
-	}
-
-	/**
-	 * returns an arraylist of all the textual directions, in string form, to get from one node to another.
-	 * assumes a path exists
-	 *
-	 * @param scaleFactor this is how we'll convert coordinates to feet
-	 */
-	//TODO: edge cases like only two nodes
-	//TODO: test
-	public ArrayList<String> textDirect(Node start, Node end, double scaleFactor)
-	{
-		ArrayList<Node> path = findPath(start, end);
-		Node hold;
-		for (int j = 0; j < path.size()/2; j++)
-		{
-			hold = path.get(j);
-			path.set(j, path.get(path.size()-1 - j));
-			path.set(path.size()-1 - j, hold);
-		}
-		if (path == null)
-		    return null;
-		ArrayList<String> temp = new ArrayList<>();
-		for (int i = 0; i < path.size() - 2; i++)
-		{
-			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
-			if (path.get(i).getFloor() != path.get(i+1).getFloor())
-				temp.add("Take the elevator to floor " + path.get(i+1).getFloor() + ", then");
-			else
-			temp.add(path.get(i).angle(path.get(i+1), path.get(i+2)) + ", then");
-		}
-		temp.add("Walk " + Math.round(scaleFactor*path.get(path.size()-2).distance(path.get(path.size()-1))) + " feet");
-		temp.add("You have reached your destination!");
-		return temp;
 	}
 }

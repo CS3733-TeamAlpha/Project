@@ -12,5 +12,4 @@ public interface Graph
 	 * @return Ordered collection of nodes forming a complete path from start to finish, or null upon error/no-path.
 	 */
 	ArrayList<Node> findPath(Node start, Node end);
-	ArrayList<String> textDirect(Node start, Node end, double scaleFactor);
 }
