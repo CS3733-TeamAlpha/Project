@@ -380,7 +380,6 @@ public class MapController extends BaseController
 
 				if(!changed)
 				{
-					System.out.println("Added label");
 					LabelThingy temp = new LabelThingy();
 					temp.x = (int)n.getX();
 					temp.y = (int)n.getY();
