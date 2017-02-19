@@ -941,6 +941,8 @@ public class Database implements AdminStorage
 
 	public void resetDatabase()
 	{
+		nodeCache.clear();
+
 		runScript(DB_DROP_ALL);
 		runScript(DB_CREATE_SQL);
 		runScript(DB_INSERT_NODES);
