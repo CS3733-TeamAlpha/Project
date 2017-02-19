@@ -29,14 +29,11 @@ public class MapController extends BaseController
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
-	private boolean pathGoesDown = false;
-	private boolean pathGoesUp = false;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
 	private Node selected;
 	private Node kiosk;
 	boolean findingDirections = false;
-	boolean multifloorDirections = false;
 	boolean pathingUp = false;
 	boolean pathingDown = false;
 	int targetFloor = -1;
