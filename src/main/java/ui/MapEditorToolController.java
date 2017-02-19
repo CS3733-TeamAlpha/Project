@@ -1,16 +1,14 @@
 package ui;
 
 import data.Database;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
@@ -200,10 +198,42 @@ public class MapEditorToolController extends BaseController
 
 		//set the floorImage imageview to display the correct floor's image.
 		//TODO: make this work with multiple buildings
-		setFloorImage(FLOORID);
+		setFloorImage(BUILDINGID, FLOORID);
 
 		//set up event handlers for drag and drop images
 		setupImageEventHandlers();
+
+		//set up the choicebox for changing buildings
+		ArrayList<String> buildings = database.getBuildings();
+		for(String s: buildings)
+			System.out.println(s);
+		ChoiceBox buildingChoice = new ChoiceBox();
+		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
+		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
+		buildingChoice.setLayoutX(49);
+		buildingChoice.setLayoutY(106);
+		buildingChoice.setOnAction(event ->
+				{
+					changeBuilding((String)buildingChoice.getValue());
+				}
+		);
+	}
+
+	/**
+	 * Change the building that is currently being edited
+	 * @param building String name of the buliding to edit
+	 */
+	private void changeBuilding(String building)
+	{
+		//change selected building ID
+		BUILDINGID = database.getBuildingUUID(building);
+		//remove all buttons and lines on the current floor
+		purgeButtonsAndLines();
+		//default to floor 1 when changing buildings
+		FLOORID = 1;
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
+		setFloorImage(BUILDINGID, FLOORID);
 	}
 
 	/**
@@ -212,57 +242,64 @@ public class MapEditorToolController extends BaseController
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
 	 */
-	private void setFloorImage(int floor)
+	private void setFloorImage(String buildingid, int floor)
 	{
-		if(Accessibility.isHighContrast())
+		//faulkner building
+		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			if (floor == 1)
+			if (Accessibility.isHighContrast())
 			{
-				floorImage.setImage(f1ContrastProxy.getFXImage());
-			} else if (floor == 2)
+				if (floor == 1)
+				{
+					floorImage.setImage(f1ContrastProxy.getFXImage());
+				} else if (floor == 2)
+				{
+					floorImage.setImage(f2ContrastProxy.getFXImage());
+				} else if (floor == 3)
+				{
+					floorImage.setImage(f3ContrastProxy.getFXImage());
+				} else if (floor == 4)
+				{
+					floorImage.setImage(f4ContrastProxy.getFXImage());
+				} else if (floor == 5)
+				{
+					floorImage.setImage(f5ContrastProxy.getFXImage());
+				} else if (floor == 6)
+				{
+					floorImage.setImage(f6ContrastProxy.getFXImage());
+				} else if (floor == 7)
+				{
+					floorImage.setImage(f7ContrastProxy.getFXImage());
+				}
+			} else
 			{
-				floorImage.setImage(f2ContrastProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ContrastProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ContrastProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ContrastProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ContrastProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ContrastProxy.getFXImage());
+				if (floor == 1)
+				{
+					floorImage.setImage(f1ImageProxy.getFXImage());
+				} else if (floor == 2)
+				{
+					floorImage.setImage(f2ImageProxy.getFXImage());
+				} else if (floor == 3)
+				{
+					floorImage.setImage(f3ImageProxy.getFXImage());
+				} else if (floor == 4)
+				{
+					floorImage.setImage(f4ImageProxy.getFXImage());
+				} else if (floor == 5)
+				{
+					floorImage.setImage(f5ImageProxy.getFXImage());
+				} else if (floor == 6)
+				{
+					floorImage.setImage(f6ImageProxy.getFXImage());
+				} else if (floor == 7)
+				{
+					floorImage.setImage(f7ImageProxy.getFXImage());
+				}
 			}
 		}
 		else
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ImageProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ImageProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ImageProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ImageProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ImageProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ImageProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ImageProxy.getFXImage());
-			}
+			System.out.println("wew");
 		}
 	}
 
@@ -714,7 +751,7 @@ public class MapEditorToolController extends BaseController
 			FLOORID--;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
@@ -776,7 +813,7 @@ public class MapEditorToolController extends BaseController
 			FLOORID++;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
