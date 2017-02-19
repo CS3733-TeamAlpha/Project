@@ -112,7 +112,7 @@ public class Database implements AdminStorage
 	 */
 	private void initTables()
 	{
-		runScript(DB_CREATE_SQL);
+		runScript(DB_CREATE_SQL, false);
 	}
 
 	/**
@@ -953,12 +953,11 @@ public class Database implements AdminStorage
 			e.printStackTrace();
 		}
 
-		runScript(DB_DROP_ALL);
-		runScript(DB_CREATE_SQL);
-		runScript(DB_INSERT_NODES);
-		runScript(DB_INSERT_EDGES);
-		runScript(DB_INSERT_SQL);
-		//runScript(DB_INSERT_EDGES);
+		runScript(DB_DROP_ALL, true);
+		runScript(DB_CREATE_SQL, true);
+		runScript(DB_INSERT_NODES, true);
+		runScript(DB_INSERT_EDGES, true);
+		//runScript(DB_INSERT_SQL, true);
 
 		try
 		{
@@ -970,7 +969,7 @@ public class Database implements AdminStorage
 		reloadCache();
 	}
 
-	private void runScript(String filepath)
+	private void runScript(String filepath, boolean showOutput)
 	{
 		try
 		{
@@ -980,8 +979,10 @@ public class Database implements AdminStorage
 				@Override
 				public void write(int i) throws IOException
 				{
-					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
-					//to begin with though...
+					if(showOutput)
+					{
+						System.out.write(i);
+					}
 				}
 			}, "UTF-8");
 		} catch (IOException e)
