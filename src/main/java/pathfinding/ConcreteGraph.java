@@ -17,6 +17,14 @@ public class ConcreteGraph implements Graph
 		if (start == null || end == null)
 			return null; //idiot check
 
+		//Idiot check for trying to path from point A to point
+		if (start == end)
+		{
+			ArrayList<Node> ret = new ArrayList<>();
+			ret.add(start);
+			return ret;
+		}
+
 		//Init: add the first node to the open list
 		ASTNode astStart = new ASTNode(start, 0);
 		ASTNode astEnd = new ASTNode(end, -1);

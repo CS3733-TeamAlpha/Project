@@ -65,6 +65,8 @@ public class ConcreteGraphTest {
 		Node emptyNode = new ConcreteNode();
 		assertNull(graph.findPath(emptyNode, gridNodes[0][0]));
 		assertNull(graph.findPath(gridNodes[0][0], emptyNode));
+		assertEquals(1, graph.findPath(straightNodes[0], straightNodes[0]).size());
+		assertTrue(straightNodes[0] == graph.findPath(straightNodes[0], straightNodes[0]).get(0));
 
 		//Ordering + path integrity test
 		ArrayList<Node> orderedSolution = graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]);

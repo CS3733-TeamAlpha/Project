@@ -916,8 +916,8 @@ public class Database implements AdminStorage
 		try
 		{
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Nodes WHERE NAME LIKE ? UNION " +
-					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE NAME LIKE ? UNION " +
+					"SELECT Name, provider_uuid AS UUID FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
@@ -925,6 +925,7 @@ public class Database implements AdminStorage
 			{
 				SearchResult res = new SearchResult();
 				res.displayText = results.getString("Name");
+				res.id = results.getString("UUID");
 				searchResults.add(res);
 			}
 
@@ -980,9 +981,7 @@ public class Database implements AdminStorage
 				public void write(int i) throws IOException
 				{
 					if(showOutput)
-					{
 						System.out.write(i);
-					}
 				}
 			}, "UTF-8");
 		} catch (IOException e)
