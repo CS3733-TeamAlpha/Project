@@ -942,6 +942,16 @@ public class Database implements AdminStorage
 	public void resetDatabase()
 	{
 		nodeCache.clear();
+		try
+		{
+			statement.close();
+			connection.close();
+			connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
+		} catch (SQLException e)
+		{
+			//whatever
+			e.printStackTrace();
+		}
 
 		runScript(DB_DROP_ALL);
 		runScript(DB_CREATE_SQL);
@@ -950,6 +960,13 @@ public class Database implements AdminStorage
 		runScript(DB_INSERT_SQL);
 		//runScript(DB_INSERT_EDGES);
 
+		try
+		{
+			statement = connection.createStatement();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 		reloadCache();
 	}
 
