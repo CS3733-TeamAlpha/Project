@@ -91,6 +91,13 @@ public class MapEditorToolController extends BaseController
 		{
 			if(e.isSecondaryButtonDown())
 			{
+				if(currentButton != e.getSource() && currentButton != null)
+				{
+					currentButton.setId("node-button-unselected");
+					currentButton = (Button)e.getSource();
+					currentButton.setId("node-button-selected");
+					currentNode = nodeButtonLinks.get(currentButton);
+				}
 				currentState = editorStates.SHOWINGNODEMENU;
 				displayContextMenu(e);
 			}
