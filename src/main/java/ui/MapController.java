@@ -80,6 +80,24 @@ public class MapController extends BaseController
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
 		downFloor.setId("downbuttonTriangle");
+		Node searched = getSearchedFor();
+		if(searched!=null){
+			System.out.println(searched.getName());
+			jumpFloor(searched.getFloor());
+
+			//TODO - FIX SCROLLING
+			double width = scroller.getContent().getBoundsInLocal().getWidth();
+			double height = scroller.getContent().getBoundsInLocal().getHeight();
+			System.out.println(searched.getX()/(width-scroller.getWidth()));
+			System.out.println(searched.getY()/(height-scroller.getHeight()));
+			scroller.setHvalue(searched.getX()/(width-scroller.getWidth()));
+			scroller.setVvalue(1-searched.getY()/(height-scroller.getHeight()));
+
+
+			selected = searched;
+			showRoomInfo(searched);
+			setSearchedFor(null);
+		}
 	}
 
 	public void showRoomInfo(Node n)
@@ -178,6 +196,11 @@ public class MapController extends BaseController
 		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
 		showRoomInfo(selected);
+	}
+
+
+	void goToNode(Node n){
+
 	}
 
 	/**
