@@ -42,15 +42,9 @@ public class MapEditorToolController extends BaseController
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
 
-
-
-
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
-
-
-
 
 	//enums to indicate current state
 	private enum editorStates {
@@ -201,53 +195,11 @@ public class MapEditorToolController extends BaseController
 	{
 		if(Accessibility.isHighContrast())
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ContrastProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ContrastProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ContrastProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ContrastProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ContrastProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ContrastProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ContrastProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
 		}
 		else
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ImageProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ImageProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ImageProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ImageProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ImageProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ImageProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ImageProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 	}
 

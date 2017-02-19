@@ -276,59 +276,16 @@ public class MapController extends BaseController
 	 * a specific floor.
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
-	 * TODO: Stole this from map editor, may want to fix
 	 */
 	private void setFloorImage(int floor)
 	{
 		if(Accessibility.isHighContrast())
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ContrastProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ContrastProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ContrastProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ContrastProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ContrastProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ContrastProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ContrastProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
 		}
 		else
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ImageProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ImageProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ImageProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ImageProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ImageProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ImageProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ImageProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 	}
 
