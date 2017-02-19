@@ -47,6 +47,11 @@ class Paths
 	public static ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
 	public static ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
 
+	public static ProxyImage[] regularFloorImages =
+			{
+					f1ImageProxy, f2ImageProxy, f3ImageProxy, f4ImageProxy, f5ImageProxy, f6ImageProxy, f7ImageProxy
+			};
+
 	public static ProxyImage f1ContrastProxy = new ProxyImage(Paths.FLOOR1_CONTRAST);
 	public static ProxyImage f2ContrastProxy = new ProxyImage(Paths.FLOOR2_CONTRAST);
 	public static ProxyImage f3ContrastProxy = new ProxyImage(Paths.FLOOR3_CONTRAST);
@@ -54,6 +59,11 @@ class Paths
 	public static ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
 	public static ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
 	public static ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
+
+	public static ProxyImage[] contrastFloorImages =
+			{
+					f1ContrastProxy, f2ContrastProxy, f3ContrastProxy, f4ContrastProxy, f5ContrastProxy, f6ContrastProxy, f7ContrastProxy
+			};
 
 	// Make proxyimages for icons
 	public static ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
