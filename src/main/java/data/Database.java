@@ -911,13 +911,20 @@ public class Database implements AdminStorage
 		return connected;
 	}
 
+	/**
+	 * Resturns search results from the Nodes and Providers tables.
+	 * @param searchText The text to search for
+	 * @param top6 If true, only return the top 6 search results
+	 * @return Any providers or nodes whos name contains the given search text (not case sensitive).
+	 */
 	public ArrayList<SearchResult> getResultsForSearch(String searchText, boolean top6)
 	{
 		try
 		{
+			searchText = searchText.toLowerCase();
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE NAME LIKE ? UNION " +
-					"SELECT Name, provider_uuid AS UUID FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE LOWER(NAME) LIKE ? UNION " +
+					"SELECT Name, provider_uuid AS UUID FROM PROVIDERS WHERE LOWER(NAME) LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
