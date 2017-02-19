@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -93,7 +94,14 @@ public class MapEditorToolController extends BaseController
 			{
 				if(currentButton != e.getSource() && currentButton != null)
 				{
+					System.out.println("dont happen");
 					currentButton.setId("node-button-unselected");
+					currentButton = (Button)e.getSource();
+					currentButton.setId("node-button-selected");
+					currentNode = nodeButtonLinks.get(currentButton);
+				}
+				else if (currentButton == null)
+				{
 					currentButton = (Button)e.getSource();
 					currentButton.setId("node-button-selected");
 					currentNode = nodeButtonLinks.get(currentButton);
@@ -217,6 +225,25 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void setupImageEventHandlers()
 	{
+		//if esc key is pressed, remove contextmenus/canvases and set state to doingnothing
+		//this is a failsafe as well as feature
+		stage.getScene().setOnKeyPressed(e ->{
+			if(e.getCode() == KeyCode.ESCAPE)
+			{
+				//remove canvas if it exists
+				if (editingFloor.getChildren().contains(canvas))
+				{
+					editingFloor.getChildren().remove(canvas);
+				}
+				//remove context menu if it exists
+				if(editingFloor.getChildren().contains(CONTEXTMENU))
+				{
+					editingFloor.getChildren().remove(CONTEXTMENU);
+				}
+				currentState = editorStates.DOINGNOTHING;
+			}
+		});
+
 		//set the imaveview objects to use the correct images
 		hallwayImage.setImage(Paths.hallwayImageProxy.getFXImage());
 		officeImage.setImage(Paths.doctorImageProxy.getFXImage());
@@ -544,7 +571,6 @@ public class MapEditorToolController extends BaseController
 	 */
 	@FXML
 	void rightclickFloorImage(ContextMenuEvent event) {
-		System.out.println("fuckinghas;dflkj");
 		currentState = editorStates.DOINGNOTHING;
 	}
 
@@ -570,7 +596,7 @@ public class MapEditorToolController extends BaseController
 				database.updateNode(currentNode);
 
 				//draw connecting lines
-				drawToNeighbors(currentNode);
+				//drawToNeighbors(currentNode);
 				drawToNeighbors(oldNode);
 
 				break;
@@ -708,7 +734,8 @@ public class MapEditorToolController extends BaseController
 
 	//TODO: update to match refactored database
 	/**
-	 * Create a new node at given xy coordinates
+	 * Create a new node at given xy coordinates.
+	 * Note on node types: 0 is hallway, 1 is doctorsoffice, 2 is elevator, 3 is resetroom
 	 * @param x X coordinate of new node
 	 * @param y Y coordinate of new node
 	 */
@@ -716,7 +743,6 @@ public class MapEditorToolController extends BaseController
 	{
 		Node newNode = new ConcreteNode();
 		newNode.setName("New " + type);
-		//TODO: Set node type! It's -1 by default!
 		newNode.setX(x);
 		newNode.setY(y);
 		newNode.setFloor(FLOORID);
