@@ -3,6 +3,8 @@ package ui;
 import data.Database;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import pathfinding.Node;
 
@@ -13,7 +15,7 @@ import java.io.IOException;
  */
 abstract class BaseController
 {
-	private static Stage stage;
+	protected static Stage stage;
 	private boolean currentSceneSupportsHC = true;
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.USER_DIRECTORY_FXML};
 	protected static Database database;
@@ -127,6 +129,46 @@ abstract class BaseController
 
 	protected Node getSearchedFor(){
 		return searchedFor;
+	}
+
+	/**
+	 * Set the correct image to a node button
+	 * @param b target button to set graphic to
+	 * @param type node type
+	 */
+	protected void setButtonImage(Button b, int type)
+	{
+		if(type == 1)
+		{
+			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 2)
+		{
+			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 3)
+		{
+			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 4 || type == 5)
+		{
+			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 0)
+		{
+		}
 	}
 
 }
