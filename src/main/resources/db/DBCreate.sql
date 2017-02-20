@@ -51,9 +51,12 @@ CREATE TABLE Logins
   password VARCHAR(64) NOT NULL
 );
 
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'outdoors');
+
 --Delete all nodes in the building if the building gets deleted
 ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE;
-INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'default');
+
+--Default login 'admin:admin'
 INSERT INTO LOGINS VALUES('admin', '$2a$10$TzLC8ubvjWCaG/zc53OwIOhxwP1BicrifkL7Do80Dgpu1kT9iNJHG');
 
 

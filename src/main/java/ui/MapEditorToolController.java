@@ -1,16 +1,14 @@
 package ui;
 
 import data.Database;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
@@ -43,9 +41,17 @@ public class MapEditorToolController extends BaseController
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
 
+
+
+
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
+
+
+    //boolean to determine whether or not to automatically connect newly added nodes
+	//to the nearest hallway node
+	private boolean AUTOCONNECT = false;
 
 	//enums to indicate current state
 	private enum editorStates {
@@ -194,10 +200,42 @@ public class MapEditorToolController extends BaseController
 
 		//set the floorImage imageview to display the correct floor's image.
 		//TODO: make this work with multiple buildings
-		setFloorImage(FLOORID);
+		setFloorImage(BUILDINGID, FLOORID);
 
 		//set up event handlers for drag and drop images
 		setupImageEventHandlers();
+
+		//set up the choicebox for changing buildings
+		ArrayList<String> buildings = database.getBuildings();
+		for(String s: buildings)
+			System.out.println(s);
+		ChoiceBox buildingChoice = new ChoiceBox();
+		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
+		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
+		buildingChoice.setLayoutX(49);
+		buildingChoice.setLayoutY(106);
+		buildingChoice.setOnAction(event ->
+				{
+					changeBuilding((String)buildingChoice.getValue());
+				}
+		);
+	}
+
+	/**
+	 * Change the building that is currently being edited
+	 * @param building String name of the buliding to edit
+	 */
+	private void changeBuilding(String building)
+	{
+		//change selected building ID
+		BUILDINGID = database.getBuildingUUID(building);
+		//remove all buttons and lines on the current floor
+		purgeButtonsAndLines();
+		//default to floor 1 when changing buildings
+		FLOORID = 1;
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
+		setFloorImage(BUILDINGID, FLOORID);
 	}
 
 	/**
@@ -206,15 +244,23 @@ public class MapEditorToolController extends BaseController
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
 	 */
-	private void setFloorImage(int floor)
+	private void setFloorImage(String buildingid, int floor)
 	{
-		if(Accessibility.isHighContrast())
+		//faulkner building
+		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
+			if(Accessibility.isHighContrast())
+			{
+				floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
+			}
+			else
+			{
+				floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
+			}
 		}
-		else
+		else if(buildingid.equals("00000000-0000-0000-0000-belkin_house"))
 		{
-			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
+			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
 	}
 
@@ -241,6 +287,7 @@ public class MapEditorToolController extends BaseController
 					editingFloor.getChildren().remove(CONTEXTMENU);
 				}
 				currentState = editorStates.DOINGNOTHING;
+				mainScroll.setPannable(true);
 			}
 		});
 
@@ -519,6 +566,8 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	private VBox dndContainer;
 
+	@FXML
+	private CheckBox toggleAutoConnect;
 
 	@FXML
 	private Button upFloor;
@@ -599,6 +648,8 @@ public class MapEditorToolController extends BaseController
 				//drawToNeighbors(currentNode);
 				drawToNeighbors(oldNode);
 
+				currentButton.toFront();
+
 				break;
 			default:
 				hideNodeDetails();
@@ -666,7 +717,7 @@ public class MapEditorToolController extends BaseController
 			FLOORID--;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
@@ -728,7 +779,7 @@ public class MapEditorToolController extends BaseController
 			FLOORID++;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
@@ -786,34 +837,27 @@ public class MapEditorToolController extends BaseController
 		if(currentState != editorStates.CHAINADDING)
 		{
 			currentState = editorStates.DOINGNOTHING;
-		}
-	}
+			//auto connect toggled
+			if(AUTOCONNECT)
+			{
+				//find nearest hallway node and add as neighbor
+				Node nearest = database.getNearestHallwayNode(currentNode);
+				if(nearest != null)
+				{
+					nearest.addNeighbor(currentNode);
+					currentNode.addNeighbor(nearest);
 
-	private void setButtonImage(Button b, int type)
-	{
-		if(type == 1)
-		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 0)
-		{
+					//link to nearest neighbor
+					database.updateNode(nearest);
+					database.updateNode(currentNode);
+
+					//draw connecting lines
+					drawToNeighbors(currentNode);
+					drawToNeighbors(nearest);
+
+					currentButton.toFront();
+				}
+			}
 		}
 	}
 
@@ -1225,7 +1269,17 @@ public class MapEditorToolController extends BaseController
 		yField.setText("");
 	}
 
-    /**
+	/**
+	 * toggle new node auto connection setting
+	 * @param event
+	 */
+	@FXML
+	void onToggleAutoConnect(ActionEvent event) {
+		AUTOCONNECT = toggleAutoConnect.isSelected();
+	}
+
+
+	/**
      * update a node's X coordinate, both visually and in the node's properties
      */
 	@FXML
@@ -1306,6 +1360,41 @@ public class MapEditorToolController extends BaseController
 		{
 			//TODO: need more exception handling?
 			System.out.println("Not a double");
+		}
+	}
+
+	/**
+	 * update a node's Type and update its corresponding image
+	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
+	 * @param event
+	 */
+	@FXML
+	void updateNodeType(ActionEvent event)
+	{
+		try
+		{
+			int newType = Integer.parseInt(typeField.getText());
+			if (newType <= 5 && newType >= 0)
+			{
+				if (newType == 5) //changing to selected kiosk
+				{
+					database.setSelectedKiosk(currentNode);
+				}
+				//update type
+				currentNode.setType(newType);
+				database.updateNode(currentNode);
+				for(Button b: nodeButtonLinks.keySet())
+				{
+					if(nodeButtonLinks.get(b) == currentNode)
+					{
+						setButtonImage(b, newType);
+						break;
+					}
+				}
+			}
+		} catch (NumberFormatException e)
+		{
+			System.out.println("Not an int");
 		}
 	}
 
