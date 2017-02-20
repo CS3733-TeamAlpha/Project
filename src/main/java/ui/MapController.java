@@ -29,14 +29,11 @@ public class MapController extends BaseController
 	//public ImageView floorImage;
 	private Graph graph;
 	private boolean roomInfoShown;
-	private boolean pathGoesDown = false;
-	private boolean pathGoesUp = false;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
 	private Node selected;
 	private Node kiosk;
 	boolean findingDirections = false;
-	boolean multifloorDirections = false;
 	boolean pathingUp = false;
 	boolean pathingDown = false;
 	int targetFloor = -1;
@@ -83,6 +80,24 @@ public class MapController extends BaseController
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
 		downFloor.setId("downbuttonTriangle");
+		Node searched = getSearchedFor();
+		if(searched!=null){
+			System.out.println(searched.getName());
+			jumpFloor(searched.getFloor());
+
+			//TODO - FIX SCROLLING
+			double width = scroller.getContent().getBoundsInLocal().getWidth();
+			double height = scroller.getContent().getBoundsInLocal().getHeight();
+			System.out.println(searched.getX()/(width-scroller.getWidth()));
+			System.out.println(searched.getY()/(height-scroller.getHeight()));
+			scroller.setHvalue(searched.getX()/(width-scroller.getWidth()));
+			scroller.setVvalue(1-searched.getY()/(height-scroller.getHeight()));
+
+
+			selected = searched;
+			showRoomInfo(searched);
+			setSearchedFor(null);
+		}
 	}
 
 	public void showRoomInfo(Node n)
@@ -183,6 +198,11 @@ public class MapController extends BaseController
 		showRoomInfo(selected);
 	}
 
+
+	void goToNode(Node n){
+
+	}
+
 	/**
 	 * jump directly to the target floor
 	 */
@@ -256,59 +276,16 @@ public class MapController extends BaseController
 	 * a specific floor.
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
-	 * TODO: Stole this from map editor, may want to fix
 	 */
 	private void setFloorImage(int floor)
 	{
 		if(Accessibility.isHighContrast())
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ContrastProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ContrastProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ContrastProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ContrastProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ContrastProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ContrastProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ContrastProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
 		}
 		else
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ImageProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ImageProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ImageProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ImageProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ImageProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ImageProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ImageProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 	}
 
@@ -383,7 +360,6 @@ public class MapController extends BaseController
 
 				if(!changed)
 				{
-					System.out.println("Added label");
 					LabelThingy temp = new LabelThingy();
 					temp.x = (int)n.getX();
 					temp.y = (int)n.getY();
