@@ -290,40 +290,7 @@ public class MapController extends BaseController
 	}
 
 	// TODO: Stole this from map editor, may want to fix
-	private void setButtonImage(Button b, int type)
-	{
-		if(type == 1)
-		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 4 || type == 5)
-		{
-			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 0)
-		{
-		}
-	}
+
 
 	/**
 	 * Create a button on the scene and associate it with a node

@@ -833,41 +833,6 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	private void setButtonImage(Button b, int type)
-	{
-		if(type == 1)
-		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 4 || type == 5)
-		{
-			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 0)
-		{
-		}
-	}
-
 	/**
 	 * This is called whenever the mouse is dragged around on the map.
 	 * We use this function to display and use the radial context menu, if
