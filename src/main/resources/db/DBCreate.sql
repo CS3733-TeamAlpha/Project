@@ -27,8 +27,8 @@ CREATE TABLE Services --Shops, cafes, etc. What is this, a mall?
 CREATE TABLE Providers
 (
   provider_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
-  firstName VARCHAR(128) NOT NULL UNIQUE,
-  lastName VARCHAR(128),
+  firstName VARCHAR(128) NOT NULL,
+  lastName VARCHAR(128) NOT NULL,
   title VARCHAR(60)
 );
 

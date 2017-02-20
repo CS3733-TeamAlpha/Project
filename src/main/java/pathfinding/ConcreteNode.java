@@ -122,6 +122,7 @@ public class ConcreteNode implements Node
 	@Override
 	public void addProvider(Provider newProvider)
 	{
+		//Only add the provider if they aren't already added here
 		boolean exists = providers.stream().anyMatch(provider -> provider.getUuid().equals(newProvider.getUuid()));
 		if (!exists)
 			providers.add(newProvider);
