@@ -72,7 +72,7 @@ public class MapController extends BaseController
 	{
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
-		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
+		kiosk = database.getSelectedKiosk();
 		graph = new ConcreteGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
 		setFloorImage(FLOORID); //Set image of floor
@@ -290,33 +290,7 @@ public class MapController extends BaseController
 	}
 
 	// TODO: Stole this from map editor, may want to fix
-	private void setButtonImage(Button b, int type)
-	{
-		if(type == 1)
-		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 0)
-		{
-		}
-	}
+
 
 	/**
 	 * Create a button on the scene and associate it with a node
