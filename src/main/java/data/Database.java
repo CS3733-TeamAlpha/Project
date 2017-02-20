@@ -347,6 +347,56 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * Get all nodes that are tagged as kiosks.
+	 * These nodes have a type of either 4 or 5
+	 * @return A list of kiosk nodes
+	 */
+	public ArrayList<Node> getAllKiosks()
+	{
+		ArrayList<Node> kiosklist = null;
+		try
+		{
+
+			//The node with type 5 is selected. Assume only one such node exists
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5 OR type=4");
+
+			while (results.next())
+				kiosklist.add(nodeCache.get(results.getString(1)));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error retriving all kiosks!");
+			e.printStackTrace();
+		}
+		return kiosklist;
+	}
+
+	/**
+	 * Get the node that is selected as the kiosk to be used for this app.
+	 * The selected kiosk has a type of 5, while non-selected kiosks have a value of 4
+	 * @return
+	 */
+	public Node getSelectedKiosk()
+	{
+		Node kiosk = null;
+		try
+		{
+
+			//The node with type 5 is selected. Assume only one such node exists
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5");
+
+			while (results.next())
+				kiosk = nodeCache.get(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error retrieving selected kiosk!");
+			e.printStackTrace();
+		}
+		return kiosk;
+	}
+
+	/**
 	 * Compatibilty hack for DirectoryController
 	 * TODO: EXTERMINATE
 	 *
@@ -498,6 +548,29 @@ public class Database implements AdminStorage
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Get the nearest node to a given node.
+	 * First check for other nodes on the same floor/building, then determine nearest.
+	 * Only hallway nodes are considered.
+	 * @param n The node to find the nearest node to
+	 * @return
+	 */
+	public Node getNearestHallwayNode(Node n)
+	{
+		double minDist = 0;
+		Node nearest = null;
+		for(Node nearN: getNodesInBuildingFloor(n.getBuilding(), n.getFloor()))
+		{
+			if(nearN.getType() == 0 && n != nearN &&
+					(n.distance(nearN) < minDist || nearest == null))
+			{
+				minDist = n.distance(nearN);
+				nearest = nearN;
+			}
+		}
+		return nearest;
 	}
 
 	/**
@@ -951,47 +1024,22 @@ public class Database implements AdminStorage
 		return null;
 	}
 
-	/**
-	 * Gets the currently selected kiosk from the database
-	 * @return The Node for the currently selected kiosk
-	 */
-	public Node getSelectedKiosk()
-	{
-		try
-		{
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Nodes WHERE TYPE=?");
-			stmt.setInt(1, NODE_TYPE_KIOSK_SELECTED);
-			ResultSet results = stmt.executeQuery();
-
-			if(results.next())
-			{
-				return new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
-						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public void setSelectedKiosk(Node kiosk)
 	{
 		try
 		{
-			boolean success = statement.execute("UPDATE Nodes SET TYPE=" + NODE_TYPE_KIOSK_NOT_SELECTED +
-					"WHERE TYPE=" + NODE_TYPE_KIOSK_SELECTED);
-			if(!success)
-				System.err.println("UNABLE TO REMOVE SELECTED KIOSK");
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type="+
+					NODE_TYPE_KIOSK_SELECTED);
 
-			PreparedStatement stmt = connection.prepareStatement("UPDATE Nodes SET Type=" + NODE_TYPE_KIOSK_SELECTED +
-					"WHERE NODE_UUID=?");
-			stmt.setString(1, kiosk.getID());
+			while (results.next())
+			{
+				Node oldKiosk = nodeCache.get(results.getString(1));
+				oldKiosk.setType(NODE_TYPE_KIOSK_NOT_SELECTED);
+				updateNode(oldKiosk);
+			}
 
-			success = stmt.execute();
-			if(!success)
-				System.err.println("UNABLE TO SET SELECTED KIOSK");
+			nodeCache.get(kiosk.getID()).setType(NODE_TYPE_KIOSK_SELECTED);
+			updateNode(nodeCache.get(kiosk.getID()));
 
 		}
 		catch (SQLException e)

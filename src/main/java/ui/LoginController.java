@@ -1,9 +1,12 @@
 package ui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import org.mindrot.jbcrypt.BCrypt;
+
+import javax.swing.*;
 
 /**
  * Created by Ari on 2/7/17.
@@ -53,7 +56,7 @@ public class LoginController extends BaseController
 			resultText.setText("Logging in...");
 			resultText.setVisible(true);
 
-			new Thread(() -> loadFXML(Paths.ADMIN_PAGE_FXML)).start();
+			Platform.runLater(() -> loadFXML(Paths.ADMIN_PAGE_FXML));
 		}
 		else
 		{
