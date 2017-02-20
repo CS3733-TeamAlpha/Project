@@ -4,6 +4,7 @@ import data.Database;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import pathfinding.Node;
 
 import java.io.IOException;
 
@@ -16,6 +17,8 @@ abstract class BaseController
 	private boolean currentSceneSupportsHC = true;
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.DIRECTORY2_FXML};
 	protected static Database database;
+
+	private static Node searchedFor;
 
 	// Make proxyimages to store floor pictures
 	ProxyImage f1ImageProxy = Paths.f1ImageProxy;
@@ -115,6 +118,15 @@ abstract class BaseController
 		{
 			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
 		}
+	}
+
+	protected void setSearchedFor(Node n)
+	{
+		searchedFor = n;
+	}
+
+	protected Node getSearchedFor(){
+		return searchedFor;
 	}
 
 }

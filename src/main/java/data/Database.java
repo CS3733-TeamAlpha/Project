@@ -112,7 +112,7 @@ public class Database implements AdminStorage
 	 */
 	private void initTables()
 	{
-		runScript(DB_CREATE_SQL);
+		runScript(DB_CREATE_SQL, false);
 	}
 
 	/**
@@ -916,8 +916,8 @@ public class Database implements AdminStorage
 		try
 		{
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name FROM Nodes WHERE NAME LIKE ? UNION " +
-					"SELECT Name FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE NAME LIKE ? UNION " +
+					"SELECT Name, provider_uuid AS UUID FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
@@ -925,6 +925,7 @@ public class Database implements AdminStorage
 			{
 				SearchResult res = new SearchResult();
 				res.displayText = results.getString("Name");
+				res.id = results.getString("UUID");
 				searchResults.add(res);
 			}
 
@@ -953,12 +954,11 @@ public class Database implements AdminStorage
 			e.printStackTrace();
 		}
 
-		runScript(DB_DROP_ALL);
-		runScript(DB_CREATE_SQL);
-		runScript(DB_INSERT_NODES);
-		runScript(DB_INSERT_EDGES);
-		runScript(DB_INSERT_SQL);
-		//runScript(DB_INSERT_EDGES);
+		runScript(DB_DROP_ALL, true);
+		runScript(DB_CREATE_SQL, true);
+		runScript(DB_INSERT_NODES, true);
+		runScript(DB_INSERT_EDGES, true);
+		//runScript(DB_INSERT_SQL, true);
 
 		try
 		{
@@ -970,7 +970,7 @@ public class Database implements AdminStorage
 		reloadCache();
 	}
 
-	private void runScript(String filepath)
+	private void runScript(String filepath, boolean showOutput)
 	{
 		try
 		{
@@ -980,8 +980,8 @@ public class Database implements AdminStorage
 				@Override
 				public void write(int i) throws IOException
 				{
-					//Needed so that we don't carpet bomb stdout with sql messages from ij. This is already kinda kludgy
-					//to begin with though...
+					if(showOutput)
+						System.out.write(i);
 				}
 			}, "UTF-8");
 		} catch (IOException e)
