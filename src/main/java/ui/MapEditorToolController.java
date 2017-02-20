@@ -1275,10 +1275,7 @@ public class MapEditorToolController extends BaseController
 	 */
 	@FXML
 	void onToggleAutoConnect(ActionEvent event) {
-		if(toggleAutoConnect.isSelected())
-			AUTOCONNECT = true;
-		else
-			AUTOCONNECT = false;
+		AUTOCONNECT = toggleAutoConnect.isSelected();
 	}
 
 
