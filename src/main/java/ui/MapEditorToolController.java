@@ -287,6 +287,7 @@ public class MapEditorToolController extends BaseController
 					editingFloor.getChildren().remove(CONTEXTMENU);
 				}
 				currentState = editorStates.DOINGNOTHING;
+				mainScroll.setPannable(true);
 			}
 		});
 
