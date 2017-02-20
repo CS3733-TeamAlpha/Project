@@ -10,7 +10,7 @@ class Paths
 	public static final String PROVIDER_BOX_FXML = "/fxml/ProviderBox.fxml";
 	public static final String STARTUP_FXML = "/fxml/Startup.fxml";
 	public static final String ADMIN_PAGE_FXML = "/fxml/AdminPage.fxml";
-	public static final String DIRECTORY2_FXML = "/fxml/Directory2.fxml";
+	public static final String USER_DIRECTORY_FXML = "/fxml/UserDirectory.fxml";
 
 	public static final String FLOOR1_NORMAL = "/Floors/floor1ColorScheme.png";
 	public static final String FLOOR2_NORMAL = "/Floors/floor2ColorScheme.png";

@@ -15,7 +15,7 @@ abstract class BaseController
 {
 	private static Stage stage;
 	private boolean currentSceneSupportsHC = true;
-	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.DIRECTORY2_FXML};
+	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.USER_DIRECTORY_FXML};
 	protected static Database database;
 
 	private static Node searchedFor;

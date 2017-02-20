@@ -1,12 +1,14 @@
 package pathfinding;
 
+import data.Provider;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
 public class ConcreteNode implements Node
 {
-	private ArrayList<String> providers;
+	private ArrayList<Provider> providers;
 	private ArrayList<String> services;
 	private ArrayList<Node> neighbors;
 	private String id;
@@ -118,16 +120,17 @@ public class ConcreteNode implements Node
 	/*Getters and setters*/
 
 	@Override
-	public void addProvider(String newProvider)
+	public void addProvider(Provider newProvider)
 	{
-		if (!providers.contains(newProvider))
+		boolean exists = providers.stream().anyMatch(provider -> provider.getUuid().equals(newProvider.getUuid()));
+		if (!exists)
 			providers.add(newProvider);
 	}
 
 	@Override
-	public void delProvider(String oldProvider)
+	public void delProvider(Provider oldProvider)
 	{
-		providers.remove(oldProvider);
+		providers.removeIf((provider -> provider.getUuid().equals(oldProvider.getUuid())));
 	}
 
 	@Override
@@ -199,7 +202,7 @@ public class ConcreteNode implements Node
 	}
 
 	@Override
-	public ArrayList<String> getProviders()
+	public ArrayList<Provider> getProviders()
 	{
 		return providers;
 	}

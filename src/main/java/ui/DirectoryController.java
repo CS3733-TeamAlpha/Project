@@ -55,16 +55,15 @@ public class DirectoryController extends BaseController
 	 */
 	public void loadProvidersFromDatabase()
 	{
-		for (String providerName : database.getProviders())
+		for (Provider p : database.getProviders())
 		{
-			Provider p = new Provider(providerName, database.getProviderUUID(providerName));
-			p.locations.addAll(database.getProviderLocations(p.uuid));
 			loadProvider(p);
 		}
 	}
 
-	public void addNewProvider(){
-		Provider newProvider = new Provider("Last Name, First Name; Title", UUID.randomUUID().toString());
+	public void addNewProvider()
+	{
+		Provider newProvider = Provider.newInstance("First Name", "Last Name", UUID.randomUUID().toString(), "Title", new ArrayList<>());
 		newProviderList.add(newProvider);
 		loadProvider(newProvider);
 	}
@@ -81,7 +80,7 @@ public class DirectoryController extends BaseController
 			((VBox) newH.getParent()).getChildren().remove(newH);
 		});
 		TextField fname = new TextField();
-		fname.setText(p.name.split(";")[0].split(",")[1]);
+		fname.setText(p.getFirstName());
 		fname.textProperty().addListener(event ->
 		{
 			if(!modifiedProvidersList.contains(p)){
@@ -89,14 +88,14 @@ public class DirectoryController extends BaseController
 			}
 		});
 		TextField lname = new TextField();
-		lname.setText(p.name.split(",")[0]);
+		lname.setText(p.getLastName());
 		lname.textProperty().addListener(event ->
 		{
 			if(!modifiedProvidersList.contains(p))
 				modifiedProvidersList.add(p);
 		});
 		TextField title = new TextField();
-		title.setText(p.name.split(";")[1]);
+		title.setText(p.getTitle());
 		title.textProperty().addListener(event ->
 		{
 			if(!modifiedProvidersList.contains(p))
@@ -126,7 +125,7 @@ public class DirectoryController extends BaseController
 			if(database.getNodeByUUID(s) != null)
 			{
 				Node n = database.getNodeByUUID(s);
-				p.locations.add(n);
+				p.addLocation(n);
 				HBox innerH = new HBox();
 				Label locL = new Label();
 				locL.setText("ID:" + n.getID() + ": " + n.getName()); //used to be .getData().get(0)
@@ -146,15 +145,16 @@ public class DirectoryController extends BaseController
 		newLocH.getChildren().addAll(locationSelector, addBut);
 		newV.getChildren().add(newLocH);
 
-		for(Node n: p.locations)
+		HashMap<String, String> nodeIdNameMap = p.getNodeIdNameMap();
+		for(String nodeKey: nodeIdNameMap.keySet())
 		{
 			HBox innerH = new HBox();
 			Label locL = new Label();
-			locL.setText("ID:"+n.getID()+": "+n.getName());
+			locL.setText("ID:"+nodeKey+": "+nodeIdNameMap.get(nodeKey));
 			Button xBut = new Button("X");
 			xBut.setOnAction(event ->
 			{
-				p.locations.remove(n);
+				p.removeLocation(nodeKey);
 				((VBox) innerH.getParent()).getChildren().remove(innerH);
 				if(!modifiedProvidersList.contains(p))
 					modifiedProvidersList.add(p);
@@ -169,47 +169,32 @@ public class DirectoryController extends BaseController
 
 	public void pushChangesToDatabase()
 	{
+		//Add any new providers
 		for (Provider provider : newProviderList)
 		{
-			database.addProvider(provider.name);
-			provider.uuid = database.getProviderUUID(provider.name); //what?
-			for (Node node : provider.locations)
-			{
-				node.addProvider(provider.name);
-				database.updateNode(node);
-			}
+			database.addProvider(provider);
 		}
 		newProviderList.clear();
 
+		//Update any changed providers
 		for(Provider thisProvider: modifiedProvidersList){
 			HBox hb = boxProviderLinks.get(thisProvider);
 			TextField title = (TextField)hb.getChildren().get(3);
 			TextField fn = (TextField)hb.getChildren().get(1);
 			TextField ln = (TextField)hb.getChildren().get(2);
-			String newName = ln.getText() + " ," + fn.getText() + "; " + title.getText();
 
-			//First go through each node in the list and remove this provider from it
-			for (Node node : thisProvider.locations)
-				node.delProvider(thisProvider.name);
+			thisProvider.setFirstName(fn.getText());
+			thisProvider.setLastName(ln.getText());
+			thisProvider.setTitle(title.getText());
 
-			//Rename the provider...
-			database.renameProvider(newName, thisProvider.uuid);
-
-			//Now re-add the provider to all nodes
-			for (Node node : thisProvider.locations)
-				node.addProvider(newName);
-
-			//Rename the provider's name according to this thing
-			thisProvider.name = newName;
-
-			//And finally update the nodes
-			for (Node node : thisProvider.locations)
-				database.updateNode(node);
+			//Update the provider...
+			database.updateOrAddProvider(thisProvider);
+			System.out.println("Updated provider!");
 		}
 		modifiedProvidersList.clear();
 
 		for(Provider p: deleteProviderList)
-			database.deleteProvider(p.uuid);
+			database.deleteProvider(p);
 		deleteProviderList.clear();
 	}
 
