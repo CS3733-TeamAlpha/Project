@@ -72,7 +72,7 @@ public class MapController extends BaseController
 	{
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
-		kiosk = database.getNodeByUUID("00000000-0000-0000-0000-000000000000"); //kiosk gets the default node
+		kiosk = database.getSelectedKiosk();
 		graph = new ConcreteGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
 		setFloorImage(FLOORID); //Set image of floor
@@ -309,6 +309,13 @@ public class MapController extends BaseController
 		else if(type == 3)
 		{
 			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
+		else if(type == 4 || type == 5)
+		{
+			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);

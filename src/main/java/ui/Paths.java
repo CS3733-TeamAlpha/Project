@@ -28,11 +28,16 @@ class Paths
 	public static final String FLOOR6_CONTRAST = "/Floors/floor6Contrast.png";
 	public static final String FLOOR7_CONTRAST = "/Floors/floor7Contrast.png";
 
+	public static final String FLOOR1_BELKIN = "/NewFloors/belkin1rsz.png";
+	public static final String FLOOR2_BELKIN = "/NewFloors/belkin2rsz.png";
+	public static final String FLOOR3_BELKIN = "/NewFloors/belkin3rsz.png";
+	public static final String FLOOR4_BELKIN = "/NewFloors/belkin4rsz.png";
 
 	public static final String HALLWAYICON = "/images/nodeIcon.png";
 	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
 	public static final String DOCTORICON = "/images/DoctorIcon2.png";
 	public static final String RESTROOMICON = "/images/UniRestroomIcon.png";
+	public static final String KIOSKICON = "/images/KioskIcon.png";
 	public static final String ADDNODE = "/images/addNodeSmall.png";
 	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
@@ -65,6 +70,16 @@ class Paths
 					f1ContrastProxy, f2ContrastProxy, f3ContrastProxy, f4ContrastProxy, f5ContrastProxy, f6ContrastProxy, f7ContrastProxy
 			};
 
+	public static ProxyImage f1BelkinProxy = new ProxyImage(Paths.FLOOR1_BELKIN);
+	public static ProxyImage f2BelkinProxy = new ProxyImage(Paths.FLOOR2_BELKIN);
+	public static ProxyImage f3BelkinProxy = new ProxyImage(Paths.FLOOR3_BELKIN);
+	public static ProxyImage f4BelkinProxy = new ProxyImage(Paths.FLOOR4_BELKIN);
+
+	public static ProxyImage[] belkinFloorImages =
+			{
+					f1BelkinProxy, f2BelkinProxy, f3BelkinProxy, f4BelkinProxy
+			};
+
 	// Make proxyimages for icons
 	public static ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
 	public static ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
@@ -74,4 +89,5 @@ class Paths
 	public static ProxyImage restroomImageProxy = new ProxyImage(Paths.RESTROOMICON);
 	public static ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
 	public static ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
+	public static ProxyImage kioskImageProxy = new ProxyImage(Paths.KIOSKICON);
 }

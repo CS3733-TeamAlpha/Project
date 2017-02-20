@@ -247,59 +247,18 @@ public class MapEditorToolController extends BaseController
 		//faulkner building
 		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			if (Accessibility.isHighContrast())
+			if(Accessibility.isHighContrast())
 			{
-				if (floor == 1)
-				{
-					floorImage.setImage(f1ContrastProxy.getFXImage());
-				} else if (floor == 2)
-				{
-					floorImage.setImage(f2ContrastProxy.getFXImage());
-				} else if (floor == 3)
-				{
-					floorImage.setImage(f3ContrastProxy.getFXImage());
-				} else if (floor == 4)
-				{
-					floorImage.setImage(f4ContrastProxy.getFXImage());
-				} else if (floor == 5)
-				{
-					floorImage.setImage(f5ContrastProxy.getFXImage());
-				} else if (floor == 6)
-				{
-					floorImage.setImage(f6ContrastProxy.getFXImage());
-				} else if (floor == 7)
-				{
-					floorImage.setImage(f7ContrastProxy.getFXImage());
-				}
-			} else
+				floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
+			}
+			else
 			{
-				if (floor == 1)
-				{
-					floorImage.setImage(f1ImageProxy.getFXImage());
-				} else if (floor == 2)
-				{
-					floorImage.setImage(f2ImageProxy.getFXImage());
-				} else if (floor == 3)
-				{
-					floorImage.setImage(f3ImageProxy.getFXImage());
-				} else if (floor == 4)
-				{
-					floorImage.setImage(f4ImageProxy.getFXImage());
-				} else if (floor == 5)
-				{
-					floorImage.setImage(f5ImageProxy.getFXImage());
-				} else if (floor == 6)
-				{
-					floorImage.setImage(f6ImageProxy.getFXImage());
-				} else if (floor == 7)
-				{
-					floorImage.setImage(f7ImageProxy.getFXImage());
-				}
+				floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 			}
 		}
-		else
+		else if(buildingid.equals("00000000-0000-0000-0000-belkin_house"))
 		{
-			System.out.println("wew");
+			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
 	}
 
@@ -897,6 +856,13 @@ public class MapEditorToolController extends BaseController
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
 		}
+		else if(type == 4 || type == 5)
+		{
+			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}
 		else if(type == 0)
 		{
 		}
@@ -1391,6 +1357,55 @@ public class MapEditorToolController extends BaseController
 		{
 			//TODO: need more exception handling?
 			System.out.println("Not a double");
+		}
+	}
+
+	/**
+	 * update a node's Type and update its corresponding image
+	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
+	 * @param event
+	 */
+	@FXML
+	void updateNodeType(ActionEvent event)
+	{
+		try
+		{
+			int newType = Integer.parseInt(typeField.getText());
+			if (newType <= 5 && newType >= 0)
+			{
+				if (newType == 5) //changing to selected kiosk
+				{
+					//get old selected kiosk and make it unselected
+					Node n = null;
+					n = database.getSelectedKiosk();
+					if(n != null)
+					{
+						n.setType(4);
+						database.updateNode(n);
+						for(Button b: nodeButtonLinks.keySet())
+						{
+							if(nodeButtonLinks.get(b) == n)
+							{
+								setButtonImage(b, 4);
+							}
+						}
+					}
+				}
+				//update type
+				currentNode.setType(newType);
+				database.updateNode(currentNode);
+				for(Button b: nodeButtonLinks.keySet())
+				{
+					if(nodeButtonLinks.get(b) == currentNode)
+					{
+						setButtonImage(b, newType);
+						break;
+					}
+				}
+			}
+		} catch (NumberFormatException e)
+		{
+			System.out.println("Not an int");
 		}
 	}
 

@@ -343,6 +343,56 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * Get all nodes that are tagged as kiosks.
+	 * These nodes have a type of either 4 or 5
+	 * @return A list of kiosk nodes
+	 */
+	public ArrayList<Node> getAllKiosks()
+	{
+		ArrayList<Node> kiosklist = null;
+		try
+		{
+
+			//The node with type 5 is selected. Assume only one such node exists
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5 OR type=4");
+
+			while (results.next())
+				kiosklist.add(nodeCache.get(results.getString(1)));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error retriving all kiosks!");
+			e.printStackTrace();
+		}
+		return kiosklist;
+	}
+
+	/**
+	 * Get the node that is selected as the kiosk to be used for this app.
+	 * The selected kiosk has a type of 5, while non-selected kiosks have a value of 4
+	 * @return
+	 */
+	public Node getSelectedKiosk()
+	{
+		Node kiosk = null;
+		try
+		{
+
+			//The node with type 5 is selected. Assume only one such node exists
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5");
+
+			while (results.next())
+				kiosk = nodeCache.get(results.getString(1));
+
+		} catch (SQLException e)
+		{
+			System.out.println("Error retrieving selected kiosk!");
+			e.printStackTrace();
+		}
+		return kiosk;
+	}
+
+	/**
 	 * Compatibilty hack for DirectoryController
 	 * TODO: EXTERMINATE
 	 *
