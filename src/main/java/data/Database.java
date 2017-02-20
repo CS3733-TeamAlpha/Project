@@ -403,10 +403,21 @@ public class Database implements AdminStorage
 			//would be generated).
 			statement.execute("DELETE FROM Edges WHERE dst='" + uuid + "'");
 
+			PreparedStatement stmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE NODE_UUID=?");
+			stmt.setString(1, uuid);
+			stmt.execute();
+
 			//That should've performed a cascade delete on the database, so now we just need to remove cache
 			//references to this node, which should run in O(n) time, unfortunately.
 			//TODO: Find a way of optimizing this algorithm.
 			Node node = nodeCache.get(uuid);
+
+			//Notify the providers they are not longer associated with this location
+			for(Provider p : node.getProviders())
+			{
+				p.removeLocation(uuid);
+			}
+
 			if (node == null)
 			{
 				System.out.println("Lord of the nullptr exceptions reporting in, sir, there's been a most unusual error... not sure how to proceed.");
@@ -414,7 +425,9 @@ public class Database implements AdminStorage
 			}
 
 			for (String s : nodeCache.keySet())
+			{
 				nodeCache.get(s).delNeighbor(node);
+			}
 			nodeCache.remove(uuid);
 		} catch (SQLException e)
 		{
@@ -726,6 +739,9 @@ public class Database implements AdminStorage
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
 			pstmt.setString(1, provider.getUuid());
 			pstmt.execute();
+
+			pstmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
+			pstmt.setString(1, provider.getUuid());
 
 			//Flush changes to the node cache. This is O(n), unfortunately
 			for (String s : nodeCache.keySet())
