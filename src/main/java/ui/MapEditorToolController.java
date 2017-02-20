@@ -640,8 +640,10 @@ public class MapEditorToolController extends BaseController
 				database.updateNode(currentNode);
 
 				//draw connecting lines
-				//drawToNeighbors(currentNode);
+				drawToNeighbors(currentNode);
 				drawToNeighbors(oldNode);
+
+				currentButton.toFront();
 
 				break;
 			default:
