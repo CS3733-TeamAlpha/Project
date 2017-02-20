@@ -178,6 +178,10 @@ public class DatabaseTest
 	@Test
 	public void testGetByBuilding()
 	{
+		//Drop the default building
+		database.deleteBuilding("00000000-0000-0000-0000-000000000000");
+		assertEquals(0, database.getBuildings().size());
+
 		//Create a new building with random UUID
 		database.insertBuilding(UUID.randomUUID().toString(), "Starfleet Headquarters");
 
@@ -205,9 +209,10 @@ public class DatabaseTest
 		assertEquals(0, database.getNodesInBuildingFloor("00", 1701).size()); //Incorrect uuid, correct floor
 		assertEquals(0, database.getNodesInBuildingFloor("00", 1702).size()); //Incorrect uuid, incorrect floor
 
-		//And clean up the database by deleting the whole building!
+		//And clean up the database by deleting the whole building and re-adding default!
 		database.deleteBuilding(uuid);
 		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1701).size());
+		database.insertBuilding("00000000-0000-0000-0000-000000000000", "outdoors");
 	}
 
 	@Test
