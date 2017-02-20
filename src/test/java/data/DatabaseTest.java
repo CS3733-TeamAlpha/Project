@@ -184,7 +184,7 @@ public class DatabaseTest
 		//Verify that the building was actually inserted
 		final String uuid = database.getBuildingUUID("Starfleet Headquarters");
 		assertEquals(36, uuid.length());
-		assertEquals(1, database.getBuildings().size());
+		assertEquals(3, database.getBuildings().size());
 
 		//Verify that we can't get a bad building
 		assertTrue(database.getBuildingUUID("Dominion Headquarters").isEmpty());
