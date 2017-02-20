@@ -1340,21 +1340,7 @@ public class MapEditorToolController extends BaseController
 			{
 				if (newType == 5) //changing to selected kiosk
 				{
-					//get old selected kiosk and make it unselected
-					Node n = null;
-					n = database.getSelectedKiosk();
-					if(n != null)
-					{
-						n.setType(4);
-						database.updateNode(n);
-						for(Button b: nodeButtonLinks.keySet())
-						{
-							if(nodeButtonLinks.get(b) == n)
-							{
-								setButtonImage(b, 4);
-							}
-						}
-					}
+					database.setSelectedKiosk(currentNode);
 				}
 				//update type
 				currentNode.setType(newType);
