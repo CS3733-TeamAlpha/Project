@@ -49,7 +49,9 @@ public class MapEditorToolController extends BaseController
     private Button currentButton = null;
 
 
-
+    //boolean to determine whether or not to automatically connect newly added nodes
+	//to the nearest hallway node
+	private boolean AUTOCONNECT = false;
 
 	//enums to indicate current state
 	private enum editorStates {
@@ -563,6 +565,8 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	private VBox dndContainer;
 
+	@FXML
+	private CheckBox toggleAutoConnect;
 
 	@FXML
 	private Button upFloor;
@@ -832,6 +836,27 @@ public class MapEditorToolController extends BaseController
 		if(currentState != editorStates.CHAINADDING)
 		{
 			currentState = editorStates.DOINGNOTHING;
+			//auto connect toggled
+			if(AUTOCONNECT)
+			{
+				//find nearest hallway node and add as neighbor
+				Node nearest = database.getNearestHallwayNode(currentNode);
+				if(nearest != null)
+				{
+					nearest.addNeighbor(currentNode);
+					currentNode.addNeighbor(nearest);
+
+					//link to nearest neighbor
+					database.updateNode(nearest);
+					database.updateNode(currentNode);
+
+					//draw connecting lines
+					drawToNeighbors(currentNode);
+					drawToNeighbors(nearest);
+
+					currentButton.toFront();
+				}
+			}
 		}
 	}
 
@@ -1243,7 +1268,20 @@ public class MapEditorToolController extends BaseController
 		yField.setText("");
 	}
 
-    /**
+	/**
+	 * toggle new node auto connection setting
+	 * @param event
+	 */
+	@FXML
+	void onToggleAutoConnect(ActionEvent event) {
+		if(toggleAutoConnect.isSelected())
+			AUTOCONNECT = true;
+		else
+			AUTOCONNECT = false;
+	}
+
+
+	/**
      * update a node's X coordinate, both visually and in the node's properties
      */
 	@FXML

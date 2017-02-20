@@ -551,6 +551,29 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * Get the nearest node to a given node.
+	 * First check for other nodes on the same floor/building, then determine nearest.
+	 * Only hallway nodes are considered.
+	 * @param n The node to find the nearest node to
+	 * @return
+	 */
+	public Node getNearestHallwayNode(Node n)
+	{
+		double minDist = 0;
+		Node nearest = null;
+		for(Node nearN: getNodesInBuildingFloor(n.getBuilding(), n.getFloor()))
+		{
+			if(nearN.getType() == 0 && n != nearN &&
+					(n.distance(nearN) < minDist || nearest == null))
+			{
+				minDist = n.distance(nearN);
+				nearest = nearN;
+			}
+		}
+		return nearest;
+	}
+
+	/**
 	 * Gets an ArrayList of building names
 	 *
 	 * @return ArrayList of building names. Who'd have thought?
