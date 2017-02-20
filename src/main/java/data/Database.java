@@ -23,6 +23,10 @@ public class Database implements AdminStorage
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
 
+	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
+	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
+
+
 	private String dbName;
 	private boolean connected;
 	private Statement statement;
@@ -911,13 +915,20 @@ public class Database implements AdminStorage
 		return connected;
 	}
 
+	/**
+	 * Resturns search results from the Nodes and Providers tables.
+	 * @param searchText The text to search for
+	 * @param top6 If true, only return the top 6 search results
+	 * @return Any providers or nodes whos name contains the given search text (not case sensitive).
+	 */
 	public ArrayList<SearchResult> getResultsForSearch(String searchText, boolean top6)
 	{
 		try
 		{
+			searchText = searchText.toLowerCase();
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE NAME LIKE ? UNION " +
-					"SELECT Name, provider_uuid AS UUID FROM PROVIDERS WHERE NAME LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE LOWER(NAME) LIKE ? UNION " +
+					"SELECT Name, provider_uuid AS UUID FROM PROVIDERS WHERE LOWER(NAME) LIKE ?" + ((top6)?" FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
@@ -938,6 +949,55 @@ public class Database implements AdminStorage
 		}
 
 		return null;
+	}
+
+	/**
+	 * Gets the currently selected kiosk from the database
+	 * @return The Node for the currently selected kiosk
+	 */
+	public Node getSelectedKiosk()
+	{
+		try
+		{
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Nodes WHERE TYPE=?");
+			stmt.setInt(1, NODE_TYPE_KIOSK_SELECTED);
+			ResultSet results = stmt.executeQuery();
+
+			if(results.next())
+			{
+				return new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
+						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void setSelectedKiosk(Node kiosk)
+	{
+		try
+		{
+			boolean success = statement.execute("UPDATE Nodes SET TYPE=" + NODE_TYPE_KIOSK_NOT_SELECTED +
+					"WHERE TYPE=" + NODE_TYPE_KIOSK_SELECTED);
+			if(!success)
+				System.err.println("UNABLE TO REMOVE SELECTED KIOSK");
+
+			PreparedStatement stmt = connection.prepareStatement("UPDATE Nodes SET Type=" + NODE_TYPE_KIOSK_SELECTED +
+					"WHERE NODE_UUID=?");
+			stmt.setString(1, kiosk.getID());
+
+			success = stmt.execute();
+			if(!success)
+				System.err.println("UNABLE TO SET SELECTED KIOSK");
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public void resetDatabase()
