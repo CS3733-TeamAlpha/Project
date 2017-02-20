@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LoginController">
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LoginController">
    <children>
       <Pane fx:id="thickBar" prefHeight="303.0" prefWidth="1280.0" styleClass="bh-white">
          <children>
@@ -23,11 +30,11 @@
                <children>
                   <ImageView fitHeight="413.0" fitWidth="754.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../images/badge.png" />
+                        <Image url="@../images/oldBadge.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="usernameField" layoutX="429.0" layoutY="223.0"/>
-                  <PasswordField fx:id="passwordField" layoutX="429.0" layoutY="262.0" onAction="#login"/>
+                  <TextField fx:id="usernameField" layoutX="429.0" layoutY="223.0" />
+                  <PasswordField fx:id="passwordField" layoutX="429.0" layoutY="262.0" onAction="#login" />
                   <Label layoutX="319.0" layoutY="223.0" text="Username:">
                      <font>
                         <Font size="20.0" />
@@ -38,22 +45,22 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Button fx:id="loginButton" layoutX="515.0" layoutY="303.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER" focusTraversable="false"/>
-                  <Button fx:id="cancelButton" layoutX="429.0" layoutY="303.0" mnemonicParsing="false" onAction="#showStartup" text="Cancel" textAlignment="CENTER" focusTraversable="false"/>
+                  <Button fx:id="loginButton" focusTraversable="false" layoutX="515.0" layoutY="303.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER" />
+                  <Button fx:id="cancelButton" focusTraversable="false" layoutX="429.0" layoutY="303.0" mnemonicParsing="false" onAction="#showStartup" text="Cancel" textAlignment="CENTER" />
                   <Label layoutX="312.0" layoutY="164.0" text="Administrator Login">
                      <font>
                         <Font name="Glacial Indifference Regular" size="34.0" />
                      </font>
                   </Label>
-                  <ProgressIndicator fx:id="progressIndicator" visible="false" layoutX="546.0" layoutY="352.0" prefHeight="19.0" prefWidth="20.0" />
-                  <Label fx:id="resultText" layoutX="459.0" visible="false" layoutY="353.0" text="Logging in...">
+                  <ProgressIndicator fx:id="progressIndicator" layoutX="546.0" layoutY="352.0" prefHeight="19.0" prefWidth="20.0" visible="false" />
+                  <Label fx:id="resultText" layoutX="459.0" layoutY="353.0" text="Logging in..." visible="false">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                </children>
             </Pane>
-            <Button focusTraversable="false" alignment="BOTTOM_RIGHT" layoutX="1185.0" layoutY="552.0" mnemonicParsing="false" onAction="#addLogin" text="Add Login" StackPane.alignment="BOTTOM_RIGHT" />
+            <Button alignment="BOTTOM_RIGHT" focusTraversable="false" layoutX="1185.0" layoutY="552.0" mnemonicParsing="false" onAction="#addLogin" text="Add Login" StackPane.alignment="BOTTOM_RIGHT" />
          </children>
       </StackPane>
    </children>
