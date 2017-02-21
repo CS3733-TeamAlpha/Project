@@ -323,7 +323,6 @@ public class MapController extends BaseController
 	 * Go to previous floor in path
 	 * Prevent moving if already on first floor
 	 * @param event
-	 * TODO: Actually write it
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
@@ -333,10 +332,11 @@ public class MapController extends BaseController
 	/**
 	 * Clear line showing path, deselect all nodes
 	 * @param event
-	 * TODO: Actually test it, just kind of stole code form goUpFloor to make this
 	 */
 	@FXML
 	void clearPath(ActionEvent event) {
+		hasNextStep = false;
+		findingDirections = false;
 		if(currentPath.size() != 0){
 			for(Line l: currentPath){
 				((AnchorPane) l.getParent()).getChildren().remove(l);
