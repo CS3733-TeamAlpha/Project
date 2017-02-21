@@ -266,7 +266,6 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goNextStep(ActionEvent event) {
-
 		if(hasNextStep)
 		{
 			if(currentPath.size() != 0){
@@ -312,10 +311,7 @@ public class MapController extends BaseController
 				showRoomInfo(selected);
 			}
 		}
-		if(BUILDINGID.equals(selected.getBuilding()) && FLOORID == selected.getFloor())
-		{
-			hasNextStep = false;
-		}
+
 	}
 
 	/**
@@ -325,6 +321,48 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
+		if(hasNextStep)
+		{
+			if(currentPath.size() != 0){
+				for(Line l: currentPath){
+					((AnchorPane) l.getParent()).getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
+			if(!selected.getBuilding().equals(kiosk.getBuilding())) // If selected is in a different building
+			{
+				if(FLOORID == 1 && (BUILDINGID == kiosk.getBuilding())) // If we are in kiosk building
+				{
+					jumpFloor(kiosk.getFloor());
+				}
+				else if(BUILDINGID.equals("00000000-0000-0000-0000-222222222222")) // If we are outside
+				{
+					purgeButtons();
+					BUILDINGID = kiosk.getBuilding();
+					loadNodesFromDatabase();
+					currentFloorLabel.setText(Integer.toString(FLOORID));
+					setFloorImage(BUILDINGID, FLOORID);
+				} else if(FLOORID == 1) { // Check to see if selected is on bottom floor
+					purgeButtons();
+					BUILDINGID = "00000000-0000-0000-0000-222222222222";
+					loadNodesFromDatabase();
+					currentFloorLabel.setText(Integer.toString(FLOORID));
+					setFloorImage(BUILDINGID, FLOORID);
+				} else { // Must be on upper floor in selected's building
+					jumpFloor(1); // Go to first floor of selected's building
+				}
+
+				findingDirections = true;
+				showRoomInfo(selected);
+			}
+			else
+			{
+				//jump to kiosk floor
+				jumpFloor(kiosk.getFloor());
+				findingDirections = true;
+				showRoomInfo(selected);
+			}
+		}
 
 	}
 
