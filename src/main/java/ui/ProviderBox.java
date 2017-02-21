@@ -63,7 +63,7 @@ public class ProviderBox extends HBox
 			if(n.getName().equals(s))
 				toAdd = n; //TODO: Jesus christ, this can be sped up.
 		}
-		provider.locations.add(toAdd);
+		provider.addLocation(toAdd);
 		refreshBox();
 	}
 
@@ -80,13 +80,13 @@ public class ProviderBox extends HBox
 	}
 
 	public void refreshBox(){
-		firstNameField.setText(provider.name.split(";")[0].split(",")[1]);
-		lastNameField.setText(provider.name.split(",")[0]);
-		titlesField.setText(provider.name.split(";")[1]);
-		for(Node n : provider.locations)
+		firstNameField.setText(provider.getFirstName());
+		lastNameField.setText(provider.getLastName());
+		titlesField.setText(provider.getTitle());
+		for(String nodeName : provider.getLocationStringArray())
 		{
 			HBox box = new HBox();
-			Label label = new Label(n.getName());
+			Label label = new Label(nodeName);
 			Button button = new Button("X");
 			box.getChildren().addAll(label,button);
 			locationsVBox.getChildren().add(0,box);

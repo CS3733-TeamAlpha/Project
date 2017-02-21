@@ -3,7 +3,7 @@ CREATE TABLE Nodes
   node_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   posX DOUBLE NOT NULL,
   posY DOUBLE NOT NULL,
-  type INTEGER, --can be an enum in java?  //options are service, provider, hallway
+  type INTEGER,
   floor INTEGER NOT NULL,
   building VARCHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
   name VARCHAR(128)
@@ -27,10 +27,12 @@ CREATE TABLE Services --Shops, cafes, etc. What is this, a mall?
 CREATE TABLE Providers
 (
   provider_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
-  name VARCHAR(128) NOT NULL UNIQUE--If your name is bigger than 128 chars, you need a shorter name
+  firstName VARCHAR(128) NOT NULL,
+  lastName VARCHAR(128) NOT NULL,
+  title VARCHAR(60)
 );
 
-CREATE TABLE DoctorOffices --Links between doctors and their offices.
+CREATE TABLE ProviderOffices --Links between doctors and their offices.
 (
   provider_uuid VARCHAR(36),
   node_uuid VARCHAR(36),
