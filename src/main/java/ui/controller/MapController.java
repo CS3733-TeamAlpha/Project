@@ -148,8 +148,8 @@ public class MapController extends BaseController
 				}
 				for (int i = 0; i < path.size()-1; i++)
 				{
-
-					if(path.get(i).getFloor() == FLOORID && path.get(i).getBuilding().equals(BUILDINGID))
+					if(path.get(i).getFloor() == FLOORID && path.get(i).getBuilding().equals(BUILDINGID)
+							&& path.get(i+1).getFloor() == FLOORID && path.get(i+1).getBuilding().equals(BUILDINGID))
 					{
 						Line line = new Line();
 						System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
@@ -322,7 +322,6 @@ public class MapController extends BaseController
 	 * Go to previous floor in path
 	 * Prevent moving if already on first floor
 	 * @param event
-	 * TODO: Actually write it
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
@@ -332,10 +331,11 @@ public class MapController extends BaseController
 	/**
 	 * Clear line showing path, deselect all nodes
 	 * @param event
-	 * TODO: Actually test it, just kind of stole code form goUpFloor to make this
 	 */
 	@FXML
 	void clearPath(ActionEvent event) {
+		hasNextStep = false;
+		findingDirections = false;
 		if(currentPath.size() != 0){
 			for(Line l: currentPath){
 				((AnchorPane) l.getParent()).getChildren().remove(l);

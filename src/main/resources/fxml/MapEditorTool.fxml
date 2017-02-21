@@ -36,7 +36,7 @@
                         <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back" />
                         <Button fx:id="upFloor" layoutX="23.0" layoutY="77.0" mnemonicParsing="false" onAction="#goUpFloor" />
                         <Button fx:id="downFloor" layoutX="23.0" layoutY="134.0" mnemonicParsing="false" onAction="#goDownFloor" />
-                        <Label fx:id="currentFloorLabel" layoutX="24.0" layoutY="103.0" text="3">
+                        <Label fx:id="currentFloorLabel" layoutX="24.0" layoutY="103.0" text="1">
                            <font>
                               <Font size="26.0" />
                            </font>
