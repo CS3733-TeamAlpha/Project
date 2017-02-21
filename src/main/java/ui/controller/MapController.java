@@ -32,6 +32,7 @@ public class MapController extends BaseController
 	private Node kiosk;
 	boolean findingDirections = false;
 	boolean hasNextStep = false;
+	boolean resetSteps = false;
 	int targetFloor = -1;
 	String targetBuilding = "";
 
@@ -63,6 +64,7 @@ public class MapController extends BaseController
 	private Button nextStep;
 
 	ArrayList<Label> loadedLabels = new ArrayList<>();
+	ChoiceBox buildingChoice = null;
 
 	public MapController()
 	{
@@ -104,7 +106,7 @@ public class MapController extends BaseController
 		ArrayList<String> buildings = database.getBuildings();
 		for(String s: buildings)
 			System.out.println(s);
-		ChoiceBox buildingChoice = new ChoiceBox();
+		buildingChoice = new ChoiceBox();
 		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
 		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);
@@ -114,6 +116,10 @@ public class MapController extends BaseController
 					changeBuilding((String)buildingChoice.getValue());
 				}
 		);
+//		buildingChoice.setValue("faulkner_main");
+
+		nextStep.setDisable(true);
+		previousStep.setDisable(true);
 	}
 
 	public void showRoomInfo(Node n)
@@ -176,10 +182,11 @@ public class MapController extends BaseController
 							n.getFloor() != kiosk.getFloor())
 					{
 						hasNextStep = true;
+						nextStep.setDisable(false);
 					}
 				}
 			}
-			findingDirections = false;
+			//findingDirections = false;
 		}
 		selected = n;
 		if (!roomInfoShown)
@@ -207,6 +214,10 @@ public class MapController extends BaseController
 	}
 
 	public void findDirectionsTo(){
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+		}
 		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
 		showRoomInfo(selected);
@@ -232,6 +243,12 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
 		if(FLOORID > 1){
 			//remove all buttons and lines on the current floor
 			purgeButtons();
@@ -239,6 +256,15 @@ public class MapController extends BaseController
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
+		}
+		if(selected != null)
+		{
+			showRoomInfo(selected);
+		}
+
+		if(hasNextStep)
+		{
+			resetSteps = true;
 		}
 	}
 
@@ -249,6 +275,12 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor (ActionEvent event){
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
 		if(FLOORID < 7){
 			//remove all buttons and lines on the current floor
 			purgeButtons();
@@ -256,6 +288,14 @@ public class MapController extends BaseController
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
+		}
+		if(selected != null)
+		{
+			showRoomInfo(selected);
+		}
+		if(hasNextStep)
+		{
+			resetSteps = true;
 		}
 	}
 
@@ -266,8 +306,13 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goNextStep(ActionEvent event) {
-		if(hasNextStep)
+		if(resetSteps)
 		{
+			resetSteps();
+		}
+		else if(hasNextStep)
+		{
+			previousStep.setDisable(false);
 			if(currentPath.size() != 0){
 				for(Line l: currentPath){
 					((AnchorPane) l.getParent()).getChildren().remove(l);
@@ -289,6 +334,13 @@ public class MapController extends BaseController
 						loadNodesFromDatabase();
 						currentFloorLabel.setText(Integer.toString(FLOORID));
 						setFloorImage(BUILDINGID, FLOORID);
+//						if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))
+//						{
+//							buildingChoice.setValue("faulkner_main");
+//						} else
+//						{
+//							buildingChoice.setValue("belkin_house");
+//						}
 					}
 					else //otherwise go outside
 					{
@@ -297,6 +349,7 @@ public class MapController extends BaseController
 						loadNodesFromDatabase();
 						currentFloorLabel.setText(Integer.toString(FLOORID));
 						setFloorImage(BUILDINGID, FLOORID);
+//						buildingChoice.setValue("outdoors");
 					}
 				}
 
@@ -311,7 +364,42 @@ public class MapController extends BaseController
 				showRoomInfo(selected);
 			}
 		}
+		if(BUILDINGID.equals(selected.getBuilding()) && FLOORID == selected.getFloor())
+		{
+			nextStep.setDisable(true);
+		}
+	}
 
+	/**
+	 * Reset to kiosk location
+	 */
+	private void resetSteps()
+	{
+		//idiot proof, reset to kiosk step
+		resetSteps = false;
+		previousStep.setDisable(true);
+		nextStep.setDisable(false);
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
+		BUILDINGID = kiosk.getBuilding();
+		FLOORID = kiosk.getFloor();
+		purgeButtons();
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
+		setFloorImage(BUILDINGID, FLOORID);
+		findingDirections = true;
+		showRoomInfo(selected);
+//		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))
+//		{
+//			buildingChoice.setValue("faulkner_main");
+//		} else
+//		{
+//			buildingChoice.setValue("belkin_house");
+//		}
 	}
 
 	/**
@@ -321,8 +409,13 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
-		if(hasNextStep)
+		if(resetSteps)
 		{
+			resetSteps();
+		}
+		else if(hasNextStep)
+		{
+			nextStep.setDisable(false);
 			if(currentPath.size() != 0){
 				for(Line l: currentPath){
 					((AnchorPane) l.getParent()).getChildren().remove(l);
@@ -342,12 +435,20 @@ public class MapController extends BaseController
 					loadNodesFromDatabase();
 					currentFloorLabel.setText(Integer.toString(FLOORID));
 					setFloorImage(BUILDINGID, FLOORID);
+//					if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))
+//					{
+//						buildingChoice.setValue("faulkner_main");
+//					} else
+//					{
+//						buildingChoice.setValue("belkin_house");
+//					}
 				} else if(FLOORID == 1) { // Check to see if selected is on bottom floor
 					purgeButtons();
 					BUILDINGID = "00000000-0000-0000-0000-222222222222";
 					loadNodesFromDatabase();
 					currentFloorLabel.setText(Integer.toString(FLOORID));
 					setFloorImage(BUILDINGID, FLOORID);
+//					buildingChoice.setValue("outdoors");
 				} else { // Must be on upper floor in selected's building
 					jumpFloor(1); // Go to first floor of selected's building
 				}
@@ -363,7 +464,10 @@ public class MapController extends BaseController
 				showRoomInfo(selected);
 			}
 		}
-
+		if(BUILDINGID.equals(kiosk.getBuilding()) && FLOORID == kiosk.getFloor())
+		{
+			previousStep.setDisable(true);
+		}
 	}
 
 	/**
@@ -380,6 +484,8 @@ public class MapController extends BaseController
 			}
 			currentPath.clear();
 		}
+		nextStep.setDisable(true);
+		previousStep.setDisable(true);
 	}
 
 	/**
@@ -392,6 +498,13 @@ public class MapController extends BaseController
 		BUILDINGID = database.getBuildingUUID(building);
 		//remove all buttons and lines on the current floor
 		purgeButtons();
+
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
 		//default to floor 1 when changing buildings
 		FLOORID = 1;
 		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
@@ -406,6 +519,14 @@ public class MapController extends BaseController
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
+		if(selected != null)
+		{
+			showRoomInfo(selected);
+		}
+		if(hasNextStep)
+		{
+			resetSteps = true;
+		}
 	}
 
 
