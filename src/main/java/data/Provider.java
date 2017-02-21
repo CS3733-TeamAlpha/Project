@@ -118,11 +118,12 @@ public class Provider
 	public String getStringLocations()
 	{
 		StringBuilder build = new StringBuilder();
-		for(int i = 0; i < locations.size(); i++)
+		Object[] keySet = locations.keySet().toArray();
+		for(int i = 0; i < keySet.length; i++)
 		{
-			build.append(locations.get(i).getName());
+			build.append(locations.get(keySet[i]).getName());
 			if(i != locations.size()-1)
-				build.append(", ");
+				build.append("\n");
 		}
 		return build.toString();
 	}

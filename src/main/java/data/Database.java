@@ -1045,7 +1045,7 @@ public class Database implements AdminStorage
 		runScript(DB_CREATE_SQL, true);
 		runScript(DB_INSERT_NODES, true);
 		runScript(DB_INSERT_EDGES, true);
-		//runScript(DB_INSERT_SQL, true);
+		runScript(DB_INSERT_SQL, true);
 
 		try
 		{
