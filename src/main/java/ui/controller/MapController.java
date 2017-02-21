@@ -58,6 +58,10 @@ public class MapController extends BaseController
 	private Label currentFloorLabel;
 	@FXML
 	private ImageView floorImage;
+	@FXML
+	private Button previousFloor;
+	@FXML
+	private Button nextFloor;
 
 	ArrayList<Label> loadedLabels = new ArrayList<>();
 
@@ -185,6 +189,7 @@ public class MapController extends BaseController
 	}
 
 
+
 	public void showStartup()
 	{
 		loadFXML(Paths.STARTUP_FXML);
@@ -196,10 +201,6 @@ public class MapController extends BaseController
 		showRoomInfo(selected);
 	}
 
-
-	void goToNode(Node n){
-
-	}
 
 	/**
 	 * jump directly to the target floor
@@ -268,6 +269,44 @@ public class MapController extends BaseController
 			setFloorImage(FLOORID);
 		}
 	}
+
+	/**
+	 * Go to next floor in path
+	 * Prevent moving if already on last floor
+	 * @param event
+	 * TODO: Actually write it
+	 */
+	@FXML
+	public void goNextFloor(ActionEvent event) {
+
+	}
+
+	/**
+	 * Go to previous floor in path
+	 * Prevent moving if already on first floor
+	 * @param event
+	 * TODO: Actually write it
+	 */
+	@FXML
+	public void goPreviousFloor(ActionEvent event) {
+
+	}
+
+	/**
+	 * Clear line showing path, deselect all nodes
+	 * @param event
+	 * TODO: Actually test it, just kind of stole code form goUpFloor to make this
+	 */
+	@FXML
+	void clearPath(ActionEvent event) {
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
+	}
+
 
 	/**
 	 * Set the floorImage imageview object to display the image of
