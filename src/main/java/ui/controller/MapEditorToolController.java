@@ -75,12 +75,6 @@ public class MapEditorToolController extends BaseController
 	private int contextSelection = -1; //default to -1, no context menu option selected
 
 
-
-
-	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
-	//TODO: should nodes be able to be moved to different floor? probably not
-
-
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
 	private GraphicsContext gc;
@@ -156,9 +150,6 @@ public class MapEditorToolController extends BaseController
 
 	public MapEditorToolController()
 	{
-		//TODO: make editortool load all nodes without making everything static
-		//currently achieved by pressing a button
-		// loadNodesFromDatabase();
 		super();
 	}
 
@@ -168,9 +159,6 @@ public class MapEditorToolController extends BaseController
 
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();
-
-		//TODO: Load in image for a specific floor and determine canvas size
-		//		based on image size
 
 		//create canvas and graphicscontext
 		//these will be used later for drawing lines in realtime and drag&drop visuals
@@ -197,7 +185,6 @@ public class MapEditorToolController extends BaseController
 		downFloor.setId("downbuttonTriangle");
 
 		//set the floorImage imageview to display the correct floor's image.
-		//TODO: make this work with multiple buildings
 		setFloorImage(BUILDINGID, FLOORID);
 
 		//set up event handlers for drag and drop images
@@ -256,15 +243,7 @@ public class MapEditorToolController extends BaseController
 		//faulkner building
 		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			//TODO: possibly reimplement highcontrast
-			//if(Accessibility.isHighContrast())
-			//{
-			//	floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
-			//}
-			//else
-			//{
-				floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
-			//}
+			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
 		{
@@ -272,7 +251,6 @@ public class MapEditorToolController extends BaseController
 		}
 		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
 		{
-			//TODO: fix path of outdoor image
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 	}
@@ -366,14 +344,14 @@ public class MapEditorToolController extends BaseController
 				i.setX(0);
 				i.setY(0);
 
-				//TODO: This is a hack
+				// This is a hack
 				// because I can't seem to figure out how to get a drop event
 				// to fire while getting the right XY coordinates relative to the floorimage
 
 				//modify our XY values based on the image's current scroll and the
 				//dragged image's initial position on the screen
 
-				//TODO: fix magic number: 15, probably about the size of the scrollbars
+				//fix magic number: 15, probably about the size of the scrollbars
 				Double fixX = e.getX()+palettePane.getLayoutX()+i.getLayoutX()+
 						mainScroll.getHvalue()*(floorImage.getFitWidth()-mainScroll.getWidth()+15);
 				Double fixY = e.getY()+palettePane.getLayoutY()+i.getLayoutY()+
@@ -406,7 +384,6 @@ public class MapEditorToolController extends BaseController
 		CONTEXTMENU.setLayoutY(y);
 
 		//main radial arc, currently colored gray.
-		//TODO: convert color options to css for high contrast mode
 		Arc radialMenu = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 360);
 		radialMenu.setType(ArcType.OPEN);
 		radialMenu.setStrokeWidth(CONTEXTWIDTH);
@@ -416,7 +393,6 @@ public class MapEditorToolController extends BaseController
 		radialMenu.setOpacity(0.95);
 
 		//arc wedge will be used to indicate current selection
-		//TODO: convert color options to css for high contrast mode
 		SELECTIONWEDGE = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 0);
 		SELECTIONWEDGE.setType(ArcType.ROUND);
 		SELECTIONWEDGE.setStrokeWidth(CONTEXTWIDTH);
@@ -444,7 +420,6 @@ public class MapEditorToolController extends BaseController
 				-(CONTEXTRAD/Math.sqrt(2)), -(CONTEXTRAD/Math.sqrt(2)));
 		split4.setStrokeWidth(2);
 
-		//TODO: probaby replace these with all images later
 		//4 options, whose contents will differ based on whether we are showing node menu or not
 		ImageView option1 = null;
 		ImageView option2 = null;
@@ -482,7 +457,6 @@ public class MapEditorToolController extends BaseController
 				option4.setY(imageOffsetY - CONTEXTRAD + CONTEXTWIDTH / 2);
 				break;
 			case SHOWINGNODEMENU: //contextmenu for nodes
-				//TODO: replace all of these with appropriate icons/pictures
 
 				//node specific context menu
 
@@ -556,7 +530,7 @@ public class MapEditorToolController extends BaseController
 	private TextField nameField;
 
 	@FXML
-	private TextField typeField; //TODO: Turn this into a dropdown menu?
+	private TextField typeField;
 
 	@FXML
 	private TextField xField;
@@ -677,7 +651,6 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
-	 * TODO: Make the min floor change depending on current building (iteration 3)
 	 */
 	void goDownFloor(ActionEvent event) {
 		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
@@ -738,7 +711,6 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
-	 * TODO: Make the max floor change depending on current building (iteration 3)
 	 */
 	void goUpFloor(ActionEvent event)
 	{
@@ -796,7 +768,6 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	//TODO: update to match refactored database
 	/**
 	 * Create a new node at given xy coordinates.
 	 * Note on node types: 0 is hallway, 1 is doctorsoffice, 2 is elevator, 3 is resetroom
@@ -815,7 +786,6 @@ public class MapEditorToolController extends BaseController
 
 		database.insertNode(newNode);
 
-		//TODO: set buttons to be appropriate image depending on node type
 		//make a new button to associate with the node
 		Button nodeB = new Button();
 		nodeB.setId("node-button-unselected");
@@ -950,7 +920,7 @@ public class MapEditorToolController extends BaseController
 			contextSelection = 3;
 		}
 		else
-		{ //TODO: is this case ever possible?
+		{
 			//make selectionwedge not visible
 			SELECTIONWEDGE.setLength(0);
 			contextSelection = -1;
@@ -1029,7 +999,6 @@ public class MapEditorToolController extends BaseController
 					case 0:
 						//top option
 						System.out.println("top");
-						//TODO: set to proper state for whatever top option is
 						currentState = editorStates.CHAINADDING;
 						break;
 					case 1:
@@ -1204,7 +1173,6 @@ public class MapEditorToolController extends BaseController
 		 * addingNeighbor or removingNeighbor booleans have been tagged true, and if so
 		 * we add/remove the currently clicked node from the original node's neighborlist,
 		 * and then update the lines by calling DrawToNeighbors.
-		 * TODO: update?
 		 */
 		switch(currentState){
 			case ADDINGNEIGHBOR:
@@ -1251,8 +1219,6 @@ public class MapEditorToolController extends BaseController
 
 				if(currentButton != null)
 				{
-					//TODO: set style for background-color using hex without copying everything?
-					//TODO: Just rying to setstyle for color made button change shape
 					currentButton.setId("node-button-unselected");
 				}
 				currentButton = nodeB;
@@ -1267,11 +1233,8 @@ public class MapEditorToolController extends BaseController
 	private void hideNodeDetails()
 	{
 		currentNode = null;
-		//TODO: is null check on currentbutton necessary? can we get to this function with a null button?
 		if(currentButton != null)
 		{
-			//TODO: set style for background-color using hex without copying everything?
-			//TODO: Just trying to setstyle for color made button change shape
 			currentButton.setId("node-button-unselected");
 		}
 		currentButton = null;
@@ -1319,7 +1282,6 @@ public class MapEditorToolController extends BaseController
         }
         catch (NumberFormatException e)
         {
-            //TODO: need more exception handling?
             System.out.println("Not a double");
         }
     }
@@ -1335,7 +1297,7 @@ public class MapEditorToolController extends BaseController
             {
                 currentButton.setLayoutY(Double.parseDouble(yField.getText()));
                 currentNode.setY(Double.parseDouble(yField.getText()));
-                database.updateNode(currentNode); //TODO: meld multiple database update calls into one, that function is expensive!
+                database.updateNode(currentNode);
 
                 //redraw lines for any node that has currentNode as a neighbor
                 //store nodes that need to be redrawn in a list as a workaround
@@ -1351,7 +1313,6 @@ public class MapEditorToolController extends BaseController
                 drawToNeighbors(currentNode);
             }
         } catch (NumberFormatException e){
-            //TODO: need more exception handling?
             System.out.println("Not a double");
         }
     }
@@ -1371,7 +1332,6 @@ public class MapEditorToolController extends BaseController
 			}
 		} catch (NumberFormatException e)
 		{
-			//TODO: need more exception handling?
 			System.out.println("Not a double");
 		}
 	}
@@ -1569,7 +1529,6 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Continuously draw and update the line on the canvas so that the user can see
 	 * lines as they are adding connections.
-	 * TODO: possibly need to fix naming of function
 	 * @param event mouse event
 	 */
 	@FXML
@@ -1596,9 +1555,7 @@ public class MapEditorToolController extends BaseController
 				//circle drawing placement offset
 				gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
 				break;
-			//TODO: cases for making different kinds of nodes
 
-			//TODO: do context menus need to do anything here?
 			case SHOWINGEMPTYMENU:
 				break;
 			case SHOWINGNODEMENU:
