@@ -1,4 +1,4 @@
-package ui;
+package ui.controller;
 
 import data.Provider;
 import javafx.scene.control.TableColumn;

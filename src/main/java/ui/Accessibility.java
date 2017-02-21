@@ -1,5 +1,7 @@
 package ui;
 
+import ui.controller.BaseController;
+
 public class Accessibility
 {
 	public static final String HIGH_CONTRAST_CSS = "css/high-contrast.css";

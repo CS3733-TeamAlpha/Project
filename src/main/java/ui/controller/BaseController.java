@@ -1,4 +1,4 @@
-package ui;
+package ui.controller;
 
 import data.Database;
 import javafx.fxml.FXMLLoader;
@@ -7,13 +7,14 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import pathfinding.Node;
+import ui.*;
 
 import java.io.IOException;
 
 /**
  * Created by Ari on 2/14/17.
  */
-abstract class BaseController
+public abstract class BaseController
 {
 	protected static Stage stage;
 	private boolean currentSceneSupportsHC = true;
@@ -98,7 +99,7 @@ abstract class BaseController
 		updateCSS();
 	}
 
-	protected void updateCSS()
+	public void updateCSS()
 	{
 		if(currentSceneSupportsHC && Accessibility.isHighContrast())
 		{

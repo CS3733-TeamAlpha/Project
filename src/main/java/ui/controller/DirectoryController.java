@@ -1,4 +1,4 @@
-package ui;
+package ui.controller;
 
 import data.Provider;
 import javafx.collections.FXCollections;
@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import pathfinding.Node;
+import ui.Paths;
 
 import java.util.ArrayList;
 import java.util.HashMap;

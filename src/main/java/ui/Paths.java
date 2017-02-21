@@ -1,6 +1,6 @@
 package ui;
 
-class Paths
+public class Paths
 {
 
 	public static final String LOGIN_FXML = "/fxml/Login.fxml";
