@@ -564,6 +564,66 @@ public class Database implements AdminStorage
 	}
 
 	/**
+	 * Remove entrance node neighbor relations, if they exist.
+	 * This function should only occur when a previously linked entrace has its type changed.
+	 * @param n
+	 * @param type
+	 */
+	public void removeEntranceConnection(Node n, int type)
+	{
+		try
+		{
+			//works with the assumption that only one pair with the same type will exist
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type="+
+					type);
+
+			while (results.next())
+			{
+				Node linkNode = nodeCache.get(results.getString(1));
+				linkNode.delNeighbor(n);
+				updateNode(linkNode);
+				n.delNeighbor(linkNode);
+				updateNode(n);
+			}
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Link entrance nodes together across different buildings.
+	 * Type 6 up to type 19 are unique connections between buildings
+	 * @param n Source node, checks if another node with the same type exists and connect
+	 * @param type Type integer
+	 */
+	public void connectEntrances(Node n, int type)
+	{
+		try
+		{
+			//works with the assumption that only one pair with the same type will exist
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type="+
+					type);
+
+			if (results.next())
+			{
+				Node linkNode = nodeCache.get(results.getString(1));
+				linkNode.addNeighbor(n);
+				updateNode(linkNode);
+				n.addNeighbor(linkNode);
+				updateNode(n);
+			}
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Gets an ArrayList of building names
 	 *
 	 * @return ArrayList of building names. Who'd have thought?

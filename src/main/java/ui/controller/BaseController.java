@@ -1,6 +1,7 @@
 package ui.controller;
 
 import data.Database;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -53,8 +54,8 @@ public abstract class BaseController
 
 	//X and Y offsets, for button placement.
 	//TODO: fine tune offsets to make button placement visuals better
-	double XOFFSET = CIRCLEWIDTH/2;
-	double YOFFSET = CIRCLEWIDTH/2;
+	double XOFFSET = CIRCLEWIDTH / 2;
+	double YOFFSET = CIRCLEWIDTH / 2;
 
 	static
 	{
@@ -72,9 +73,11 @@ public abstract class BaseController
 
 	public abstract void initialize();
 
-	public static void setStage(Stage s){
+	public static void setStage(Stage s)
+	{
 		stage = s;
 	}
+
 	protected void loadFXML(String path)
 	{
 		Parent root = null;
@@ -89,9 +92,9 @@ public abstract class BaseController
 
 		//Update the high contrast option
 		currentSceneSupportsHC = true;
-		for(int i = 0; i < highContrastBlackList.length; i++)
+		for (int i = 0; i < highContrastBlackList.length; i++)
 		{
-			if(highContrastBlackList[i].equals(path))
+			if (highContrastBlackList[i].equals(path))
 			{
 				currentSceneSupportsHC = false;
 			}
@@ -101,11 +104,10 @@ public abstract class BaseController
 
 	public void updateCSS()
 	{
-		if(currentSceneSupportsHC && Accessibility.isHighContrast())
+		if (currentSceneSupportsHC && Accessibility.isHighContrast())
 		{
 			enableHighContrastCss();
-		}
-		else
+		} else
 		{
 			disableHighContrastCss();
 		}
@@ -113,7 +115,7 @@ public abstract class BaseController
 
 	private void disableHighContrastCss()
 	{
-		if(stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
+		if (stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
 		{
 			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
 		}
@@ -121,7 +123,7 @@ public abstract class BaseController
 
 	private void enableHighContrastCss()
 	{
-		if(! stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
+		if (!stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
 		{
 			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
 		}
@@ -132,46 +134,44 @@ public abstract class BaseController
 		searchedFor = n;
 	}
 
-	protected Node getSearchedFor(){
+	protected Node getSearchedFor()
+	{
 		return searchedFor;
 	}
 
 	/**
 	 * Set the correct image to a node button
-	 * @param b target button to set graphic to
+	 *
+	 * @param b    target button to set graphic to
 	 * @param type node type
 	 */
 	protected void setButtonImage(Button b, int type)
 	{
-		if(type == 1)
+		if (type == 1)
 		{
 			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		}
-		else if(type == 2)
+		} else if (type == 2)
 		{
 			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		}
-		else if(type == 3)
+		} else if (type == 3)
 		{
 			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		}
-		else if(type == 4 || type == 5)
+		} else if (type == 4 || type == 5)
 		{
 			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		}
-		else if(type == 0)
+		} else if (type == 0)
 		{
 		}
 	}
