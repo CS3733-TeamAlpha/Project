@@ -263,7 +263,6 @@ public class MapController extends BaseController
 	 * Go to next floor in path
 	 * Prevent moving if already on last floor
 	 * @param event
-	 * TODO: Actually write it
 	 */
 	@FXML
 	public void goNextStep(ActionEvent event) {
