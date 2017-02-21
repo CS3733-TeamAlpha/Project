@@ -1390,11 +1390,18 @@ public class MapEditorToolController extends BaseController
 		try
 		{
 			int newType = Integer.parseInt(typeField.getText());
-			if (newType <= 5 && newType >= 0)
+			if (newType < 20 && newType >= 0)
 			{
 				if (newType == 5) //changing to selected kiosk
 				{
 					database.setSelectedKiosk(currentNode);
+				}
+				if (newType > 5 && newType < 20) //links between buildings
+				{
+					database.connectEntrances(currentNode, newType);
+				} else if(currentNode.getType() > 5) //remove links between buildings if changing type to not be a link
+				{
+					database.removeEntranceConnection(currentNode, currentNode.getType());
 				}
 				//update type
 				currentNode.setType(newType);
@@ -1470,51 +1477,54 @@ public class MapEditorToolController extends BaseController
 		//for each neighbor associated with source Node, draw a line.
 		for (Node neighbor : neighbors)
 		{
-
-			Line line = new Line();
-			line.setStrokeWidth(LINEWIDTH);
-			if(Accessibility.isHighContrast())
+			if(neighbor.getBuilding().equals(source.getBuilding()) &&
+					neighbor.getFloor() == source.getFloor())
 			{
-				line.setStroke(Color.WHITE);
+				Line line = new Line();
+				line.setStrokeWidth(LINEWIDTH);
+				if (Accessibility.isHighContrast())
+				{
+					line.setStroke(Color.WHITE);
+				}
+				line.setStartX(source.getX());
+				line.setStartY(source.getY());
+				line.setEndX(neighbor.getX());
+				line.setEndY(neighbor.getY());
+
+				//some shape creation magic for making arrow lines
+
+				//get difference in xy position
+				double diffY = neighbor.getY() - source.getY();
+				double diffX = neighbor.getX() - source.getX();
+
+				//we will use pathShift to place the line's arrow somewhere in the middle of the line.
+				//this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
+				double pathShift = 0.9;
+
+				//make a new triangle
+				Polygon arrowTriangle = new Polygon();
+				arrowTriangle.getPoints().addAll(0.0, 0.0,
+						-5.0, 10.0,
+						5.0, 10.0);
+
+				//get angle the angle of the line we'll be making in degrees
+				double slopeAngle = Math.toDegrees(Math.atan2(diffY, diffX));
+				//reotate the triangle we made
+				//simple correction rotation angle
+				double correction = 90;
+				arrowTriangle.getTransforms().add(new Rotate(slopeAngle + correction, 0, 0));
+				//position the triangle onto the line
+				arrowTriangle.setLayoutX(source.getX() + pathShift * diffX);
+				arrowTriangle.setLayoutY(source.getY() + pathShift * diffY);
+
+				//group together the line and triangle for future referencing
+				Group g = new Group();
+				g.getChildren().add(line);
+				g.getChildren().add(arrowTriangle);
+				editingFloor.getChildren().add(2, g);
+				//add this line into the lines array
+				groups.add(g);
 			}
-			line.setStartX(source.getX());
-			line.setStartY(source.getY());
-			line.setEndX(neighbor.getX());
-			line.setEndY(neighbor.getY());
-
-			//some shape creation magic for making arrow lines
-
-			//get difference in xy position
-			double diffY = neighbor.getY() - source.getY();
-			double diffX = neighbor.getX() - source.getX();
-
-			//we will use pathShift to place the line's arrow somewhere in the middle of the line.
-			//this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
-			double pathShift = 0.9;
-
-			//make a new triangle
-			Polygon arrowTriangle = new Polygon();
-			arrowTriangle.getPoints().addAll(0.0, 0.0,
-					-5.0, 10.0,
-					5.0, 10.0);
-
-			//get angle the angle of the line we'll be making in degrees
-			double slopeAngle = Math.toDegrees(Math.atan2(diffY, diffX));
-			//reotate the triangle we made
-			//simple correction rotation angle
-			double correction = 90;
-			arrowTriangle.getTransforms().add(new Rotate(slopeAngle + correction, 0, 0));
-			//position the triangle onto the line
-			arrowTriangle.setLayoutX(source.getX() + pathShift * diffX);
-			arrowTriangle.setLayoutY(source.getY() + pathShift * diffY);
-
-			//group together the line and triangle for future referencing
-			Group g = new Group();
-			g.getChildren().add(line);
-			g.getChildren().add(arrowTriangle);
-			editingFloor.getChildren().add(2, g);
-			//add this line into the lines array
-			groups.add(g);
 		}
 		//store the array of lines for this source node into the hashmap
 		//to be used to delete all lines later when redrawing
