@@ -3,7 +3,7 @@ CREATE TABLE Nodes
   node_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   posX DOUBLE NOT NULL,
   posY DOUBLE NOT NULL,
-  type INTEGER,
+  type INTEGER, --can be an enum in java? 0-hallway, 1-doctor, 2-elevator, 3-restroom, 4-kiosk, 5-selectedkiosk, 6-entrance
   floor INTEGER NOT NULL,
   building VARCHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
   name VARCHAR(128)
@@ -53,7 +53,10 @@ CREATE TABLE Logins
   password VARCHAR(64) NOT NULL
 );
 
-INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'outdoors');
+
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'faulkner_main');
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-111111111111', 'belkin_house');
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-222222222222', 'outdoors');
 
 --Delete all nodes in the building if the building gets deleted
 ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE;

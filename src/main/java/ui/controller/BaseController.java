@@ -40,8 +40,12 @@ public abstract class BaseController
 	ProxyImage f6ContrastProxy = Paths.f6ContrastProxy;
 	ProxyImage f7ContrastProxy = Paths.f7ContrastProxy;
 
-	int FLOORID = 3; //Default floor id for minimal application
+	ProxyImage outdoorsProxy = Paths.outdoorImageProxy;
+
+	//default to floor1 of faulkner
+	int FLOORID = 1;
 	String BUILDINGID = "00000000-0000-0000-0000-000000000000";
+	int MAXFLOOR = 7;
 
 	//define widths for circles/lines that the canvas will draw
 	double CIRCLEWIDTH = 13.0;

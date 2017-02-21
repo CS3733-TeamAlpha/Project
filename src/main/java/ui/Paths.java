@@ -12,13 +12,16 @@ public class Paths
 	public static final String ADMIN_PAGE_FXML = "/fxml/AdminPage.fxml";
 	public static final String USER_DIRECTORY_FXML = "/fxml/UserDirectory.fxml";
 
-	public static final String FLOOR1_NORMAL = "/Floors/floor1ColorScheme.png";
-	public static final String FLOOR2_NORMAL = "/Floors/floor2ColorScheme.png";
-	public static final String FLOOR3_NORMAL = "/Floors/floor3ColorScheme.png";
-	public static final String FLOOR4_NORMAL = "/Floors/floor4ColorScheme.png";
-	public static final String FLOOR5_NORMAL = "/Floors/floor5ColorSchemeNoLines.png";
-	public static final String FLOOR6_NORMAL = "/Floors/floor6ColorSchemeNoLines.png";
-	public static final String FLOOR7_NORMAL = "/Floors/floor7ColorSchemeNoLines.png";
+	public static final String FLOOR1_NORMAL = "/NewFloors/hospital1.png";
+	public static final String FLOOR2_NORMAL = "/NewFloors/hospital2.png";
+	public static final String FLOOR3_NORMAL = "/NewFloors/hospital3.png";
+	public static final String FLOOR4_NORMAL = "/NewFloors/hospital4.png";
+	public static final String FLOOR5_NORMAL = "/NewFloors/hospital5.png";
+	public static final String FLOOR6_NORMAL = "/NewFloors/hospital6.png";
+	public static final String FLOOR7_NORMAL = "/NewFloors/hospital7.png";
+
+	//placeholder
+	public static final String OUTDOORS = "/Floors/floor1Contrast.png";
 
 	public static final String FLOOR1_CONTRAST = "/Floors/floor1Contrast.png";
 	public static final String FLOOR2_CONTRAST = "/Floors/floor2Contrast.png";
@@ -90,4 +93,6 @@ public class Paths
 	public static ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
 	public static ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
 	public static ProxyImage kioskImageProxy = new ProxyImage(Paths.KIOSKICON);
+
+	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
 }
