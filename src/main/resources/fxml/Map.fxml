@@ -59,12 +59,12 @@
                </VBox.margin></Button>
             <HBox prefHeight="52.0" prefWidth="315.0">
                <children>
-                  <Button fx:id="previousFloor" mnemonicParsing="false" onAction="#goPreviousFloor" prefHeight="52.0" prefWidth="150.0" text="Previous Floor">
+                  <Button fx:id="previousStep" mnemonicParsing="false" onAction="#goPreviousStep" prefHeight="52.0" prefWidth="150.0" text="Previous Step">
                      <HBox.margin>
                         <Insets right="15.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="nextFloor" mnemonicParsing="false" onAction="#goNextFloor" prefHeight="52.0" prefWidth="150.0" text="Next Floor" />
+                  <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" text="Next Step" />
                </children>
             </HBox>
             <ScrollPane prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">

@@ -59,9 +59,9 @@ public class MapController extends BaseController
 	@FXML
 	private ImageView floorImage;
 	@FXML
-	private Button previousFloor;
+	private Button previousStep;
 	@FXML
-	private Button nextFloor;
+	private Button nextStep;
 
 	ArrayList<Label> loadedLabels = new ArrayList<>();
 
@@ -277,7 +277,7 @@ public class MapController extends BaseController
 	 * TODO: Actually write it
 	 */
 	@FXML
-	public void goNextFloor(ActionEvent event) {
+	public void goNextStep(ActionEvent event) {
 
 	}
 
@@ -288,7 +288,7 @@ public class MapController extends BaseController
 	 * TODO: Actually write it
 	 */
 	@FXML
-	public void goPreviousFloor(ActionEvent event) {
+	public void goPreviousStep(ActionEvent event) {
 
 	}
 
