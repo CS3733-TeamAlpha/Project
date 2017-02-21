@@ -351,7 +351,7 @@ public class MapEditorToolController extends BaseController
 
 			case SHOWINGEMPTYMENU: //context menu for non-nodes
 
-				option1 = new ImageView(Paths.addNeighborImageProxy.getFXImage());
+				option1 = new ImageView(Paths.hallwayImageProxy.getFXImage());
 				option1.setScaleX(0.15);
 				option1.setScaleY(0.15);
 				option1.setX(imageOffsetX + CONTEXTRAD - CONTEXTWIDTH / 2);
