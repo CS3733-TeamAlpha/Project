@@ -1,9 +1,14 @@
 package ui.controller;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import misc.Account;
+import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import ui.Paths;
 
@@ -30,7 +35,12 @@ public class LoginController extends BaseController
 
 	public void initialize()
 	{
-		usernameField.requestFocus();
+		Platform.runLater(() -> usernameField.requestFocus());
+
+		usernameField.textProperty().addListener((observable, oldValue, newValue) ->
+				loginButton.setDisable(newValue.isEmpty()));
+
+		LoginState.logout();
 	}
 
 	public void showStartup()
@@ -53,13 +63,17 @@ public class LoginController extends BaseController
 		{
 			progressIndicator.setVisible(true);
 			resultText.setText("Logging in...");
+			resultText.setTextFill(Color.BLACK);
 			resultText.setVisible(true);
+
+			LoginState.login(new Account(usernameField.getText()));
 
 			Platform.runLater(() -> loadFXML(Paths.ADMIN_PAGE_FXML));
 		}
 		else
 		{
 			resultText.setText("Incorrect login");
+			resultText.setTextFill(Color.RED);
 			resultText.setVisible(true);
 
 			usernameField.setDisable(false);

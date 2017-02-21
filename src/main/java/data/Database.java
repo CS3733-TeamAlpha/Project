@@ -1,5 +1,6 @@
 package data;
 
+import misc.Account;
 import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
@@ -736,8 +737,8 @@ public class Database implements AdminStorage
 			ResultSet results = pstmt.executeQuery();
 			while (results.next())
 				ret.add(nodeCache.get(results.getString(1)));
-
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
 			System.out.println("Error trying to get list of provider's offices!");
 			e.printStackTrace();
@@ -970,6 +971,27 @@ public class Database implements AdminStorage
 		{
 			System.out.println("Error trying to delete user " + username + "!");
 			e.printStackTrace();
+		}
+	}
+
+	public ArrayList<String> getAllAccounts()
+	{
+		try
+		{
+			ArrayList<String> userNames = new ArrayList<>();
+			ResultSet results = statement.executeQuery("SELECT username FROM LOGINS");
+
+			while(results.next())
+			{
+				userNames.add(results.getString("username"));
+			}
+
+			return userNames;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null;
 		}
 	}
 

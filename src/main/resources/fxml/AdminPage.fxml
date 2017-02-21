@@ -70,7 +70,7 @@
                               <Image url="@../images/lock_large.png" />
                            </image>
                         </ImageView>
-                        <Button mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
