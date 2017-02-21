@@ -1,13 +1,12 @@
 package ui.controller;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -32,9 +31,9 @@ public class MapController extends BaseController
 	private Node selected;
 	private Node kiosk;
 	boolean findingDirections = false;
-	boolean pathingUp = false;
-	boolean pathingDown = false;
+	boolean hasNextStep = false;
 	int targetFloor = -1;
+	String targetBuilding = "";
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
@@ -77,7 +76,7 @@ public class MapController extends BaseController
 		kiosk = database.getSelectedKiosk();
 		graph = new ConcreteGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
-		setFloorImage(FLOORID); //Set image of floor
+		setFloorImage(BUILDINGID, FLOORID); //Set image of floor
 
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
@@ -100,12 +99,32 @@ public class MapController extends BaseController
 			showRoomInfo(searched);
 			setSearchedFor(null);
 		}
+
+		//set up the choicebox for changing buildings
+		ArrayList<String> buildings = database.getBuildings();
+		for(String s: buildings)
+			System.out.println(s);
+		ChoiceBox buildingChoice = new ChoiceBox();
+		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
+		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
+		buildingChoice.setLayoutX(49);
+		buildingChoice.setLayoutY(106);
+		buildingChoice.setOnAction(event ->
+				{
+					changeBuilding((String)buildingChoice.getValue());
+				}
+		);
 	}
 
 	public void showRoomInfo(Node n)
 	{
 		if(findingDirections)
 		{
+			if(!hasNextStep)
+			{
+				BUILDINGID = kiosk.getBuilding();
+				jumpFloor(kiosk.getFloor());
+			}
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
 
 			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 0.1);
@@ -130,7 +149,7 @@ public class MapController extends BaseController
 				for (int i = 0; i < path.size()-1; i++)
 				{
 
-					if(path.get(i).getFloor() == FLOORID)
+					if(path.get(i).getFloor() == FLOORID && path.get(i).getBuilding().equals(BUILDINGID))
 					{
 						Line line = new Line();
 						System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
@@ -151,21 +170,13 @@ public class MapController extends BaseController
 					}
 				}
 
-				if(!pathingUp && !pathingDown)
+				if(!hasNextStep)
 				{
-					if (n.getFloor() > kiosk.getFloor())
+					if(!n.getBuilding().equals(kiosk.getBuilding()) ||
+							n.getFloor() != kiosk.getFloor())
 					{
-						targetFloor = n.getFloor();
-						pathingUp = true;
-					} else if (n.getFloor() < kiosk.getFloor())
-					{
-						targetFloor = n.getFloor();
-						pathingDown = true;
+						hasNextStep = true;
 					}
-				} else
-				{
-					pathingUp = false;
-					pathingDown = false;
 				}
 			}
 			findingDirections = false;
@@ -211,7 +222,7 @@ public class MapController extends BaseController
 		FLOORID = floor;
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
-		setFloorImage(FLOORID);
+		setFloorImage(BUILDINGID, FLOORID);
 	}
 
 	@FXML
@@ -221,24 +232,13 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
-		if(currentPath.size() != 0){
-			for(Line l: currentPath){
-				((AnchorPane) l.getParent()).getChildren().remove(l);
-			}
-			currentPath.clear();
-		}
-		if(pathingUp || pathingDown){
-			jumpFloor(targetFloor);
-			findingDirections = true;
-			showRoomInfo(selected);
-		}
-		else if(FLOORID > 1){
+		if(FLOORID > 1){
 			//remove all buttons and lines on the current floor
 			purgeButtons();
 			FLOORID--;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
@@ -249,24 +249,13 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor (ActionEvent event){
-		if(currentPath.size() != 0){
-			for(Line l: currentPath){
-				((AnchorPane) l.getParent()).getChildren().remove(l);
-			}
-			currentPath.clear();
-		}
-		if(pathingUp || pathingDown){
-			jumpFloor(targetFloor);
-			findingDirections = true;
-			showRoomInfo(selected);
-		}
-		else if(FLOORID < 7){
+		if(FLOORID < 7){
 			//remove all buttons and lines on the current floor
 			purgeButtons();
 			FLOORID++;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
@@ -279,6 +268,55 @@ public class MapController extends BaseController
 	@FXML
 	public void goNextFloor(ActionEvent event) {
 
+		if(hasNextStep)
+		{
+			if(currentPath.size() != 0){
+				for(Line l: currentPath){
+					((AnchorPane) l.getParent()).getChildren().remove(l);
+				}
+				currentPath.clear();
+			}
+			if(!selected.getBuilding().equals(kiosk.getBuilding()))
+			{
+				if(FLOORID != 1)
+				{
+					jumpFloor(1);
+				}
+				else
+				{
+					if(BUILDINGID.equals("00000000-0000-0000-0000-222222222222"))//if we are in outsidefloor
+					{
+						purgeButtons();
+						BUILDINGID = selected.getBuilding();
+						loadNodesFromDatabase();
+						currentFloorLabel.setText(Integer.toString(FLOORID));
+						setFloorImage(BUILDINGID, FLOORID);
+					}
+					else //otherwise go outside
+					{
+						purgeButtons();
+						BUILDINGID = "00000000-0000-0000-0000-222222222222";
+						loadNodesFromDatabase();
+						currentFloorLabel.setText(Integer.toString(FLOORID));
+						setFloorImage(BUILDINGID, FLOORID);
+					}
+				}
+
+				findingDirections = true;
+				showRoomInfo(selected);
+			}
+			else
+			{
+				//jump to correct floor
+				jumpFloor(selected.getFloor());
+				findingDirections = true;
+				showRoomInfo(selected);
+			}
+		}
+		if(BUILDINGID.equals(selected.getBuilding()) && FLOORID == selected.getFloor())
+		{
+			hasNextStep = false;
+		}
 	}
 
 	/**
@@ -307,6 +345,32 @@ public class MapController extends BaseController
 		}
 	}
 
+	/**
+	 * Change the building that is currently being edited
+	 * @param building String name of the buliding to edit
+	 */
+	private void changeBuilding(String building)
+	{
+		//change selected building ID
+		BUILDINGID = database.getBuildingUUID(building);
+		//remove all buttons and lines on the current floor
+		purgeButtons();
+		//default to floor 1 when changing buildings
+		FLOORID = 1;
+		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
+		{
+			MAXFLOOR = 7;
+		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
+		{
+			MAXFLOOR = 4;
+		} else {
+			MAXFLOOR = 1;
+		}
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
+		setFloorImage(BUILDINGID, FLOORID);
+	}
+
 
 	/**
 	 * Set the floorImage imageview object to display the image of
@@ -314,15 +378,29 @@ public class MapController extends BaseController
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
 	 */
-	private void setFloorImage(int floor)
+	private void setFloorImage(String buildingid, int floor)
 	{
-		if(Accessibility.isHighContrast())
+		//faulkner building
+		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
-		}
-		else
-		{
+			//TODO: possibly reimplement highcontrast
+			//if(Accessibility.isHighContrast())
+			//{
+			//	floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
+			//}
+			//else
+			//{
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
+			//}
+		}
+		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
+		{
+			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
+		}
+		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
+		{
+			//TODO: fix path of outdoor image
+			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 	}
 
