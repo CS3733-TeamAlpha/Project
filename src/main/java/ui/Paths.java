@@ -20,7 +20,6 @@ public class Paths
 	public static final String FLOOR6_NORMAL = "/NewFloors/hospital6.png";
 	public static final String FLOOR7_NORMAL = "/NewFloors/hospital7.png";
 
-	//placeholder
 	public static final String OUTDOORS = "/NewFloors/outsideFloor.png";
 
 	public static final String FLOOR1_CONTRAST = "/Floors/floor1Contrast.png";
