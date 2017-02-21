@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import static java.awt.Color.PINK;
 import static java.awt.SystemColor.window;
 
 public class MapEditorToolController extends BaseController
@@ -233,6 +234,15 @@ public class MapEditorToolController extends BaseController
 		purgeButtonsAndLines();
 		//default to floor 1 when changing buildings
 		FLOORID = 1;
+		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
+		{
+			MAXFLOOR = 7;
+		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
+		{
+			MAXFLOOR = 4;
+		} else {
+			MAXFLOOR = 1;
+		}
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
@@ -249,18 +259,24 @@ public class MapEditorToolController extends BaseController
 		//faulkner building
 		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			if(Accessibility.isHighContrast())
-			{
-				floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
-			}
-			else
-			{
+			//TODO: possibly reimplement highcontrast
+			//if(Accessibility.isHighContrast())
+			//{
+			//	floorImage.setImage(Paths.contrastFloorImages[floor-1].getFXImage());
+			//}
+			//else
+			//{
 				floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
-			}
+			//}
 		}
-		else if(buildingid.equals("00000000-0000-0000-0000-belkin_house"))
+		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
 		{
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
+		}
+		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
+		{
+			//TODO: fix path of outdoor image
+			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 	}
 
@@ -731,7 +747,7 @@ public class MapEditorToolController extends BaseController
 	{
 		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
-		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < 7 &&
+		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < MAXFLOOR &&
 				currentNode != null && currentNode.getType() == 2)
 		{
 			//get the upper elevator node and connect if it exists
@@ -747,7 +763,7 @@ public class MapEditorToolController extends BaseController
 				System.out.println("Connected up");
 			}
 			currentState = editorStates.DOINGNOTHING;
-		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < 7 &&
+		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < MAXFLOOR &&
 				currentNode != null && currentNode.getType() == 2)
 		{
 			//get the upper elevator node and remove it from neighbor if it exists
@@ -772,7 +788,7 @@ public class MapEditorToolController extends BaseController
 			}
 			currentState = editorStates.DOINGNOTHING;
 		}
-		else if(FLOORID < 7)
+		else if(FLOORID < MAXFLOOR)
 		{
 			//remove all buttons and lines on the current floor
 			purgeButtonsAndLines();
