@@ -1,8 +1,9 @@
-package ui;
+package ui.controller;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import ui.Paths;
 
 import java.util.Optional;
 

@@ -1,14 +1,11 @@
-package ui;
+package ui.controller;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -17,8 +14,9 @@ import javafx.scene.shape.Line;
 import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
 import pathfinding.Node;
+import ui.Accessibility;
+import ui.Paths;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 

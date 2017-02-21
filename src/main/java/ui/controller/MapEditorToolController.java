@@ -1,6 +1,5 @@
-package ui;
+package ui.controller;
 
-import data.Database;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -9,7 +8,6 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
@@ -20,12 +18,12 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
+import ui.Accessibility;
+import ui.Paths;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-
-import static java.awt.SystemColor.window;
 
 public class MapEditorToolController extends BaseController
 {

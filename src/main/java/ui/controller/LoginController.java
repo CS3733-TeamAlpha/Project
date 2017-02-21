@@ -1,12 +1,11 @@
-package ui;
+package ui.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import org.mindrot.jbcrypt.BCrypt;
-
-import javax.swing.*;
+import ui.Paths;
 
 /**
  * Created by Ari on 2/7/17.

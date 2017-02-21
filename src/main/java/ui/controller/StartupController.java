@@ -1,14 +1,13 @@
-package ui;
+package ui.controller;
 
 import data.SearchResult;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import ui.Accessibility;
+import ui.Paths;
 
 import java.util.ArrayList;
 

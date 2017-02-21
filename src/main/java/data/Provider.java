@@ -127,6 +127,11 @@ public class Provider
 		return build.toString();
 	}
 
+	/**
+	 * The point in having this is preventing direct access to our Node List, since we want
+	 * to be the one responsible for keeping it updated
+	 * @return A Hashmap relating Node IDs to Node Names
+	 */
 	public HashMap<String, String> getNodeIdNameMap()
 	{
 		HashMap<String, String> map = new HashMap<>();

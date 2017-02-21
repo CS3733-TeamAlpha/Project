@@ -21,7 +21,7 @@ public class ProviderBox extends HBox
 	//Terrible, disgusting hack to grand ProviderBox access to the database BECAUSE JAVA IS STUPID AND DOESN'T ALLOW FOR
 	//MULTIPLE INHERITANCE! F*** YOU, JAVA, I'M LEAVING YOU FOR C++ AFTER THIS!
 	//Basically, the AbstractController class will inject the right database object into this. Gah!
-	static Database database = null;
+	public static Database database = null;
 
 	private Provider provider;
 	@FXML
