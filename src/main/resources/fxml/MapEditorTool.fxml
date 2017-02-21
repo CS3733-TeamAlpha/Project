@@ -58,26 +58,6 @@
                         <Button fx:id="addConnectionButton" layoutX="4.0" layoutY="300.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
                         <Button fx:id="removeConnectionButton" layoutX="4.0" layoutY="340.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
                         <Button fx:id="deleteNodeButton" layoutX="4.0" layoutY="261.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node" />
-                        <ImageView fx:id="hallwayImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="400.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/placeholderHallway.jpg" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="officeImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="450.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/placeholderOffice.jpg" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="restroomImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="500.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/placeholderRestroom.jpg" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="elevatorImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/placeholderElevator.jpg" />
-                           </image>
-                        </ImageView>
                      </children>
                   </AnchorPane>
          </children>

@@ -282,90 +282,6 @@ public class MapEditorToolController extends BaseController
 			}
 		});
 
-		//set the imaveview objects to use the correct images
-		hallwayImage.setImage(Paths.hallwayImageProxy.getFXImage());
-		officeImage.setImage(Paths.doctorImageProxy.getFXImage());
-		restroomImage.setImage(Paths.restroomImageProxy.getFXImage());
-		elevatorImage.setImage(Paths.elevatorImageProxy.getFXImage());
-
-		//For each image, set OnMouseDragged to change currentstate and
-		//modify the images' XY coordinates
-		//Any additional functionality that we want while dragging an image would go here
-
-		hallwayImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWHALLWAY;
-				hallwayImage.setX(e.getX()-hallwayImage.getFitWidth()/2);
-				hallwayImage.setY(e.getY()-hallwayImage.getFitHeight()/2);
-			}
-		});
-		officeImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWOFFICE;
-				officeImage.setX(e.getX()-officeImage.getFitWidth()/2);
-				officeImage.setY(e.getY()-officeImage.getFitHeight()/2);
-			}
-		});
-		restroomImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWRESTROOM;
-				restroomImage.setX(e.getX()-restroomImage.getFitWidth()/2);
-				restroomImage.setY(e.getY()-restroomImage.getFitHeight()/2);
-			}
-		});
-		elevatorImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWELEVATOR;
-				elevatorImage.setX(e.getX()-elevatorImage.getFitWidth()/2);
-				elevatorImage.setY(e.getY()-elevatorImage.getFitHeight()/2);
-			}
-		});
-
-		//use same eventhandler for all images when mouse is released
-		//on release, we reset the image location and then make a new node
-		EventHandler releaseHandler = new EventHandler<MouseEvent>(){
-			@Override
-			public void handle(MouseEvent e){
-				//get source of mouserelease event so we can change its xy coordinates
-				ImageView i = (ImageView)e.getSource();
-				//set xy to 0 to return to original position
-				i.setX(0);
-				i.setY(0);
-
-				// This is a hack
-				// because I can't seem to figure out how to get a drop event
-				// to fire while getting the right XY coordinates relative to the floorimage
-
-				//modify our XY values based on the image's current scroll and the
-				//dragged image's initial position on the screen
-
-				//fix magic number: 15, probably about the size of the scrollbars
-				Double fixX = e.getX()+palettePane.getLayoutX()+i.getLayoutX()+
-						mainScroll.getHvalue()*(floorImage.getFitWidth()-mainScroll.getWidth()+15);
-				Double fixY = e.getY()+palettePane.getLayoutY()+i.getLayoutY()+
-						mainScroll.getVvalue()*(floorImage.getFitHeight()-mainScroll.getHeight()+15);
-
-				dropNode(fixX, fixY);
-			}
-		};
-
-		//add the release handler to each image
-		hallwayImage.setOnMouseReleased(releaseHandler);
-		officeImage.setOnMouseReleased(releaseHandler);
-		elevatorImage.setOnMouseReleased(releaseHandler);
-		restroomImage.setOnMouseReleased(releaseHandler);
 	}
 
 
@@ -510,18 +426,6 @@ public class MapEditorToolController extends BaseController
 
 	@FXML
 	private ImageView floorImage;
-
-	@FXML
-	private ImageView hallwayImage;
-
-	@FXML
-	private ImageView officeImage;
-
-	@FXML
-	private ImageView restroomImage;
-
-	@FXML
-	private ImageView elevatorImage;
 
 	@FXML
 	private Button newNodeButton;
