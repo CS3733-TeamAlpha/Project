@@ -40,8 +40,7 @@ public class DepthFirstGraph implements Graph
 			{
 				while (parentMap.get(temp) != null)
 				{
-					if (temp.getFloor() == start.getFloor() || temp.getFloor() == end.getFloor())
-						result.add(temp);
+					result.add(temp);
 					temp = parentMap.get(temp);
 				}
 				result.add(start);

@@ -89,8 +89,7 @@ public class AStarGraph implements Graph
 		//Backtrack from the end node, assembling an ordered list as we go
 		ArrayList<Node> path = new ArrayList<Node>();
 		for (ASTNode node = astEnd; node != null; node = node.parent)
-			if (node.node.getFloor() == start.getFloor() || node.node.getFloor() == end.getFloor())
-				path.add(node.node);
+			path.add(node.node);
 		return path;
 	}
 

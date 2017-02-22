@@ -79,28 +79,4 @@ public class AStarGraphTest
 		for (int i = 0; i < 100; i++)
 			assertEquals(orderedSolution.get(i), straightNodes[99 - i]);
 	}
-
-	@Test
-	public void straitShotOptimization()
-	{
-		//Straight shot optimization test - test to make sure that intermediate floors are skipped
-		Node[] nodes = new Node[3];
-		for (int i = 0; i < nodes.length; i++)
-		{
-			nodes[i] = new Node();
-			nodes[i].setFloor(i);
-		}
-
-		for (int i = 0; i < nodes.length - 1; i++)
-		{
-			if (i > 0)
-				nodes[i].addNeighbor(nodes[i-1]);
-			if (i < nodes.length - 1)
-				nodes[i].addNeighbor(nodes[i+1]);
-		}
-
-		AStarGraph graph = new AStarGraph();
-		ArrayList<Node> path = graph.findPath(nodes[0], nodes[nodes.length-1]);
-		assertEquals(2, path.size());
-	}
 }

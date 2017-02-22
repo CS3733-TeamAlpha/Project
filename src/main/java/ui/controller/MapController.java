@@ -146,11 +146,7 @@ public class MapController extends BaseController
 		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);
 		buildingChoice.setLayoutY(106);
-		buildingChoice.setOnAction(event ->
-				{
-					changeBuilding((String)buildingChoice.getValue());
-				}
-		);
+		buildingChoice.setOnAction(event -> changeBuilding((String)buildingChoice.getValue()));
 //		buildingChoice.setValue("faulkner_main");
 
 		nextStep.setDisable(true);
