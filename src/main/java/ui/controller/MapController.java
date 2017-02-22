@@ -269,33 +269,27 @@ public class MapController extends BaseController
 
 			if(zoomWrapper.getWidth()-focusX < scroller.getWidth()/2)
 			{
-				System.out.println("1");
 				scroller.hvalueProperty().setValue(1);
 			}
 			else if(focusX < scroller.getWidth()/2)
 			{
-				System.out.println("2");
 				scroller.hvalueProperty().setValue(0);
 			}
 			else
 			{
-				System.out.println("3");
 				scroller.hvalueProperty().setValue(focusX/(zoomWrapper.getWidth()-scroller.getWidth()/2));
 			}
 
 			if(focusY < scroller.getHeight()/2)
 			{
-				System.out.println("4");
 				scroller.vvalueProperty().setValue(0);
 			}
 			else if(zoomWrapper.getHeight()-focusY < scroller.getHeight()/2)
 			{
-				System.out.println("5");
 				scroller.vvalueProperty().setValue(1);
 			}
 			else
 			{
-				System.out.println("6");
 				scroller.vvalueProperty().setValue(focusY/(zoomWrapper.getHeight()-scroller.getHeight()/2));
 			}
 		}
