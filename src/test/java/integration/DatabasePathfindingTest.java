@@ -20,7 +20,7 @@ public class DatabasePathfindingTest
 	@Before
 	public void setUp()
 	{
-		graph = new ConcreteGraph();
+		graph = new AStarGraph();
 		database = new data.Database("junit_testing_db");
 	}
 

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class ConcreteGraphTest {
+public class DepthFirstTest
+{
 
 	@Test
 	public void findPath()
@@ -24,7 +25,8 @@ public class ConcreteGraphTest {
 				gridNodes[i][j] = new Node();
 
 		//Create a simple straightshot array of nodes to idiot-test the pathfinding
-		for (int i = 0; i < straightNodes.length; i++) {
+		for (int i = 0; i < straightNodes.length; i++)
+		{
 			straightNodes[i].setX(i);
 			if (i > 0)
 				straightNodes[i].addNeighbor(straightNodes[i - 1]);
@@ -33,8 +35,10 @@ public class ConcreteGraphTest {
 		}
 
 		//Create a more complicated grid of nodes to check for actual pathfinding ability where many choices exist
-		for (int i = 0; i < 100; i++) {
-			for (int j = 0; j < 100; j++) {
+		for (int i = 0; i < 100; i++)
+		{
+			for (int j = 0; j < 100; j++)
+			{
 				gridNodes[i][j].setX(i);
 				gridNodes[i][j].setY(j);
 				if (i > 0)
@@ -48,17 +52,18 @@ public class ConcreteGraphTest {
 			}
 		}
 
-		Graph graph = new ConcreteGraph();
+		Graph graph = new DepthFirstGraph();
 
 		//Straight shot pathing test
-		assertNotNull(graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]));
-		assertEquals(straightNodes.length, graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]).size());
+		ArrayList<Node> path = graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]);
+		assertNotNull(path);
+		assertTrue(path.contains(straightNodes[0]));
+		assertTrue(path.contains(straightNodes[straightNodes.length - 1]));
+		assertEquals(straightNodes.length, path.size());
 
 		//Grid pathing test
 		assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[99][99]));
-		assertEquals(100, graph.findPath(gridNodes[0][0], gridNodes[0][99]).size());
-		assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[99][99]));
-		assertEquals(199, graph.findPath(gridNodes[0][0], gridNodes[99][99]).size());
+		assertTrue(199 < graph.findPath(gridNodes[0][0], gridNodes[99][99]).size());
 
 		//***EDGE CASES***
 		assertNull(graph.findPath(null, null));
@@ -90,13 +95,13 @@ public class ConcreteGraphTest {
 		for (int i = 0; i < nodes.length - 1; i++)
 		{
 			if (i > 0)
-				nodes[i].addNeighbor(nodes[i-1]);
+				nodes[i].addNeighbor(nodes[i - 1]);
 			if (i < nodes.length - 1)
-				nodes[i].addNeighbor(nodes[i+1]);
+				nodes[i].addNeighbor(nodes[i + 1]);
 		}
 
-		ConcreteGraph graph = new ConcreteGraph();
-		ArrayList<Node> path = graph.findPath(nodes[0], nodes[nodes.length-1]);
+		Graph graph = new DepthFirstGraph();
+		ArrayList<Node> path = graph.findPath(nodes[0], nodes[nodes.length - 1]);
 		assertEquals(2, path.size());
 	}
 }

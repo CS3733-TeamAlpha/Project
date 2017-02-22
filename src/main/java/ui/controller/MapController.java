@@ -1,8 +1,8 @@
 package ui.controller;
 
+import data.Node;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -14,9 +14,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import pathfinding.ConcreteGraph;
+import pathfinding.AStarGraph;
 import pathfinding.Graph;
-import data.Node;
+import pathfinding.TextualDirections;
 import ui.Accessibility;
 import ui.Paths;
 
@@ -118,7 +118,7 @@ public class MapController extends BaseController
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getSelectedKiosk();
-		graph = new ConcreteGraph();
+		graph = new AStarGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
 		setFloorImage(BUILDINGID, FLOORID); //Set image of floor
 
@@ -175,7 +175,7 @@ public class MapController extends BaseController
 		{
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
 
-			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 0.1);
+			ArrayList<String> textDirections = TextualDirections.getDirections(graph.findPath(kiosk, selected), 0.1);
 			StringBuilder build = new StringBuilder();
 			if(textDirections != null)
 			{
