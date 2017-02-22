@@ -22,5 +22,6 @@ public class BreadthFirstTest {
         }
         Graph graph = new BreadthFirstGraph();
         graph.findPath(testNodes[0], testNodes[5]);
+        graph.findPath(testNodes[0], testNodes[0]);
     }
 }

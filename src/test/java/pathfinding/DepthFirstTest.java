@@ -22,5 +22,6 @@ public class DepthFirstTest {
         }
         Graph graph = new DepthFirstGraph();
         graph.findPath(testNodes[0], testNodes[5]);
+        graph.findPath(testNodes[0], testNodes[0]);
     }
 }
