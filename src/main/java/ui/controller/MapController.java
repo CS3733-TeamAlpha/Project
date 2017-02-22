@@ -177,15 +177,20 @@ public class MapController extends BaseController
 
 			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 0.1);
 			StringBuilder build = new StringBuilder();
-			for(String sentence : textDirections)
+			if(textDirections != null)
 			{
-				build.append(sentence);
-				build.append("\n");
+				for (String sentence : textDirections)
+				{
+					build.append(sentence);
+					build.append("\n");
+				}
 			}
 			textDirectionsLabel.setText(build.toString());
 
 			if(path == null){
 				System.out.println("No path found");
+				focusNode = kiosk;
+				textDirectionsLabel.setText("No path found");
 			}else
 			{
 				if(currentPath.size() != 0){

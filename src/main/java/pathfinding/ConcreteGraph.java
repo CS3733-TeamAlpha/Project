@@ -133,6 +133,10 @@ public class ConcreteGraph implements Graph
 	public ArrayList<String> textDirect(Node start, Node end, double scaleFactor)
 	{
 		ArrayList<Node> path = findPath(start, end);
+		if(path == null)
+		{
+			return null;
+		}
 		ArrayList<String> toReturn = new ArrayList<>();
 		int length = path.size()-1;
 
