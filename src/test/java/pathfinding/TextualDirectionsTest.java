@@ -1,6 +1,6 @@
 package pathfinding;
 
-import data.ConcreteNode;
+import data.Node;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -13,15 +13,15 @@ public class TextualDirectionsTest
 	@Test
 	public void findAngle()
 	{
-		ConcreteNode nodes[] = new ConcreteNode[6];
-		ConcreteNode pivot = new ConcreteNode();
+		Node nodes[] = new Node[6];
+		Node pivot = new Node();
 		pivot.setX(10);
 		pivot.setY(10); //nonstandard line breaks!
-		ConcreteNode start = new ConcreteNode();
+		Node start = new Node();
 		start.setX(10);
 		start.setY(0);
 		for (int i = 0; i < 6; i++)
-			nodes[i] = new ConcreteNode();
+			nodes[i] = new Node();
 
 		nodes[0].setX(11);
 		nodes[0].setY(0);
@@ -47,9 +47,9 @@ public class TextualDirectionsTest
 	@Test
 	public void textDirections()
 	{
-		ConcreteNode[] testNodes = new ConcreteNode[6];
+		Node[] testNodes = new Node[6];
 		for (int i = 0; i < testNodes.length; i++)
-			testNodes[i] = new ConcreteNode();
+			testNodes[i] = new Node();
 		for (int i = 0; i < testNodes.length; i++)
 		{
 			if (i > 0)

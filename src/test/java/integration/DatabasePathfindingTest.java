@@ -32,8 +32,8 @@ public class DatabasePathfindingTest
 
 	@Test
 	public void testLinkPersistence(){
-		ConcreteNode node1 = new ConcreteNode();
-		ConcreteNode node2 = new ConcreteNode();
+		Node node1 = new Node();
+		Node node2 = new Node();
 		assertNull(graph.findPath(node1, node2)); //Idiot check... you never know when programs drop 100 IQ on the spot
 		node1.addNeighbor(node2);
 		node2.addNeighbor(node1);
@@ -69,12 +69,12 @@ public class DatabasePathfindingTest
 		//Lets have a little fun with the database by giving it 100 nodes to manage
 		//Start by initializing and linking 100x100 nodes together
 		System.out.println("Beginning graph creation");
-		ConcreteNode[][] gridNodes = new ConcreteNode[10][10];
+		Node[][] gridNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				gridNodes[i][j] = new ConcreteNode();
+				gridNodes[i][j] = new Node();
 				gridNodes[i][j].setX(i);
 				gridNodes[i][j].setY(j);
 			}
@@ -113,7 +113,7 @@ public class DatabasePathfindingTest
 		database.connect();
 
 		//...and get them all back out again!
-		Node[][] dGridNodes = new ConcreteNode[10][10];
+		Node[][] dGridNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)

@@ -11,10 +11,9 @@ import java.util.stream.Collectors;
  */
 public class Provider extends Observable
 {
-	private String firstName, lastName, title;
-	private String uuid;
-
-	private HashMap<String, Node> locations;
+	String firstName, lastName, title;
+	String uuid;
+	HashMap<String, Node> locations;
 
 	/**
 	 * Creates a new provider using given data. Makes sure to assign this provider to the given locations.

@@ -30,7 +30,7 @@ public class Database implements Observer
 	private Statement statement;
 	private Connection connection;
 
-	private Hashtable<String, ConcreteNode> nodeCache;
+	private Hashtable<String, Node> nodeCache;
 	private Hashtable<String, Provider> providerCache;
 
 	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
@@ -44,9 +44,9 @@ public class Database implements Observer
 	@Override
 	public void update(Observable observable, Object o)
 	{
-		//(cond [(ConcreteNode? o) (...)])
+		//(cond [(Node? o) (...)])
 		//whoa, that was a flashback I didn't want
-		if (observable.getClass().equals(ConcreteNode.class))
+		if (observable.getClass().equals(Node.class))
 		{
 			updateNode((Node)observable);
 		}
@@ -145,7 +145,7 @@ public class Database implements Observer
 	 *
 	 * @param node Node object to insert.
 	 */
-	public void insertNode(ConcreteNode node)
+	public void insertNode(Node node)
 	{
 		node.addObserver(this);
 		try
@@ -364,31 +364,6 @@ public class Database implements Observer
 		}
 
 		return ret;
-	}
-
-	/**
-	 * Get all nodes that are tagged as kiosks.
-	 * These nodes have a type of either 4 or 5
-	 * @return A list of kiosk nodes
-	 */
-	public ArrayList<Node> getAllKiosks()
-	{
-		ArrayList<Node> kiosklist = null;
-		try
-		{
-
-			//The node with type 5 is selected. Assume only one such node exists
-			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5 OR type=4");
-
-			while (results.next())
-				kiosklist.add(nodeCache.get(results.getString(1)));
-
-		} catch (SQLException e)
-		{
-			System.out.println("Error retriving all kiosks!");
-			e.printStackTrace();
-		}
-		return kiosklist;
 	}
 
 	/**
@@ -656,9 +631,7 @@ public class Database implements Observer
 			{
 				Node linkNode = nodeCache.get(results.getString(1));
 				linkNode.addNeighbor(n);
-				updateNode(linkNode);
 				n.addNeighbor(linkNode);
-				updateNode(n);
 			}
 
 		}
@@ -774,7 +747,8 @@ public class Database implements Observer
 			}
 			else
 			{
-				//Add provider
+				//Add new provider
+				p.addObserver(this);
 				PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
 				insPrv.setString(1, p.getUUID());
 				insPrv.setString(2, p.getFirstName());
@@ -813,7 +787,7 @@ public class Database implements Observer
 		provider.deleteObserver(this);
 		providerCache.remove(provider.getUUID());
 		//Notify the provider's associated nodes
-		provider.getLocations().forEach((node) -> node.delProvider(provider)); //HAIL LAMBDA! HAIL HYDR- wait, what?
+		provider.getLocations().forEach((node) -> node.providers.remove(provider)); //HAIL LAMBDA! HAIL HYDR- wait, what?
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
@@ -973,8 +947,9 @@ public class Database implements Observer
 			ResultSet results = statement.executeQuery("SELECT * FROM Nodes");
 			while (results.next())
 			{
-				ConcreteNode node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
+				Node node = new Node(results.getString(1), results.getString(7), results.getString(6),
 						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
+				node.addObserver(this);
 				nodeCache.put(node.getID(), node);
 			}
 
@@ -987,7 +962,7 @@ public class Database implements Observer
 				if (src == null || dst == null)
 					System.out.println("DATABASE TRYING TO CONNECT NULL NODE(S)!");
 				else
-					src.addNeighbor(dst);
+					src.neighbors.add(dst);
 			}
 
 			//Load all the providers
@@ -996,6 +971,7 @@ public class Database implements Observer
 			{
 				Provider provider = new Provider(results.getString("firstName"), results.getString("lastName"),
 						results.getString("provider_uuid"), results.getString("title"));
+				provider.addObserver(this);
 				providerCache.put(provider.getUUID(), provider);
 			}
 
@@ -1005,14 +981,14 @@ public class Database implements Observer
 			{
 				final String provider = results.getString("provider_uuid");
 				final String node = results.getString("node_uuid");
-				nodeCache.get(node).addProvider(providerCache.get(provider)); //these two lines being the same length is very satisfying
-				providerCache.get(provider).addLocation(nodeCache.get(node));
+				nodeCache.get(node).providers.add(providerCache.get(provider)); //these two lines being the same length is very satisfying
+				providerCache.get(provider).locations.put(nodeCache.get(node).getID(), nodeCache.get(node));
 			}
 
 			//Load service info
 			results = statement.executeQuery("SELECT * FROM Services");
 			while (results.next())
-				nodeCache.get(results.getString(1)).addService(results.getString(2));
+				nodeCache.get(results.getString(1)).services.add(results.getString(2));
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to load pathable nodes!");

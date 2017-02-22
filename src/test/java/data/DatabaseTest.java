@@ -57,7 +57,7 @@ public class DatabaseTest
 	@Test
 	public void testInsertAndRetrieval()
 	{
-		ConcreteNode testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
+		Node testNode = new Node("00000000-0000-0000-0000-000000000000",
 				"Test Node", "00000000-0000-0000-0000-000000000000", 1, 2, 3, 1701);
 
 		database.insertNode(testNode); //Insert the node...
@@ -71,7 +71,7 @@ public class DatabaseTest
 	@Test
 	public void testDelete()
 	{
-		ConcreteNode testNode = new ConcreteNode();
+		Node testNode = new Node();
 		database.insertNode(testNode);
 		assertNotNull(database.getNodeByUUID(testNode.getID()));
 		database.deleteNodeByUUID(testNode.getID());
@@ -82,10 +82,10 @@ public class DatabaseTest
 	public void testLinkage()
 	{
 		//Stolen from pathfinding integration test
-		ConcreteNode[][] gridNodes = new ConcreteNode[10][10];
+		Node[][] gridNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++)
-				gridNodes[i][j] = new ConcreteNode();
+				gridNodes[i][j] = new Node();
 
 		for (int i = 0; i < 10; i++)
 		{
@@ -110,7 +110,7 @@ public class DatabaseTest
 		database.connect();
 
 		//Now get all those nodes back out again
-		Node[][] testNodes = new ConcreteNode[10][10];
+		Node[][] testNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)
@@ -146,10 +146,10 @@ public class DatabaseTest
 	public void testGetByFloor()
 	{
 		//Create some nodes on 10 different floors
-		ConcreteNode[] nodes = new ConcreteNode[50];
+		Node[] nodes = new Node[50];
 		for (int i = 0; i < nodes.length; i++)
 		{
-			nodes[i] = new ConcreteNode();
+			nodes[i] = new Node();
 			nodes[i].setFloor(i / 5);
 			database.insertNode(nodes[i]);
 		}
@@ -170,7 +170,7 @@ public class DatabaseTest
 		}
 
 		//And now clean up
-		for (ConcreteNode node : nodes)
+		for (Node node : nodes)
 			database.deleteNodeByUUID(node.getID());
 	}
 
@@ -193,10 +193,10 @@ public class DatabaseTest
 		assertTrue(database.getBuildingUUID("Dominion Headquarters").isEmpty());
 
 		//Now add some nodes to Starfleet Headquarters
-		ConcreteNode[] nodes = new ConcreteNode[5];
-		for (ConcreteNode node : nodes)
+		Node[] nodes = new Node[5];
+		for (Node node : nodes)
 		{
-			node = new ConcreteNode();
+			node = new Node();
 			node.setFloor(1701);
 			node.setBuilding(uuid);
 			database.insertNode(node);
@@ -219,8 +219,8 @@ public class DatabaseTest
 	{
 		//Create a pair of unlinked nodes, put them in the database. Create a 1->2 edge between them, insert the edge,
 		//shutdown the database, restart it, and grab the two nodes out again. Verify that they're still connected.
-		ConcreteNode node1 = new ConcreteNode();
-		ConcreteNode node2 = new ConcreteNode();
+		Node node1 = new Node();
+		Node node2 = new Node();
 		database.insertNode(node1);
 		database.insertNode(node2);
 		node1.addNeighbor(node2);
@@ -241,7 +241,7 @@ public class DatabaseTest
 	public void testProviderOperations()
 	{
 		//Create a test node with a test provider, put it in the database.
-		ConcreteNode node = new ConcreteNode();
+		Node node = new Node();
 		Provider picard = new Provider("Jean Luc", "Picard", UUID.randomUUID().toString(), "Captain");
 		node.addProvider(picard);
 		database.insertNode(node);
@@ -259,7 +259,6 @@ public class DatabaseTest
 		assertEquals(2, database.getProviders().size());
 
 		//Delete picard and verify his deletion
-		node.delProvider(picard);
 		database.deleteProvider(picard);
 		assertEquals(1, database.getProviders().size());
 
@@ -273,7 +272,7 @@ public class DatabaseTest
 	public void testServices()
 	{
 		//Create a test node with a service, put it in the database
-		ConcreteNode node = new ConcreteNode();
+		Node node = new Node();
 		node.addService("tenforward");
 		database.insertNode(node);
 		assertEquals(1, database.getServices().size());
@@ -286,7 +285,7 @@ public class DatabaseTest
 
 		//Verify that two nodes can have a service by the same name - nodes and services are 1-1
 		//This could cause issues with getting a service's location, but that's a problem for another (edge-casey) time.
-		ConcreteNode node2 = new ConcreteNode();
+		Node node2 = new Node();
 		node2.addService("tenforward");
 		database.insertNode(node2);
 		assertEquals(2, database.getServices().size());

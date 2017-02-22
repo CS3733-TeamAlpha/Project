@@ -17,7 +17,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import data.ConcreteNode;
 import data.Node;
 import ui.Accessibility;
 import ui.Paths;
@@ -727,7 +726,7 @@ public class MapEditorToolController extends BaseController
 	 */
 	public void createNewNode(double x, double y, int type)
 	{
-		ConcreteNode newNode = new ConcreteNode();
+		Node newNode = new Node();
 		newNode.setName("New " + type);
 		newNode.setX(x);
 		newNode.setY(y);
