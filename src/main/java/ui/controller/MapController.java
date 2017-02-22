@@ -2,10 +2,12 @@ package ui.controller;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -40,6 +42,40 @@ public class MapController extends BaseController
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
+	public class MapZoomHandler implements EventHandler<ScrollEvent> {
+
+		public MapZoomHandler()
+		{
+		}
+
+		@Override
+		public void handle(ScrollEvent scrollEvent) {
+			final double scale = calculateScale(scrollEvent);
+			editingFloor.setScaleX(scale);
+			editingFloor.setScaleY(scale);
+			zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
+			zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
+			zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
+			zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+
+			editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
+			editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
+			scrollEvent.consume();
+		}
+
+		private double calculateScale(ScrollEvent scrollEvent) {
+			double scale = currentZoom + scrollEvent.getDeltaY() / 5000;
+
+			if (scale <= MINZOOM) {
+				scale = MINZOOM;
+			} else if (scale >= MAXZOOM) {
+				scale = MAXZOOM;
+			}
+			currentZoom = scale;
+			return scale;
+		}
+	}
+
 	@FXML
 	private SplitPane roomviewSplit;
 	@FXML
@@ -52,6 +88,8 @@ public class MapController extends BaseController
 	private Label roomDescription;
 	@FXML
 	private AnchorPane editingFloor;
+	@FXML
+	private AnchorPane zoomWrapper;
 	@FXML
 	private Button upFloor;
 	@FXML
@@ -122,6 +160,9 @@ public class MapController extends BaseController
 
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
+
+		//add event filter to let scrolling do zoom instead
+		scroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 	}
 
 
@@ -530,6 +571,17 @@ public class MapController extends BaseController
 		{
 			resetSteps = true;
 		}
+
+		//set floor stuff correctly
+		editingFloor.setScaleX(currentZoom);
+		editingFloor.setScaleY(currentZoom);
+		zoomWrapper.setMinWidth(editingFloor.getWidth()*currentZoom);
+		zoomWrapper.setMinHeight(editingFloor.getHeight()*currentZoom);
+		zoomWrapper.setMaxWidth(editingFloor.getWidth()*currentZoom);
+		zoomWrapper.setMaxHeight(editingFloor.getHeight()*currentZoom);
+
+		editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
+		editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
 	}
 
 

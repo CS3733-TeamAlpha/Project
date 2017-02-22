@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -136,6 +137,40 @@ public class MapEditorToolController extends BaseController
 		}
 	};
 
+	public class ZoomHandler implements EventHandler<ScrollEvent> {
+
+		public ZoomHandler()
+		{
+		}
+
+		@Override
+		public void handle(ScrollEvent scrollEvent) {
+				final double scale = calculateScale(scrollEvent);
+				editingFloor.setScaleX(scale);
+				editingFloor.setScaleY(scale);
+				zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
+				zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
+				zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
+				zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+
+				editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
+				editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
+				scrollEvent.consume();
+		}
+
+		private double calculateScale(ScrollEvent scrollEvent) {
+			double scale = currentZoom + scrollEvent.getDeltaY() / 5000;
+
+			if (scale <= MINZOOM) {
+				scale = MINZOOM;
+			} else if (scale >= MAXZOOM) {
+				scale = MAXZOOM;
+			}
+			currentZoom = scale;
+			return scale;
+		}
+	}
+
 	static
 	{
 		//initialize connection and floor/node/provider lists right away
@@ -198,6 +233,10 @@ public class MapEditorToolController extends BaseController
 					changeBuilding((String)buildingChoice.getValue());
 				}
 		);
+
+		//add event filter to let scrolling do zoom instead
+		mainScroll.addEventFilter(ScrollEvent.ANY, new ZoomHandler());
+
 	}
 
 	/**
@@ -224,6 +263,17 @@ public class MapEditorToolController extends BaseController
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
+
+		//set floor stuff correctly
+		editingFloor.setScaleX(currentZoom);
+		editingFloor.setScaleY(currentZoom);
+		zoomWrapper.setMinWidth(editingFloor.getWidth()*currentZoom);
+		zoomWrapper.setMinHeight(editingFloor.getHeight()*currentZoom);
+		zoomWrapper.setMaxWidth(editingFloor.getWidth()*currentZoom);
+		zoomWrapper.setMaxHeight(editingFloor.getHeight()*currentZoom);
+
+		editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
+		editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
 	}
 
 	/**
@@ -414,6 +464,9 @@ public class MapEditorToolController extends BaseController
 
 	@FXML
 	private AnchorPane editingFloor;
+
+	@FXML
+	private AnchorPane zoomWrapper;
 
 	@FXML
 	private Pane palettePane;
