@@ -93,8 +93,8 @@ public class MapController extends BaseController
 			double height = scroller.getContent().getBoundsInLocal().getHeight();
 			System.out.println(searched.getX()/(width-scroller.getWidth()));
 			System.out.println(searched.getY()/(height-scroller.getHeight()));
-			scroller.setHvalue(searched.getX()/(width-scroller.getWidth()));
-			scroller.setVvalue(1-searched.getY()/(height-scroller.getHeight()));
+			scroller.setHvalue(1);
+			scroller.setVvalue(1);
 
 
 			selected = searched;
