@@ -145,10 +145,11 @@ public class ConcreteGraph implements Graph
 		{
 			String tempN = getNearbyName(path.get(i-2));
 			int tempA = path.get(i).angle(path.get(i-1),path.get(i-2));
-			if(tempN.equals(lastName) && tempA==lastAngle)
+			if(tempN.equals(lastName) && tempA==lastAngle && tempA==3)
 			{
-			}else if(path.get(i-1).getType()==2 && path.get(i-2).getType()==2){
-				toReturn.add("Take the elevator to floor " + path.get(i-2).getFloor());
+			}else if(path.get(i).getType()==2 && path.get(i-1).getType()==2){
+				toReturn.add("Take the elevator to floor " + path.get(i-1).getFloor());
+				i--;
 			}else if(tempN.equals("the hallway"))
 			{
 				toReturn.add(angles[tempA] + " and walk down " + tempN);
@@ -159,7 +160,7 @@ public class ConcreteGraph implements Graph
 			lastAngle = tempA;
 		}
 
-		toReturn.add("Walk to " + path.get(0).getName() + ", you have arrived!");
+		toReturn.add("You have arrived at " + path.get(0).getName());
 
 		return toReturn;
 	}
