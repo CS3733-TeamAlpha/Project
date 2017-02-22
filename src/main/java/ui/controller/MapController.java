@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
-import pathfinding.Node;
+import data.Node;
 import ui.Accessibility;
 import ui.Paths;
 

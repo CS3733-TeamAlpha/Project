@@ -1,25 +1,24 @@
-package pathfinding;
-
-import data.Provider;
+package data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Observable;
 import java.util.UUID;
 
-public class ConcreteNode implements Node
+public class Node extends Observable
 {
-	private ArrayList<Provider> providers;
-	private ArrayList<String> services;
-	private ArrayList<Node> neighbors;
-	private String id;
-	private String name;
-	private String building;
-	private double x;
-	private double y;
-	private int type; //TODO: Create a better type field, probably an enum
-	private int floor;
+	ArrayList<Provider> providers;
+	ArrayList<String> services;
+	ArrayList<Node> neighbors;
+	String id;
+	String name;
+	String building;
+	double x;
+	double y;
+	int type; //TODO: Create a better type field, probably an enum
+	int floor;
 
-	public ConcreteNode()
+	public Node()
 	{
 		providers = new ArrayList<>();
 		services = new ArrayList<>();
@@ -33,7 +32,7 @@ public class ConcreteNode implements Node
 		floor = 1;
 	}
 
-	public ConcreteNode(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
+	public Node(String newID, String newName, String newBuilding, double newPosX, double newPosY, int newType, int newFloor)
 	{
 		providers = new ArrayList<>();
 		services = new ArrayList<>();
@@ -53,7 +52,6 @@ public class ConcreteNode implements Node
 	 * @param node Second node
 	 * @return Distance
 	 */
-	@Override
 	public double distance(Node node)
 	{
 		return distance(node.getX(), node.getY());
@@ -66,14 +64,12 @@ public class ConcreteNode implements Node
 	 * @param nodeY Y coordinate
 	 * @return Distance to node
 	 */
-	@Override
 	public double distance(double nodeX, double nodeY)
 	{
 
 		return Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
 	}
 
-	@Override
 	public boolean equals(Node node)
 	{
 		return id.equals(node.getID()) &&
@@ -121,144 +117,163 @@ public class ConcreteNode implements Node
 
 	/*Getters and setters*/
 
-	@Override
 	public void addProvider(Provider newProvider)
 	{
 		//Only add the provider if they aren't already added here
-		boolean exists = providers.stream().anyMatch(provider -> provider.getUuid().equals(newProvider.getUuid()));
-		if (!exists)
+		if (!providers.contains(newProvider))
+		{
 			providers.add(newProvider);
+			newProvider.addLocation(this); //this could get fun and loopy
+			setChanged();
+			notifyObservers();
+		}
 	}
 
-	@Override
 	public void delProvider(Provider oldProvider)
 	{
-		providers.removeIf((provider -> provider.getUuid().equals(oldProvider.getUuid())));
+		if (providers.contains(oldProvider))
+		{
+			providers.remove(oldProvider);
+			oldProvider.removeLocation(this.getID()); //todo: why am I removing this by ID? This could get fun and loopy
+			setChanged();
+			notifyObservers();
+		}
 	}
 
-	@Override
 	public void addService(String newService)
 	{
 		if (!services.contains(newService))
+		{
 			services.add(newService);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
-	@Override
 	public void delService(String oldService)
 	{
-		services.remove(oldService);
+		if (services.contains(oldService))
+		{
+			services.remove(oldService);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
-	@Override
 	public void addNeighbor(Node newNeighbor)
 	{
 		if (!neighbors.contains(newNeighbor))
+		{
 			neighbors.add(newNeighbor);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
-	@Override
 	public void delNeighbor(Node oldNeighbor)
 	{
-		neighbors.remove(oldNeighbor);
+		if (neighbors.contains(oldNeighbor))
+		{
+			neighbors.remove(oldNeighbor);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
-	@Override
 	public void setID(String newID)
 	{
 		id = newID;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public void setName(String newName)
 	{
 		name = newName;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public void setBuilding(String newBuilding)
 	{
 		building = newBuilding;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public void setX(double newX)
 	{
 		x = newX;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public void setY(double newY)
 	{
 		y = newY;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public void setType(int newType)
 	{
 		type = newType;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public void setFloor(int newFloor)
 	{
 		floor = newFloor;
+		setChanged();
+		notifyObservers();
 	}
 
-	@Override
 	public ArrayList<Provider> getProviders()
 	{
 		return providers;
 	}
 
-	@Override
 	public ArrayList<String> getServices()
 	{
 		return services;
 	}
 
-	@Override
 	public Collection<Node> getNeighbors()
 	{
 		return neighbors;
 	}
 
-	@Override
 	public String getID()
 	{
 		return id;
 	}
 
-	@Override
 	public String getName()
 	{
 		return name;
 	}
 
-	@Override
 	public String getBuilding()
 	{
 		return building;
 	}
 
-	@Override
 	public double getX()
 	{
 		return x;
 	}
 
-	@Override
 	public double getY()
 	{
 		return y;
 	}
 
-	@Override
 	public int getType()
 	{
 		return type;
 	}
 
-	@Override
 	public int getFloor()
 	{
 		return floor;
