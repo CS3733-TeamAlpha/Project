@@ -3,6 +3,7 @@ package ui.controller;
 import data.SearchResult;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -10,6 +11,7 @@ import ui.Accessibility;
 import ui.Paths;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StartupController extends BaseController
 {
@@ -30,7 +32,7 @@ public class StartupController extends BaseController
 
 		searchBox.textProperty().addListener(((observable, oldValue, newValue) ->
 		{
-			ArrayList<SearchResult> results = database.getResultsForSearch(newValue, true);
+			List<SearchResult> results = database.getResultsForSearch(newValue, true);
 			contextMenu.getItems().remove(0, contextMenu.getItems().size());
 			for(SearchResult result : results)
 			{

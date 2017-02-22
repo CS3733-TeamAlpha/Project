@@ -908,6 +908,8 @@ public class Database implements AdminStorage
 			ResultSet results = pstmt.executeQuery();
 			if (results.next())
 				password = results.getString(1);
+			else
+				return null;
 		} catch (SQLException e)
 		{
 			System.out.printf("Error trying to get hashed password!");

@@ -60,7 +60,6 @@
                   </Label>
                </children>
             </Pane>
-            <Button alignment="BOTTOM_RIGHT" focusTraversable="false" layoutX="1185.0" layoutY="552.0" mnemonicParsing="false" onAction="#addLogin" text="Add Login" StackPane.alignment="BOTTOM_RIGHT" />
          </children>
       </StackPane>
    </children>

@@ -1,18 +1,13 @@
 package ui.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
-import sun.security.util.Password;
 import ui.Paths;
 
 import java.util.Optional;
@@ -44,7 +39,7 @@ public class AdminPageController extends BaseController
 	{
 		if(LoginState.isAdminLoggedIn())
 		{
-
+			loadFXML(Paths.MANAGE_ACCOUNTS_FXML);
 		}
 		else
 		{
@@ -57,9 +52,10 @@ public class AdminPageController extends BaseController
 			alert.getButtonTypes().setAll(submit, ButtonType.CANCEL);
 
 			GridPane grid = new GridPane();
+			grid.setPrefWidth(350);
 			grid.setHgap(10);
 			grid.setVgap(10);
-			grid.setPadding(new Insets(20, 10, 10, 10));
+			grid.setPadding(new Insets(20, 0, 10, 30));
 
 			PasswordField oldPasswordField = new PasswordField();
 			oldPasswordField.setPromptText("Current Password");
@@ -68,17 +64,24 @@ public class AdminPageController extends BaseController
 			PasswordField newPasswordField = new PasswordField();
 			newPasswordField.setPromptText("New Password");
 
+			PasswordField retypePasswordField = new PasswordField();
+			retypePasswordField.setPromptText("Confirm Password");
+
 			Label badPasswordLabel = new Label("Incorrect password");
+			badPasswordLabel.setWrapText(true);
 			badPasswordLabel.setTextFill(Color.RED);
 			badPasswordLabel.setVisible(false);
 
 			grid.add(new Label("Current Password:"), 0, 0);
 			grid.add(oldPasswordField, 1, 0);
 
-			grid.add(badPasswordLabel, 1, 1);
+			grid.add(new Label("New Password:"), 0, 1);
+			grid.add(newPasswordField, 1, 1);
 
-			grid.add(new Label("New Password:"), 0, 2);
-			grid.add(newPasswordField, 1, 2);
+			grid.add(new Label("Confirm Password: "), 0, 2);
+			grid.add(retypePasswordField, 1, 2);
+
+			grid.add(badPasswordLabel, 1, 3);
 
 			alert.getDialogPane().setContent(grid);
 
@@ -95,19 +98,30 @@ public class AdminPageController extends BaseController
 				boolean success = !storedHash.isEmpty() && BCrypt.checkpw(oldPasswordField.getText(), storedHash);
 				if(success)
 				{
-					String hashed = BCrypt.hashpw(newPasswordField.getText(), BCrypt.gensalt());
-					database.storeHashedPassword(LoginState.getLoggedInAccount(), hashed);
+					if(newPasswordField.getText().equals(retypePasswordField.getText()))
+					{
+						String hashed = BCrypt.hashpw(newPasswordField.getText(), BCrypt.gensalt());
+						database.storeHashedPassword(LoginState.getLoggedInAccount(), hashed);
 
-					Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
-					confirmation.setTitle("Password Updated");
-					confirmation.setHeaderText("Password Successfully Updated");
-					confirmation.getButtonTypes().setAll(ButtonType.OK);
-					confirmation.show();
+						Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
+						confirmation.setTitle("Password Updated");
+						confirmation.setHeaderText("Password Successfully Updated");
+						confirmation.getButtonTypes().setAll(ButtonType.OK);
+						confirmation.show();
+					}
+					else
+					{
+						ae.consume();
+						badPasswordLabel.setVisible(true);
+						badPasswordLabel.setText("Password must match");
+						okButton.setDisable(false);
+					}
 				}
 				else
 				{
 					ae.consume();
 					badPasswordLabel.setVisible(true);
+					badPasswordLabel.setText("Incorrect current password");
 					okButton.setDisable(false);
 				}
 			});

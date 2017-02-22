@@ -82,18 +82,4 @@ public class LoginController extends BaseController
 			cancelButton.setDisable(false);
 		}
 	}
-
-	public void addLogin()
-	{
-		if(usernameField.getText().trim().isEmpty() || passwordField.getText().trim().isEmpty())
-		{
-			System.err.println("Bad Login");
-		}
-		else
-		{
-			String hashed = BCrypt.hashpw(passwordField.getText(), BCrypt.gensalt());
-			database.storeHashedPassword(usernameField.getText(), hashed);
-			System.out.println("Password stored");
-		}
-	}
 }
