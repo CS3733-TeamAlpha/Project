@@ -171,12 +171,6 @@ public class MapController extends BaseController
 		}
 		if(findingDirections)
 		{
-			if(!hasNextStep && jumping)
-			{
-				BUILDINGID = kiosk.getBuilding();
-				jumpFloor(kiosk.getFloor());
-				focusNode = kiosk;
-			}
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
 
 			ArrayList<String> textDirections = graph.textDirect(kiosk, selected, 0.1);
@@ -197,6 +191,14 @@ public class MapController extends BaseController
 						((AnchorPane) l.getParent()).getChildren().remove(l);
 					}
 					currentPath.clear();
+				}
+				//flip path to be ordered
+				for(int i=0; i<path.size()/2; i++)
+				{
+					Node temp = path.get(i);
+					path.set(i, path.get(path.size()-1-i));
+					path.set(path.size()-1-i, temp);
+
 				}
 				for (int i = 0; i < path.size()-1; i++)
 				{
@@ -233,11 +235,6 @@ public class MapController extends BaseController
 						nextStep.setDisable(false);
 					}
 				}
-				if(focusNode != null)
-				{
-					focusView(focusNode);
-					focusNode = null;
-				}
 			}
 			//findingDirections = false;
 		}
@@ -246,6 +243,12 @@ public class MapController extends BaseController
 			roomviewSplit.getItems().add(1, roomInfo);
 			roomviewSplit.setDividerPositions(.75);
 			roomInfoShown = true;
+		}
+
+		if(focusNode != null)
+		{
+			focusView(focusNode);
+			focusNode = null;
 		}
 		roomName.setText(n.getName());
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
@@ -268,8 +271,9 @@ public class MapController extends BaseController
 	 * @param n The node to focus view on
 	 */
 	private void focusView(Node n){
+		System.out.println(n.getName());
 
-		if(zoomWrapper.getWidth() > scroller.getWidth())
+		if(zoomWrapper.getWidth() > scroller.getWidth() || zoomWrapper.getHeight() > scroller.getHeight())
 		{
 			double focusX = n.getX()*currentZoom+editingFloor.getLayoutX();
 			double focusY = n.getY()*currentZoom+editingFloor.getLayoutY();
@@ -284,7 +288,8 @@ public class MapController extends BaseController
 			}
 			else
 			{
-				scroller.hvalueProperty().setValue(focusX/(zoomWrapper.getWidth()-scroller.getWidth()/2));
+				scroller.hvalueProperty().setValue((focusX-scroller.getWidth()/2)/
+						(zoomWrapper.getWidth()-scroller.getWidth()));
 			}
 
 			if(focusY < scroller.getHeight()/2)
@@ -297,7 +302,8 @@ public class MapController extends BaseController
 			}
 			else
 			{
-				scroller.vvalueProperty().setValue(focusY/(zoomWrapper.getHeight()-scroller.getHeight()/2));
+				scroller.vvalueProperty().setValue((focusY-scroller.getHeight()/2)/
+						(zoomWrapper.getHeight()-scroller.getHeight()));
 			}
 		}
 	}
@@ -312,8 +318,10 @@ public class MapController extends BaseController
 		{
 			hasNextStep = false;
 		}
+		BUILDINGID = kiosk.getBuilding();
 		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
+		previousStep.setDisable(true);
 		jumping = true;
 		showRoomInfo(selected);
 	}
@@ -467,6 +475,7 @@ public class MapController extends BaseController
 				}
 
 				findingDirections = true;
+				System.out.println("fffffffffff");
 				showRoomInfo(selected);
 			}
 			else
@@ -475,6 +484,7 @@ public class MapController extends BaseController
 				jumpFloor(selected.getFloor());
 				findingDirections = true;
 				showRoomInfo(selected);
+
 			}
 		}
 		if(BUILDINGID.equals(selected.getBuilding()) && FLOORID == selected.getFloor())
