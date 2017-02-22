@@ -197,6 +197,8 @@ public class Database implements Observer
 					insPrv.setString(3, prv.getLastName());
 					insPrv.setString(4, prv.getTitle());
 					insPrv.execute();
+					if (!providerCache.containsKey(prv.getUUID()))
+						providerCache.put(prv.getUUID(), prv);
 				}
 				catch (SQLException e)
 				{
@@ -293,48 +295,7 @@ public class Database implements Observer
 			}
 
 			//Insert providers if they don't already exist. This algorithm sucks because java derby sucks. **** you, derby.
-			//TODO: Extract into separate function?
-			for (Provider prv : node.getProviders())
-			{
-				try
-				{
-					PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
-					insPrv.setString(1, prv.getUUID());
-					insPrv.setString(2, prv.getFirstName());
-					insPrv.setString(3, prv.getLastName());
-					insPrv.setString(4, prv.getTitle());
-					insPrv.execute();
-				}
-				catch (SQLException e)
-				{
-					if (e.getSQLState().equals("23505")) //unique constraint violation
-					{
-						PreparedStatement updPrv = connection.prepareStatement("UPDATE Providers SET FirstName=?,LastName=?,Title=? WHERE provider_uuid=?");
-						updPrv.setString(1, prv.getFirstName());
-						updPrv.setString(2, prv.getLastName());
-						updPrv.setString(3, prv.getTitle());
-						updPrv.setString(4, prv.getUUID());
-						updPrv.execute();
-					}
-					else
-					{
-						System.out.println("Error trying to insert provider!");
-						e.printStackTrace();
-					}
-				}
-			}
-
-			//Update provider Offices
-			PreparedStatement delOffices = connection.prepareStatement("DELETE FROM ProviderOffices WHERE node_uuid=?");
-			delOffices.setString(1, node.getID());
-			delOffices.execute();
-			PreparedStatement insOff = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?,?)");
-			for (Provider prv : node.getProviders()) //Is this dupe'd code? why yes, yes it is!
-			{
-				insOff.setString(1, prv.getUUID());
-				insOff.setString(2, node.getID());
-				insOff.execute();
-			}
+			node.getProviders().forEach((p) -> updateProvider(p));
 
 			//Update services
 			PreparedStatement delServices = connection.prepareStatement("DELETE FROM Services WHERE node=?");
@@ -765,7 +726,8 @@ public class Database implements Observer
 			pstmt.setString(4, p.getTitle());
 			pstmt.execute();
 
-			updateProviderLocations(p);
+			updateProvider(p); //should put all necessary connections to the database.
+			providerCache.put(p.getUUID(), p);
 		} catch (SQLException e)
 		{
 			if (!e.getSQLState().equals("23505")) //unique constraint violation
@@ -794,12 +756,39 @@ public class Database implements Observer
 	 */
 	private void updateProvider(Provider p)
 	{
-		modifyProviderData(p);
 		try
 		{
-			//Delete any existing connections in the database
+			/*INSERT OR UPDATE PROVIDER*/
+			PreparedStatement existsPrv = connection.prepareStatement("SELECT provider_uuid FROM Providers WHERE provider_uuid=?");
+			existsPrv.setString(1, p.getUUID());
+			ResultSet results = existsPrv.executeQuery();
+
+			if (results.next()) //Update provider
+			{
+				PreparedStatement updPrv = connection.prepareStatement("UPDATE Providers SET FirstName=?,LastName=?,Title=? WHERE provider_uuid=?");
+				updPrv.setString(1, p.getFirstName());
+				updPrv.setString(2, p.getLastName());
+				updPrv.setString(3, p.getTitle());
+				updPrv.setString(4, p.getUUID());
+				updPrv.execute();
+			}
+			else
+			{
+				//Add provider
+				PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
+				insPrv.setString(1, p.getUUID());
+				insPrv.setString(2, p.getFirstName());
+				insPrv.setString(3, p.getLastName());
+				insPrv.setString(4, p.getTitle());
+				insPrv.execute();
+				providerCache.put(p.getUUID(), p);
+			}
+
+			/*UPDATE OFFICES*/
+			//Delete any existing offices in the database
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM ProviderOffices WHERE provider_uuid=?");
 			stmt.setString(1, p.getUUID());
+			stmt.execute();
 
 			//Add all the new ones
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?, ?)");
@@ -839,35 +828,6 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
-	}
-
-	private void modifyProviderData(Provider provider)
-	{
-		try
-		{
-			PreparedStatement stmt = connection.prepareStatement("SELECT firstName FROM Providers WHERE provider_uuid=?");
-			stmt.setString(1, provider.getUUID());
-			ResultSet set = stmt.executeQuery();
-			if(set.next())
-			{
-				stmt = connection.prepareStatement("UPDATE Providers SET firstName=?, lastName=?, title=? WHERE provider_uuid=?");
-				stmt.setString(1, provider.getFirstName());
-				stmt.setString(2, provider.getLastName());
-				stmt.setString(3, provider.getTitle());
-				stmt.setString(4, provider.getUUID());
-				stmt.execute();
-
-				updateProvider(provider);
-			}
-			else
-			{
-				addProvider(provider);
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -1013,7 +973,7 @@ public class Database implements Observer
 			ResultSet results = statement.executeQuery("SELECT * FROM Nodes");
 			while (results.next())
 			{
-				Node node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
+				ConcreteNode node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
 						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
 				nodeCache.put(node.getID(), node);
 			}

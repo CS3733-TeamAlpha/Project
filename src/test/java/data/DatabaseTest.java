@@ -57,7 +57,7 @@ public class DatabaseTest
 	@Test
 	public void testInsertAndRetrieval()
 	{
-		Node testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
+		ConcreteNode testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
 				"Test Node", "00000000-0000-0000-0000-000000000000", 1, 2, 3, 1701);
 
 		database.insertNode(testNode); //Insert the node...
@@ -194,7 +194,7 @@ public class DatabaseTest
 
 		//Now add some nodes to Starfleet Headquarters
 		ConcreteNode[] nodes = new ConcreteNode[5];
-		for (Node node : nodes)
+		for (ConcreteNode node : nodes)
 		{
 			node = new ConcreteNode();
 			node.setFloor(1701);
@@ -219,13 +219,12 @@ public class DatabaseTest
 	{
 		//Create a pair of unlinked nodes, put them in the database. Create a 1->2 edge between them, insert the edge,
 		//shutdown the database, restart it, and grab the two nodes out again. Verify that they're still connected.
-		Node node1 = new ConcreteNode();
-		Node node2 = new ConcreteNode();
+		ConcreteNode node1 = new ConcreteNode();
+		ConcreteNode node2 = new ConcreteNode();
 		database.insertNode(node1);
 		database.insertNode(node2);
 		node1.addNeighbor(node2);
 
-		database.updateNode(node1);
 		database.disconnect(); //Clears the node cache
 		database.connect();
 
@@ -257,7 +256,6 @@ public class DatabaseTest
 		//Add a second provider to the node and verify the transaction
 		Provider sisko = new Provider("Benjamin", "Sisko", UUID.randomUUID().toString(), "Captain");
 		node.addProvider(sisko);
-		database.updateNode(node);
 		assertEquals(2, database.getProviders().size());
 
 		//Delete picard and verify his deletion
@@ -281,11 +279,9 @@ public class DatabaseTest
 		assertEquals(1, database.getServices().size());
 
 		node.addService("quarks");
-		database.updateNode(node);
 		assertEquals(2, database.getServices().size());
 
 		node.delService("quarks");
-		database.updateNode(node);
 		assertEquals(1, database.getServices().size());
 
 		//Verify that two nodes can have a service by the same name - nodes and services are 1-1

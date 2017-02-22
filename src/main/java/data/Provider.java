@@ -86,6 +86,8 @@ public class Provider extends Observable
 	public void setFirstName(String firstName)
 	{
 		this.firstName = firstName;
+		setChanged();
+		notifyObservers();
 	}
 
 	public String getLastName()
@@ -96,6 +98,8 @@ public class Provider extends Observable
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+		setChanged();
+		notifyObservers();
 	}
 
 	public String getUUID()
@@ -106,6 +110,8 @@ public class Provider extends Observable
 	public void setUuid(String uuid)
 	{
 		this.uuid = uuid;
+		setChanged();
+		notifyObservers();
 	}
 
 	public List<String> getLocationIds()
@@ -122,14 +128,24 @@ public class Provider extends Observable
 
 	public void addLocation(Node n)
 	{
-		locations.put(n.getID(), n);
-		n.addProvider(this);
+		if (!locations.containsKey(n.getID()))
+		{
+			locations.put(n.getID(), n);
+			n.addProvider(this); //introducing looper 2...
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	public void removeLocation(String id)
 	{
-		locations.get(id).delProvider(this);
-		locations.remove(id);
+		if (locations.containsKey(id))
+		{
+			locations.get(id).delProvider(this);
+			locations.remove(id);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	public List<String> getLocationStringArray()

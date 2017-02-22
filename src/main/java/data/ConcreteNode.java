@@ -125,19 +125,22 @@ public class ConcreteNode extends Observable implements Node
 		if (!providers.contains(newProvider))
 		{
 			providers.add(newProvider);
+			newProvider.addLocation(this); //this could get fun and loopy
 			setChanged();
 			notifyObservers();
 		}
-		newProvider.addLocation(this); //this could get fun and loopy
 	}
 
 	@Override
 	public void delProvider(Provider oldProvider)
 	{
-		providers.remove(oldProvider);
-		oldProvider.removeLocation(this.getID()); //todo: why am I removing this by ID? This could get fun and loopy
-		setChanged();
-		notifyObservers();
+		if (providers.contains(oldProvider))
+		{
+			providers.remove(oldProvider);
+			oldProvider.removeLocation(this.getID()); //todo: why am I removing this by ID? This could get fun and loopy
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	@Override

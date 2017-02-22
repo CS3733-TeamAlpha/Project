@@ -189,7 +189,7 @@ public class DirectoryController extends BaseController
 			thisProvider.setTitle(title.getText());
 
 			//Update the provider...
-			database.modifyProviderData(thisProvider);
+			//database.modifyProviderData(thisProvider);
 			System.out.println("Updated provider!");
 		}
 		modifiedProvidersList.clear();

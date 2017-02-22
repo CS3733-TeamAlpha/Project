@@ -727,7 +727,7 @@ public class MapEditorToolController extends BaseController
 	 */
 	public void createNewNode(double x, double y, int type)
 	{
-		Node newNode = new ConcreteNode();
+		ConcreteNode newNode = new ConcreteNode();
 		newNode.setName("New " + type);
 		newNode.setX(x);
 		newNode.setY(y);
