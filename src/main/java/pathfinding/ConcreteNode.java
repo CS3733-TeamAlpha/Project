@@ -88,7 +88,7 @@ public class ConcreteNode implements Node
 	/**
 	 * {@inheritDoc}
 	 */
-	public String angle(Node pivot, Node dest)
+	public int angle(Node pivot, Node dest)
 	{
 		double angle;
 		// Google atan2 if you want to understand this; I sure don't
@@ -103,18 +103,20 @@ public class ConcreteNode implements Node
 		if (angle < 0)
 			angle += 360;
 		if (0 <= angle && angle < 60)
-			return "Sharp left";
+			return 0;
 		else if (60 <= angle && angle < 120)
-			return "Turn left";
-		else if (120 <= angle && angle < 180)
-			return "Bear left";
-		else if (180 <= angle && angle < 240)
-			return "Bear right";
+			return 1;
+		else if (120 <= angle && angle < 165)
+			return 2;
+		else if (165 <= angle && angle < 195)
+			return 3;
+		else if (195 <= angle && angle < 240)
+			return 4;
 		else if (240 <= angle && angle < 300)
-			return "Turn right";
+			return 5;
 		else if (300 <= angle && angle < 360)
-			return "Sharp right";
-		else return null;
+			return 6;
+		else return -1;
 	}
 
 	/*Getters and setters*/
