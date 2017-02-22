@@ -21,16 +21,17 @@ public class Database implements AdminStorage
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
-
 	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
 	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
 
-
+	//Database things
 	private String dbName;
 	private boolean connected;
 	private Statement statement;
 	private Connection connection;
+
 	private Hashtable<String, Node> nodeCache;
+	private Hashtable<String, Provider> providerCache;
 
 	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
 	private PreparedStatement checkExist;
@@ -50,6 +51,7 @@ public class Database implements AdminStorage
 		statement = null;
 		connection = null;
 		nodeCache = new Hashtable<>();
+		providerCache = new Hashtable<>();
 
 		checkExist = null;
 		insertNode = null;
@@ -883,17 +885,17 @@ public class Database implements AdminStorage
 	{
 		try
 		{
-			PreparedStatement stmt = connection.prepareStatement("SELECT firstName FROM PROVIDERS WHERE PROVIDER_UUID=?");
+			PreparedStatement stmt = connection.prepareStatement("SELECT firstName FROM Providers WHERE provider_uuid=?");
 			stmt.setString(1, provider.getUUID());
 			ResultSet set = stmt.executeQuery();
 			if(set.next())
 			{
-				stmt = connection.prepareStatement("UPDATE PROVIDERS SET FIRSTNAME=?, LASTNAME=?, TITLE=? WHERE PROVIDER_UUID=?");
+				stmt = connection.prepareStatement("UPDATE Providers SET firstName=?, lastName=?, title=? WHERE provider_uuid=?");
 				stmt.setString(1, provider.getFirstName());
 				stmt.setString(2, provider.getLastName());
 				stmt.setString(3, provider.getTitle());
 				stmt.setString(4, provider.getUUID());
-				boolean success = stmt.execute();
+				stmt.execute();
 
 				updateProviderLocations(provider);
 			}
@@ -1044,7 +1046,7 @@ public class Database implements AdminStorage
 	 */
 	public void reloadCache()
 	{
-		//No need to clear the hash table, it's a hash table... it doesn't have duplicate entries...
+		//No need to clear the node cache or the provider cache, they're hashtables... they don't suffer from duplicate entries...
 		try
 		{
 			//First load all nodes, sans neighbor relation information
@@ -1066,6 +1068,25 @@ public class Database implements AdminStorage
 					System.out.println("DATABASE TRYING TO CONNECT NULL NODE(S)!");
 				else
 					src.addNeighbor(dst);
+			}
+
+			//Load all the providers
+			results = statement.executeQuery("SELECT * From Providers");
+			while (results.next())
+			{
+				Provider provider = new Provider(results.getString("firstName"), results.getString("lastName"),
+						results.getString("provider_uuid"), results.getString("title"));
+				providerCache.put(provider.getUUID(), provider);
+			}
+
+			//Link providers objects to node objects, using the database as a reference point for connections
+			results = statement.executeQuery("SELECT * FROM ProviderOffices");
+			while (results.next())
+			{
+				final String provider = results.getString("provider_uuid");
+				final String node = results.getString("node_uuid");
+				nodeCache.get(node).addProvider(providerCache.get(provider)); //these two lines being the same length is very satisfying
+				providerCache.get(provider).addLocation(nodeCache.get(node));
 			}
 
 			//Load service info
