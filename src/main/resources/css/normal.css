@@ -126,3 +126,26 @@
     -fx-background-radius: 3em;
 
 }
+
+.fake-list-view
+{
+    -fx-border-width: 0px;
+    -fx-background-color: white;
+}
+
+.fake-list-cell
+{
+    -fx-background-color: white;
+    -fx-border-width: 1px 1px 0px 1px;
+    -fx-border-color: #aaaaaa;
+}
+
+.fake-list-alternate
+{
+    -fx-background-color: #eeeeee;
+}
+
+.fake-list-cell-last
+{
+    -fx-border-width: 1px;
+}

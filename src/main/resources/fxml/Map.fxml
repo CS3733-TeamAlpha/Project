@@ -18,18 +18,22 @@
    <items>
       <StackPane alignment="TOP_CENTER">
           <children>
-              <ScrollPane fx:id="scroller" hbarPolicy="ALWAYS" maxHeight="-Infinity" maxWidth="-Infinity" pannable="true" prefHeight="720.0" prefWidth="1280.0" vbarPolicy="ALWAYS" StackPane.alignment="TOP_LEFT">
-                  <content>
-                      <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0" prefHeight="1300.0" prefWidth="2250.0">
-                          <children>
-                              <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                               <image>
-                                  <Image url="@/images/floor3.png" />
-                               </image>
-                              </ImageView>
-                          </children>
-                      </AnchorPane>
-                  </content>
+              <ScrollPane fx:id="scroller" hbarPolicy="ALWAYS" pannable="true" vbarPolicy="ALWAYS" StackPane.alignment="TOP_LEFT">
+               <content>
+                  <AnchorPane fx:id="zoomWrapper">
+                     <children>
+                            <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0">
+                                <children>
+                                    <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                     <image>
+                                        <Image url="@/images/floor3.png" />
+                                     </image>
+                                    </ImageView>
+                                </children>
+                            </AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </content>
               </ScrollPane>
               <Pane pickOnBounds="false">
                   <children>
