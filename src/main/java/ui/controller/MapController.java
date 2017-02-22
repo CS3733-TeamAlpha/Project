@@ -629,7 +629,6 @@ public class MapController extends BaseController
 				Tooltip t = new Tooltip(descNames);
 				nodeB.setCursor(Cursor.HAND);
 				Tooltip.install(nodeB, t);
-				System.out.println("Straight hovering son");
 			});
 				nodeB.setOnAction(event -> showRoomInfo(n));
 			//add button to scene
