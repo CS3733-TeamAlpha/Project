@@ -817,6 +817,8 @@ public class Database implements AdminStorage
 	public void deleteProvider(Provider provider)
 	{
 		providerCache.remove(provider.getUUID());
+		//Notify the provider's associated nodes
+		provider.getLocations().forEach((node) -> node.delProvider(provider)); //HAIL LAMBDA! HAIL HYDR- wait, what?
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
@@ -825,11 +827,6 @@ public class Database implements AdminStorage
 
 			pstmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
 			pstmt.setString(1, provider.getUUID());
-
-			//Flush changes to the node cache. This is O(n), unfortunately
-			for (String s : nodeCache.keySet())
-				nodeCache.get(s).delProvider(provider);
-
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to delete provider!");
