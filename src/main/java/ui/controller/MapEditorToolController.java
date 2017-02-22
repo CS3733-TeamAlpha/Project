@@ -269,17 +269,6 @@ public class MapEditorToolController extends BaseController
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
-
-		//set floor stuff correctly
-		editingFloor.setScaleX(currentZoom);
-		editingFloor.setScaleY(currentZoom);
-		zoomWrapper.setMinWidth(editingFloor.getWidth()*currentZoom);
-		zoomWrapper.setMinHeight(editingFloor.getHeight()*currentZoom);
-		zoomWrapper.setMaxWidth(editingFloor.getWidth()*currentZoom);
-		zoomWrapper.setMaxHeight(editingFloor.getHeight()*currentZoom);
-
-		editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
-		editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
 	}
 
 	/**
@@ -303,6 +292,24 @@ public class MapEditorToolController extends BaseController
 		{
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
+
+		editingFloor.setMinWidth(floorImage.getFitWidth());
+		editingFloor.setMinHeight(floorImage.getFitHeight());
+		editingFloor.setMaxWidth(floorImage.getFitWidth());
+		editingFloor.setMaxHeight(floorImage.getFitHeight());
+
+		final double scale = 1;
+		currentZoom = scale;
+		editingFloor.setScaleX(scale);
+		editingFloor.setScaleY(scale);
+
+		zoomWrapper.setMinWidth(floorImage.getFitWidth());
+		zoomWrapper.setMinHeight(floorImage.getFitHeight());
+		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
+		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
+
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
 	}
 
 	/**

@@ -2,6 +2,7 @@ package ui.controller;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -51,13 +52,13 @@ public class MapController extends BaseController
 			final double scale = calculateScale(scrollEvent);
 			editingFloor.setScaleX(scale);
 			editingFloor.setScaleY(scale);
-			zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
-			zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
-			zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
-			zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+			zoomWrapper.setMinWidth(editingFloor.getWidth() * scale);
+			zoomWrapper.setMinHeight(editingFloor.getHeight() * scale);
+			zoomWrapper.setMaxWidth(editingFloor.getWidth() * scale);
+			zoomWrapper.setMaxHeight(editingFloor.getHeight() * scale);
 
-			editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
-			editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
+			editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth()) / 2);
+			editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight()) / 2);
 			scrollEvent.consume();
 		}
 
@@ -134,7 +135,6 @@ public class MapController extends BaseController
 			scroller.setHvalue(searched.getX()/(width-scroller.getWidth()));
 			scroller.setVvalue(1-searched.getY()/(height-scroller.getHeight()));
 
-
 			selected = searched;
 			showRoomInfo(searched);
 			setSearchedFor(null);
@@ -161,6 +161,7 @@ public class MapController extends BaseController
 
 		//add event filter to let scrolling do zoom instead
 		scroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+
 	}
 
 	public void showRoomInfo(Node n)
@@ -200,13 +201,13 @@ public class MapController extends BaseController
 					if(path.get(i).getFloor() == FLOORID && path.get(i).getBuilding().equals(BUILDINGID)
 							&& path.get(i+1).getFloor() == FLOORID && path.get(i+1).getBuilding().equals(BUILDINGID))
 					{
-						if(focusNode != null)
+						if(focusNode == null)
 						{
 							focusNode = path.get(i);
 						}
 						Line line = new Line();
-						System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
-						System.out.println(path.get(i+1).getID());
+						//System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
+						//System.out.println(path.get(i+1).getID());
 						line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
 						line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
 						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
@@ -260,9 +261,44 @@ public class MapController extends BaseController
 	 * @param n The node to focus view on
 	 */
 	private void focusView(Node n){
-		if(editingFloor.getWidth() > )
-		double focusX = n.getX();
-		double focusY = n.getY();
+
+		if(zoomWrapper.getWidth() > scroller.getWidth())
+		{
+			double focusX = n.getX()*currentZoom+editingFloor.getLayoutX();
+			double focusY = n.getY()*currentZoom+editingFloor.getLayoutY();
+
+			if(zoomWrapper.getWidth()-focusX < scroller.getWidth()/2)
+			{
+				System.out.println("1");
+				scroller.hvalueProperty().setValue(1);
+			}
+			else if(focusX < scroller.getWidth()/2)
+			{
+				System.out.println("2");
+				scroller.hvalueProperty().setValue(0);
+			}
+			else
+			{
+				System.out.println("3");
+				scroller.hvalueProperty().setValue(focusX/(zoomWrapper.getWidth()-scroller.getWidth()/2));
+			}
+
+			if(focusY < scroller.getHeight()/2)
+			{
+				System.out.println("4");
+				scroller.vvalueProperty().setValue(0);
+			}
+			else if(zoomWrapper.getHeight()-focusY < scroller.getHeight()/2)
+			{
+				System.out.println("5");
+				scroller.vvalueProperty().setValue(1);
+			}
+			else
+			{
+				System.out.println("6");
+				scroller.vvalueProperty().setValue(focusY/(zoomWrapper.getHeight()-scroller.getHeight()/2));
+			}
+		}
 	}
 
 	public void showStartup()
@@ -585,16 +621,6 @@ public class MapController extends BaseController
 			resetSteps = true;
 		}
 
-		//set floor stuff correctly
-		editingFloor.setScaleX(currentZoom);
-		editingFloor.setScaleY(currentZoom);
-		zoomWrapper.setMinWidth(editingFloor.getWidth()*currentZoom);
-		zoomWrapper.setMinHeight(editingFloor.getHeight()*currentZoom);
-		zoomWrapper.setMaxWidth(editingFloor.getWidth()*currentZoom);
-		zoomWrapper.setMaxHeight(editingFloor.getHeight()*currentZoom);
-
-		editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
-		editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
 	}
 
 
@@ -628,6 +654,25 @@ public class MapController extends BaseController
 			//TODO: fix path of outdoor image
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
+
+		editingFloor.setMinWidth(floorImage.getFitWidth());
+		editingFloor.setMinHeight(floorImage.getFitHeight());
+		editingFloor.setMaxWidth(floorImage.getFitWidth());
+		editingFloor.setMaxHeight(floorImage.getFitHeight());
+
+		final double scale = 1;
+		currentZoom = scale;
+		editingFloor.setScaleX(scale);
+		editingFloor.setScaleY(scale);
+
+		zoomWrapper.setMinWidth(floorImage.getFitWidth());
+		zoomWrapper.setMinHeight(floorImage.getFitHeight());
+		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
+		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
+
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
+
 	}
 
 	// TODO: Stole this from map editor, may want to fix
