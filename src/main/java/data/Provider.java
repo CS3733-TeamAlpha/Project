@@ -97,7 +97,7 @@ public class Provider
 		this.lastName = lastName;
 	}
 
-	public String getUuid()
+	public String getUUID()
 	{
 		return uuid;
 	}

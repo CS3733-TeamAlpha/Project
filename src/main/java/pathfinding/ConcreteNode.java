@@ -123,7 +123,7 @@ public class ConcreteNode implements Node
 	public void addProvider(Provider newProvider)
 	{
 		//Only add the provider if they aren't already added here
-		boolean exists = providers.stream().anyMatch(provider -> provider.getUuid().equals(newProvider.getUuid()));
+		boolean exists = providers.stream().anyMatch(provider -> provider.getUUID().equals(newProvider.getUUID()));
 		if (!exists)
 			providers.add(newProvider);
 	}
@@ -131,7 +131,7 @@ public class ConcreteNode implements Node
 	@Override
 	public void delProvider(Provider oldProvider)
 	{
-		providers.removeIf((provider -> provider.getUuid().equals(oldProvider.getUuid())));
+		providers.removeIf((provider -> provider.getUUID().equals(oldProvider.getUUID())));
 	}
 
 	@Override

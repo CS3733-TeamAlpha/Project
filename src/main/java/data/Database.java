@@ -166,11 +166,42 @@ public class Database implements AdminStorage
 				insertEdge.execute();
 			}
 
-			//Insert provider info
+			//Insert providers if they don't already exist. This algorithm sucks because java derby sucks. **** you, derby.
+			for (Provider prv : node.getProviders())
+			{
+				try
+				{
+					PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
+					insPrv.setString(1, prv.getUUID());
+					insPrv.setString(2, prv.getFirstName());
+					insPrv.setString(3, prv.getLastName());
+					insPrv.setString(4, prv.getTitle());
+					insPrv.execute();
+				}
+				catch (SQLException e)
+				{
+					if (e.getSQLState().equals("23505")) //unique constraint violation
+					{
+						PreparedStatement updPrv = connection.prepareStatement("UPDATE Providers SET FirstName=?,LastName=?,Title=? WHERE provider_uuid=?");
+						updPrv.setString(1, prv.getFirstName());
+						updPrv.setString(2, prv.getLastName());
+						updPrv.setString(3, prv.getTitle());
+						updPrv.setString(4, prv.getUUID());
+						updPrv.execute();
+					}
+					else
+					{
+						System.out.println("Error trying to insert provider!");
+						e.printStackTrace();
+					}
+				}
+			}
+
+			//Insert offices
 			PreparedStatement insOff = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?,?)");
 			for (Provider prv : node.getProviders())
 			{
-				insOff.setString(1, prv.getUuid());
+				insOff.setString(1, prv.getUUID());
 				insOff.setString(2, node.getID());
 				insOff.execute();
 			}
@@ -241,6 +272,38 @@ public class Database implements AdminStorage
 				insNbr.execute();
 			}
 
+			//Insert providers if they don't already exist. This algorithm sucks because java derby sucks. **** you, derby.
+			//TODO: Extract into separate function?
+			for (Provider prv : node.getProviders())
+			{
+				try
+				{
+					PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
+					insPrv.setString(1, prv.getUUID());
+					insPrv.setString(2, prv.getFirstName());
+					insPrv.setString(3, prv.getLastName());
+					insPrv.setString(4, prv.getTitle());
+					insPrv.execute();
+				}
+				catch (SQLException e)
+				{
+					if (e.getSQLState().equals("23505")) //unique constraint violation
+					{
+						PreparedStatement updPrv = connection.prepareStatement("UPDATE Providers SET FirstName=?,LastName=?,Title=? WHERE provider_uuid=?");
+						updPrv.setString(1, prv.getFirstName());
+						updPrv.setString(2, prv.getLastName());
+						updPrv.setString(3, prv.getTitle());
+						updPrv.setString(4, prv.getUUID());
+						updPrv.execute();
+					}
+					else
+					{
+						System.out.println("Error trying to insert provider!");
+						e.printStackTrace();
+					}
+				}
+			}
+
 			//Update provider Offices
 			PreparedStatement delOffices = connection.prepareStatement("DELETE FROM ProviderOffices WHERE node_uuid=?");
 			delOffices.setString(1, node.getID());
@@ -248,7 +311,7 @@ public class Database implements AdminStorage
 			PreparedStatement insOff = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?,?)");
 			for (Provider prv : node.getProviders()) //Is this dupe'd code? why yes, yes it is!
 			{
-				insOff.setString(1, prv.getUuid());
+				insOff.setString(1, prv.getUUID());
 				insOff.setString(2, node.getID());
 				insOff.execute();
 			}
@@ -411,10 +474,11 @@ public class Database implements AdminStorage
 			//TODO: Find a way of optimizing this algorithm.
 			Node node = nodeCache.get(uuid);
 
-			//Notify the providers they are not longer associated with this location
-			for(Provider p : node.getProviders())
+			//Notify the providers they are no longer associated with this location
+			ArrayList<Provider> tmpProviders = node.getProviders();
+			for (int i = 0; i < tmpProviders.size(); i++)
 			{
-				p.removeLocation(uuid);
+				tmpProviders.get(i).removeLocation(node.getID());
 			}
 
 			if (node == null)
@@ -673,7 +737,7 @@ public class Database implements AdminStorage
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
-			pstmt.setString(1, p.getUuid());
+			pstmt.setString(1, p.getUUID());
 			pstmt.setString(2, p.getFirstName());
 			pstmt.setString(3, p.getLastName());
 			pstmt.setString(4, p.getTitle());
@@ -773,14 +837,14 @@ public class Database implements AdminStorage
 		{
 			//Delete any existing connections in the database
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
-			stmt.setString(1, p.getUuid());
+			stmt.setString(1, p.getUUID());
 
 			//Add all the new ones
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?, ?)");
 
 			for(String nodeID : p.getLocationIds())
 			{
-				pstmt.setString(1, p.getUuid());
+				pstmt.setString(1, p.getUUID());
 				pstmt.setString(2, nodeID);
 				pstmt.execute();
 			}
@@ -797,11 +861,11 @@ public class Database implements AdminStorage
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
-			pstmt.setString(1, provider.getUuid());
+			pstmt.setString(1, provider.getUUID());
 			pstmt.execute();
 
 			pstmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
-			pstmt.setString(1, provider.getUuid());
+			pstmt.setString(1, provider.getUUID());
 
 			//Flush changes to the node cache. This is O(n), unfortunately
 			for (String s : nodeCache.keySet())
@@ -820,7 +884,7 @@ public class Database implements AdminStorage
 		try
 		{
 			PreparedStatement stmt = connection.prepareStatement("SELECT firstName FROM PROVIDERS WHERE PROVIDER_UUID=?");
-			stmt.setString(1, provider.getUuid());
+			stmt.setString(1, provider.getUUID());
 			ResultSet set = stmt.executeQuery();
 			if(set.next())
 			{
@@ -828,7 +892,7 @@ public class Database implements AdminStorage
 				stmt.setString(1, provider.getFirstName());
 				stmt.setString(2, provider.getLastName());
 				stmt.setString(3, provider.getTitle());
-				stmt.setString(4, provider.getUuid());
+				stmt.setString(4, provider.getUUID());
 				boolean success = stmt.execute();
 
 				updateProviderLocations(provider);

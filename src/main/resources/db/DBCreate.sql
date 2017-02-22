@@ -30,7 +30,8 @@ CREATE TABLE Providers
   provider_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   firstName VARCHAR(128) NOT NULL,
   lastName VARCHAR(128) NOT NULL,
-  title VARCHAR(60)
+  title VARCHAR(60),
+  CONSTRAINT UNIQ_NAME UNIQUE(firstName, lastName) --two people can have the same name? no, no they can't, that would be silly.
 );
 
 CREATE TABLE ProviderOffices --Links between doctors and their offices.

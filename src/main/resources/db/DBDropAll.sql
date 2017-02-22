@@ -1,4 +1,4 @@
-DROP TABLE PROVIDEROFFICES;
+DROP TABLE ProviderOffices;
 DROP TABLE Providers;
 DROP TABLE Edges;
 DROP TABLE Services;
