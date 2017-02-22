@@ -51,8 +51,11 @@ public class AStarGraphTest
 		Graph graph = new AStarGraph();
 
 		//Straight shot pathing test
-		assertNotNull(graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]));
-		assertEquals(straightNodes.length, graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]).size());
+		ArrayList<Node> path = graph.findPath(straightNodes[0], straightNodes[straightNodes.length - 1]);
+		assertNotNull(path);
+		assertTrue(path.contains(straightNodes[0]));
+		assertTrue(path.contains(straightNodes[straightNodes.length - 1]));
+		assertEquals(straightNodes.length, path.size());;
 
 		//Grid pathing test
 		assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[99][99]));
