@@ -170,7 +170,6 @@ public class MapController extends BaseController
 		}
 		if(findingDirections)
 		{
-			System.out.println("fuck");
 			if(!hasNextStep)
 			{
 				BUILDINGID = kiosk.getBuilding();
@@ -424,9 +423,13 @@ public class MapController extends BaseController
 			}
 			if(!selected.getBuilding().equals(kiosk.getBuilding()))
 			{
-				if(FLOORID != 1)
+				if(FLOORID != 1 && BUILDINGID.equals(kiosk.getBuilding()))
 				{
 					jumpFloor(1);
+				}
+				else if (BUILDINGID.equals(selected.getBuilding()))
+				{
+					jumpFloor(selected.getFloor());
 				}
 				else
 				{
