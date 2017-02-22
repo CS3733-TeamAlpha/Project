@@ -257,14 +257,17 @@ public class DatabaseTest
 		Provider sisko = new Provider("Benjamin", "Sisko", UUID.randomUUID().toString(), "Captain");
 		node.addProvider(sisko);
 		assertEquals(2, database.getProviders().size());
+		assertEquals(2, node.getProviders().size());
 
 		//Delete picard and verify his deletion
 		database.deleteProvider(picard);
 		assertEquals(1, database.getProviders().size());
+		assertEquals(1, node.getProviders().size())
 
 		//Clean up
 		database.deleteNodeByUUID(node.getID());
 		database.deleteProvider(sisko);
+		assertEquals(0, node.getProviders().size());
 		assertEquals(0, database.getProviders().size());
 	}
 
