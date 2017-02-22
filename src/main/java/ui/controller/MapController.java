@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
-import pathfinding.Node;
+import data.Node;
 import ui.Accessibility;
 import ui.Paths;
 
@@ -128,7 +128,9 @@ public class MapController extends BaseController
 		Node searched = getSearchedFor();
 		if(searched!=null){
 			System.out.println(searched.getName());
-			jumpFloor(searched.getFloor());
+			int floor = searched.getFloor();
+			String buildingid = searched.getBuilding();
+			setFloorImage(buildingid,floor);
 			selected = searched;
 			showRoomInfo(searched);
 			focusView(searched);

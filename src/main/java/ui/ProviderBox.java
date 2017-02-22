@@ -1,5 +1,6 @@
 package ui;
 
+import data.Node;
 import data.Database;
 import data.Provider;
 import javafx.collections.FXCollections;
@@ -11,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import pathfinding.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;

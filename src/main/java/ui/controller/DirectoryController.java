@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import pathfinding.Node;
+import data.Node;
 import ui.Paths;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class DirectoryController extends BaseController
 
 	public void addNewProvider()
 	{
-		Provider newProvider = Provider.newInstance("First Name", "Last Name", UUID.randomUUID().toString(), "Title", new ArrayList<>());
+		Provider newProvider = new Provider("First Name", "Last Name", UUID.randomUUID().toString(), "Title", new ArrayList<>());
 		newProviderList.add(newProvider);
 		loadProvider(newProvider);
 	}
@@ -189,7 +189,7 @@ public class DirectoryController extends BaseController
 			thisProvider.setTitle(title.getText());
 
 			//Update the provider...
-			database.updateOrAddProvider(thisProvider);
+			//database.modifyProviderData(thisProvider);
 			System.out.println("Updated provider!");
 		}
 		modifiedProvidersList.clear();

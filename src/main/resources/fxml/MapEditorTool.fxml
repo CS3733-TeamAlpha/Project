@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -12,7 +17,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapEditorToolController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapEditorToolController">
    <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -59,9 +64,30 @@
                         <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
                         <Label layoutX="4.0" layoutY="174.0" text="Node Y Coordinate" />
                         <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0" />
-                        <Button fx:id="addConnectionButton" layoutX="4.0" layoutY="300.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
-                        <Button fx:id="removeConnectionButton" layoutX="4.0" layoutY="340.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
-                        <Button fx:id="deleteNodeButton" layoutX="4.0" layoutY="261.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node" />
+                        <Button fx:id="addConnectionButton" layoutX="4.0" layoutY="279.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
+                        <Button fx:id="removeConnectionButton" layoutX="4.0" layoutY="318.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
+                        <Button fx:id="deleteNodeButton" layoutX="4.0" layoutY="240.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node" />
+                  <ScrollPane layoutX="4.0" layoutY="360.0" prefHeight="359.0" prefWidth="232.0">
+                     <content>
+                        <VBox prefHeight="350.0" prefWidth="212.0">
+                           <children>
+                              <Label text="Creating Nodes" underline="true" />
+                              <Label prefHeight="65.0" prefWidth="212.0" text="Right click the map, hold, and drag to one of the following node options:" wrapText="true" />
+                              <Label text="    up:      Elvators" />
+                              <Label text="    right:   Hallways" />
+                              <Label text="    down:  Provider/Service" />
+                              <Label text="    left:      Bathrooms" />
+                              <Label />
+                              <Label text="Creating Connections" underline="true" />
+                              <Label prefHeight="86.0" prefWidth="212.0" text="Click on a node, right click, hold and drag one of the following options:" wrapText="true" />
+                              <Label prefHeight="35.0" prefWidth="212.0" text="    up:      Continuous Nodes" wrapText="true" />
+                              <Label text="    right:   Add Connection" />
+                              <Label text="    down:  Remove Connection" />
+                              <Label text="    left:      Delete Node" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                      </children>
                   </AnchorPane>
          </children>
