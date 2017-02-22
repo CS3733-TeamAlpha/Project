@@ -94,16 +94,10 @@ public class MapEditorToolController extends BaseController
 				{
 					System.out.println("dont happen");
 					currentButton.setId("node-button-unselected");
-					currentButton = (Button)e.getSource();
-					currentButton.setId("node-button-selected");
-					currentNode = nodeButtonLinks.get(currentButton);
 				}
-				else if (currentButton == null)
-				{
-					currentButton = (Button)e.getSource();
-					currentButton.setId("node-button-selected");
-					currentNode = nodeButtonLinks.get(currentButton);
-				}
+				currentButton = (Button)e.getSource();
+				currentButton.setId("node-button-selected");
+				currentNode = nodeButtonLinks.get(currentButton);
 				currentState = editorStates.SHOWINGNODEMENU;
 				displayContextMenu(e);
 			}
@@ -761,7 +755,6 @@ public class MapEditorToolController extends BaseController
 		if(e.isSecondaryButtonDown())
 		{
 			if(currentButton != null){ //radial context menu for node options
-				//currentState = editorStates.SHOWINGNODEMENU;
 				mainScroll.setPannable(false);
 			} else { //radial context menu for adding nodes
 				currentState = editorStates.SHOWINGEMPTYMENU;
@@ -851,6 +844,7 @@ public class MapEditorToolController extends BaseController
 				setupContextMenu(e.getX() - CIRCLEWIDTH / 2, e.getY() - CIRCLEWIDTH / 2);
 			}
 			editingFloor.getChildren().add(1, CONTEXTMENU);
+			CONTEXTMENU.toFront();
 		}
 
 		//xy distance from center of contextmenu to mouse
