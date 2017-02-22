@@ -2,7 +2,7 @@ package pathfinding;
 
 import java.util.*;
 
-public class BreadthFirstGraph implements Graph {
+public class DepthFirstGraph implements Graph {
 
     public ArrayList<Node> findPath(Node start, Node end) {
 
@@ -26,7 +26,7 @@ public class BreadthFirstGraph implements Graph {
         }
 
         while (!nodeQueue.isEmpty()) {
-            Node temp = nodeQueue.poll();
+            Node temp = nodeQueue.removeLast();
             if (temp == end) {
                 while (parentMap.get(temp) != null) {
                     result.add(temp);
