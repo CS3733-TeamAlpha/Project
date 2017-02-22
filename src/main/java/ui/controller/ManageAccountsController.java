@@ -8,7 +8,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import misc.Account;
 import org.mindrot.jbcrypt.BCrypt;
 import ui.Paths;
 
@@ -35,7 +34,7 @@ public class ManageAccountsController extends BaseController
 		for (int i = 0; i < allAccounts.size(); i++)
 		{
 			String account = allAccounts.get(i);
-			AnchorPane anchorPane = generateListItem(new Account(account));
+			AnchorPane anchorPane = generateListItem(account);
 			listBox.getChildren().add(anchorPane);
 			if(i % 2 == 1)
 			{
@@ -53,11 +52,8 @@ public class ManageAccountsController extends BaseController
 		loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
-	private AnchorPane generateListItem(Account account)
+	private AnchorPane generateListItem(String accountName)
 	{
-		String accountName = account.getUserName();
-
-
 		AnchorPane root = null;
 		try
 		{
@@ -72,7 +68,7 @@ public class ManageAccountsController extends BaseController
 		accountLabel.setText(accountName);
 
 		Button deleteButton = (Button) root.lookup("#deleteButton");
-		if(account.isAdmin())
+		if(Paths.isAdmin(accountName))
 		{
 			deleteButton.setVisible(false);
 		}
@@ -82,7 +78,7 @@ public class ManageAccountsController extends BaseController
 					{
 						Alert deleteWarning = new Alert(Alert.AlertType.WARNING);
 						deleteWarning.setTitle("Warning: Account Deleting");
-						deleteWarning.setHeaderText("Warning: Deleting account '" + account.getUserName() + "'");
+						deleteWarning.setHeaderText("Warning: Deleting account '" + accountName + "'");
 						deleteWarning.setContentText("This operation cannot be undone");
 
 						deleteWarning.getButtonTypes().addAll(ButtonType.CANCEL);

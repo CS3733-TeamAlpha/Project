@@ -1,5 +1,7 @@
 package misc;
 
+import ui.Paths;
+
 public class LoginState
 {
 	private static boolean loggedIn = false;
@@ -13,14 +15,15 @@ public class LoginState
 		loggedInAccount = null;
 	}
 
-	public static void login(Account account)
+	/**
+	 * Stores the currently logged in account. It will also detect if the account is admin, and store than information too.
+	 * @param account The user name to store.
+	 */
+	public static void login(String account)
 	{
-		if(account.isAdmin())
-		{
-			adminLoggedIn = true;
-		}
+		adminLoggedIn = Paths.isAdmin(account);
 		loggedIn = true;
-		loggedInAccount = account.getUserName();
+		loggedInAccount = account;
 	}
 
 	public static boolean isLoggedIn()

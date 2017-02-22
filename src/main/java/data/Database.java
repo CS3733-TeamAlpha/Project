@@ -1,6 +1,5 @@
 package data;
 
-import misc.Account;
 import org.apache.derby.tools.ij;
 import pathfinding.ConcreteNode;
 import pathfinding.Node;
@@ -10,7 +9,6 @@ import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.UUID;
 
 /**
  * Class for database access using java derby.
@@ -896,7 +894,7 @@ public class Database implements AdminStorage
 	/**
 	 * Gets a user's password in hashed form
 	 * @param username Username to get password for
-	 * @return Hashed password
+	 * @return Hashed password, or snull if the account does not exist
 	 */
 	public String getHashedPassword(String username)
 	{

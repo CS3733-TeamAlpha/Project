@@ -97,4 +97,9 @@ public class Paths
 	public static ProxyImage kioskImageProxy = new ProxyImage(Paths.KIOSKICON);
 
 	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
+
+	public static boolean isAdmin(String userName)
+	{
+		return userName.equals("admin");
+	}
 }
