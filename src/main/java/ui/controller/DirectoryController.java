@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import pathfinding.Node;
+import data.Node;
 import ui.Paths;
 
 import java.util.ArrayList;

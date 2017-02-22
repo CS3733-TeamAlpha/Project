@@ -1,5 +1,7 @@
 package pathfinding;
 
+import data.ConcreteNode;
+import data.Node;
 import org.junit.Test;
 
 import java.util.ArrayList;

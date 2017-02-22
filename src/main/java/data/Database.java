@@ -1,8 +1,6 @@
 package data;
 
 import org.apache.derby.tools.ij;
-import pathfinding.ConcreteNode;
-import pathfinding.Node;
 
 import java.io.IOException;
 import java.io.OutputStream;

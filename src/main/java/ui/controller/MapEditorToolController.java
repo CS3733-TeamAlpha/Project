@@ -17,8 +17,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import pathfinding.ConcreteNode;
-import pathfinding.Node;
+import data.ConcreteNode;
+import data.Node;
 import ui.Accessibility;
 import ui.Paths;
 

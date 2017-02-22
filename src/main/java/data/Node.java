@@ -1,6 +1,4 @@
-package pathfinding;
-
-import data.Provider;
+package data;
 
 import java.util.ArrayList;
 import java.util.Collection;

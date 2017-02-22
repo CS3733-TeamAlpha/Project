@@ -3,7 +3,6 @@ package data;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pathfinding.*;
 
 import java.io.File;
 import java.util.ArrayList;

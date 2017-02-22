@@ -1,5 +1,6 @@
-package pathfinding;
+package data;
 
+import data.Node;
 import data.Provider;
 
 import java.util.ArrayList;

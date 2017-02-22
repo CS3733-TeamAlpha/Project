@@ -7,9 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.awt.image.renderable.ContextualRenderedImageFactory;
-import java.util.ArrayList;
-
 /**
  * THIS IS AWFUL!
  * THERE HAS TO BE A BETTER WAY OF DOING INTEGRATION TESTS
