@@ -1,13 +1,11 @@
 package data;
 
-import data.Node;
-import data.Provider;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Observable;
 import java.util.UUID;
 
-public class ConcreteNode implements Node
+public class ConcreteNode extends Observable implements Node
 {
 	private ArrayList<Provider> providers;
 	private ArrayList<String> services;
@@ -124,83 +122,122 @@ public class ConcreteNode implements Node
 	public void addProvider(Provider newProvider)
 	{
 		//Only add the provider if they aren't already added here
-		boolean exists = providers.stream().anyMatch(provider -> provider.getUUID().equals(newProvider.getUUID()));
-		if (!exists)
+		if (!providers.contains(newProvider))
+		{
 			providers.add(newProvider);
+			setChanged();
+			notifyObservers();
+		}
+		newProvider.addLocation(this); //this could get fun and loopy
 	}
 
 	@Override
 	public void delProvider(Provider oldProvider)
 	{
-		providers.removeIf((provider -> provider.getUUID().equals(oldProvider.getUUID())));
+		providers.remove(oldProvider);
+		oldProvider.removeLocation(this.getID()); //todo: why am I removing this by ID? This could get fun and loopy
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void addService(String newService)
 	{
 		if (!services.contains(newService))
+		{
 			services.add(newService);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	@Override
 	public void delService(String oldService)
 	{
-		services.remove(oldService);
+		if (services.contains(oldService))
+		{
+			services.remove(oldService);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	@Override
 	public void addNeighbor(Node newNeighbor)
 	{
 		if (!neighbors.contains(newNeighbor))
+		{
 			neighbors.add(newNeighbor);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	@Override
 	public void delNeighbor(Node oldNeighbor)
 	{
-		neighbors.remove(oldNeighbor);
+		if (neighbors.contains(oldNeighbor))
+		{
+			neighbors.remove(oldNeighbor);
+			setChanged();
+			notifyObservers();
+		}
 	}
 
 	@Override
 	public void setID(String newID)
 	{
 		id = newID;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void setName(String newName)
 	{
 		name = newName;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void setBuilding(String newBuilding)
 	{
 		building = newBuilding;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void setX(double newX)
 	{
 		x = newX;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void setY(double newY)
 	{
 		y = newY;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void setType(int newType)
 	{
 		type = newType;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
 	public void setFloor(int newFloor)
 	{
 		floor = newFloor;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override

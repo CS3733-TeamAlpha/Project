@@ -3,12 +3,13 @@ package data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
 import java.util.stream.Collectors;
 
 /**
  * Represents a service provider.
  */
-public class Provider
+public class Provider extends Observable
 {
 	private String firstName, lastName, title;
 	private String uuid;
@@ -73,6 +74,8 @@ public class Provider
 	public void setTitle(String title)
 	{
 		this.title = title;
+		setChanged();
+		notifyObservers();
 	}
 
 	public String getFirstName()

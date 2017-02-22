@@ -7,11 +7,13 @@ import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Class for database access using java derby.
  */
-public class Database implements AdminStorage
+public class Database implements Observer
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
@@ -28,7 +30,7 @@ public class Database implements AdminStorage
 	private Statement statement;
 	private Connection connection;
 
-	private Hashtable<String, Node> nodeCache;
+	private Hashtable<String, ConcreteNode> nodeCache;
 	private Hashtable<String, Provider> providerCache;
 
 	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
@@ -36,6 +38,23 @@ public class Database implements AdminStorage
 	private PreparedStatement insertNode;
 	private PreparedStatement insertEdge;
 	private PreparedStatement deleteFrom;
+
+	//Neato observer stuff
+
+	@Override
+	public void update(Observable observable, Object o)
+	{
+		//(cond [(ConcreteNode? o) (...)])
+		//whoa, that was a flashback I didn't want
+		if (observable.getClass().equals(ConcreteNode.class))
+		{
+			updateNode((Node)observable);
+		}
+		else if (observable.getClass().equals(Provider.class))
+		{
+			updateProvider((Provider)observable);
+		}
+	}
 
 	/**
 	 * Construct a new database object that will connect to the named database and immediately initiate the connection
@@ -126,8 +145,9 @@ public class Database implements AdminStorage
 	 *
 	 * @param node Node object to insert.
 	 */
-	public void insertNode(Node node)
+	public void insertNode(ConcreteNode node)
 	{
+		node.addObserver(this);
 		try
 		{
 			//Create prepared statements.
@@ -488,10 +508,10 @@ public class Database implements AdminStorage
 			}
 
 			for (String s : nodeCache.keySet())
-			{
 				nodeCache.get(s).delNeighbor(node);
-			}
+			nodeCache.get(uuid).deleteObserver(this);
 			nodeCache.remove(uuid);
+
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to delete node from table!");
@@ -735,6 +755,7 @@ public class Database implements AdminStorage
 
 	public void addProvider(Provider p)
 	{
+		p.addObserver(this);
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
@@ -768,42 +789,28 @@ public class Database implements AdminStorage
 	}
 
 	/**
-	 * You win, Andrew. This function will create an office for a provider.
-	 * @param provUUID UUID of provider to give location to
-	 * @param nodeUUID UUID of node that provider is located at
+	 * Updates a provider in the database.
+	 * @param p Provider to update.
 	 */
-	private void addProviderLocation(String provUUID, String nodeUUID)
+	private void updateProvider(Provider p)
 	{
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?, ?)");
-			pstmt.setString(1, provUUID);
-			pstmt.setString(2, nodeUUID);
-			pstmt.execute();
-		} catch (SQLException e)
-		{
-			System.out.println("Error trying to add provider location!");
-			e.printStackTrace();
-		}
-	}
-
-	private void updateProviderLocations(Provider p)
-	{
+		modifyProviderData(p);
 		try
 		{
 			//Delete any existing connections in the database
-			PreparedStatement stmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
+			PreparedStatement stmt = connection.prepareStatement("DELETE FROM ProviderOffices WHERE provider_uuid=?");
 			stmt.setString(1, p.getUUID());
 
 			//Add all the new ones
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?, ?)");
-
 			for(String nodeID : p.getLocationIds())
 			{
 				pstmt.setString(1, p.getUUID());
 				pstmt.setString(2, nodeID);
 				pstmt.execute();
 			}
+
+			//Changes to cached nodes shouldn't be necessary, their associated providers will have already done that.
 
 		} catch (SQLException e)
 		{
@@ -814,6 +821,7 @@ public class Database implements AdminStorage
 
 	public void deleteProvider(Provider provider)
 	{
+		provider.deleteObserver(this);
 		providerCache.remove(provider.getUUID());
 		//Notify the provider's associated nodes
 		provider.getLocations().forEach((node) -> node.delProvider(provider)); //HAIL LAMBDA! HAIL HYDR- wait, what?
@@ -833,7 +841,7 @@ public class Database implements AdminStorage
 
 	}
 
-	public void updateOrAddProvider(Provider provider)
+	private void modifyProviderData(Provider provider)
 	{
 		try
 		{
@@ -849,7 +857,7 @@ public class Database implements AdminStorage
 				stmt.setString(4, provider.getUUID());
 				stmt.execute();
 
-				updateProviderLocations(provider);
+				updateProvider(provider);
 			}
 			else
 			{
@@ -1174,4 +1182,6 @@ public class Database implements AdminStorage
 			e.printStackTrace();
 		}
 	}
+
+
 }
