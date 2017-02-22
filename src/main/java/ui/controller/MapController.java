@@ -169,14 +169,16 @@ public class MapController extends BaseController
 
 	public void showRoomInfo(Node n)
 	{
+		Node focusNode = null;
 		if(selected != n)
 		{
 			selected = n;
 			findingDirections = false;
+			focusNode = n;
 		}
 		if(findingDirections)
 		{
-			Node focusNode = null;
+			System.out.println("fuck");
 			if(!hasNextStep)
 			{
 				BUILDINGID = kiosk.getBuilding();
@@ -214,8 +216,6 @@ public class MapController extends BaseController
 							focusNode = path.get(i);
 						}
 						Line line = new Line();
-						//System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
-						//System.out.println(path.get(i+1).getID());
 						line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
 						line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
 						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
@@ -241,8 +241,11 @@ public class MapController extends BaseController
 						nextStep.setDisable(false);
 					}
 				}
-				focusView(focusNode);
-				focusNode = null;
+				if(focusNode != null)
+				{
+					focusView(focusNode);
+					focusNode = null;
+				}
 			}
 			//findingDirections = false;
 		}
