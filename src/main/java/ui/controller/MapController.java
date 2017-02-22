@@ -169,6 +169,11 @@ public class MapController extends BaseController
 
 	public void showRoomInfo(Node n)
 	{
+		if(selected != n)
+		{
+			selected = n;
+			findingDirections = false;
+		}
 		if(findingDirections)
 		{
 			Node focusNode = null;
@@ -241,7 +246,6 @@ public class MapController extends BaseController
 			}
 			//findingDirections = false;
 		}
-		selected = n;
 		if (!roomInfoShown)
 		{
 			roomviewSplit.getItems().add(1, roomInfo);
@@ -256,6 +260,8 @@ public class MapController extends BaseController
 	{
 		roomviewSplit.getItems().remove(roomInfo);
 		roomInfoShown = false;
+
+		selected = null;
 
 		findingDirections = false;
 		hasNextStep = false;
