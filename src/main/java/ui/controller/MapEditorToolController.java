@@ -851,6 +851,7 @@ public class MapEditorToolController extends BaseController
 				setupContextMenu(e.getX() - CIRCLEWIDTH / 2, e.getY() - CIRCLEWIDTH / 2);
 			}
 			editingFloor.getChildren().add(1, CONTEXTMENU);
+			CONTEXTMENU.toFront();
 		}
 
 		//xy distance from center of contextmenu to mouse
