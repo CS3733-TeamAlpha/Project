@@ -1,19 +1,19 @@
 package data;
 
 import org.apache.derby.tools.ij;
-import pathfinding.ConcreteNode;
-import pathfinding.Node;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Class for database access using java derby.
  */
-public class Database implements AdminStorage
+public class Database implements Observer
 {
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
@@ -21,22 +21,40 @@ public class Database implements AdminStorage
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
-
 	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
 	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
 
-
+	//Database things
 	private String dbName;
 	private boolean connected;
 	private Statement statement;
 	private Connection connection;
+
 	private Hashtable<String, Node> nodeCache;
+	private Hashtable<String, Provider> providerCache;
 
 	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
 	private PreparedStatement checkExist;
 	private PreparedStatement insertNode;
 	private PreparedStatement insertEdge;
 	private PreparedStatement deleteFrom;
+
+	//Neato observer stuff
+
+	@Override
+	public void update(Observable observable, Object o)
+	{
+		//(cond [(Node? o) (...)])
+		//whoa, that was a flashback I didn't want
+		if (observable.getClass().equals(Node.class))
+		{
+			updateNode((Node)observable);
+		}
+		else if (observable.getClass().equals(Provider.class))
+		{
+			updateProvider((Provider)observable);
+		}
+	}
 
 	/**
 	 * Construct a new database object that will connect to the named database and immediately initiate the connection
@@ -50,6 +68,7 @@ public class Database implements AdminStorage
 		statement = null;
 		connection = null;
 		nodeCache = new Hashtable<>();
+		providerCache = new Hashtable<>();
 
 		checkExist = null;
 		insertNode = null;
@@ -128,6 +147,7 @@ public class Database implements AdminStorage
 	 */
 	public void insertNode(Node node)
 	{
+		node.addObserver(this);
 		try
 		{
 			//Create prepared statements.
@@ -166,11 +186,44 @@ public class Database implements AdminStorage
 				insertEdge.execute();
 			}
 
-			//Insert provider info
+			//Insert providers if they don't already exist. This algorithm sucks because java derby sucks. **** you, derby.
+			for (Provider prv : node.getProviders())
+			{
+				try
+				{
+					PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
+					insPrv.setString(1, prv.getUUID());
+					insPrv.setString(2, prv.getFirstName());
+					insPrv.setString(3, prv.getLastName());
+					insPrv.setString(4, prv.getTitle());
+					insPrv.execute();
+					if (!providerCache.containsKey(prv.getUUID()))
+						providerCache.put(prv.getUUID(), prv);
+				}
+				catch (SQLException e)
+				{
+					if (e.getSQLState().equals("23505")) //unique constraint violation
+					{
+						PreparedStatement updPrv = connection.prepareStatement("UPDATE Providers SET FirstName=?,LastName=?,Title=? WHERE provider_uuid=?");
+						updPrv.setString(1, prv.getFirstName());
+						updPrv.setString(2, prv.getLastName());
+						updPrv.setString(3, prv.getTitle());
+						updPrv.setString(4, prv.getUUID());
+						updPrv.execute();
+					}
+					else
+					{
+						System.out.println("Error trying to insert provider!");
+						e.printStackTrace();
+					}
+				}
+			}
+
+			//Insert offices
 			PreparedStatement insOff = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?,?)");
 			for (Provider prv : node.getProviders())
 			{
-				insOff.setString(1, prv.getUuid());
+				insOff.setString(1, prv.getUUID());
 				insOff.setString(2, node.getID());
 				insOff.execute();
 			}
@@ -241,17 +294,8 @@ public class Database implements AdminStorage
 				insNbr.execute();
 			}
 
-			//Update provider Offices
-			PreparedStatement delOffices = connection.prepareStatement("DELETE FROM ProviderOffices WHERE node_uuid=?");
-			delOffices.setString(1, node.getID());
-			delOffices.execute();
-			PreparedStatement insOff = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?,?)");
-			for (Provider prv : node.getProviders()) //Is this dupe'd code? why yes, yes it is!
-			{
-				insOff.setString(1, prv.getUuid());
-				insOff.setString(2, node.getID());
-				insOff.execute();
-			}
+			//Insert providers if they don't already exist. This algorithm sucks because java derby sucks. **** you, derby.
+			node.getProviders().forEach((p) -> updateProvider(p));
 
 			//Update services
 			PreparedStatement delServices = connection.prepareStatement("DELETE FROM Services WHERE node=?");
@@ -323,31 +367,6 @@ public class Database implements AdminStorage
 	}
 
 	/**
-	 * Get all nodes that are tagged as kiosks.
-	 * These nodes have a type of either 4 or 5
-	 * @return A list of kiosk nodes
-	 */
-	public ArrayList<Node> getAllKiosks()
-	{
-		ArrayList<Node> kiosklist = null;
-		try
-		{
-
-			//The node with type 5 is selected. Assume only one such node exists
-			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5 OR type=4");
-
-			while (results.next())
-				kiosklist.add(nodeCache.get(results.getString(1)));
-
-		} catch (SQLException e)
-		{
-			System.out.println("Error retriving all kiosks!");
-			e.printStackTrace();
-		}
-		return kiosklist;
-	}
-
-	/**
 	 * Get the node that is selected as the kiosk to be used for this app.
 	 * The selected kiosk has a type of 5, while non-selected kiosks have a value of 4
 	 * @return
@@ -402,7 +421,7 @@ public class Database implements AdminStorage
 			//would be generated).
 			statement.execute("DELETE FROM Edges WHERE dst='" + uuid + "'");
 
-			PreparedStatement stmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE NODE_UUID=?");
+			PreparedStatement stmt = connection.prepareStatement("DELETE FROM ProviderOffices WHERE NODE_UUID=?");
 			stmt.setString(1, uuid);
 			stmt.execute();
 
@@ -411,23 +430,14 @@ public class Database implements AdminStorage
 			//TODO: Find a way of optimizing this algorithm.
 			Node node = nodeCache.get(uuid);
 
-			//Notify the providers they are not longer associated with this location
-			for(Provider p : node.getProviders())
-			{
-				p.removeLocation(uuid);
-			}
-
-			if (node == null)
-			{
-				System.out.println("Lord of the nullptr exceptions reporting in, sir, there's been a most unusual error... not sure how to proceed.");
-				return;
-			}
+			//Notify the providers they are no longer associated with this location
+			node.getProviders().forEach((prv) -> prv.locations.remove(uuid));
 
 			for (String s : nodeCache.keySet())
-			{
-				nodeCache.get(s).delNeighbor(node);
-			}
+				nodeCache.get(s).neighbors.remove(node);
+			node.deleteObserver(this);
 			nodeCache.remove(uuid);
+
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to delete node from table!");
@@ -597,6 +607,7 @@ public class Database implements AdminStorage
 	 * Type 6 up to type 19 are unique connections between buildings
 	 * @param n Source node, checks if another node with the same type exists and connect
 	 * @param type Type integer
+	 * @apiNote wtf is this
 	 */
 	public void connectEntrances(Node n, int type)
 	{
@@ -610,9 +621,7 @@ public class Database implements AdminStorage
 			{
 				Node linkNode = nodeCache.get(results.getString(1));
 				linkNode.addNeighbor(n);
-				updateNode(linkNode);
 				n.addNeighbor(linkNode);
-				updateNode(n);
 			}
 
 		}
@@ -670,16 +679,18 @@ public class Database implements AdminStorage
 
 	public void addProvider(Provider p)
 	{
+		p.addObserver(this);
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
-			pstmt.setString(1, p.getUuid());
+			pstmt.setString(1, p.getUUID());
 			pstmt.setString(2, p.getFirstName());
 			pstmt.setString(3, p.getLastName());
 			pstmt.setString(4, p.getTitle());
 			pstmt.execute();
 
-			updateProviderLocations(p);
+			updateProvider(p); //should put all necessary connections to the database.
+			providerCache.put(p.getUUID(), p);
 		} catch (SQLException e)
 		{
 			if (!e.getSQLState().equals("23505")) //unique constraint violation
@@ -691,98 +702,68 @@ public class Database implements AdminStorage
 	}
 
 	/**
-	 * Gets a list of all provider names
+	 * Gets a list of all providers
 	 *
-	 * @return ArrayList of names
+	 * @return ArrayList of all providers.
 	 */
 	public ArrayList<Provider> getProviders()
 	{
 		ArrayList<Provider> ret = new ArrayList<>();
+		providerCache.forEach((id, provider) -> ret.add(provider));
+		return ret;
+	}
+
+	/**
+	 * Updates a provider in the database.
+	 * @param p Provider to update.
+	 */
+	private void updateProvider(Provider p)
+	{
 		try
 		{
-			ResultSet results = statement.executeQuery("SELECT * FROM Providers");
-			while (results.next())
+			/*INSERT OR UPDATE PROVIDER*/
+			PreparedStatement existsPrv = connection.prepareStatement("SELECT provider_uuid FROM Providers WHERE provider_uuid=?");
+			existsPrv.setString(1, p.getUUID());
+			ResultSet results = existsPrv.executeQuery();
+
+			if (results.next()) //Update provider
 			{
-				Provider p = Provider.newInstance(results.getString("firstName"),
-						results.getString("lastName"),
-						results.getString("provider_uuid"),
-						results.getString("title"),
-						getProviderLocations(results.getString("provider_uuid")));
-				ret.add(p);
+				PreparedStatement updPrv = connection.prepareStatement("UPDATE Providers SET FirstName=?,LastName=?,Title=? WHERE provider_uuid=?");
+				updPrv.setString(1, p.getFirstName());
+				updPrv.setString(2, p.getLastName());
+				updPrv.setString(3, p.getTitle());
+				updPrv.setString(4, p.getUUID());
+				updPrv.execute();
+			}
+			else
+			{
+				//Add new provider
+				p.addObserver(this);
+				PreparedStatement insPrv = connection.prepareStatement("INSERT INTO Providers VALUES(?, ?, ?, ?)");
+				insPrv.setString(1, p.getUUID());
+				insPrv.setString(2, p.getFirstName());
+				insPrv.setString(3, p.getLastName());
+				insPrv.setString(4, p.getTitle());
+				insPrv.execute();
+				providerCache.put(p.getUUID(), p);
 			}
 
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Returns all of a provider's offices
-	 *
-	 * @param providerUUID UUID of provider
-	 * @return ArrayList of nodes that the provider has an office at
-	 */
-	private ArrayList<Node> getProviderLocations(String providerUUID)
-	{
-		ArrayList<Node> ret = new ArrayList<>();
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM ProviderOffices WHERE provider_uuid=?");
-			pstmt.setString(1, providerUUID);
-			ResultSet results = pstmt.executeQuery();
-			while (results.next())
-				ret.add(nodeCache.get(results.getString(1)));
-		}
-		catch (SQLException e)
-		{
-			System.out.println("Error trying to get list of provider's offices!");
-			e.printStackTrace();
-		}
-
-		return ret;
-	}
-
-
-	/**
-	 * You win, Andrew. This function will create an office for a provider.
-	 * @param provUUID UUID of provider to give location to
-	 * @param nodeUUID UUID of node that provider is located at
-	 */
-	private void addProviderLocation(String provUUID, String nodeUUID)
-	{
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?, ?)");
-			pstmt.setString(1, provUUID);
-			pstmt.setString(2, nodeUUID);
-			pstmt.execute();
-		} catch (SQLException e)
-		{
-			System.out.println("Error trying to add provider location!");
-			e.printStackTrace();
-		}
-	}
-
-	private void updateProviderLocations(Provider p)
-	{
-		try
-		{
-			//Delete any existing connections in the database
-			PreparedStatement stmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
-			stmt.setString(1, p.getUuid());
+			/*UPDATE OFFICES*/
+			//Delete any existing offices in the database
+			PreparedStatement stmt = connection.prepareStatement("DELETE FROM ProviderOffices WHERE provider_uuid=?");
+			stmt.setString(1, p.getUUID());
+			stmt.execute();
 
 			//Add all the new ones
 			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ProviderOffices VALUES(?, ?)");
-
 			for(String nodeID : p.getLocationIds())
 			{
-				pstmt.setString(1, p.getUuid());
+				pstmt.setString(1, p.getUUID());
 				pstmt.setString(2, nodeID);
 				pstmt.execute();
 			}
+
+			//Changes to cached nodes shouldn't be necessary, their associated providers will have already done that.
 
 		} catch (SQLException e)
 		{
@@ -793,54 +774,25 @@ public class Database implements AdminStorage
 
 	public void deleteProvider(Provider provider)
 	{
+		provider.deleteObserver(this);
+		providerCache.remove(provider.getUUID());
+
+		//Notify the provider's associated nodes
+		provider.getLocations().forEach((node) -> node.providers.remove(provider)); //HAIL LAMBDA! HAIL HYDR- wait, what?
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");
-			pstmt.setString(1, provider.getUuid());
+			pstmt.setString(1, provider.getUUID());
 			pstmt.execute();
 
 			pstmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE PROVIDER_UUID=?");
-			pstmt.setString(1, provider.getUuid());
-
-			//Flush changes to the node cache. This is O(n), unfortunately
-			for (String s : nodeCache.keySet())
-				nodeCache.get(s).delProvider(provider);
-
+			pstmt.setString(1, provider.getUUID());
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to delete provider!");
 			e.printStackTrace();
 		}
 
-	}
-
-	public void updateOrAddProvider(Provider provider)
-	{
-		try
-		{
-			PreparedStatement stmt = connection.prepareStatement("SELECT firstName FROM PROVIDERS WHERE PROVIDER_UUID=?");
-			stmt.setString(1, provider.getUuid());
-			ResultSet set = stmt.executeQuery();
-			if(set.next())
-			{
-				stmt = connection.prepareStatement("UPDATE PROVIDERS SET FIRSTNAME=?, LASTNAME=?, TITLE=? WHERE PROVIDER_UUID=?");
-				stmt.setString(1, provider.getFirstName());
-				stmt.setString(2, provider.getLastName());
-				stmt.setString(3, provider.getTitle());
-				stmt.setString(4, provider.getUuid());
-				boolean success = stmt.execute();
-
-				updateProviderLocations(provider);
-			}
-			else
-			{
-				addProvider(provider);
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -894,7 +846,7 @@ public class Database implements AdminStorage
 	/**
 	 * Gets a user's password in hashed form
 	 * @param username Username to get password for
-	 * @return Hashed password, or snull if the account does not exist
+	 * @return Hashed password, or null if the account does not exist
 	 */
 	public String getHashedPassword(String username)
 	{
@@ -1002,15 +954,16 @@ public class Database implements AdminStorage
 	 */
 	public void reloadCache()
 	{
-		//No need to clear the hash table, it's a hash table... it doesn't have duplicate entries...
+		//No need to clear the node cache or the provider cache, they're hashtables... they don't suffer from duplicate entries...
 		try
 		{
 			//First load all nodes, sans neighbor relation information
 			ResultSet results = statement.executeQuery("SELECT * FROM Nodes");
 			while (results.next())
 			{
-				Node node = new ConcreteNode(results.getString(1), results.getString(7), results.getString(6),
+				Node node = new Node(results.getString(1), results.getString(7), results.getString(6),
 						results.getDouble(2), results.getDouble(3), results.getInt(4), results.getInt(5));
+				node.addObserver(this);
 				nodeCache.put(node.getID(), node);
 			}
 
@@ -1023,13 +976,33 @@ public class Database implements AdminStorage
 				if (src == null || dst == null)
 					System.out.println("DATABASE TRYING TO CONNECT NULL NODE(S)!");
 				else
-					src.addNeighbor(dst);
+					src.neighbors.add(dst);
+			}
+
+			//Load all the providers
+			results = statement.executeQuery("SELECT * From Providers");
+			while (results.next())
+			{
+				Provider provider = new Provider(results.getString("firstName"), results.getString("lastName"),
+						results.getString("provider_uuid"), results.getString("title"));
+				provider.addObserver(this);
+				providerCache.put(provider.getUUID(), provider);
+			}
+
+			//Link providers objects to node objects, using the database as a reference point for connections
+			results = statement.executeQuery("SELECT * FROM ProviderOffices");
+			while (results.next())
+			{
+				final String provider = results.getString("provider_uuid");
+				final String node = results.getString("node_uuid");
+				nodeCache.get(node).providers.add(providerCache.get(provider)); //these two lines being the same length is very satisfying
+				providerCache.get(provider).locations.put(nodeCache.get(node).getID(), nodeCache.get(node));
 			}
 
 			//Load service info
 			results = statement.executeQuery("SELECT * FROM Services");
 			while (results.next())
-				nodeCache.get(results.getString(1)).addService(results.getString(2));
+				nodeCache.get(results.getString(1)).services.add(results.getString(2));
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to load pathable nodes!");

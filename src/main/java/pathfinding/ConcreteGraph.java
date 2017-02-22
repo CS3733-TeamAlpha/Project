@@ -1,5 +1,7 @@
 package pathfinding;
 
+import data.Node;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -131,26 +133,51 @@ public class ConcreteGraph implements Graph
 	public ArrayList<String> textDirect(Node start, Node end, double scaleFactor)
 	{
 		ArrayList<Node> path = findPath(start, end);
-		Node hold;
-		for (int j = 0; j < path.size()/2; j++)
+		ArrayList<String> toReturn = new ArrayList<>();
+		int length = path.size()-1;
+
+		String[] angles = {"Sharp left","Turn left","Bear left","Continue straight","Bear right","Turn right","Sharp right"};
+
+		toReturn.add("Leave kiosk and " + angles[path.get(length).angle(path.get(length-1),path.get(length-2))].toLowerCase());
+		String lastName = "";
+		int lastAngle = -1;
+		for (int i = length-2; i>=2 ; i--)
 		{
-			hold = path.get(j);
-			path.set(j, path.get(path.size()-1 - j));
-			path.set(path.size()-1 - j, hold);
+			String tempN = getNearbyName(path.get(i-2));
+			int tempA = path.get(i).angle(path.get(i-1),path.get(i-2));
+			if(tempN.equals(lastName) && tempA==lastAngle && tempA==3)
+			{
+			}else if(path.get(i).getType()==2 && path.get(i-1).getType()==2){
+				toReturn.add("Take the elevator to floor " + path.get(i-1).getFloor());
+				i--;
+			}else if(tempN.equals("the hallway"))
+			{
+				toReturn.add(angles[tempA] + " and walk down " + tempN);
+			}else{
+				toReturn.add(angles[tempA] + " towards the " +tempN);
+			}
+			lastName = tempN;
+			lastAngle = tempA;
 		}
-		if (path == null)
-		    return null;
-		ArrayList<String> temp = new ArrayList<>();
-		for (int i = 0; i < path.size() - 2; i++)
-		{
-			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
-			if (path.get(i).getFloor() != path.get(i+1).getFloor())
-				temp.add("Take the elevator to floor " + path.get(i+1).getFloor() + ", then");
-			else
-			temp.add(path.get(i).angle(path.get(i+1), path.get(i+2)) + ", then");
+
+		toReturn.add("You have arrived at " + path.get(0).getName());
+
+		return toReturn;
+	}
+
+	private String getNearbyName(Node next)
+	{
+		if(next.getType()!=0){
+			return next.getName();
+		}else{
+			for (Node n:next.getNeighbors())
+			{
+				if(n.getType()!=0)
+				{
+					return n.getName();
+				}
+			}
 		}
-		temp.add("Walk " + Math.round(scaleFactor*path.get(path.size()-2).distance(path.get(path.size()-1))) + " feet");
-		temp.add("You have reached your destination!");
-		return temp;
+		return "the hallway";
 	}
 }

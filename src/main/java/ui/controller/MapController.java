@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import pathfinding.ConcreteGraph;
 import pathfinding.Graph;
-import pathfinding.Node;
+import data.Node;
 import ui.Accessibility;
 import ui.Paths;
 
@@ -38,6 +38,7 @@ public class MapController extends BaseController
 	boolean findingDirections = false;
 	boolean hasNextStep = false;
 	boolean resetSteps = false;
+	boolean jumping = false;
 	int targetFloor = -1;
 	String targetBuilding = "";
 
@@ -127,18 +128,12 @@ public class MapController extends BaseController
 		Node searched = getSearchedFor();
 		if(searched!=null){
 			System.out.println(searched.getName());
-			jumpFloor(searched.getFloor());
-
-			//TODO - FIX SCROLLING
-			double width = scroller.getContent().getBoundsInLocal().getWidth();
-			double height = scroller.getContent().getBoundsInLocal().getHeight();
-			System.out.println(searched.getX()/(width-scroller.getWidth()));
-			System.out.println(searched.getY()/(height-scroller.getHeight()));
-			scroller.setHvalue(searched.getX()/(width-scroller.getWidth()));
-			scroller.setVvalue(1-searched.getY()/(height-scroller.getHeight()));
-
+			int floor = searched.getFloor();
+			String buildingid = searched.getBuilding();
+			setFloorImage(buildingid,floor);
 			selected = searched;
 			showRoomInfo(searched);
+			focusView(searched);
 			setSearchedFor(null);
 		}
 
@@ -169,15 +164,16 @@ public class MapController extends BaseController
 
 	public void showRoomInfo(Node n)
 	{
+		Node focusNode = null;
 		if(selected != n)
 		{
 			selected = n;
 			findingDirections = false;
+			focusNode = n;
 		}
 		if(findingDirections)
 		{
-			Node focusNode = null;
-			if(!hasNextStep)
+			if(!hasNextStep && jumping)
 			{
 				BUILDINGID = kiosk.getBuilding();
 				jumpFloor(kiosk.getFloor());
@@ -214,8 +210,6 @@ public class MapController extends BaseController
 							focusNode = path.get(i);
 						}
 						Line line = new Line();
-						//System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
-						//System.out.println(path.get(i+1).getID());
 						line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
 						line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
 						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
@@ -241,8 +235,11 @@ public class MapController extends BaseController
 						nextStep.setDisable(false);
 					}
 				}
-				focusView(focusNode);
-				focusNode = null;
+				if(focusNode != null)
+				{
+					focusView(focusNode);
+					focusNode = null;
+				}
 			}
 			//findingDirections = false;
 		}
@@ -265,6 +262,7 @@ public class MapController extends BaseController
 
 		findingDirections = false;
 		hasNextStep = false;
+		jumping = false;
 	}
 
 	/**
@@ -318,6 +316,7 @@ public class MapController extends BaseController
 		}
 		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
+		jumping = true;
 		showRoomInfo(selected);
 	}
 
@@ -355,14 +354,15 @@ public class MapController extends BaseController
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
 		}
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
-		}
-
-		if(hasNextStep)
-		{
-			resetSteps = true;
 		}
 	}
 
@@ -397,13 +397,15 @@ public class MapController extends BaseController
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
 		}
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
-		}
-		if(hasNextStep)
-		{
-			resetSteps = true;
 		}
 	}
 
@@ -414,6 +416,7 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goNextStep(ActionEvent event) {
+		jumping = true;
 		if(resetSteps)
 		{
 			resetSteps();
@@ -429,9 +432,13 @@ public class MapController extends BaseController
 			}
 			if(!selected.getBuilding().equals(kiosk.getBuilding()))
 			{
-				if(FLOORID != 1)
+				if(FLOORID != 1 && BUILDINGID.equals(kiosk.getBuilding()))
 				{
 					jumpFloor(1);
+				}
+				else if (BUILDINGID.equals(selected.getBuilding()))
+				{
+					jumpFloor(selected.getFloor());
 				}
 				else
 				{
@@ -517,6 +524,7 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
+		jumping = true;
 		if(resetSteps)
 		{
 			resetSteps();
@@ -591,6 +599,7 @@ public class MapController extends BaseController
 				((AnchorPane) l.getParent()).getChildren().remove(l);
 			}
 			currentPath.clear();
+			textDirectionsLabel.setText("");
 		}
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
@@ -627,13 +636,15 @@ public class MapController extends BaseController
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
-		}
-		if(hasNextStep)
-		{
-			resetSteps = true;
 		}
 
 	}

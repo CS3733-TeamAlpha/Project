@@ -30,7 +30,8 @@ CREATE TABLE Providers
   provider_uuid VARCHAR(36) PRIMARY KEY NOT NULL,
   firstName VARCHAR(128) NOT NULL,
   lastName VARCHAR(128) NOT NULL,
-  title VARCHAR(60)
+  title VARCHAR(60),
+  CONSTRAINT UNIQ_NAME UNIQUE(firstName, lastName) --two people can have the same name? no, no they can't, that would be silly.
 );
 
 CREATE TABLE ProviderOffices --Links between doctors and their offices.
@@ -56,8 +57,7 @@ CREATE TABLE Logins
 
 
 INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'faulkner_main');
-INSERT INTO Buildings VALUES('00000000-0000-0000-0000-111111111111', 'belkin_house');
-INSERT INTO Buildings VALUES('00000000-0000-0000-0000-222222222222', 'outdoors');
+
 
 --Delete all nodes in the building if the building gets deleted
 ALTER TABLE Nodes ADD FOREIGN KEY (building) REFERENCES Buildings(building_uuid) ON DELETE CASCADE;
