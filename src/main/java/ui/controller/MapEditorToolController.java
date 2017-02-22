@@ -110,8 +110,8 @@ public class MapEditorToolController extends BaseController
 				showNodeDetails(nodeB);
 				nodeB.setLayoutX(e.getX() - XOFFSET + nodeB.getLayoutX());
 				nodeB.setLayoutY(e.getY() - YOFFSET + nodeB.getLayoutY());
-				currentNode.setX(nodeB.getLayoutX() + XOFFSET);
-				currentNode.setY(nodeB.getLayoutY() + YOFFSET);
+				currentNode.setXQuiet(nodeB.getLayoutX() + XOFFSET);
+				currentNode.setYQuiet(nodeB.getLayoutY() + YOFFSET);
 				redrawAllNeighbors(currentNode);
 			}
 		}
@@ -813,8 +813,14 @@ public class MapEditorToolController extends BaseController
 		//is this a right click?
 		if(e.isSecondaryButtonDown())
 		{
+			System.out.println("asdf");
+			System.out.println(currentState);
 			if(currentButton != null){ //radial context menu for node options
 				mainScroll.setPannable(false);
+				if(currentState != editorStates.SHOWINGNODEMENU)
+				{
+					currentState = editorStates.SHOWINGEMPTYMENU;
+				}
 			} else { //radial context menu for adding nodes
 				currentState = editorStates.SHOWINGEMPTYMENU;
 				mainScroll.setPannable(false);
@@ -981,8 +987,10 @@ public class MapEditorToolController extends BaseController
 				}
 				contextSelection = -1;
 				break;
-
+			case MOVINGNODE:
+				currentNode.notifyObservers();
 			default:
+				System.out.println("asdf");
 				if(currentNode != null)
 				{
 					database.updateNode(currentNode);

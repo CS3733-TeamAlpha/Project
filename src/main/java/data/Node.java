@@ -201,11 +201,23 @@ public class Node extends Observable
 		notifyObservers();
 	}
 
+	public void setXQuiet(double newX)
+	{
+		setChanged();
+		x = newX;
+	}
+
 	public void setX(double newX)
 	{
 		x = newX;
 		setChanged();
 		notifyObservers();
+	}
+
+	public void setYQuiet(double newY)
+	{
+		setChanged();
+		y = newY;
 	}
 
 	public void setY(double newY)
