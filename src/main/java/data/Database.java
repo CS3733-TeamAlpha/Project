@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.UUID;
 
 /**
  * Class for database access using java derby.
@@ -704,7 +703,8 @@ public class Database implements AdminStorage
 			ResultSet results = statement.executeQuery("SELECT * FROM Providers");
 			while (results.next())
 			{
-				Provider p = Provider.newInstance(results.getString("firstName"),
+				//TODO: Unfuck this so that providers are tracked globally
+				Provider p = new Provider(results.getString("firstName"),
 						results.getString("lastName"),
 						results.getString("provider_uuid"),
 						results.getString("title"),

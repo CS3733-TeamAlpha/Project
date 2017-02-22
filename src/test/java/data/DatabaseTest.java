@@ -244,9 +244,9 @@ public class DatabaseTest
 	{
 		//Create a test node with a test provider, put it in the database.
 		ConcreteNode node = new ConcreteNode();
-		node.addProvider("Picard, Jean-Luc; Captain");
+		Provider picard = new Provider("Jean Luc", "Picard", UUID.randomUUID().toString(), "Captain");
+		node.addProvider(picard);
 		database.insertNode(node);
-		final String provID = database.getProviderUUID("Picard, Jean-Luc; Captain");
 
 		//Reload from the database
 		database.disconnect();
@@ -256,18 +256,19 @@ public class DatabaseTest
 		assertEquals(1, database.getProviders().size());
 
 		//Add a second provider to the node and verify the transaction
-		node.addProvider("Sisko, Benjamin; Captain");
+		Provider sisko = new Provider("Benjamin", "Sisko", UUID.randomUUID().toString(), "Captain");
+		node.addProvider(sisko);
 		database.updateNode(node);
 		assertEquals(2, database.getProviders().size());
 
 		//Delete picard and verify his deletion
-		node.delProvider("Picard, Jean-Luc; Captain");
-		database.deleteProvider(provID);
+		node.delProvider(picard);
+		database.deleteProvider(picard);
 		assertEquals(1, database.getProviders().size());
 
 		//Clean up
 		database.deleteNodeByUUID(node.getID());
-		database.deleteProvider(database.getProviderUUID("Sisko, Benjamin; Captain"));
+		database.deleteProvider(sisko);
 		assertEquals(0, database.getProviders().size());
 	}
 

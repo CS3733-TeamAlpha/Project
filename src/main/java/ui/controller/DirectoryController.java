@@ -64,7 +64,7 @@ public class DirectoryController extends BaseController
 
 	public void addNewProvider()
 	{
-		Provider newProvider = Provider.newInstance("First Name", "Last Name", UUID.randomUUID().toString(), "Title", new ArrayList<>());
+		Provider newProvider = new Provider("First Name", "Last Name", UUID.randomUUID().toString(), "Title", new ArrayList<>());
 		newProviderList.add(newProvider);
 		loadProvider(newProvider);
 	}
