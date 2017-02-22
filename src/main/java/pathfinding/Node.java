@@ -1,5 +1,7 @@
 package pathfinding;
 
+import data.Provider;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -36,9 +38,9 @@ public interface Node
 	boolean equals(Node node);
 
 	//Documentation on getters/setters? NEVER!
-	void addProvider(String newProvider);
+	void addProvider(Provider newProvider);
 
-	void delProvider(String oldProvider);
+	void delProvider(Provider oldProvider);
 
 	void addService(String newService);
 
@@ -62,7 +64,7 @@ public interface Node
 
 	void setFloor(int newFloor);
 
-	ArrayList<String> getProviders();
+	ArrayList<Provider> getProviders();
 
 	ArrayList<String> getServices();
 

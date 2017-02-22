@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -12,34 +8,39 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapController">
+<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <items>
       <StackPane alignment="TOP_CENTER">
           <children>
-              <ScrollPane fx:id="scroller" hbarPolicy="ALWAYS" maxHeight="-Infinity" maxWidth="-Infinity" pannable="true" prefHeight="720.0" prefWidth="1280.0" vbarPolicy="ALWAYS" StackPane.alignment="TOP_LEFT">
-                  <content>
-                      <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0" prefHeight="1300.0" prefWidth="2250.0">
-                          <children>
-                              <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                               <image>
-                                  <Image url="@/images/floor3.png" />
-                               </image>
-                              </ImageView>
-                          </children>
-                      </AnchorPane>
-                  </content>
+              <ScrollPane fx:id="scroller" hbarPolicy="ALWAYS" pannable="true" vbarPolicy="ALWAYS" StackPane.alignment="TOP_LEFT">
+               <content>
+                  <AnchorPane fx:id="zoomWrapper">
+                     <children>
+                            <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0">
+                                <children>
+                                    <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                     <image>
+                                        <Image url="@/images/floor3.png" />
+                                     </image>
+                                    </ImageView>
+                                </children>
+                            </AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </content>
               </ScrollPane>
               <Pane pickOnBounds="false">
                   <children>
                   <Button layoutX="14.0" layoutY="7.0" mnemonicParsing="false" onAction="#showStartup" text="&lt; Back" />
                   <Button fx:id="upFloor" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" onAction="#goUpFloor" />
                   <Button fx:id="downFloor" layoutX="14.0" layoutY="143.0" mnemonicParsing="false" onAction="#goDownFloor" />
-                  <Label fx:id="currentFloorLabel" layoutX="17.0" layoutY="105.0" text="3">
+                  <Label fx:id="currentFloorLabel" layoutX="17.0" layoutY="105.0" text="1">
                      <font>
                         <Font size="26.0" />
                      </font>
@@ -50,17 +51,31 @@
       </StackPane>
       <VBox fx:id="roomInfo" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#hideRoomInfo" prefHeight="28.0" prefWidth="65.0" text="Hide &gt;" />
+            <Button mnemonicParsing="false" onAction="#hideRoomInfo" prefHeight="28.0" prefWidth="65.0" text="Hide" />
             <Label fx:id="roomName" alignment="CENTER" prefHeight="82.0" prefWidth="327.0" text="Room 212">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" prefHeight="93.0" prefWidth="315.0" text="Find Directions" />
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" prefHeight="93.0" prefWidth="315.0" text="Find Directions">
+               <VBox.margin>
+                  <Insets bottom="30.0" />
+               </VBox.margin></Button>
+            <HBox prefHeight="52.0" prefWidth="315.0">
+               <children>
+                  <Button fx:id="previousStep" mnemonicParsing="false" onAction="#goPreviousStep" prefHeight="52.0" prefWidth="150.0" text="Previous Step">
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" text="Next Step" />
+               </children>
+            </HBox>
             <ScrollPane prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">
                <content>
                   <Label fx:id="textDirectionsLabel" styleClass="hc-black" />
                </content></ScrollPane>
+            <Button mnemonicParsing="false" onAction="#clearPath" prefHeight="36.0" prefWidth="315.0" text="Clear Path" />
          </children></VBox>
    </items>
 </SplitPane>

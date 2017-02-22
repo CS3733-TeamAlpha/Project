@@ -1,4 +1,4 @@
-package ui;
+package ui.controller;
 
 import data.SearchResult;
 import javafx.geometry.Side;
@@ -6,6 +6,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import ui.Accessibility;
+import ui.Paths;
 
 import java.util.ArrayList;
 
@@ -23,7 +25,6 @@ public class StartupController extends BaseController
 
 	public void initialize()
 	{
-		updateLowerImages();
 		contextMenu = new ContextMenu();
 		contextMenu.setMaxWidth(searchBox.getWidth());
 
@@ -35,6 +36,12 @@ public class StartupController extends BaseController
 			{
 				MenuItem item = new MenuItem(result.displayText);
 				contextMenu.getItems().add(item);
+				item.setOnAction(event ->
+				{
+					setSearchedFor(database.getNodeByUUID(result.id));
+					System.out.println(result.id);
+					loadFXML(Paths.MAP_FXML);
+				});
 			}
 
 			if(newValue.length() == 0)
@@ -56,7 +63,7 @@ public class StartupController extends BaseController
 
 	public void ShowDirectory()
 	{
-		loadFXML(Paths.DIRECTORY2_FXML);
+		loadFXML(Paths.USER_DIRECTORY_FXML);
 	}
 
 	public void showLogin()
@@ -67,24 +74,5 @@ public class StartupController extends BaseController
 	public void toggleHighContrast()
 	{
 		Accessibility.toggleHighContrast(this);
-		updateLowerImages();
-	}
-
-	private void updateLowerImages()
-	{
-		/*if(Accessibility.isHighContrast())
-		{
-			ColorAdjust white = new ColorAdjust();
-			white.setBrightness(1);
-			eyeImage.setEffect(white);
-			lockImage.setEffect(white);
-		}
-		else
-		{
-			ColorAdjust white = new ColorAdjust();
-			white.setBrightness(0.3);
-			eyeImage.setEffect(white);
-			lockImage.setEffect(white);
-		}*/
 	}
 }

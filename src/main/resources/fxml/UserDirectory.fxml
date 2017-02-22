@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.UserDirectoryController">
+   <children>
+      <VBox layoutX="505.0" layoutY="189.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+             <Pane prefHeight="115.0" prefWidth="1280.0" styleClass="bh-white">
+                 <children>
+                     <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                         <image>
+                             <Image url="@../images/BWHlogo.gif" />
+                         </image>
+                     </ImageView>
+                 </children>
+             </Pane>
+             <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
+            <AnchorPane VBox.vgrow="SOMETIMES">
+               <children>
+                  <TableView fx:id="tableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="60.0" VBox.vgrow="SOMETIMES">
+                    <columns>
+                        <TableColumn fx:id="firstNameColumn" prefWidth="201.0" text="First Name" />
+                        <TableColumn fx:id="lastNameColumn" editable="false" prefWidth="364.0" resizable="false" text="Last Name" />
+                        <TableColumn fx:id="titleColumn" prefWidth="140.0" text="Title" />
+                        <TableColumn fx:id="locationsColumn" prefWidth="514.0" text="Locations" />
+                    </columns>
+                  </TableView>
+                  <Button focusTraversable="false" layoutX="14.0" layoutY="17.0" mnemonicParsing="false" onAction="#backButton" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="17.0" />
+                  <TextField fx:id="searchBar" layoutX="845.0" layoutY="14.0" prefHeight="27.0" prefWidth="355.0" promptText="Search by name..." AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="14.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font></TextField>
+                  <Label layoutX="80.0" layoutY="10.0" text="Provider Directory" AnchorPane.leftAnchor="80.0">
+                     <font>
+                        <Font size="33.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
