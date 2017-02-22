@@ -70,6 +70,15 @@ public class Provider extends Observable
 		return title;
 	}
 
+	public void setAll(String newFName, String newLName, String newTitle)
+	{
+		firstName = newFName;
+		lastName = newLName;
+		title = newTitle;
+		setChanged();
+		notifyObservers();
+	}
+
 	public void setTitle(String title)
 	{
 		this.title = title;
