@@ -663,6 +663,7 @@ public class Database implements AdminStorage
 	 * Type 6 up to type 19 are unique connections between buildings
 	 * @param n Source node, checks if another node with the same type exists and connect
 	 * @param type Type integer
+	 * @apiNote wtf is this
 	 */
 	public void connectEntrances(Node n, int type)
 	{
@@ -757,61 +758,16 @@ public class Database implements AdminStorage
 	}
 
 	/**
-	 * Gets a list of all provider names
+	 * Gets a list of all providers
 	 *
-	 * @return ArrayList of names
+	 * @return ArrayList of all providers.
 	 */
 	public ArrayList<Provider> getProviders()
 	{
 		ArrayList<Provider> ret = new ArrayList<>();
-		try
-		{
-			ResultSet results = statement.executeQuery("SELECT * FROM Providers");
-			while (results.next())
-			{
-				//TODO: Unfuck this so that providers are tracked globally
-				Provider p = new Provider(results.getString("firstName"),
-						results.getString("lastName"),
-						results.getString("provider_uuid"),
-						results.getString("title"),
-						getProviderLocations(results.getString("provider_uuid")));
-				ret.add(p);
-			}
-
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
+		providerCache.forEach((id, provider) -> ret.add(provider));
 		return ret;
 	}
-
-	/**
-	 * Returns all of a provider's offices
-	 *
-	 * @param providerUUID UUID of provider
-	 * @return ArrayList of nodes that the provider has an office at
-	 */
-	private ArrayList<Node> getProviderLocations(String providerUUID)
-	{
-		ArrayList<Node> ret = new ArrayList<>();
-		try
-		{
-			PreparedStatement pstmt = connection.prepareStatement("SELECT node_uuid FROM ProviderOffices WHERE provider_uuid=?");
-			pstmt.setString(1, providerUUID);
-			ResultSet results = pstmt.executeQuery();
-			while (results.next())
-				ret.add(nodeCache.get(results.getString(1)));
-
-		} catch (SQLException e)
-		{
-			System.out.println("Error trying to get list of provider's offices!");
-			e.printStackTrace();
-		}
-
-		return ret;
-	}
-
 
 	/**
 	 * You win, Andrew. This function will create an office for a provider.
@@ -860,6 +816,7 @@ public class Database implements AdminStorage
 
 	public void deleteProvider(Provider provider)
 	{
+		providerCache.remove(provider.getUUID());
 		try
 		{
 			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Providers WHERE provider_uuid=?");

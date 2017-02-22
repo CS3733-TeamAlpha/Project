@@ -112,6 +112,13 @@ public class Provider
 		return locations.keySet().stream().collect(Collectors.toList());
 	}
 
+	public List<Node> getLocations()
+	{
+		ArrayList<Node> ret = new ArrayList<>();
+		locations.forEach((id, node) -> ret.add(node));
+		return ret;
+	}
+
 	public void addLocation(Node n)
 	{
 		locations.put(n.getID(), n);
