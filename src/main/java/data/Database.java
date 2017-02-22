@@ -1035,15 +1035,15 @@ public class Database implements Observer
 			searchText = searchText.toLowerCase();
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
 			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE LOWER(NAME) LIKE ? UNION " +
-					"SELECT lastName, firstName, title, provider_uuid FROM Providers WHERE LOWER(CONCAT(lastName, ', ', firstName, ', ', title)) LIKE ?" + ((top6)? " FETCH FIRST 6 ROWS ONLY" : ""));
+					"SELECT (lastName || ', ' ||  firstName || '; ' || title) AS name, provider_uuid FROM Providers WHERE LOWER(lastName || ', ' ||  firstName || '; ' || title) LIKE ?" + ((top6)? " FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
 			while(results.next())
 			{
 				SearchResult res = new SearchResult();
-				res.displayText = results.getString("lastName") + ", " + results.getString("firstName") + "; " + results.getString("title");
-				res.id = results.getString("provider_uuid");
+				res.displayText = results.getString("name");
+				res.id = results.getString(2);
 				searchResults.add(res);
 			}
 
