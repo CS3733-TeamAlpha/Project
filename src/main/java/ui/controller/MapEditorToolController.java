@@ -813,8 +813,6 @@ public class MapEditorToolController extends BaseController
 		//is this a right click?
 		if(e.isSecondaryButtonDown())
 		{
-			System.out.println("asdf");
-			System.out.println(currentState);
 			if(currentButton != null){ //radial context menu for node options
 				mainScroll.setPannable(false);
 				if(currentState != editorStates.SHOWINGNODEMENU)
