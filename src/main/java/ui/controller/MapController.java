@@ -373,13 +373,23 @@ public class MapController extends BaseController
 	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor (ActionEvent event){
+		int topFloor;
+
 		if(currentPath.size() != 0){
 			for(Line l: currentPath){
 				((AnchorPane) l.getParent()).getChildren().remove(l);
 			}
 			currentPath.clear();
 		}
-		if(FLOORID < 7){
+
+		if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111")) { //If we are in belkin house
+			topFloor = 4;
+		} else if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000")) { //If we are in Faulkner House
+			topFloor = 7;
+		} else { //Assume we are outside at this point
+			topFloor = 1;
+		}
+		if(FLOORID < topFloor){
 			//remove all buttons and lines on the current floor
 			purgeButtons();
 			FLOORID++;
