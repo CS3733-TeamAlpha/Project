@@ -75,6 +75,7 @@ public class DatabaseTest
 		database.insertNode(testNode);
 		assertNotNull(database.getNodeByUUID(testNode.getID()));
 		database.deleteNodeByUUID(testNode.getID());
+		assertEquals(0, database.getAllNodes().size());
 		assertNull(database.getNodeByUUID(testNode.getID()));
 	}
 
@@ -262,10 +263,14 @@ public class DatabaseTest
 		//Delete picard and verify his deletion
 		database.deleteProvider(picard);
 		assertEquals(1, database.getProviders().size());
-		assertEquals(1, node.getProviders().size())
+		assertEquals(1, node.getProviders().size());
+		System.out.printf("Remaining provider " + database.getProviders().get(0).getLastName());
 
 		//Clean up
 		database.deleteNodeByUUID(node.getID());
+		assertEquals(1, node.getProviders().size());
+		assertEquals(0, database.getAllNodes().size());
+		assertEquals(1, database.getProviders().size());
 		database.deleteProvider(sisko);
 		assertEquals(0, node.getProviders().size());
 		assertEquals(0, database.getProviders().size());

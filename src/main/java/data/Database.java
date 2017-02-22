@@ -421,7 +421,7 @@ public class Database implements Observer
 			//would be generated).
 			statement.execute("DELETE FROM Edges WHERE dst='" + uuid + "'");
 
-			PreparedStatement stmt = connection.prepareStatement("DELETE FROM PROVIDEROFFICES WHERE NODE_UUID=?");
+			PreparedStatement stmt = connection.prepareStatement("DELETE FROM ProviderOffices WHERE NODE_UUID=?");
 			stmt.setString(1, uuid);
 			stmt.execute();
 
@@ -431,21 +431,11 @@ public class Database implements Observer
 			Node node = nodeCache.get(uuid);
 
 			//Notify the providers they are no longer associated with this location
-			ArrayList<Provider> tmpProviders = node.getProviders();
-			for (int i = 0; i < tmpProviders.size(); i++)
-			{
-				tmpProviders.get(i).removeLocation(node.getID());
-			}
-
-			if (node == null)
-			{
-				System.out.println("Lord of the nullptr exceptions reporting in, sir, there's been a most unusual error... not sure how to proceed.");
-				return;
-			}
+			node.getProviders().forEach((prv) -> prv.locations.remove(uuid));
 
 			for (String s : nodeCache.keySet())
-				nodeCache.get(s).delNeighbor(node);
-			nodeCache.get(uuid).deleteObserver(this);
+				nodeCache.get(s).neighbors.remove(node);
+			node.deleteObserver(this);
 			nodeCache.remove(uuid);
 
 		} catch (SQLException e)
@@ -786,6 +776,7 @@ public class Database implements Observer
 	{
 		provider.deleteObserver(this);
 		providerCache.remove(provider.getUUID());
+
 		//Notify the provider's associated nodes
 		provider.getLocations().forEach((node) -> node.providers.remove(provider)); //HAIL LAMBDA! HAIL HYDR- wait, what?
 		try
