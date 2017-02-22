@@ -38,6 +38,7 @@ public class MapController extends BaseController
 	boolean findingDirections = false;
 	boolean hasNextStep = false;
 	boolean resetSteps = false;
+	boolean jumping = false;
 	int targetFloor = -1;
 	String targetBuilding = "";
 
@@ -170,7 +171,7 @@ public class MapController extends BaseController
 		}
 		if(findingDirections)
 		{
-			if(!hasNextStep)
+			if(!hasNextStep && jumping)
 			{
 				BUILDINGID = kiosk.getBuilding();
 				jumpFloor(kiosk.getFloor());
@@ -259,6 +260,7 @@ public class MapController extends BaseController
 
 		findingDirections = false;
 		hasNextStep = false;
+		jumping = false;
 	}
 
 	/**
@@ -312,6 +314,7 @@ public class MapController extends BaseController
 		}
 		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
+		jumping = true;
 		showRoomInfo(selected);
 	}
 
@@ -349,14 +352,15 @@ public class MapController extends BaseController
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
 		}
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
-		}
-
-		if(hasNextStep)
-		{
-			resetSteps = true;
 		}
 	}
 
@@ -391,13 +395,15 @@ public class MapController extends BaseController
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
 		}
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
-		}
-		if(hasNextStep)
-		{
-			resetSteps = true;
 		}
 	}
 
@@ -408,6 +414,7 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goNextStep(ActionEvent event) {
+		jumping = true;
 		if(resetSteps)
 		{
 			resetSteps();
@@ -515,6 +522,7 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
+		jumping = true;
 		if(resetSteps)
 		{
 			resetSteps();
@@ -626,13 +634,15 @@ public class MapController extends BaseController
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
-		}
-		if(hasNextStep)
-		{
-			resetSteps = true;
 		}
 
 	}
