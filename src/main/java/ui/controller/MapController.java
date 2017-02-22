@@ -126,10 +126,12 @@ public class MapController extends BaseController
 	{
 		if(findingDirections)
 		{
+			Node focusNode = null;
 			if(!hasNextStep)
 			{
 				BUILDINGID = kiosk.getBuilding();
 				jumpFloor(kiosk.getFloor());
+				focusNode = kiosk;
 			}
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
 
@@ -157,6 +159,10 @@ public class MapController extends BaseController
 					if(path.get(i).getFloor() == FLOORID && path.get(i).getBuilding().equals(BUILDINGID)
 							&& path.get(i+1).getFloor() == FLOORID && path.get(i+1).getBuilding().equals(BUILDINGID))
 					{
+						if(focusNode != null)
+						{
+							focusNode = path.get(i);
+						}
 						Line line = new Line();
 						System.out.println("Line from "+path.get(i).getX()+", "+path.get(i).getY()+" to "+path.get(i+1).getX()+", "+path.get(i + 1).getY());
 						System.out.println(path.get(i+1).getID());
@@ -185,6 +191,8 @@ public class MapController extends BaseController
 						nextStep.setDisable(false);
 					}
 				}
+				focusView(focusNode);
+				focusNode = null;
 			}
 			//findingDirections = false;
 		}
@@ -206,7 +214,15 @@ public class MapController extends BaseController
 		selected = null;
 	}
 
-
+	/**
+	 * focus the view of the map to center on the node
+	 * @param n The node to focus view on
+	 */
+	private void focusView(Node n){
+		if(editingFloor.getWidth() > )
+		double focusX = n.getX();
+		double focusY = n.getY();
+	}
 
 	public void showStartup()
 	{
