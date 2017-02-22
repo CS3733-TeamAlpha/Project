@@ -3,6 +3,7 @@ package ui.controller;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -16,6 +17,7 @@ import pathfinding.Node;
 import ui.Accessibility;
 import ui.Paths;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -121,6 +123,7 @@ public class MapController extends BaseController
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
 	}
+
 
 	public void showRoomInfo(Node n)
 	{
@@ -617,7 +620,18 @@ public class MapController extends BaseController
 				}
 			}
 
-			nodeB.setOnAction(event -> showRoomInfo(n));
+			nodeB.hoverProperty().addListener(l->{
+				ToolTipManager.sharedInstance().setInitialDelay(0);
+				ToolTipManager.sharedInstance().setDismissDelay(100000);
+				String[] splittedName = n.getName().split(";");
+				//ToDO: switch the below index to 1 when the new data is implemented
+				String descNames = splittedName[0];
+				Tooltip t = new Tooltip(descNames);
+				nodeB.setCursor(Cursor.HAND);
+				Tooltip.install(nodeB, t);
+				System.out.println("Straight hovering son");
+			});
+				nodeB.setOnAction(event -> showRoomInfo(n));
 			//add button to scene
 			editingFloor.getChildren().add(1, nodeB);
 		}
