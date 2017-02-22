@@ -128,17 +128,9 @@ public class MapController extends BaseController
 		if(searched!=null){
 			System.out.println(searched.getName());
 			jumpFloor(searched.getFloor());
-
-			//TODO - FIX SCROLLING
-			double width = scroller.getContent().getBoundsInLocal().getWidth();
-			double height = scroller.getContent().getBoundsInLocal().getHeight();
-			System.out.println(searched.getX()/(width-scroller.getWidth()));
-			System.out.println(searched.getY()/(height-scroller.getHeight()));
-			scroller.setHvalue(searched.getX()/(width-scroller.getWidth()));
-			scroller.setVvalue(1-searched.getY()/(height-scroller.getHeight()));
-
 			selected = searched;
 			showRoomInfo(searched);
+			focusView(searched);
 			setSearchedFor(null);
 		}
 
