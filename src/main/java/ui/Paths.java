@@ -11,6 +11,8 @@ public class Paths
 	public static final String STARTUP_FXML = "/fxml/Startup.fxml";
 	public static final String ADMIN_PAGE_FXML = "/fxml/AdminPage.fxml";
 	public static final String USER_DIRECTORY_FXML = "/fxml/UserDirectory.fxml";
+	public static final String ACCOUNT_BOX_FXML = "/fxml/AccountBox.fxml";
+	public static final String MANAGE_ACCOUNTS_FXML = "/fxml/ManageAccounts.fxml";
 
 	public static final String FLOOR1_NORMAL = "/NewFloors/hospital1.png";
 	public static final String FLOOR2_NORMAL = "/NewFloors/hospital2.png";
@@ -94,4 +96,9 @@ public class Paths
 	public static ProxyImage kioskImageProxy = new ProxyImage(Paths.KIOSKICON);
 
 	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
+
+	public static boolean isAdmin(String userName)
+	{
+		return userName.equals("admin");
+	}
 }

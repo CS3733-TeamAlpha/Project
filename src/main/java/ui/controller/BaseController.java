@@ -57,6 +57,10 @@ public abstract class BaseController
 	double XOFFSET = CIRCLEWIDTH / 2;
 	double YOFFSET = CIRCLEWIDTH / 2;
 
+	double MINZOOM = 0.6;
+	double MAXZOOM = 1.4;
+	double currentZoom = 1.0;
+
 	static
 	{
 		database = null;
@@ -175,5 +179,7 @@ public abstract class BaseController
 		{
 		}
 	}
+
+
 
 }
