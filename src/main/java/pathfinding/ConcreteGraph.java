@@ -134,23 +134,30 @@ public class ConcreteGraph implements Graph
 		ArrayList<String> toReturn = new ArrayList<>();
 		int length = path.size()-1;
 
-		toReturn.add("Leave this kiosk in the direction of " + getNearbyName(path.get(length-2)));
+		String[] angles = {"Sharp left","Turn left","Bear left","Continue straight","Bear right","Turn right","Sharp right"};
 
-		for(int i = length-1; i > 0; i--)
+		toReturn.add("Leave kiosk and " + angles[path.get(length).angle(path.get(length-1),path.get(length-2))].toLowerCase());
+		String lastName = "";
+		int lastAngle = -1;
+		for (int i = length-2; i>=2 ; i--)
 		{
-			if(path.get(i).getType()!=0)
+			String tempN = getNearbyName(path.get(i-2));
+			int tempA = path.get(i).angle(path.get(i-1),path.get(i-2));
+			if(tempN.equals(lastName) && tempA==lastAngle)
 			{
-
-				toReturn.add("walk to " + path.get(i).getName() + " then,");
-				if(path.get(i).getType()==2)
-				{
-					toReturn.add("Take the elevator to floor " + path.get(i-1).getFloor());
-					i--;
-				}
+			}else if(path.get(i-1).getType()==2 && path.get(i-2).getType()==2){
+				toReturn.add("Take the elevator to floor " + path.get(i-2).getFloor());
+			}else if(tempN.equals("the hallway"))
+			{
+				toReturn.add(angles[tempA] + " and walk down " + tempN);
+			}else{
+				toReturn.add(angles[tempA] + " towards the " +tempN);
 			}
+			lastName = tempN;
+			lastAngle = tempA;
 		}
-		toReturn.add("walk to ");
 
+		toReturn.add("Walk to " + path.get(0).getName() + ", you have arrived!");
 
 		return toReturn;
 	}
@@ -168,6 +175,6 @@ public class ConcreteGraph implements Graph
 				}
 			}
 		}
-		return " the hallway";
+		return "the hallway";
 	}
 }

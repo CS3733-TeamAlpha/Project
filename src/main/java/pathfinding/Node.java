@@ -29,11 +29,10 @@ public interface Node
 	 * uses BLACK MAGIC to calculate the angle between 3 nodes, the first being the node
 	 * that this method is called on. Doesn't actually return the angle; returns an approximate
 	 * direction
-	 *
-	 * @param pivot the second node in a set of three nodes
+	 *  @param pivot the second node in a set of three nodes
 	 * @param dest  the third node in a set of three nodes
 	 */
-	String angle(Node pivot, Node dest);
+	int angle(Node pivot, Node dest);
 
 	boolean equals(Node node);
 
