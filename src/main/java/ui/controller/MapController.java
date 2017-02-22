@@ -206,7 +206,9 @@ public class MapController extends BaseController
 	{
 		roomviewSplit.getItems().remove(roomInfo);
 		roomInfoShown = false;
-		selected = null;
+
+		findingDirections = false;
+		hasNextStep = false;
 	}
 
 
