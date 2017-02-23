@@ -22,7 +22,7 @@ CREATE TABLE Services --Shops, cafes, etc. What is this, a mall?
 (
   node VARCHAR(36),
   name VARCHAR(128) NOT NULL UNIQUE ,
-  FOREIGN KEY (node) REFERENCES Nodes(node_uuid) ON DELETE CASCADE --services and nodes have 1-1 relationship
+  FOREIGN KEY (node) REFERENCES Nodes(node_uuid)
 );
 
 CREATE TABLE Providers
