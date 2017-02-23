@@ -221,12 +221,12 @@ public class MapController extends BaseController
 						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
 						line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 						line.setStrokeWidth(10);
-						// Change color for line if it is high contrast
-						if (Accessibility.isHighContrast()) {
-							line.setStroke(Color.WHITE);
-						} else {
-							line.setStroke(Color.BLUE);
-						}
+//						// Change color for line if it is high contrast
+//						if (Accessibility.isHighContrast()) {
+//							line.setStroke(Color.WHITE);
+//						} else {
+						line.setStroke(Color.BLUE);
+//						}
 						editingFloor.getChildren().add(1,line);
 						currentPath.add(line);
 					}
