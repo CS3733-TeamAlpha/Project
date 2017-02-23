@@ -308,12 +308,7 @@ public class MapController extends BaseController
 			if(i < services.size()-1)
 				toAdd += ", ";
 		}
-		if(toAdd.length()>2)
-		{
-			servicesLabel.setText(toAdd.substring(0, toAdd.length() - 2));
-		}else{
-			servicesLabel.setText("");
-		}
+		servicesLabel.setText(toAdd);
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 
