@@ -434,6 +434,11 @@ public class Database implements Observer
 	{
 		try
 		{
+			//Remove service connections but leave the services, required since there is no cascade delete on services and services use a foreign key system
+			PreparedStatement unlinkServices = connection.prepareStatement("UPDATE Services SET node=NULL WHERE node=?");
+			unlinkServices.setString(1, uuid);
+			unlinkServices.execute();
+
 			statement.execute("DELETE FROM Nodes WHERE node_uuid='" + uuid + "'");
 
 			//Needed because there can be no FOREIGN KEY constraint on the edges dst column. If there were, it would
@@ -866,6 +871,24 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	/**
+	 * Delete a service by name.
+	 * @param name Name of the service to delete.
+	 */
+	public void delService(String name)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Services WHERE name=?");
+			pstmt.setString(1, name);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete a service!");
+			e.printStackTrace();
+		}
 	}
 
 	/**
