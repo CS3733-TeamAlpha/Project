@@ -1,0 +1,19 @@
+[display]
+fullscreen=true
+multi-sampling=true
+no-vsync=true
+viewport=1920x1080
+
+[gource]
+auto-skip-seconds=0.01
+caption-duration=4
+caption-file=gource_captions.txt
+caption-size=42
+file-idle-time=0
+hide=filenames,mouse,progress
+highlight-users=true
+key=true
+seconds-per-day=2
+title=Team Alpha Project
+user-image-dir=.git/avatar
+
