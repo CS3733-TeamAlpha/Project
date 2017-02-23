@@ -1,32 +1,29 @@
-package ui;
+package ui.controller;
 
-import data.Database;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import pathfinding.ConcreteNode;
-import pathfinding.Node;
+import data.Node;
+import ui.Accessibility;
+import ui.Paths;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-
-import static java.awt.SystemColor.window;
 
 public class MapEditorToolController extends BaseController
 {
@@ -50,7 +47,9 @@ public class MapEditorToolController extends BaseController
     private Button currentButton = null;
 
 
-
+    //boolean to determine whether or not to automatically connect newly added nodes
+	//to the nearest hallway node
+	private boolean AUTOCONNECT = false;
 
 	//enums to indicate current state
 	private enum editorStates {
@@ -76,12 +75,6 @@ public class MapEditorToolController extends BaseController
 	private int contextSelection = -1; //default to -1, no context menu option selected
 
 
-
-
-	private int currentFloor = 3; //TODO: make current floor relevant to new/modifying nodes
-	//TODO: should nodes be able to be moved to different floor? probably not
-
-
 	//canvas and graphicscontext, to draw onto the scene
 	private Canvas canvas;
 	private GraphicsContext gc;
@@ -97,6 +90,14 @@ public class MapEditorToolController extends BaseController
 		{
 			if(e.isSecondaryButtonDown())
 			{
+				if(currentButton != e.getSource() && currentButton != null)
+				{
+					System.out.println("dont happen");
+					currentButton.setId("node-button-unselected");
+				}
+				currentButton = (Button)e.getSource();
+				currentButton.setId("node-button-selected");
+				currentNode = nodeButtonLinks.get(currentButton);
 				currentState = editorStates.SHOWINGNODEMENU;
 				displayContextMenu(e);
 			}
@@ -109,8 +110,8 @@ public class MapEditorToolController extends BaseController
 				showNodeDetails(nodeB);
 				nodeB.setLayoutX(e.getX() - XOFFSET + nodeB.getLayoutX());
 				nodeB.setLayoutY(e.getY() - YOFFSET + nodeB.getLayoutY());
-				currentNode.setX(nodeB.getLayoutX() + XOFFSET);
-				currentNode.setY(nodeB.getLayoutY() + YOFFSET);
+				currentNode.setXQuiet(nodeB.getLayoutX() + XOFFSET);
+				currentNode.setYQuiet(nodeB.getLayoutY() + YOFFSET);
 				redrawAllNeighbors(currentNode);
 			}
 		}
@@ -135,6 +136,40 @@ public class MapEditorToolController extends BaseController
 		}
 	};
 
+	public class ZoomHandler implements EventHandler<ScrollEvent> {
+
+		public ZoomHandler()
+		{
+		}
+
+		@Override
+		public void handle(ScrollEvent scrollEvent) {
+				final double scale = calculateScale(scrollEvent);
+				editingFloor.setScaleX(scale);
+				editingFloor.setScaleY(scale);
+				zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
+				zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
+				zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
+				zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+
+				editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
+				editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
+				scrollEvent.consume();
+		}
+
+		private double calculateScale(ScrollEvent scrollEvent) {
+			double scale = currentZoom + scrollEvent.getDeltaY() / 5000;
+
+			if (scale <= MINZOOM) {
+				scale = MINZOOM;
+			} else if (scale >= MAXZOOM) {
+				scale = MAXZOOM;
+			}
+			currentZoom = scale;
+			return scale;
+		}
+	}
+
 	static
 	{
 		//initialize connection and floor/node/provider lists right away
@@ -143,9 +178,6 @@ public class MapEditorToolController extends BaseController
 
 	public MapEditorToolController()
 	{
-		//TODO: make editortool load all nodes without making everything static
-		//currently achieved by pressing a button
-		// loadNodesFromDatabase();
 		super();
 	}
 
@@ -155,9 +187,6 @@ public class MapEditorToolController extends BaseController
 
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();
-
-		//TODO: Load in image for a specific floor and determine canvas size
-		//		based on image size
 
 		//create canvas and graphicscontext
 		//these will be used later for drawing lines in realtime and drag&drop visuals
@@ -184,11 +213,58 @@ public class MapEditorToolController extends BaseController
 		downFloor.setId("downbuttonTriangle");
 
 		//set the floorImage imageview to display the correct floor's image.
-		//TODO: make this work with multiple buildings
-		setFloorImage(FLOORID);
+		setFloorImage(BUILDINGID, FLOORID);
 
 		//set up event handlers for drag and drop images
 		setupImageEventHandlers();
+
+		//set up the choicebox for changing buildings
+		ArrayList<String> buildings = database.getBuildings();
+		for(String s: buildings)
+			System.out.println(s);
+		ChoiceBox buildingChoice = new ChoiceBox();
+		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
+		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
+		buildingChoice.setLayoutX(49);
+		buildingChoice.setLayoutY(106);
+		buildingChoice.setOnAction(event ->
+				{
+					changeBuilding((String)buildingChoice.getValue());
+				}
+		);
+
+		//add event filter to let scrolling do zoom instead
+		mainScroll.addEventFilter(ScrollEvent.ANY, new ZoomHandler());
+
+		ArrayList<String> allServices = database.getServices();
+		serviceAddChoiceBox.setItems(FXCollections.observableArrayList(allServices.toArray()));
+
+	}
+
+	/**
+	 * Change the building that is currently being edited
+	 * @param building String name of the buliding to edit
+	 */
+	private void changeBuilding(String building)
+	{
+		//change selected building ID
+		BUILDINGID = database.getBuildingUUID(building);
+		//remove all buttons and lines on the current floor
+		purgeButtonsAndLines();
+		//default to floor 1 when changing buildings
+		FLOORID = 1;
+		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
+		{
+			MAXFLOOR = 7;
+		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
+		{
+			MAXFLOOR = 4;
+		} else {
+			MAXFLOOR = 1;
+		}
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
+		setFloorImage(BUILDINGID, FLOORID);
 	}
 
 	/**
@@ -197,58 +273,39 @@ public class MapEditorToolController extends BaseController
 	 * Currently only works based on floor, not building
 	 * @param floor The floor to display
 	 */
-	private void setFloorImage(int floor)
+	private void setFloorImage(String buildingid, int floor)
 	{
-		if(Accessibility.isHighContrast())
+		//faulkner building
+		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ContrastProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ContrastProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ContrastProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ContrastProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ContrastProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ContrastProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ContrastProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
-		else
+		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
 		{
-			if (floor == 1)
-			{
-				floorImage.setImage(f1ImageProxy.getFXImage());
-			} else if (floor == 2)
-			{
-				floorImage.setImage(f2ImageProxy.getFXImage());
-			} else if (floor == 3)
-			{
-				floorImage.setImage(f3ImageProxy.getFXImage());
-			} else if (floor == 4)
-			{
-				floorImage.setImage(f4ImageProxy.getFXImage());
-			} else if (floor == 5)
-			{
-				floorImage.setImage(f5ImageProxy.getFXImage());
-			} else if (floor == 6)
-			{
-				floorImage.setImage(f6ImageProxy.getFXImage());
-			} else if (floor == 7)
-			{
-				floorImage.setImage(f7ImageProxy.getFXImage());
-			}
+			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
+		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
+		{
+			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
+		}
+
+		editingFloor.setMinWidth(floorImage.getFitWidth());
+		editingFloor.setMinHeight(floorImage.getFitHeight());
+		editingFloor.setMaxWidth(floorImage.getFitWidth());
+		editingFloor.setMaxHeight(floorImage.getFitHeight());
+
+		final double scale = 1;
+		currentZoom = scale;
+		editingFloor.setScaleX(scale);
+		editingFloor.setScaleY(scale);
+
+		zoomWrapper.setMinWidth(floorImage.getFitWidth());
+		zoomWrapper.setMinHeight(floorImage.getFitHeight());
+		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
+		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
+
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
 	}
 
 	/**
@@ -258,90 +315,26 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void setupImageEventHandlers()
 	{
-		//set the imaveview objects to use the correct images
-		hallwayImage.setImage(Paths.hallwayImageProxy.getFXImage());
-		officeImage.setImage(Paths.doctorImageProxy.getFXImage());
-		restroomImage.setImage(Paths.restroomImageProxy.getFXImage());
-		elevatorImage.setImage(Paths.elevatorImageProxy.getFXImage());
-
-		//For each image, set OnMouseDragged to change currentstate and
-		//modify the images' XY coordinates
-		//Any additional functionality that we want while dragging an image would go here
-
-		hallwayImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
+		//if esc key is pressed, remove contextmenus/canvases and set state to doingnothing
+		//this is a failsafe as well as feature
+		stage.getScene().setOnKeyPressed(e ->{
+			if(e.getCode() == KeyCode.ESCAPE)
 			{
-				currentState = editorStates.MAKINGNEWHALLWAY;
-				hallwayImage.setX(e.getX()-hallwayImage.getFitWidth()/2);
-				hallwayImage.setY(e.getY()-hallwayImage.getFitHeight()/2);
-			}
-		});
-		officeImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWOFFICE;
-				officeImage.setX(e.getX()-officeImage.getFitWidth()/2);
-				officeImage.setY(e.getY()-officeImage.getFitHeight()/2);
-			}
-		});
-		restroomImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWRESTROOM;
-				restroomImage.setX(e.getX()-restroomImage.getFitWidth()/2);
-				restroomImage.setY(e.getY()-restroomImage.getFitHeight()/2);
-			}
-		});
-		elevatorImage.setOnMouseDragged(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent e)
-			{
-				currentState = editorStates.MAKINGNEWELEVATOR;
-				elevatorImage.setX(e.getX()-elevatorImage.getFitWidth()/2);
-				elevatorImage.setY(e.getY()-elevatorImage.getFitHeight()/2);
+				//remove canvas if it exists
+				if (editingFloor.getChildren().contains(canvas))
+				{
+					editingFloor.getChildren().remove(canvas);
+				}
+				//remove context menu if it exists
+				if(editingFloor.getChildren().contains(CONTEXTMENU))
+				{
+					editingFloor.getChildren().remove(CONTEXTMENU);
+				}
+				currentState = editorStates.DOINGNOTHING;
+				mainScroll.setPannable(true);
 			}
 		});
 
-		//use same eventhandler for all images when mouse is released
-		//on release, we reset the image location and then make a new node
-		EventHandler releaseHandler = new EventHandler<MouseEvent>(){
-			@Override
-			public void handle(MouseEvent e){
-				//get source of mouserelease event so we can change its xy coordinates
-				ImageView i = (ImageView)e.getSource();
-				//set xy to 0 to return to original position
-				i.setX(0);
-				i.setY(0);
-
-				//TODO: This is a hack
-				// because I can't seem to figure out how to get a drop event
-				// to fire while getting the right XY coordinates relative to the floorimage
-
-				//modify our XY values based on the image's current scroll and the
-				//dragged image's initial position on the screen
-
-				//TODO: fix magic number: 15, probably about the size of the scrollbars
-				Double fixX = e.getX()+palettePane.getLayoutX()+i.getLayoutX()+
-						mainScroll.getHvalue()*(floorImage.getFitWidth()-mainScroll.getWidth()+15);
-				Double fixY = e.getY()+palettePane.getLayoutY()+i.getLayoutY()+
-						mainScroll.getVvalue()*(floorImage.getFitHeight()-mainScroll.getHeight()+15);
-
-				dropNode(fixX, fixY);
-			}
-		};
-
-		//add the release handler to each image
-		hallwayImage.setOnMouseReleased(releaseHandler);
-		officeImage.setOnMouseReleased(releaseHandler);
-		elevatorImage.setOnMouseReleased(releaseHandler);
-		restroomImage.setOnMouseReleased(releaseHandler);
 	}
 
 
@@ -360,7 +353,6 @@ public class MapEditorToolController extends BaseController
 		CONTEXTMENU.setLayoutY(y);
 
 		//main radial arc, currently colored gray.
-		//TODO: convert color options to css for high contrast mode
 		Arc radialMenu = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 360);
 		radialMenu.setType(ArcType.OPEN);
 		radialMenu.setStrokeWidth(CONTEXTWIDTH);
@@ -370,7 +362,6 @@ public class MapEditorToolController extends BaseController
 		radialMenu.setOpacity(0.95);
 
 		//arc wedge will be used to indicate current selection
-		//TODO: convert color options to css for high contrast mode
 		SELECTIONWEDGE = new Arc(0, 0, CONTEXTRAD, CONTEXTRAD, 0, 0);
 		SELECTIONWEDGE.setType(ArcType.ROUND);
 		SELECTIONWEDGE.setStrokeWidth(CONTEXTWIDTH);
@@ -398,7 +389,6 @@ public class MapEditorToolController extends BaseController
 				-(CONTEXTRAD/Math.sqrt(2)), -(CONTEXTRAD/Math.sqrt(2)));
 		split4.setStrokeWidth(2);
 
-		//TODO: probaby replace these with all images later
 		//4 options, whose contents will differ based on whether we are showing node menu or not
 		ImageView option1 = null;
 		ImageView option2 = null;
@@ -414,7 +404,7 @@ public class MapEditorToolController extends BaseController
 
 			case SHOWINGEMPTYMENU: //context menu for non-nodes
 
-				option1 = new ImageView(Paths.addNeighborImageProxy.getFXImage());
+				option1 = new ImageView(Paths.hallwayImageProxy.getFXImage());
 				option1.setScaleX(0.15);
 				option1.setScaleY(0.15);
 				option1.setX(imageOffsetX + CONTEXTRAD - CONTEXTWIDTH / 2);
@@ -436,7 +426,6 @@ public class MapEditorToolController extends BaseController
 				option4.setY(imageOffsetY - CONTEXTRAD + CONTEXTWIDTH / 2);
 				break;
 			case SHOWINGNODEMENU: //contextmenu for nodes
-				//TODO: replace all of these with appropriate icons/pictures
 
 				//node specific context menu
 
@@ -486,22 +475,13 @@ public class MapEditorToolController extends BaseController
 	private AnchorPane editingFloor;
 
 	@FXML
+	private AnchorPane zoomWrapper;
+
+	@FXML
 	private Pane palettePane;
 
 	@FXML
 	private ImageView floorImage;
-
-	@FXML
-	private ImageView hallwayImage;
-
-	@FXML
-	private ImageView officeImage;
-
-	@FXML
-	private ImageView restroomImage;
-
-	@FXML
-	private ImageView elevatorImage;
 
 	@FXML
 	private Button newNodeButton;
@@ -510,7 +490,7 @@ public class MapEditorToolController extends BaseController
 	private TextField nameField;
 
 	@FXML
-	private TextField typeField; //TODO: Turn this into a dropdown menu?
+	private TextField typeField;
 
 	@FXML
 	private TextField xField;
@@ -533,6 +513,8 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	private VBox dndContainer;
 
+	@FXML
+	private CheckBox toggleAutoConnect;
 
 	@FXML
 	private Button upFloor;
@@ -542,6 +524,37 @@ public class MapEditorToolController extends BaseController
 
 	@FXML
 	private Label currentFloorLabel;
+
+	@FXML
+	private VBox relatedServicesVbox;
+
+	@FXML
+	private ChoiceBox serviceAddChoiceBox;
+
+	@FXML
+	/**
+	 * Calls when a user selects the wanted service in the choicebox and presses the add button
+	 */
+	private void addService()
+	{
+		String s = serviceAddChoiceBox.getValue().toString();
+		if(!currentNode.getServices().contains(s))
+		{
+			if (currentNode != null)
+				currentNode.addService(s);
+
+			HBox newH = new HBox();
+			Label newService = new Label(s);
+			Button deleteBut = new Button("X");
+			deleteBut.setOnAction(event ->
+			{
+				currentNode.delService(newService.getText());
+				((VBox) newH.getParent()).getChildren().remove(newH);
+			});
+			newH.getChildren().addAll(newService, deleteBut);
+			relatedServicesVbox.getChildren().add(newH);
+		}
+	}
 
 	@FXML
 	/**
@@ -585,7 +598,6 @@ public class MapEditorToolController extends BaseController
 	 */
 	@FXML
 	void rightclickFloorImage(ContextMenuEvent event) {
-		System.out.println("fuckinghas;dflkj");
 		currentState = editorStates.DOINGNOTHING;
 	}
 
@@ -606,13 +618,11 @@ public class MapEditorToolController extends BaseController
 				oldNode.addNeighbor(currentNode);
 				currentNode.addNeighbor(oldNode);
 
-				//update currentnode and linked node since both had neighbor added
-				database.updateNode(oldNode);
-				database.updateNode(currentNode);
-
 				//draw connecting lines
 				drawToNeighbors(currentNode);
 				drawToNeighbors(oldNode);
+
+				currentButton.toFront();
 
 				break;
 			default:
@@ -628,7 +638,6 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
-	 * TODO: Make the min floor change depending on current building (iteration 3)
 	 */
 	void goDownFloor(ActionEvent event) {
 		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
@@ -644,8 +653,6 @@ public class MapEditorToolController extends BaseController
 				currentNode.addNeighbor(lowerNode);
 				lowerNode.addNeighbor(currentNode);
 				//update currentnode and linked node since both had neighbor added
-				database.updateNode(lowerNode);
-				database.updateNode(currentNode);
 				currentState = editorStates.DOINGNOTHING;
 				System.out.println("Connected down");
 			}
@@ -664,11 +671,7 @@ public class MapEditorToolController extends BaseController
 				{
 					lowerNode.delNeighbor(currentNode);
 					drawToNeighbors(lowerNode);
-					//if linked node also had neighbor, update the change
-					database.updateNode(lowerNode);
 				}
-				//update currentNode (not the node that has just been clicked)
-				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
@@ -681,7 +684,7 @@ public class MapEditorToolController extends BaseController
 			FLOORID--;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
@@ -689,13 +692,12 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
-	 * TODO: Make the max floor change depending on current building (iteration 3)
 	 */
 	void goUpFloor(ActionEvent event)
 	{
 		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
-		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < 7 &&
+		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < MAXFLOOR &&
 				currentNode != null && currentNode.getType() == 2)
 		{
 			//get the upper elevator node and connect if it exists
@@ -705,13 +707,10 @@ public class MapEditorToolController extends BaseController
 			{
 				currentNode.addNeighbor(upperNode);
 				upperNode.addNeighbor(currentNode);
-				//update currentnode and linked node since both had neighbor added
-				database.updateNode(upperNode);
-				database.updateNode(currentNode);
 				System.out.println("Connected up");
 			}
 			currentState = editorStates.DOINGNOTHING;
-		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < 7 &&
+		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < MAXFLOOR &&
 				currentNode != null && currentNode.getType() == 2)
 		{
 			//get the upper elevator node and remove it from neighbor if it exists
@@ -725,39 +724,33 @@ public class MapEditorToolController extends BaseController
 				{
 					upperNode.delNeighbor(currentNode);
 					drawToNeighbors(upperNode);
-					//if linked node also had neighbor, update the change
-					database.updateNode(upperNode);
 				}
-				//update currentNode (not the node that has just been clicked)
-				database.updateNode(currentNode);
-
 				//redraw lines
 				drawToNeighbors(currentNode);
 			}
 			currentState = editorStates.DOINGNOTHING;
 		}
-		else if(FLOORID < 7)
+		else if(FLOORID < MAXFLOOR)
 		{
 			//remove all buttons and lines on the current floor
 			purgeButtonsAndLines();
 			FLOORID++;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
-			setFloorImage(FLOORID);
+			setFloorImage(BUILDINGID, FLOORID);
 		}
 	}
 
-	//TODO: update to match refactored database
 	/**
-	 * Create a new node at given xy coordinates
+	 * Create a new node at given xy coordinates.
+	 * Note on node types: 0 is hallway, 1 is doctorsoffice, 2 is elevator, 3 is resetroom
 	 * @param x X coordinate of new node
 	 * @param y Y coordinate of new node
 	 */
 	public void createNewNode(double x, double y, int type)
 	{
-		Node newNode = new ConcreteNode();
+		Node newNode = new Node();
 		newNode.setName("New " + type);
-		//TODO: Set node type! It's -1 by default!
 		newNode.setX(x);
 		newNode.setY(y);
 		newNode.setFloor(FLOORID);
@@ -766,7 +759,6 @@ public class MapEditorToolController extends BaseController
 
 		database.insertNode(newNode);
 
-		//TODO: set buttons to be appropriate image depending on node type
 		//make a new button to associate with the node
 		Button nodeB = new Button();
 		nodeB.setId("node-button-unselected");
@@ -801,34 +793,23 @@ public class MapEditorToolController extends BaseController
 		if(currentState != editorStates.CHAINADDING)
 		{
 			currentState = editorStates.DOINGNOTHING;
-		}
-	}
+			//auto connect toggled
+			if(AUTOCONNECT)
+			{
+				//find nearest hallway node and add as neighbor
+				Node nearest = database.getNearestHallwayNode(currentNode);
+				if(nearest != null)
+				{
+					nearest.addNeighbor(currentNode);
+					currentNode.addNeighbor(nearest);
 
-	private void setButtonImage(Button b, int type)
-	{
-		if(type == 1)
-		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}
-		else if(type == 0)
-		{
+					//draw connecting lines
+					drawToNeighbors(currentNode);
+					drawToNeighbors(nearest);
+
+					currentButton.toFront();
+				}
+			}
 		}
 	}
 
@@ -845,8 +826,11 @@ public class MapEditorToolController extends BaseController
 		if(e.isSecondaryButtonDown())
 		{
 			if(currentButton != null){ //radial context menu for node options
-				//currentState = editorStates.SHOWINGNODEMENU;
 				mainScroll.setPannable(false);
+				if(currentState != editorStates.SHOWINGNODEMENU)
+				{
+					currentState = editorStates.SHOWINGEMPTYMENU;
+				}
 			} else { //radial context menu for adding nodes
 				currentState = editorStates.SHOWINGEMPTYMENU;
 				mainScroll.setPannable(false);
@@ -908,7 +892,7 @@ public class MapEditorToolController extends BaseController
 			contextSelection = 3;
 		}
 		else
-		{ //TODO: is this case ever possible?
+		{
 			//make selectionwedge not visible
 			SELECTIONWEDGE.setLength(0);
 			contextSelection = -1;
@@ -935,6 +919,7 @@ public class MapEditorToolController extends BaseController
 				setupContextMenu(e.getX() - CIRCLEWIDTH / 2, e.getY() - CIRCLEWIDTH / 2);
 			}
 			editingFloor.getChildren().add(1, CONTEXTMENU);
+			CONTEXTMENU.toFront();
 		}
 
 		//xy distance from center of contextmenu to mouse
@@ -987,7 +972,6 @@ public class MapEditorToolController extends BaseController
 					case 0:
 						//top option
 						System.out.println("top");
-						//TODO: set to proper state for whatever top option is
 						currentState = editorStates.CHAINADDING;
 						break;
 					case 1:
@@ -1013,12 +997,10 @@ public class MapEditorToolController extends BaseController
 				}
 				contextSelection = -1;
 				break;
-
+			case MOVINGNODE:
+				currentNode.notifyObservers();
 			default:
-				if(currentNode != null)
-				{
-					database.updateNode(currentNode);
-				}
+				System.out.println("asdf");
 				currentState = editorStates.DOINGNOTHING;
 				break;
 		}
@@ -1162,16 +1144,12 @@ public class MapEditorToolController extends BaseController
 		 * addingNeighbor or removingNeighbor booleans have been tagged true, and if so
 		 * we add/remove the currently clicked node from the original node's neighborlist,
 		 * and then update the lines by calling DrawToNeighbors.
-		 * TODO: update?
 		 */
 		switch(currentState){
 			case ADDINGNEIGHBOR:
 				//add neighbor
 				currentNode.addNeighbor(linkedNode);
 				linkedNode.addNeighbor(currentNode);
-				//update currentnode and linked node since both had neighbor added
-				database.updateNode(linkedNode);
-				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
@@ -1187,11 +1165,7 @@ public class MapEditorToolController extends BaseController
 				{
 					linkedNode.delNeighbor(currentNode);
 					drawToNeighbors(linkedNode);
-					//if linked node also had neighbor, update the change
-					database.updateNode(linkedNode);
 				}
-				//update currentNode (not the node that has just been clicked)
-				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
@@ -1204,17 +1178,30 @@ public class MapEditorToolController extends BaseController
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
 
+				Node prevNode = currentNode;
 				//set current node/button
 				currentNode = linkedNode;
 
 				if(currentButton != null)
 				{
-					//TODO: set style for background-color using hex without copying everything?
-					//TODO: Just rying to setstyle for color made button change shape
 					currentButton.setId("node-button-unselected");
 				}
 				currentButton = nodeB;
 				nodeB.setId("node-button-selected");
+				relatedServicesVbox.getChildren().clear();
+				for (String s : currentNode.getServices())
+				{
+					HBox newH = new HBox();
+					Label newService = new Label(s);
+					Button deleteBut = new Button("X");
+					deleteBut.setOnAction(event ->
+					{
+						currentNode.delService(newService.getText());
+						((VBox) newH.getParent()).getChildren().remove(newH);
+					});
+					newH.getChildren().addAll(newService, deleteBut);
+					relatedServicesVbox.getChildren().add(newH);
+				}
 				break;
 		}
 	}
@@ -1225,11 +1212,8 @@ public class MapEditorToolController extends BaseController
 	private void hideNodeDetails()
 	{
 		currentNode = null;
-		//TODO: is null check on currentbutton necessary? can we get to this function with a null button?
 		if(currentButton != null)
 		{
-			//TODO: set style for background-color using hex without copying everything?
-			//TODO: Just trying to setstyle for color made button change shape
 			currentButton.setId("node-button-unselected");
 		}
 		currentButton = null;
@@ -1238,9 +1222,21 @@ public class MapEditorToolController extends BaseController
 		typeField.setText("");
 		xField.setText("");
 		yField.setText("");
+
+		relatedServicesVbox.getChildren().clear();
 	}
 
-    /**
+	/**
+	 * toggle new node auto connection setting
+	 * @param event
+	 */
+	@FXML
+	void onToggleAutoConnect(ActionEvent event) {
+		AUTOCONNECT = toggleAutoConnect.isSelected();
+	}
+
+
+	/**
      * update a node's X coordinate, both visually and in the node's properties
      */
 	@FXML
@@ -1248,9 +1244,8 @@ public class MapEditorToolController extends BaseController
     {
         try
         {
-            currentButton.setLayoutX(Double.parseDouble(xField.getText()));
+            currentButton.setLayoutX(Double.parseDouble(xField.getText())-XOFFSET);
             currentNode.setX(Double.parseDouble(xField.getText()));
-            database.updateNode(currentNode);
 
             //redraw lines for any node that has currentNode as a neighbor
             //store nodes that need to be redrawn in a list as a workaround
@@ -1267,7 +1262,6 @@ public class MapEditorToolController extends BaseController
         }
         catch (NumberFormatException e)
         {
-            //TODO: need more exception handling?
             System.out.println("Not a double");
         }
     }
@@ -1281,9 +1275,8 @@ public class MapEditorToolController extends BaseController
         {
             if(currentButton != null && currentNode != null)
             {
-                currentButton.setLayoutY(Double.parseDouble(yField.getText()));
+                currentButton.setLayoutY(Double.parseDouble(yField.getText())-YOFFSET);
                 currentNode.setY(Double.parseDouble(yField.getText()));
-                database.updateNode(currentNode); //TODO: meld multiple database update calls into one, that function is expensive!
 
                 //redraw lines for any node that has currentNode as a neighbor
                 //store nodes that need to be redrawn in a list as a workaround
@@ -1299,7 +1292,6 @@ public class MapEditorToolController extends BaseController
                 drawToNeighbors(currentNode);
             }
         } catch (NumberFormatException e){
-            //TODO: need more exception handling?
             System.out.println("Not a double");
         }
     }
@@ -1313,14 +1305,51 @@ public class MapEditorToolController extends BaseController
 		try
 		{
 			if (currentButton != null && currentNode != null)
-			{
 				currentNode.setName(nameField.getText());
-				database.updateNode(currentNode);
+		} catch (NumberFormatException e)
+		{
+			System.out.println("Not a double");
+		}
+	}
+
+	/**
+	 * update a node's Type and update its corresponding image
+	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
+	 * @param event
+	 */
+	@FXML
+	void updateNodeType(ActionEvent event)
+	{
+		try
+		{
+			int newType = Integer.parseInt(typeField.getText());
+			if (newType < 20 && newType >= 0)
+			{
+				if (newType == 5) //changing to selected kiosk
+				{
+					database.setSelectedKiosk(currentNode);
+				}
+				if (newType > 5 && newType < 20) //links between buildings
+				{
+					database.connectEntrances(currentNode, newType);
+				} else if(currentNode.getType() > 5) //remove links between buildings if changing type to not be a link
+				{
+					database.removeEntranceConnection(currentNode, currentNode.getType());
+				}
+				//update type
+				currentNode.setType(newType);
+				for(Button b: nodeButtonLinks.keySet())
+				{
+					if(nodeButtonLinks.get(b) == currentNode)
+					{
+						setButtonImage(b, newType);
+						break;
+					}
+				}
 			}
 		} catch (NumberFormatException e)
 		{
-			//TODO: need more exception handling?
-			System.out.println("Not a double");
+			System.out.println("Not an int");
 		}
 	}
 
@@ -1380,51 +1409,54 @@ public class MapEditorToolController extends BaseController
 		//for each neighbor associated with source Node, draw a line.
 		for (Node neighbor : neighbors)
 		{
-
-			Line line = new Line();
-			line.setStrokeWidth(LINEWIDTH);
-			if(Accessibility.isHighContrast())
+			if(neighbor.getBuilding().equals(source.getBuilding()) &&
+					neighbor.getFloor() == source.getFloor())
 			{
-				line.setStroke(Color.WHITE);
+				Line line = new Line();
+				line.setStrokeWidth(LINEWIDTH);
+				if (Accessibility.isHighContrast())
+				{
+					line.setStroke(Color.WHITE);
+				}
+				line.setStartX(source.getX());
+				line.setStartY(source.getY());
+				line.setEndX(neighbor.getX());
+				line.setEndY(neighbor.getY());
+
+				//some shape creation magic for making arrow lines
+
+				//get difference in xy position
+				double diffY = neighbor.getY() - source.getY();
+				double diffX = neighbor.getX() - source.getX();
+
+				//we will use pathShift to place the line's arrow somewhere in the middle of the line.
+				//this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
+				double pathShift = 0.9;
+
+				//make a new triangle
+				Polygon arrowTriangle = new Polygon();
+				arrowTriangle.getPoints().addAll(0.0, 0.0,
+						-5.0, 10.0,
+						5.0, 10.0);
+
+				//get angle the angle of the line we'll be making in degrees
+				double slopeAngle = Math.toDegrees(Math.atan2(diffY, diffX));
+				//reotate the triangle we made
+				//simple correction rotation angle
+				double correction = 90;
+				arrowTriangle.getTransforms().add(new Rotate(slopeAngle + correction, 0, 0));
+				//position the triangle onto the line
+				arrowTriangle.setLayoutX(source.getX() + pathShift * diffX);
+				arrowTriangle.setLayoutY(source.getY() + pathShift * diffY);
+
+				//group together the line and triangle for future referencing
+				Group g = new Group();
+				g.getChildren().add(line);
+				g.getChildren().add(arrowTriangle);
+				editingFloor.getChildren().add(2, g);
+				//add this line into the lines array
+				groups.add(g);
 			}
-			line.setStartX(source.getX());
-			line.setStartY(source.getY());
-			line.setEndX(neighbor.getX());
-			line.setEndY(neighbor.getY());
-
-			//some shape creation magic for making arrow lines
-
-			//get difference in xy position
-			double diffY = neighbor.getY() - source.getY();
-			double diffX = neighbor.getX() - source.getX();
-
-			//we will use pathShift to place the line's arrow somewhere in the middle of the line.
-			//this number should be <1. for example, a value of 0.5 should put the arrow in the middle of the line.
-			double pathShift = 0.9;
-
-			//make a new triangle
-			Polygon arrowTriangle = new Polygon();
-			arrowTriangle.getPoints().addAll(0.0, 0.0,
-					-5.0, 10.0,
-					5.0, 10.0);
-
-			//get angle the angle of the line we'll be making in degrees
-			double slopeAngle = Math.toDegrees(Math.atan2(diffY, diffX));
-			//reotate the triangle we made
-			//simple correction rotation angle
-			double correction = 90;
-			arrowTriangle.getTransforms().add(new Rotate(slopeAngle + correction, 0, 0));
-			//position the triangle onto the line
-			arrowTriangle.setLayoutX(source.getX() + pathShift * diffX);
-			arrowTriangle.setLayoutY(source.getY() + pathShift * diffY);
-
-			//group together the line and triangle for future referencing
-			Group g = new Group();
-			g.getChildren().add(line);
-			g.getChildren().add(arrowTriangle);
-			editingFloor.getChildren().add(2, g);
-			//add this line into the lines array
-			groups.add(g);
 		}
 		//store the array of lines for this source node into the hashmap
 		//to be used to delete all lines later when redrawing
@@ -1472,7 +1504,6 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Continuously draw and update the line on the canvas so that the user can see
 	 * lines as they are adding connections.
-	 * TODO: possibly need to fix naming of function
 	 * @param event mouse event
 	 */
 	@FXML
@@ -1499,9 +1530,7 @@ public class MapEditorToolController extends BaseController
 				//circle drawing placement offset
 				gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
 				break;
-			//TODO: cases for making different kinds of nodes
 
-			//TODO: do context menus need to do anything here?
 			case SHOWINGEMPTYMENU:
 				break;
 			case SHOWINGNODEMENU:

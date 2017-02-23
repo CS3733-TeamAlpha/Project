@@ -1,5 +1,7 @@
 package ui;
 
+import ui.controller.BaseController;
+
 public class Accessibility
 {
 	public static final String HIGH_CONTRAST_CSS = "css/high-contrast.css";
@@ -19,10 +21,10 @@ public class Accessibility
 		controller.updateCSS();
 	}
 
-	public static void toggleHighContrast(BaseController controller)
-	{
-		highContrast = !highContrast;
-		controller.updateCSS();
-	}
+//	public static void toggleHighContrast(BaseController controller)
+//	{
+//		highContrast = !highContrast;
+//		controller.updateCSS();
+//	}
 
 }

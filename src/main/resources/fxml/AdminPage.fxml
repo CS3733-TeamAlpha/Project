@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.AdminPageController">
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.AdminPageController">
    <children>
        <Pane prefHeight="115.0" styleClass="bh-white" VBox.vgrow="NEVER">
            <children>
@@ -29,7 +31,7 @@
                <children>
                   <HBox prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#editDirectory">
+                        <ImageView fitHeight="100.0" fitWidth="100.0" onMouseClicked="#editDirectory" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/directory.png" />
                            </image>
@@ -49,7 +51,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#editMap">
+                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#editMap" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/floor1_preview.png" />
                            </image>
@@ -65,12 +67,12 @@
                   </HBox>
                   <HBox layoutX="15.0" layoutY="137.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#changePassword">
+                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#changePassword" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/lock_large.png" />
                            </image>
                         </ImageView>
-                        <Button mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
@@ -81,7 +83,7 @@
                   </HBox>
                   <HBox layoutX="540.0" layoutY="142.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#factoryReset">
+                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#factoryReset" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/warning.png" />
                            </image>
@@ -94,7 +96,7 @@
                   </HBox>
                   <HBox layoutX="15.0" layoutY="259.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#logout">
+                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#logout" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/logout.png" />
                            </image>
@@ -108,6 +110,25 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </FlowPane.margin>
                   </HBox>
+                  <HBox prefHeight="120.0" prefWidth="510.0">
+                     <children>
+                        <VBox prefHeight="120.0" prefWidth="514.0">
+                           <children>
+                              <HBox prefHeight="28.0" prefWidth="510.0">
+                                 <children>
+                                    <Label text="Path Algorithm:" />
+                                    <ChoiceBox fx:id="algorithmSelector" prefWidth="150.0" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label prefHeight="16.0" prefWidth="102.0" text="Kiosk Node:" />
+                                    <ChoiceBox fx:id="kioskNodeSelector" prefWidth="150.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children></HBox>
                </children>
             </FlowPane>
          </center>

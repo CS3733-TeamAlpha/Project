@@ -3,7 +3,6 @@ package data;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pathfinding.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public class DatabaseTest
 	@Test
 	public void testInsertAndRetrieval()
 	{
-		Node testNode = new ConcreteNode("00000000-0000-0000-0000-000000000000",
+		Node testNode = new Node("00000000-0000-0000-0000-000000000000",
 				"Test Node", "00000000-0000-0000-0000-000000000000", 1, 2, 3, 1701);
 
 		database.insertNode(testNode); //Insert the node...
@@ -72,10 +71,11 @@ public class DatabaseTest
 	@Test
 	public void testDelete()
 	{
-		ConcreteNode testNode = new ConcreteNode();
+		Node testNode = new Node();
 		database.insertNode(testNode);
 		assertNotNull(database.getNodeByUUID(testNode.getID()));
 		database.deleteNodeByUUID(testNode.getID());
+		assertEquals(0, database.getAllNodes().size());
 		assertNull(database.getNodeByUUID(testNode.getID()));
 	}
 
@@ -83,10 +83,10 @@ public class DatabaseTest
 	public void testLinkage()
 	{
 		//Stolen from pathfinding integration test
-		ConcreteNode[][] gridNodes = new ConcreteNode[10][10];
+		Node[][] gridNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++)
-				gridNodes[i][j] = new ConcreteNode();
+				gridNodes[i][j] = new Node();
 
 		for (int i = 0; i < 10; i++)
 		{
@@ -111,7 +111,7 @@ public class DatabaseTest
 		database.connect();
 
 		//Now get all those nodes back out again
-		Node[][] testNodes = new ConcreteNode[10][10];
+		Node[][] testNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)
@@ -147,10 +147,10 @@ public class DatabaseTest
 	public void testGetByFloor()
 	{
 		//Create some nodes on 10 different floors
-		ConcreteNode[] nodes = new ConcreteNode[50];
+		Node[] nodes = new Node[50];
 		for (int i = 0; i < nodes.length; i++)
 		{
-			nodes[i] = new ConcreteNode();
+			nodes[i] = new Node();
 			nodes[i].setFloor(i / 5);
 			database.insertNode(nodes[i]);
 		}
@@ -171,13 +171,17 @@ public class DatabaseTest
 		}
 
 		//And now clean up
-		for (ConcreteNode node : nodes)
+		for (Node node : nodes)
 			database.deleteNodeByUUID(node.getID());
 	}
 
 	@Test
 	public void testGetByBuilding()
 	{
+		//Drop the default building
+		database.deleteBuilding("00000000-0000-0000-0000-000000000000");
+		assertEquals(0, database.getBuildings().size());
+
 		//Create a new building with random UUID
 		database.insertBuilding(UUID.randomUUID().toString(), "Starfleet Headquarters");
 
@@ -190,10 +194,10 @@ public class DatabaseTest
 		assertTrue(database.getBuildingUUID("Dominion Headquarters").isEmpty());
 
 		//Now add some nodes to Starfleet Headquarters
-		ConcreteNode[] nodes = new ConcreteNode[5];
+		Node[] nodes = new Node[5];
 		for (Node node : nodes)
 		{
-			node = new ConcreteNode();
+			node = new Node();
 			node.setFloor(1701);
 			node.setBuilding(uuid);
 			database.insertNode(node);
@@ -205,9 +209,10 @@ public class DatabaseTest
 		assertEquals(0, database.getNodesInBuildingFloor("00", 1701).size()); //Incorrect uuid, correct floor
 		assertEquals(0, database.getNodesInBuildingFloor("00", 1702).size()); //Incorrect uuid, incorrect floor
 
-		//And clean up the database by deleting the whole building!
+		//And clean up the database by deleting the whole building and re-adding default!
 		database.deleteBuilding(uuid);
 		assertEquals(0, database.getNodesInBuildingFloor(uuid, 1701).size());
+		database.insertBuilding("00000000-0000-0000-0000-000000000000", "outdoors");
 	}
 
 	@Test
@@ -215,13 +220,12 @@ public class DatabaseTest
 	{
 		//Create a pair of unlinked nodes, put them in the database. Create a 1->2 edge between them, insert the edge,
 		//shutdown the database, restart it, and grab the two nodes out again. Verify that they're still connected.
-		Node node1 = new ConcreteNode();
-		Node node2 = new ConcreteNode();
+		Node node1 = new Node();
+		Node node2 = new Node();
 		database.insertNode(node1);
 		database.insertNode(node2);
 		node1.addNeighbor(node2);
 
-		database.updateNode(node1);
 		database.disconnect(); //Clears the node cache
 		database.connect();
 
@@ -238,10 +242,10 @@ public class DatabaseTest
 	public void testProviderOperations()
 	{
 		//Create a test node with a test provider, put it in the database.
-		ConcreteNode node = new ConcreteNode();
-		node.addProvider("Picard, Jean-Luc; Captain");
+		Node node = new Node();
+		Provider picard = new Provider("Jean Luc", "Picard", UUID.randomUUID().toString(), "Captain");
+		node.addProvider(picard);
 		database.insertNode(node);
-		final String provID = database.getProviderUUID("Picard, Jean-Luc; Captain");
 
 		//Reload from the database
 		database.disconnect();
@@ -251,18 +255,24 @@ public class DatabaseTest
 		assertEquals(1, database.getProviders().size());
 
 		//Add a second provider to the node and verify the transaction
-		node.addProvider("Sisko, Benjamin; Captain");
-		database.updateNode(node);
+		Provider sisko = new Provider("Benjamin", "Sisko", UUID.randomUUID().toString(), "Captain");
+		node.addProvider(sisko);
 		assertEquals(2, database.getProviders().size());
+		assertEquals(2, node.getProviders().size());
 
 		//Delete picard and verify his deletion
-		node.delProvider("Picard, Jean-Luc; Captain");
-		database.deleteProvider(provID);
+		database.deleteProvider(picard);
 		assertEquals(1, database.getProviders().size());
+		assertEquals(1, node.getProviders().size());
+		System.out.printf("Remaining provider " + database.getProviders().get(0).getLastName());
 
 		//Clean up
 		database.deleteNodeByUUID(node.getID());
-		database.deleteProvider(database.getProviderUUID("Sisko, Benjamin; Captain"));
+		assertEquals(1, node.getProviders().size());
+		assertEquals(0, database.getAllNodes().size());
+		assertEquals(1, database.getProviders().size());
+		database.deleteProvider(sisko);
+		assertEquals(0, node.getProviders().size());
 		assertEquals(0, database.getProviders().size());
 	}
 
@@ -270,34 +280,32 @@ public class DatabaseTest
 	public void testServices()
 	{
 		//Create a test node with a service, put it in the database
-		ConcreteNode node = new ConcreteNode();
+		Node node = new Node();
 		node.addService("tenforward");
 		database.insertNode(node);
 		assertEquals(1, database.getServices().size());
 
 		node.addService("quarks");
-		database.updateNode(node);
 		assertEquals(2, database.getServices().size());
 
 		node.delService("quarks");
-		database.updateNode(node);
 		assertEquals(1, database.getServices().size());
 
-		//Verify that two nodes can have a service by the same name - nodes and services are 1-1
-		//This could cause issues with getting a service's location, but that's a problem for another (edge-casey) time.
-		ConcreteNode node2 = new ConcreteNode();
+		//Verify that two nodes cannot have a service by the same name - nodes and services are 1-1
+		//Nodes should still be inserted, however.
+		Node node2 = new Node();
 		node2.addService("tenforward");
 		database.insertNode(node2);
-		assertEquals(2, database.getServices().size());
-
-		//Verify that deleting a node deletes its service
-		database.deleteNodeByUUID(node2.getID());
 		assertEquals(1, database.getServices().size());
+		assertNotNull(database.getNodeByUUID(node2.getID()));
 
 		//Verify location finding
 		assertEquals(node, database.getServiceLocation("tenforward"));
 
-		//Clean up
+		//Clean up and verify that services don't get deleted along with their nodes
 		database.deleteNodeByUUID(node.getID());
+		assertEquals(1, database.getServices().size());
+		database.delService("tenforward");
+		assertEquals(0, database.getServices().size());
 	}
 }

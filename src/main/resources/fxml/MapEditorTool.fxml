@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -7,79 +12,97 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MapEditorToolController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapEditorToolController">
    <children>
-      <StackPane prefHeight="720.0" prefWidth="1050.0">
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ScrollPane fx:id="mainScroll" hbarPolicy="ALWAYS" pannable="true" prefHeight="720.0" prefWidth="1280.0" vbarPolicy="ALWAYS">
-               <content>
-                  <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0" onMouseMoved="#redrawCanvas" prefHeight="1300.0" prefWidth="2250.0">
+            <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="230.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
+               <children>
+                  <ScrollPane fx:id="mainScroll" hbarPolicy="ALWAYS" pannable="true" vbarPolicy="ALWAYS">
+                     <content>
+                        <AnchorPane fx:id="zoomWrapper">
+                           <children>
+                              <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0" onMouseMoved="#redrawCanvas">
+                                 <children>
+                                    <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" onMouseClicked="#clickFloorImage" onMouseDragged="#displayContextMenu" onMouseReleased="#releaseMouse" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <image>
+                                          <Image url="@../images/floor3.png" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
+                  <Pane pickOnBounds="false" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" onMouseClicked="#clickFloorImage" onMouseDragged="#displayContextMenu" onMouseReleased="#releaseMouse" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <image>
-                              <Image url="@../images/floor3.png" />
-                           </image>
-                        </ImageView>
+                        <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back" />
+                        <Button fx:id="upFloor" layoutX="23.0" layoutY="77.0" mnemonicParsing="false" onAction="#goUpFloor" />
+                        <Button fx:id="downFloor" layoutX="23.0" layoutY="134.0" mnemonicParsing="false" onAction="#goDownFloor" />
+                        <Label fx:id="currentFloorLabel" layoutX="24.0" layoutY="103.0" text="1">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+               </children>
+            </StackPane>
+                  <AnchorPane fx:id="nodeDetails" minHeight="0.0" minWidth="240.0" prefHeight="160.0" prefWidth="100.0" styleClass="pane">
+                     <children>
+                        <Label layoutX="4.0" layoutY="4.0" text="Selected Node Name" />
+                        <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
+                        <Label layoutX="2.0" layoutY="61.0" text="Selected Node Type" />
+                        <TextField fx:id="typeField" layoutX="4.0" layoutY="82.0" onAction="#updateNodeType" prefHeight="26.0" prefWidth="220.0" />
+                        <Label layoutX="5.0" layoutY="113.0" text="Node X Coordinate" />
+                        <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
+                        <Label layoutX="5.0" layoutY="169.0" text="Node Y Coordinate" />
+                        <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0" />
+                        <Button fx:id="addConnectionButton" layoutX="5.0" layoutY="265.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
+                        <Button fx:id="removeConnectionButton" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
+                        <Button fx:id="deleteNodeButton" layoutX="5.0" layoutY="226.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node" />
+                  <VBox layoutY="345.0" prefHeight="375.0" prefWidth="244.0">
+                     <children>
+                        <HBox>
+                           <children>
+                              <ChoiceBox fx:id="serviceAddChoiceBox" prefWidth="150.0" />
+                              <Separator opacity="0.0" prefWidth="20.0" />
+                              <Button mnemonicParsing="false" onAction="#addService" text="Add" />
+                           </children>
+                        </HBox>
+                        <VBox fx:id="relatedServicesVbox" prefWidth="100.0" />
+                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="15.0" />
+                        <ScrollPane layoutX="4.0" layoutY="490.0" prefHeight="324.0" prefWidth="184.0">
+                           <content>
+                              <VBox prefHeight="316.0" prefWidth="226.0">
+                                 <children>
+                                    <Label text="Creating Nodes" underline="true" />
+                                    <Label prefHeight="156.0" prefWidth="212.0" text="Right click the map, hold, and drag to pick a node option:" wrapText="true" />
+                                    <Label text="    up:      Elevators" />
+                                    <Label text="    right:   Hallways" />
+                                    <Label text="    down:  Provider/Service" />
+                                    <Label text="    left:      Bathrooms" />
+                                    <Label text="Creating Connections" underline="true" />
+                                    <Label prefHeight="172.0" prefWidth="222.0" text="Click on a node, right click, hold and drag to pick an action:" wrapText="true" />
+                                    <Label prefHeight="35.0" prefWidth="212.0" text="    up:      Continuous Nodes" wrapText="true" />
+                                    <Label text="    right:   Add Connection" />
+                                    <Label text="    down:  Remove Connection" />
+                                    <Label text="    left:      Delete Node" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
                      </children>
                   </AnchorPane>
-               </content>
-            </ScrollPane>
-            <Pane pickOnBounds="false" prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back" />
-                  <Button fx:id="upFloor" layoutX="23.0" layoutY="77.0" mnemonicParsing="false" onAction="#goUpFloor" />
-                  <Button fx:id="downFloor" layoutX="23.0" layoutY="134.0" mnemonicParsing="false" onAction="#goDownFloor" />
-                  <Label fx:id="currentFloorLabel" layoutX="24.0" layoutY="103.0" text="3">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
          </children>
-      </StackPane>
-      <Pane fx:id="palettePane" layoutX="1050.0" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <AnchorPane fx:id="nodeDetails" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="pane">
-               <children>
-                  <Label layoutX="4.0" layoutY="14.0" text="Selected Node Name" />
-                  <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
-                  <Label layoutX="4.0" layoutY="66.0" text="Selected Node Type" />
-                  <TextField fx:id="typeField" layoutX="4.0" layoutY="82.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
-                  <Label layoutX="4.0" layoutY="122.0" text="Node X Coordinate" />
-                  <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
-                  <Label layoutX="4.0" layoutY="174.0" text="Node Y Coordinate" />
-                  <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0" />
-                  <Button fx:id="addConnectionButton" layoutX="4.0" layoutY="300.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
-                  <Button fx:id="removeConnectionButton" layoutX="4.0" layoutY="340.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
-                  <Button fx:id="deleteNodeButton" layoutX="4.0" layoutY="261.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node" />
-                  <ImageView fx:id="hallwayImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="400.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/placeholderHallway.jpg" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="officeImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="450.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/placeholderOffice.jpg" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="restroomImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="500.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/placeholderRestroom.jpg" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="elevatorImage" fitHeight="50.0" fitWidth="50.0" layoutX="70.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/placeholderElevator.jpg" />
-                     </image>
-                  </ImageView>
-               </children>
-            </AnchorPane>
-         </children>
-      </Pane>
+      </HBox>
    </children>
-</Pane>
+</AnchorPane>

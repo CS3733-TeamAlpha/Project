@@ -1,17 +1,23 @@
-package ui;
+package ui.controller;
 
+import data.Node;
 import data.SearchResult;
+import data.SearchType;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import ui.Accessibility;
+import ui.Paths;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StartupController extends BaseController
 {
-	public ImageView eyeImage;
+//	public ImageView eyeImage;
 	public ImageView lockImage;
 	private ContextMenu contextMenu;
 	public TextField searchBox;
@@ -23,18 +29,35 @@ public class StartupController extends BaseController
 
 	public void initialize()
 	{
-		updateLowerImages();
 		contextMenu = new ContextMenu();
 		contextMenu.setMaxWidth(searchBox.getWidth());
 
 		searchBox.textProperty().addListener(((observable, oldValue, newValue) ->
 		{
-			ArrayList<SearchResult> results = database.getResultsForSearch(newValue, true);
+			List<SearchResult> results = database.getResultsForSearch(newValue, true);
 			contextMenu.getItems().remove(0, contextMenu.getItems().size());
 			for(SearchResult result : results)
 			{
 				MenuItem item = new MenuItem(result.displayText);
 				contextMenu.getItems().add(item);
+				item.setOnAction(event ->
+				{
+					if(result.searchType == SearchType.Provider)
+					{
+						List<Node> locations = database.getProviderByID(result.id).getLocations();
+						if(locations.size() > 0)
+						{
+							setSearchedFor(locations.get(0));
+							loadFXML(Paths.MAP_FXML);
+						}
+					}
+					else if(result.searchType == SearchType.Location)
+					{
+						setSearchedFor(database.getNodeByUUID(result.id));
+						System.out.println(result.id);
+						loadFXML(Paths.MAP_FXML);
+					}
+				});
 			}
 
 			if(newValue.length() == 0)
@@ -56,7 +79,7 @@ public class StartupController extends BaseController
 
 	public void ShowDirectory()
 	{
-		loadFXML(Paths.DIRECTORY2_FXML);
+		loadFXML(Paths.USER_DIRECTORY_FXML);
 	}
 
 	public void showLogin()
@@ -64,27 +87,8 @@ public class StartupController extends BaseController
 		loadFXML(Paths.LOGIN_FXML);
 	}
 
-	public void toggleHighContrast()
-	{
-		Accessibility.toggleHighContrast(this);
-		updateLowerImages();
-	}
-
-	private void updateLowerImages()
-	{
-		/*if(Accessibility.isHighContrast())
-		{
-			ColorAdjust white = new ColorAdjust();
-			white.setBrightness(1);
-			eyeImage.setEffect(white);
-			lockImage.setEffect(white);
-		}
-		else
-		{
-			ColorAdjust white = new ColorAdjust();
-			white.setBrightness(0.3);
-			eyeImage.setEffect(white);
-			lockImage.setEffect(white);
-		}*/
-	}
+//	public void toggleHighContrast()
+//	{
+//		Accessibility.toggleHighContrast(this);
+//	}
 }

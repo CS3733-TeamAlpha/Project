@@ -1,5 +1,6 @@
 package ui;
 
+import data.Node;
 import data.Database;
 import data.Provider;
 import javafx.collections.FXCollections;
@@ -11,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import pathfinding.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class ProviderBox extends HBox
 	//Terrible, disgusting hack to grand ProviderBox access to the database BECAUSE JAVA IS STUPID AND DOESN'T ALLOW FOR
 	//MULTIPLE INHERITANCE! F*** YOU, JAVA, I'M LEAVING YOU FOR C++ AFTER THIS!
 	//Basically, the AbstractController class will inject the right database object into this. Gah!
-	static Database database = null;
+	public static Database database = null;
 
 	private Provider provider;
 	@FXML
@@ -63,7 +63,7 @@ public class ProviderBox extends HBox
 			if(n.getName().equals(s))
 				toAdd = n; //TODO: Jesus christ, this can be sped up.
 		}
-		provider.locations.add(toAdd);
+		provider.addLocation(toAdd);
 		refreshBox();
 	}
 
@@ -80,13 +80,13 @@ public class ProviderBox extends HBox
 	}
 
 	public void refreshBox(){
-		firstNameField.setText(provider.name.split(";")[0].split(",")[1]);
-		lastNameField.setText(provider.name.split(",")[0]);
-		titlesField.setText(provider.name.split(";")[1]);
-		for(Node n : provider.locations)
+		firstNameField.setText(provider.getFirstName());
+		lastNameField.setText(provider.getLastName());
+		titlesField.setText(provider.getTitle());
+		for(String nodeName : provider.getLocationStringArray())
 		{
 			HBox box = new HBox();
-			Label label = new Label(n.getName());
+			Label label = new Label(nodeName);
 			Button button = new Button("X");
 			box.getChildren().addAll(label,button);
 			locationsVBox.getChildren().add(0,box);

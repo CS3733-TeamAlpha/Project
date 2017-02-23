@@ -1,21 +1,28 @@
 package pathfinding;
 
+import data.Node;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class ConcreteGraph implements Graph
+public class AStarGraph extends Graph
 {
-
 	/**
 	 * {@inheritDoc}
-	 *
-	 * @implNote This implementation returns an ArrayList.
-	 * @// TODO: 2/6/17 Implement straight-shot optimization for traversing multiple floors
 	 */
 	public ArrayList<Node> findPath(Node start, Node end)
 	{
+		System.out.println("Activating A* search");
 		if (start == null || end == null)
 			return null; //idiot check
+
+		//Idiot check for trying to path from point A to point
+		if (start == end)
+		{
+			ArrayList<Node> ret = new ArrayList<>();
+			ret.add(start);
+			return ret;
+		}
 
 		//Init: add the first node to the open list
 		ASTNode astStart = new ASTNode(start, 0);
@@ -83,7 +90,7 @@ public class ConcreteGraph implements Graph
 		//Backtrack from the end node, assembling an ordered list as we go
 		ArrayList<Node> path = new ArrayList<Node>();
 		for (ASTNode node = astEnd; node != null; node = node.parent)
-			if (node.node.getFloor() == start.getFloor() || node.node.getFloor() == end.getFloor())
+			if (filterNode(start, end, node.node))
 				path.add(node.node);
 		return path;
 	}
@@ -110,39 +117,5 @@ public class ConcreteGraph implements Graph
 				return 1;
 			return 0;
 		}
-	}
-
-	/**
-	 * returns an arraylist of all the textual directions, in string form, to get from one node to another.
-	 * assumes a path exists
-	 *
-	 * @param scaleFactor this is how we'll convert coordinates to feet
-	 */
-	//TODO: edge cases like only two nodes
-	//TODO: test
-	public ArrayList<String> textDirect(Node start, Node end, double scaleFactor)
-	{
-		ArrayList<Node> path = findPath(start, end);
-		Node hold;
-		for (int j = 0; j < path.size()/2; j++)
-		{
-			hold = path.get(j);
-			path.set(j, path.get(path.size()-1 - j));
-			path.set(path.size()-1 - j, hold);
-		}
-		if (path == null)
-		    return null;
-		ArrayList<String> temp = new ArrayList<>();
-		for (int i = 0; i < path.size() - 2; i++)
-		{
-			temp.add("Walk " + Math.round(scaleFactor*path.get(i).distance(path.get(i+1))) + " feet");
-			if (path.get(i).getFloor() != path.get(i+1).getFloor())
-				temp.add("Take the elevator to floor " + path.get(i+1).getFloor() + ", then");
-			else
-			temp.add(path.get(i).angle(path.get(i+1), path.get(i+2)) + ", then");
-		}
-		temp.add("Walk " + Math.round(scaleFactor*path.get(path.size()-2).distance(path.get(path.size()-1))) + " feet");
-		temp.add("You have reached your destination!");
-		return temp;
 	}
 }
