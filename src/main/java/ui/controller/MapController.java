@@ -1,7 +1,7 @@
 package ui.controller;
 
 import data.Node;
-import javafx.animation.FadeTransition;
+import javafx.animation.*;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -327,9 +327,11 @@ public class MapController extends BaseController
 		BUILDINGID = kiosk.getBuilding();
 		jumpFloor(kiosk.getFloor());
 		findingDirections = true;
+		nextStep.setDisable(true);
 		previousStep.setDisable(true);
 		jumping = true;
 		showRoomInfo(selected);
+		magicalJourney();
 	}
 
 
@@ -495,7 +497,64 @@ public class MapController extends BaseController
 		{
 			nextStep.setDisable(true);
 		}
-		fadeinWrapper();
+		magicalJourney();
+	}
+
+	/**
+	 * take the visitor on a magical journey
+	 */
+	private void magicalJourney()
+	{
+		SequentialTransition sequence = new SequentialTransition();
+		for(Line l: currentPath){
+			double duration = 350;
+
+			Timeline timeline = new Timeline();
+			double newH = 0;
+			double newV = 0;
+			double newX = l.getEndX()*currentZoom+editingFloor.getLayoutX();
+			double newY = l.getEndY()*currentZoom+editingFloor.getLayoutY();
+
+			if(zoomWrapper.getWidth()-newX < scroller.getWidth()/2)
+			{
+				newH = 1;
+			}
+			else if(newX < scroller.getWidth()/2)
+			{
+				newH = 0;
+			}
+			else
+			{
+				newH = (newX-scroller.getWidth()/2)/
+						(zoomWrapper.getWidth()-scroller.getWidth());
+			}
+
+			if(zoomWrapper.getHeight()-newY < scroller.getHeight()/2)
+			{
+				newV = 1;
+			}
+			else if(newY < scroller.getHeight()/2)
+			{
+				newV = 0;
+			}
+			else
+			{
+				newV = (newY-scroller.getHeight()/2)/
+						(zoomWrapper.getHeight()-scroller.getHeight());
+			}
+
+			double dif = Math.sqrt(
+					Math.pow(scroller.getVvalue()-newV, 2)+
+							Math.pow(scroller.getHvalue()-newH, 2));
+			duration = duration*dif;
+
+			 KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
+			 KeyValue kh = new KeyValue(scroller.hvalueProperty(), newH);
+			 KeyFrame kf = new KeyFrame(Duration.millis(duration+450), kv, kh);
+			timeline.getKeyFrames().add(kf);
+			sequence.getChildren().add(timeline);
+		}
+		sequence.play();
 	}
 
 	/**
