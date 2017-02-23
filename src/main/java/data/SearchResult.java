@@ -18,7 +18,3 @@ public class SearchResult
 	}
 }
 
-enum SearchType
-{
-	Location, Provider
-}
