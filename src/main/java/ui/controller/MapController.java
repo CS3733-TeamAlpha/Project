@@ -24,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -394,6 +395,7 @@ public class MapController extends BaseController
 		else {
 			buildingChoice.getSelectionModel().select(2);
 		}
+		dontTriggerChoicebox = false;
 
 		findingDirections = true;
 		nextStep.setDisable(true);
@@ -559,6 +561,7 @@ public class MapController extends BaseController
 				else {
 					buildingChoice.getSelectionModel().select(2);
 				}
+				dontTriggerChoicebox = false;
 
 				findingDirections = true;
 				showRoomInfo(selected);
@@ -587,6 +590,15 @@ public class MapController extends BaseController
 	{
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
+		Circle newCircle = new Circle();
+		newCircle.setRadius(14f);
+		newCircle.setFill(Color.RED);
+		editingFloor.getChildren().add(newCircle);
+		newCircle.toFront();
+		if(currentPath.size() != 0){
+			newCircle.setCenterX(currentPath.get(0).getStartX());
+			newCircle.setCenterY(currentPath.get(0).getStartY());
+		}
 		SequentialTransition sequence = new SequentialTransition();
 		//for each line calculate the vvalue the scroll bar should be at to "center" it in view
 		for (Line l : currentPath)
@@ -646,7 +658,9 @@ public class MapController extends BaseController
 			//keyframe stuff
 			KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
 			KeyValue kh = new KeyValue(scroller.hvalueProperty(), newH);
-			KeyFrame kf = new KeyFrame(Duration.millis(duration + 450), kv, kh);
+			KeyValue cx = new KeyValue(newCircle.centerXProperty(), l.getEndX());
+			KeyValue cy = new KeyValue(newCircle.centerYProperty(), l.getEndY());
+			KeyFrame kf = new KeyFrame(Duration.millis(duration + 450), kv, kh, cx, cy);
 			timeline.getKeyFrames().add(kf);
 			sequence.getChildren().add(timeline);
 		}
@@ -657,6 +671,7 @@ public class MapController extends BaseController
 			public void handle(ActionEvent event) {
 				nextStep.setDisable(false);
 				previousStep.setDisable(false);
+				editingFloor.getChildren().remove(newCircle);
 			}
 		});
 	}
@@ -756,6 +771,7 @@ public class MapController extends BaseController
 				else {
 					buildingChoice.getSelectionModel().select(2);
 				}
+				dontTriggerChoicebox = false;
 
 				findingDirections = true;
 				showRoomInfo(selected);
