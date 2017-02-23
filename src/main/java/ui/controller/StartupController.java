@@ -1,6 +1,8 @@
 package ui.controller;
 
+import data.Node;
 import data.SearchResult;
+import data.SearchType;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
@@ -40,9 +42,21 @@ public class StartupController extends BaseController
 				contextMenu.getItems().add(item);
 				item.setOnAction(event ->
 				{
-					setSearchedFor(database.getNodeByUUID(result.id));
-					System.out.println(result.id);
-					loadFXML(Paths.MAP_FXML);
+					if(result.searchType == SearchType.Provider)
+					{
+						List<Node> locations = database.getProviderByID(result.id).getLocations();
+						if(locations.size() > 0)
+						{
+							setSearchedFor(locations.get(0));
+							loadFXML(Paths.MAP_FXML);
+						}
+					}
+					else if(result.searchType == SearchType.Location)
+					{
+						setSearchedFor(database.getNodeByUUID(result.id));
+						System.out.println(result.id);
+						loadFXML(Paths.MAP_FXML);
+					}
 				});
 			}
 
