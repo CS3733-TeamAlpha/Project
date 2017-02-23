@@ -1244,7 +1244,7 @@ public class MapEditorToolController extends BaseController
     {
         try
         {
-            currentButton.setLayoutX(Double.parseDouble(xField.getText()));
+            currentButton.setLayoutX(Double.parseDouble(xField.getText())-XOFFSET);
             currentNode.setX(Double.parseDouble(xField.getText()));
 
             //redraw lines for any node that has currentNode as a neighbor
@@ -1275,7 +1275,7 @@ public class MapEditorToolController extends BaseController
         {
             if(currentButton != null && currentNode != null)
             {
-                currentButton.setLayoutY(Double.parseDouble(yField.getText()));
+                currentButton.setLayoutY(Double.parseDouble(yField.getText())-YOFFSET);
                 currentNode.setY(Double.parseDouble(yField.getText()));
 
                 //redraw lines for any node that has currentNode as a neighbor
