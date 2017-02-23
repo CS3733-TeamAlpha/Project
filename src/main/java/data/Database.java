@@ -1144,15 +1144,14 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
-		//TODO: set below to false, in order to avoid the carpet bombing
-		runScript(DB_DROP_ALL, true);
-		runScript(DB_CREATE_SQL, true);
-		runScript(DB_INSERT_NODES, true);
-		runScript(DB_INSERT_EDGES, true);
-		runScript(DB_INSERT_SQL, true);
-		runScript(DB_INSERT_PROVIDERS, true);
-		runScript(DB_INSERT_SERVICES, true);
-		runScript(DB_INSERT_PROVIDEROFFICES, true);
+		runScript(DB_DROP_ALL, false);
+		runScript(DB_CREATE_SQL, false);
+		runScript(DB_INSERT_NODES, false);
+		runScript(DB_INSERT_EDGES, false);
+		runScript(DB_INSERT_SQL, false);
+		runScript(DB_INSERT_PROVIDERS, false);
+		runScript(DB_INSERT_SERVICES, false);
+		runScript(DB_INSERT_PROVIDEROFFICES, false);
 
 		try
 		{
