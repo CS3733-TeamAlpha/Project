@@ -584,10 +584,6 @@ public class MapEditorToolController extends BaseController
 				oldNode.addNeighbor(currentNode);
 				currentNode.addNeighbor(oldNode);
 
-				//update currentnode and linked node since both had neighbor added
-				database.updateNode(oldNode);
-				database.updateNode(currentNode);
-
 				//draw connecting lines
 				drawToNeighbors(currentNode);
 				drawToNeighbors(oldNode);
@@ -623,8 +619,6 @@ public class MapEditorToolController extends BaseController
 				currentNode.addNeighbor(lowerNode);
 				lowerNode.addNeighbor(currentNode);
 				//update currentnode and linked node since both had neighbor added
-				database.updateNode(lowerNode);
-				database.updateNode(currentNode);
 				currentState = editorStates.DOINGNOTHING;
 				System.out.println("Connected down");
 			}
@@ -643,11 +637,7 @@ public class MapEditorToolController extends BaseController
 				{
 					lowerNode.delNeighbor(currentNode);
 					drawToNeighbors(lowerNode);
-					//if linked node also had neighbor, update the change
-					database.updateNode(lowerNode);
 				}
-				//update currentNode (not the node that has just been clicked)
-				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
@@ -683,9 +673,6 @@ public class MapEditorToolController extends BaseController
 			{
 				currentNode.addNeighbor(upperNode);
 				upperNode.addNeighbor(currentNode);
-				//update currentnode and linked node since both had neighbor added
-				database.updateNode(upperNode);
-				database.updateNode(currentNode);
 				System.out.println("Connected up");
 			}
 			currentState = editorStates.DOINGNOTHING;
@@ -703,12 +690,7 @@ public class MapEditorToolController extends BaseController
 				{
 					upperNode.delNeighbor(currentNode);
 					drawToNeighbors(upperNode);
-					//if linked node also had neighbor, update the change
-					database.updateNode(upperNode);
 				}
-				//update currentNode (not the node that has just been clicked)
-				database.updateNode(currentNode);
-
 				//redraw lines
 				drawToNeighbors(currentNode);
 			}
@@ -786,10 +768,6 @@ public class MapEditorToolController extends BaseController
 				{
 					nearest.addNeighbor(currentNode);
 					currentNode.addNeighbor(nearest);
-
-					//link to nearest neighbor
-					database.updateNode(nearest);
-					database.updateNode(currentNode);
 
 					//draw connecting lines
 					drawToNeighbors(currentNode);
@@ -989,10 +967,6 @@ public class MapEditorToolController extends BaseController
 				currentNode.notifyObservers();
 			default:
 				System.out.println("asdf");
-				if(currentNode != null)
-				{
-					database.updateNode(currentNode);
-				}
 				currentState = editorStates.DOINGNOTHING;
 				break;
 		}
@@ -1142,9 +1116,6 @@ public class MapEditorToolController extends BaseController
 				//add neighbor
 				currentNode.addNeighbor(linkedNode);
 				linkedNode.addNeighbor(currentNode);
-				//update currentnode and linked node since both had neighbor added
-				database.updateNode(linkedNode);
-				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
@@ -1160,11 +1131,7 @@ public class MapEditorToolController extends BaseController
 				{
 					linkedNode.delNeighbor(currentNode);
 					drawToNeighbors(linkedNode);
-					//if linked node also had neighbor, update the change
-					database.updateNode(linkedNode);
 				}
-				//update currentNode (not the node that has just been clicked)
-				database.updateNode(currentNode);
 
 				//redraw lines
 				drawToNeighbors(currentNode);
@@ -1228,7 +1195,6 @@ public class MapEditorToolController extends BaseController
         {
             currentButton.setLayoutX(Double.parseDouble(xField.getText()));
             currentNode.setX(Double.parseDouble(xField.getText()));
-            database.updateNode(currentNode);
 
             //redraw lines for any node that has currentNode as a neighbor
             //store nodes that need to be redrawn in a list as a workaround
@@ -1260,7 +1226,6 @@ public class MapEditorToolController extends BaseController
             {
                 currentButton.setLayoutY(Double.parseDouble(yField.getText()));
                 currentNode.setY(Double.parseDouble(yField.getText()));
-                database.updateNode(currentNode);
 
                 //redraw lines for any node that has currentNode as a neighbor
                 //store nodes that need to be redrawn in a list as a workaround
@@ -1289,10 +1254,7 @@ public class MapEditorToolController extends BaseController
 		try
 		{
 			if (currentButton != null && currentNode != null)
-			{
 				currentNode.setName(nameField.getText());
-				database.updateNode(currentNode);
-			}
 		} catch (NumberFormatException e)
 		{
 			System.out.println("Not a double");
@@ -1325,7 +1287,6 @@ public class MapEditorToolController extends BaseController
 				}
 				//update type
 				currentNode.setType(newType);
-				database.updateNode(currentNode);
 				for(Button b: nodeButtonLinks.keySet())
 				{
 					if(nodeButtonLinks.get(b) == currentNode)
