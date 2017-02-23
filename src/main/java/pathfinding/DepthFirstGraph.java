@@ -11,7 +11,7 @@ public class DepthFirstGraph extends Graph
 
 	public ArrayList<Node> findPath(Node start, Node end)
 	{
-
+		System.out.println("Activating depth first search");
 		ArrayList<Node> result = new ArrayList<Node>();
 		HashMap<Node, Node> parentMap = new HashMap<Node, Node>();
 		parentMap.put(start, null);
@@ -40,8 +40,7 @@ public class DepthFirstGraph extends Graph
 			{
 				while (parentMap.get(temp) != null)
 				{
-					if (filterNode(start, end, temp))
-						result.add(temp);
+					result.add(temp);
 					temp = parentMap.get(temp);
 				}
 				result.add(start);

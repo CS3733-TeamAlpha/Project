@@ -18,7 +18,7 @@ public abstract class BaseController
 {
 	protected static Stage stage;
 	private boolean currentSceneSupportsHC = true;
-	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_FXML, Paths.USER_DIRECTORY_FXML};
+	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_EDITOR_FXML, Paths.USER_DIRECTORY_FXML};
 	protected static Database database;
 
 	private static Node searchedFor;
@@ -56,7 +56,7 @@ public abstract class BaseController
 	double XOFFSET = CIRCLEWIDTH / 2;
 	double YOFFSET = CIRCLEWIDTH / 2;
 
-	double MINZOOM = 0.6;
+	double MINZOOM = 0.54;
 	double MAXZOOM = 1.4;
 	double currentZoom = 1.0;
 

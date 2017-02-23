@@ -53,7 +53,14 @@ public class LoginController extends BaseController
 		cancelButton.setDisable(true);
 
 		boolean success;
-		String storedHash = database.getHashedPassword(usernameField.getText());
+		boolean wrongUser = false;
+		String storedHash = "";
+		// Keeps null pointer from showing up if incorrect username
+		if(database.getHashedPassword(usernameField.getText()) != null) {
+			storedHash = database.getHashedPassword(usernameField.getText());
+		} else {
+			wrongUser = true;
+		}
 		success = !storedHash.isEmpty() && BCrypt.checkpw(passwordField.getText(), storedHash);
 
 		if (success)
@@ -69,7 +76,11 @@ public class LoginController extends BaseController
 		}
 		else
 		{
-			resultText.setText("Incorrect login");
+			if(wrongUser) { // Tell them username is wrong only if user isn't recognized
+				resultText.setText("Unrecognized Username");
+			} else { // Tell them password is wrong if user is correct
+				resultText.setText("Incorrect Password");
+			}
 			resultText.setTextFill(Color.RED);
 			resultText.setVisible(true);
 

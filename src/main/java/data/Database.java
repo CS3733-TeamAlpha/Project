@@ -5,10 +5,8 @@ import org.apache.derby.tools.ij;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class for database access using java derby.
@@ -21,6 +19,9 @@ public class Database implements Observer
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
+	private static final String DB_INSERT_PROVIDERS = "/db/APP_PROVIDERS.sql";
+	private static final String DB_INSERT_SERVICES = "/db/APP_SERVICES.sql";
+	private static final String DB_INSERT_PROVIDEROFFICES = "/db/APP_PROVIDEROFFICES.sql";
 	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
 	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
 
@@ -231,10 +232,23 @@ public class Database implements Observer
 			//Insert service info... this one should be much simpler
 			PreparedStatement insSrv = connection.prepareStatement("INSERT INTO Services VALUES(?, ?)");
 			insSrv.setString(1, node.getID());
-			for (String srv : node.getServices())
+			for (int i = 0; i < node.getServices().size(); i++)
 			{
-				insSrv.setString(2, srv);
-				insSrv.execute();
+				String srv = node.getServices().get(i);
+				try
+				{
+					insSrv.setString(2, srv);
+					insSrv.execute();
+				} catch (SQLException e2)
+				{
+					if (!e2.getSQLState().equals("23505"))
+						e2.printStackTrace();
+					else
+					{
+						System.out.println("Removing duplicate service " + srv + " from node");
+						node.services.remove(srv);
+					}
+				}
 			}
 
 			nodeCache.put(node.getID(), node);
@@ -298,6 +312,12 @@ public class Database implements Observer
 			node.getProviders().forEach((p) -> updateProvider(p));
 
 			//Update services
+			PreparedStatement resServices = connection.prepareStatement("UPDATE Services SET node=? WHERE name=?"); //Resolve services
+			for (String srv : node.getServices())
+			{
+				resServices.setString(1, node.getID());
+				resServices.setString(2, srv);
+			}
 			PreparedStatement delServices = connection.prepareStatement("DELETE FROM Services WHERE node=?");
 			delServices.setString(1, node.getID());
 			delServices.execute();
@@ -1002,7 +1022,8 @@ public class Database implements Observer
 			//Load service info
 			results = statement.executeQuery("SELECT * FROM Services");
 			while (results.next())
-				nodeCache.get(results.getString(1)).services.add(results.getString(2));
+				if (results.getString(1) != null)
+					nodeCache.get(results.getString(1)).services.add(results.getString(2));
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to load pathable nodes!");
@@ -1094,11 +1115,15 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
+		//TODO: set below to false, in order to avoid the carpet bombing
 		runScript(DB_DROP_ALL, true);
 		runScript(DB_CREATE_SQL, true);
 		runScript(DB_INSERT_NODES, true);
 		runScript(DB_INSERT_EDGES, true);
 		runScript(DB_INSERT_SQL, true);
+		runScript(DB_INSERT_PROVIDERS, true);
+		runScript(DB_INSERT_SERVICES, true);
+		runScript(DB_INSERT_PROVIDEROFFICES, true);
 
 		try
 		{
@@ -1129,5 +1154,10 @@ public class Database implements Observer
 			System.out.println("Couldn't find database creation script... that's an error.");
 			e.printStackTrace();
 		}
+	}
+
+	public List<Node> getAllServices()
+	{
+		return nodeCache.values().stream().filter(node -> node.getType() == 1).collect(Collectors.toList());
 	}
 }

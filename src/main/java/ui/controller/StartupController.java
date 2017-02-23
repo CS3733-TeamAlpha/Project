@@ -15,7 +15,7 @@ import java.util.List;
 
 public class StartupController extends BaseController
 {
-	public ImageView eyeImage;
+//	public ImageView eyeImage;
 	public ImageView lockImage;
 	private ContextMenu contextMenu;
 	public TextField searchBox;
@@ -73,8 +73,8 @@ public class StartupController extends BaseController
 		loadFXML(Paths.LOGIN_FXML);
 	}
 
-	public void toggleHighContrast()
-	{
-		Accessibility.toggleHighContrast(this);
-	}
+//	public void toggleHighContrast()
+//	{
+//		Accessibility.toggleHighContrast(this);
+//	}
 }

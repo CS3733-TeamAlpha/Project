@@ -1,20 +1,34 @@
 package ui.controller;
 
+import data.Node;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
+import pathfinding.AStarGraph;
+import pathfinding.BreadthFirstGraph;
+import pathfinding.DepthFirstGraph;
 import ui.Paths;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 
 public class AdminPageController extends BaseController
 {
+	@FXML
+	ChoiceBox algorithmSelector;
+
+	@FXML
+	ChoiceBox kioskNodeSelector;
+
 	public Button changePasswordButton;
 
 	public void initialize()
@@ -23,11 +37,54 @@ public class AdminPageController extends BaseController
 		{
 			changePasswordButton.setText("Manage Accounts");
 		}
+
+		algorithmSelector.getItems().add("A*");
+		algorithmSelector.getItems().add("Breadth First");
+		algorithmSelector.getItems().add("Depth First");
+		algorithmSelector.getSelectionModel().selectFirst();
+		algorithmSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldValue, newValue) ->
+		{
+			System.out.println("Switching from " + oldValue + " to " + newValue);
+			switch ((int)newValue)
+			{
+				case 0:
+					MapController.graph = new AStarGraph();
+					break;
+				case 1:
+					MapController.graph = new BreadthFirstGraph();
+					break;
+				case 2:
+					MapController.graph = new DepthFirstGraph();
+					break; //lol
+			}
+		});
+
+		ArrayList<Node> kiosks = new ArrayList<>();
+		database.getAllNodes().forEach((node) ->
+		{
+			if (node.getType() == 4 || node.getType() == 5)
+			{
+				kiosks.add(node);
+				kioskNodeSelector.getItems().add(node.getName());
+			}
+		});
+		kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
+		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldSelection, Number newSelection)
+			{
+				System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
+				database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
+				kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
+			}
+		});
+
 	}
 
 	public void editDirectory(ActionEvent actionEvent)
 	{
-		loadFXML(Paths.DIRECTORY_FXML);
+		loadFXML(Paths.DIRECTORY_EDITOR_FXML);
 	}
 
 	public void editMap(ActionEvent actionEvent)

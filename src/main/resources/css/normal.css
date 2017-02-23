@@ -149,3 +149,54 @@
 {
     -fx-border-width: 1px;
 }
+
+.bh-background-pane
+{
+    -fx-background-color: #29708e;
+}
+
+.bh-styled-label
+{
+    -fx-text-fill: white;
+}
+
+.bh-right-button
+{
+    -fx-background-radius: 0px 5px 5px 0px;
+}
+
+.bh-left-button
+{
+    -fx-background-radius: 5px 0px 0px 5px;
+}
+
+.bh-button:selected
+{
+    -fx-background-color: #a3a3a3;
+}
+
+.bh-divider
+{
+    -fx-background-color: gray;
+}
+
+.bh-text-field
+{
+    -fx-border-width: 0px;
+    -fx-background-color: white;
+}
+
+/* horizontal the two nodes are placed to the left/right of each other. */
+.split-pane:horizontal > * > .split-pane-divider {
+    -fx-border-color: #000;
+    -fx-background-color: #000;
+    -fx-background-insets: 0;
+}
+
+.split-pane *.horizontal-grabber
+{
+    -fx-padding: 0;
+    -fx-background-color: #000;
+    -fx-background-insets: 0;
+    -fx-shape: " ";
+}
