@@ -57,6 +57,8 @@ CREATE TABLE Logins
 
 
 INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'faulkner_main');
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-111111111111', 'belkin_house');
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-222222222222', 'outdoors');
 
 
 --Delete all nodes in the building if the building gets deleted
