@@ -1,11 +1,12 @@
 [display]
 fullscreen=true
 multi-sampling=true
-no-vsync=true
+output-framerate=60
 viewport=1920x1080
 
 [gource]
 auto-skip-seconds=0.01
+background-colour=000000
 caption-duration=4
 caption-file=gource_captions.txt
 caption-size=42
