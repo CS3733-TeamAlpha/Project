@@ -24,6 +24,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.util.Duration;
 import pathfinding.AStarGraph;
 import pathfinding.Graph;
@@ -257,17 +259,15 @@ public class MapController extends BaseController
 							focusNode = path.get(i);
 						}
 						Line line = new Line();
+						line.setStrokeLineCap(StrokeLineCap.ROUND);
 						line.setStartX(path.get(i).getX()+ PATH_LINE_OFFSET); //plus 15 to center on button
 						line.setStartY(path.get(i).getY()+PATH_LINE_OFFSET);
 						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
 						line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 						line.setStrokeWidth(10);
 //						// Change color for line if it is high contrast
-//						if (Accessibility.isHighContrast()) {
-//							line.setStroke(Color.WHITE);
-//						} else {
+
 						line.setStroke(Color.BLUE);
-//						}
 						editingFloor.getChildren().add(1,line);
 						currentPath.add(line);
 					}
@@ -424,23 +424,16 @@ public class MapController extends BaseController
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
 		}
-		Task<Void> sleeper = new Task<Void>() {
-			@Override
-			protected Void call() throws Exception {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-				return null;
-			}
-		};
-		sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				System.out.println("?????????");
-			}
-		});
-		new Thread(sleeper).start();
+		if(hasNextStep)
+		{
+			hasNextStep = false;
+			resetSteps = true;
+		}
+		jumping = false;
+		if(selected != null)
+		{
+			showRoomInfo(selected);
+		}
 	}
 
 	@FXML
