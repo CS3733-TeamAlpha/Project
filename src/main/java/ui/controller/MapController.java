@@ -284,7 +284,12 @@ public class MapController extends BaseController
 		for(String s: n.getServices()){
 			toAdd += s + ", ";
 		}
-		servicesLabel.setText(toAdd.substring(0,toAdd.length()-2));
+		if(toAdd.length()>2)
+		{
+			servicesLabel.setText(toAdd.substring(0, toAdd.length() - 2));
+		}else{
+			servicesLabel.setText("");
+		}
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 
