@@ -16,23 +16,19 @@
 
 <SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <items>
-      <StackPane alignment="TOP_CENTER">
+      <StackPane alignment="TOP_CENTER" style="-fx-background-color: black;">
           <children>
               <ScrollPane fx:id="scroller" hbarPolicy="ALWAYS" pannable="true" vbarPolicy="ALWAYS" StackPane.alignment="TOP_LEFT">
                <content>
-                  <AnchorPane fx:id="zoomWrapper">
-                     <children>
-                            <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0">
-                                <children>
-                                    <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                     <image>
-                                        <Image url="@/images/floor3.png" />
-                                     </image>
-                                    </ImageView>
-                                </children>
-                            </AnchorPane>
-                     </children>
-                  </AnchorPane>
+                      <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0">
+                          <children>
+                              <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                               <image>
+                                  <Image url="@/images/floor3.png" />
+                               </image>
+                              </ImageView>
+                          </children>
+                      </AnchorPane>
                </content>
               </ScrollPane>
               <Pane pickOnBounds="false">
