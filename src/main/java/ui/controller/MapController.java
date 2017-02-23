@@ -31,7 +31,7 @@ public class MapController extends BaseController
 	public static final int PATH_LINE_OFFSET = 0;
 	public Label textDirectionsLabel;
 	//public ImageView floorImage;
-	private Graph graph;
+	static Graph graph;
 	private boolean roomInfoShown;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 
@@ -121,7 +121,9 @@ public class MapController extends BaseController
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getSelectedKiosk();
-		graph = new AStarGraph();
+		System.out.println("MapController.initialize()");
+		if (graph == null)
+			graph = new AStarGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
 		setFloorImage(BUILDINGID, FLOORID); //Set image of floor
 
