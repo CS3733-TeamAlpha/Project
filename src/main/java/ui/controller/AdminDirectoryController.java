@@ -6,6 +6,8 @@ import data.Provider;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -29,6 +31,7 @@ public class AdminDirectoryController extends BaseController
 	public ListView<Node> providerUnusedLocationsList;
 	public Button deleteProviderButton;
 	public StackPane providerEditorPane;
+	public Button addProviderButton;
 
 	private Provider selectedProvider = null;
 
@@ -169,7 +172,6 @@ public class AdminDirectoryController extends BaseController
 
 		ChangeListener<Boolean> textFocusListener = (observable, oldValue, newValue) ->
 		{
-			System.out.println("Saved");
 			selectedProvider.setAll(firstNameField.getText(), lastNameField.getText(), titleField.getText());
 
 			((MyRefreshSkin)mainListView.getSkin()).refresh();
@@ -181,6 +183,14 @@ public class AdminDirectoryController extends BaseController
 
 		providerSelectButton.setOnAction(event -> locationSelectButton.setSelected(!providerSelectButton.isSelected()));
 		locationSelectButton.setOnAction(event -> providerSelectButton.setSelected(!locationSelectButton.isSelected()));
+
+		addProviderButton.setOnAction(event ->
+		{
+			Provider newProvider = new Provider("FirstName", "LastName", UUID.randomUUID().toString(), "Title");
+			mainListView.getItems().add(0, newProvider);
+			mainListView.getSelectionModel().select(newProvider);
+			database.addProvider(newProvider);
+		});
 	}
 
 	private void disableEditorView()
@@ -232,7 +242,6 @@ public class AdminDirectoryController extends BaseController
 
 	class MyRefreshSkin extends ListViewSkin<Provider>
 	{
-
 		public MyRefreshSkin(ListView<Provider> listView)
 		{
 			super(listView);

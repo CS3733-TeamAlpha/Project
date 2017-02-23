@@ -22,7 +22,7 @@ CREATE TABLE Services --Shops, cafes, etc. What is this, a mall?
 (
   node VARCHAR(36),
   name VARCHAR(128) NOT NULL UNIQUE ,
-  FOREIGN KEY (node) REFERENCES Nodes(node_uuid) ON DELETE CASCADE --services and nodes have 1-1 relationship
+  FOREIGN KEY (node) REFERENCES Nodes(node_uuid)
 );
 
 CREATE TABLE Providers
@@ -57,6 +57,8 @@ CREATE TABLE Logins
 
 
 INSERT INTO Buildings VALUES('00000000-0000-0000-0000-000000000000', 'faulkner_main');
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-111111111111', 'belkin_house');
+INSERT INTO Buildings VALUES('00000000-0000-0000-0000-222222222222', 'outdoors');
 
 
 --Delete all nodes in the building if the building gets deleted

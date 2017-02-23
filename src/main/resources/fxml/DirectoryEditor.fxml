@@ -23,9 +23,9 @@
          <children>
             <StackPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="SOMETIMES">
                <children>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" StackPane.alignment="CENTER">
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="2.0" StackPane.alignment="CENTER">
                      <StackPane.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
                      </StackPane.margin>
                      <children>
                         <StackPane>
@@ -41,7 +41,7 @@
                                           </Label>
                                           <HBox alignment="TOP_CENTER" prefWidth="200.0">
                                              <children>
-                                                <ToggleButton fx:id="providerSelectButton" mnemonicParsing="false" prefHeight="30.0" selected="true" text="Provider">
+                                                <ToggleButton fx:id="providerSelectButton" focusTraversable="false" mnemonicParsing="false" prefHeight="30.0" selected="true" text="Provider">
                                                    <styleClass>
                                                       <String fx:value="bh-button" />
                                                       <String fx:value="bh-left-button" />
@@ -50,7 +50,7 @@
                                                         <Font name="Glacial Indifference Regular" size="15.0" />
                                                     </font>
                                                 </ToggleButton>
-                                                <ToggleButton fx:id="locationSelectButton" mnemonicParsing="false" prefHeight="30.0" text="Location">
+                                                <ToggleButton fx:id="locationSelectButton" focusTraversable="false" mnemonicParsing="false" prefHeight="30.0" text="Location">
                                                    <styleClass>
                                                       <String fx:value="bh-button" />
                                                       <String fx:value="bh-right-button" />
@@ -77,11 +77,20 @@
                         </StackPane>
                         <HBox spacing="30.0" VBox.vgrow="SOMETIMES">
                            <children>
-                              <ListView fx:id="mainListView" prefHeight="200.0" prefWidth="200.0">
-                                 <HBox.margin>
-                                    <Insets left="5.0" right="5.0" top="10.0" />
-                                 </HBox.margin>
-                              </ListView>
+                              <VBox alignment="TOP_CENTER">
+                                 <children>
+                                    <ListView fx:id="mainListView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+                                       <HBox.margin>
+                                          <Insets left="5.0" right="5.0" top="10.0" />
+                                       </HBox.margin>
+                                    </ListView>
+                                    <Button fx:id="addProviderButton" mnemonicParsing="false" styleClass="bh-button" text="Add New Provider">
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                              </VBox>
                               <StackPane fx:id="providerEditorPane" disable="true" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="SOMETIMES">
                                  <children>
                                     <VBox alignment="BASELINE_LEFT" fillWidth="false" spacing="10.0" StackPane.alignment="CENTER">
