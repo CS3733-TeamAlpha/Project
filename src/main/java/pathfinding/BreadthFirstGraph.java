@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class BreadthFirstGraph implements Graph
+public class BreadthFirstGraph extends Graph
 {
 
 	public ArrayList<Node> findPath(Node start, Node end)
@@ -40,7 +40,8 @@ public class BreadthFirstGraph implements Graph
 			{
 				while (parentMap.get(temp) != null)
 				{
-					result.add(temp);
+					if (filterNode(start, end, temp))
+						result.add(temp);
 					temp = parentMap.get(temp);
 				}
 				result.add(start);

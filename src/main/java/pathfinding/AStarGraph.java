@@ -5,7 +5,7 @@ import data.Node;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class AStarGraph implements Graph
+public class AStarGraph extends Graph
 {
 	/**
 	 * {@inheritDoc}
@@ -89,7 +89,8 @@ public class AStarGraph implements Graph
 		//Backtrack from the end node, assembling an ordered list as we go
 		ArrayList<Node> path = new ArrayList<Node>();
 		for (ASTNode node = astEnd; node != null; node = node.parent)
-			path.add(node.node);
+			if (filterNode(start, end, node.node))
+				path.add(node.node);
 		return path;
 	}
 
