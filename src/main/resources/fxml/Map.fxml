@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
+<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <items>
       <StackPane alignment="TOP_CENTER">
           <children>
@@ -49,33 +42,52 @@
               </Pane>
           </children>
       </StackPane>
-      <VBox fx:id="roomInfo" prefHeight="200.0" prefWidth="100.0">
+      <VBox fx:id="roomInfo" alignment="TOP_CENTER" spacing="5.0" styleClass="bh-background-pane">
          <children>
-            <Button mnemonicParsing="false" onAction="#hideRoomInfo" prefHeight="28.0" prefWidth="65.0" text="Hide" />
-            <Label fx:id="roomName" alignment="CENTER" prefHeight="82.0" prefWidth="327.0" text="Room 212">
+            <AnchorPane>
+               <children>
+                  <Button mnemonicParsing="false" onAction="#hideRoomInfo" prefHeight="28.0" prefWidth="65.0" styleClass="bh-button" text="Hide &gt;" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+               </children>
+            </AnchorPane>
+            <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" wrapText="true">
                <font>
-                  <Font size="24.0" />
+                  <Font name="Glacial Indifference Regular" size="24.0" />
                </font>
             </Label>
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" prefHeight="93.0" prefWidth="315.0" text="Find Directions">
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" styleClass="bh-button" text="Find Directions">
                <VBox.margin>
-                  <Insets bottom="30.0" />
-               </VBox.margin></Button>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="32.0" />
+               </font>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding></Button>
             <HBox prefHeight="52.0" prefWidth="315.0">
                <children>
-                  <Button fx:id="previousStep" mnemonicParsing="false" onAction="#goPreviousStep" prefHeight="52.0" prefWidth="150.0" text="Previous Step">
+                  <Button fx:id="previousStep" mnemonicParsing="false" onAction="#goPreviousStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Previous Step">
                      <HBox.margin>
                         <Insets right="15.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" text="Next Step" />
+                  <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step" />
                </children>
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin>
             </HBox>
-            <ScrollPane prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">
+            <ScrollPane hbarPolicy="NEVER" prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">
                <content>
-                  <Label fx:id="textDirectionsLabel" styleClass="hc-black" />
-               </content></ScrollPane>
-            <Button mnemonicParsing="false" onAction="#clearPath" prefHeight="36.0" prefWidth="315.0" text="Clear Path" />
+                  <Label fx:id="textDirectionsLabel" styleClass="hc-black" wrapText="true" />
+               </content>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin></ScrollPane>
+            <Button mnemonicParsing="false" onAction="#clearPath" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Clear Path">
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin></Button>
          </children></VBox>
    </items>
 </SplitPane>
