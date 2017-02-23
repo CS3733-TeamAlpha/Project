@@ -2,6 +2,9 @@ package ui.controller;
 
 import data.Node;
 import javafx.animation.*;
+import javafx.animation.FadeTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -9,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -16,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -48,6 +53,8 @@ public class MapController extends BaseController
 	boolean jumping = false;
 	int targetFloor = -1;
 	String targetBuilding = "";
+	private Pane currentTooltip = null;
+	private Button currentHoveredNode = null;
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
@@ -879,6 +886,11 @@ public class MapController extends BaseController
 			//new button
 			Button nodeB = new Button();
 
+			if(n.getType() != 0)
+			{
+				nodeB.setCursor(Cursor.HAND);
+			}
+
 			//experimental style changes to make the button a circle
 			nodeB.setId("node-button-unselected");
 
@@ -918,24 +930,46 @@ public class MapController extends BaseController
 				}
 			}
 
-			nodeB.hoverProperty().addListener(l->{
-				ToolTipManager.sharedInstance().setInitialDelay(0);
-				ToolTipManager.sharedInstance().setDismissDelay(100000);
-				if(n.getProviders().size() > 0) {
-					for (int i = 0; i < n.getProviders().size(); i++) {
-						wrapToolTip.concat(n.getProviders().get(i).getFirstName());
-						wrapToolTip.concat(", ");
-						wrapToolTip.concat(n.getProviders().get(i).getLastName());
-					}
-					Tooltip t = new Tooltip(wrapToolTip);
-					Tooltip.install(nodeB, t);
-				} else {
-					Tooltip t = new Tooltip("There are no providers");
-					Tooltip.install(nodeB, t);
+			nodeB.hoverProperty().addListener((observable, oldValue, newValue) ->
+			{
+				if(currentTooltip != null && !newValue)
+				{
+					editingFloor.getChildren().remove(currentTooltip);
 				}
-				nodeB.setCursor(Cursor.HAND);
+
+				if(newValue)
+				{
+					StringBuilder tooltipText = new StringBuilder();
+					for (int i = 0; i < n.getProviders().size(); i++)
+					{
+						tooltipText.append(n.getProviders().get(i).getFirstName());
+						tooltipText.append(", ");
+						tooltipText.append(n.getProviders().get(i).getLastName());
+						if (i < n.getProviders().size() - 1)
+						{
+							tooltipText.append("\n");
+						}
+					}
+					if(!tooltipText.toString().isEmpty())
+					{
+						StackPane p = new StackPane();
+						p.setAlignment(Pos.CENTER);
+						p.setLayoutX(nodeB.getLayoutX() + 25);
+						p.setLayoutY(nodeB.getLayoutY() + 25);
+						p.getStyleClass().add("bh-tooltip");
+
+						Label theText = new Label(tooltipText.toString());
+						theText.getStyleClass().add("bh-tooltip-text");
+						p.getChildren().add(theText);
+						editingFloor.getChildren().add(p);
+						currentTooltip = p;
+						currentHoveredNode = nodeB;
+					}
+
+				}
 			});
-				nodeB.setOnAction(event -> showRoomInfo(n));
+
+			nodeB.setOnAction(event -> showRoomInfo(n));
 			//add button to scene
 			editingFloor.getChildren().add(1, nodeB);
 		}
