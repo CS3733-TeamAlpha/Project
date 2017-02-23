@@ -1,18 +1,17 @@
 package ui.controller;
 
+import com.sun.javafx.scene.control.skin.ListViewSkin;
 import data.Node;
 import data.Provider;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import ui.Paths;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AdminDirectoryController extends BaseController
@@ -20,16 +19,15 @@ public class AdminDirectoryController extends BaseController
 	public Button backButton;
 	public ToggleButton providerSelectButton;
 	public ToggleButton locationSelectButton;
-	public ListView mainListView;
+	public ListView<Provider> mainListView;
 	public TextField firstNameField;
 	public TextField lastNameField;
 	public TextField titleField;
-	public ListView providerUsedLocationsList;
+	public ListView<Node> providerUsedLocationsList;
 	public Button providerAddLocationButton;
 	public Button providerRemoveLocationButton;
-	public ListView providerUnusedLocationsList;
+	public ListView<Node> providerUnusedLocationsList;
 	public Button deleteProviderButton;
-	public Button saveProviderButton;
 	public StackPane providerEditorPane;
 
 	private Provider selectedProvider = null;
@@ -42,65 +40,148 @@ public class AdminDirectoryController extends BaseController
 
 		List<Node> allLocations = database.getAllServices();
 
-		providerEditorPane.setVisible(false);
-
 		providerUsedLocationsList.setCellFactory(param -> new ServiceCell());
 		providerUnusedLocationsList.setCellFactory(param -> new ServiceCell());
 
+		providerUnusedLocationsList.getFocusModel().focusedItemProperty().addListener((observable, oldValue, newValue) ->
+		{
+			if(newValue != null)
+			{
+				providerUsedLocationsList.getSelectionModel().clearSelection();
+			}
+		});
+		providerUsedLocationsList.getFocusModel().focusedItemProperty().addListener((observable, oldValue, newValue) ->
+		{
+			if(newValue != null)
+			{
+				providerUnusedLocationsList.getSelectionModel().clearSelection();
+			}
+		});
+
 		providerUnusedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
-			providerUsedLocationsList.getSelectionModel().clearSelection();
-			providerAddLocationButton.setDisable(false);
-			providerRemoveLocationButton.setDisable(true);
+			if(newValue != null)
+			{
+				providerAddLocationButton.setDisable(false);
+				providerRemoveLocationButton.setDisable(true);
+			}
 		});
 
 		providerUsedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
-			providerUnusedLocationsList.getSelectionModel().clearSelection();
-			providerAddLocationButton.setDisable(true);
-			providerRemoveLocationButton.setDisable(false);
+			if(newValue != null)
+			{
+				providerAddLocationButton.setDisable(true);
+				providerRemoveLocationButton.setDisable(false);
+			}
 		});
 
 		mainListView.setCellFactory(param -> new ProviderCell());
 		mainListView.setItems(FXCollections.observableArrayList(providers));
 
+
+		mainListView.setSkin(new MyRefreshSkin(mainListView));
+
 		mainListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
-			providerEditorPane.setVisible(true);
-			Provider prov = (Provider)newValue;
-			firstNameField.setText(prov.getFirstName());
-			lastNameField.setText(prov.getLastName());
-			titleField.setText(prov.getTitle());
-
-			List<Node> assignedLocations = allLocations.stream()
-					.filter(location -> prov.getLocationIds().contains(location.getID()))
-					.collect(Collectors.toList());
-
-			providerUsedLocationsList.setItems(FXCollections.observableList(assignedLocations));
-
-			List<Node> unassignedLocations = allLocations.stream()
-					.filter(location -> !prov.getLocationIds().contains(location.getID()))
-					.collect(Collectors.toList());
-
-			providerUnusedLocationsList.setItems(FXCollections.observableList(unassignedLocations));
-		});
-
-		saveProviderButton.setOnAction(event ->
-		{
-			selectedProvider.setAll(firstNameField.getText(), lastNameField.getText(), titleField.getText());
-		});
-
-		providerAddLocationButton.setOnAction(new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle(ActionEvent event)
+			if(newValue != null)
 			{
+				providerEditorPane.setDisable(false);
 
+				providerEditorPane.setVisible(true);
+
+				selectedProvider = newValue;
+				firstNameField.setText(newValue.getFirstName());
+				lastNameField.setText(newValue.getLastName());
+				titleField.setText(newValue.getTitle());
+
+				List<Node> assignedLocations = allLocations.stream()
+						.filter(location -> newValue.getLocationIds().contains(location.getID()))
+						.collect(Collectors.toList());
+
+				providerUsedLocationsList.setItems(FXCollections.observableList(assignedLocations));
+
+				List<Node> unassignedLocations = allLocations.stream()
+						.filter(location -> !newValue.getLocationIds().contains(location.getID()))
+						.collect(Collectors.toList());
+
+				providerUnusedLocationsList.setItems(FXCollections.observableList(unassignedLocations));
 			}
 		});
 
+		providerAddLocationButton.setOnAction(event ->
+		{
+			Object possibleLocation = providerUnusedLocationsList.getSelectionModel().getSelectedItem();
+			if(possibleLocation != null)
+			{
+				Node location = (Node)possibleLocation;
+				selectedProvider.addLocation(location);
+				providerUnusedLocationsList.getItems().remove(location);
+				providerUsedLocationsList.getItems().add(location);
+			}
+		});
+
+		providerRemoveLocationButton.setOnAction(event ->
+		{
+			Object possibleLocation = providerUsedLocationsList.getSelectionModel().getSelectedItem();
+			if(possibleLocation != null)
+			{
+				Node location = (Node)possibleLocation;
+				selectedProvider.removeLocation(location.getID());
+				providerUnusedLocationsList.getItems().add(location);
+				providerUsedLocationsList.getItems().remove(location);
+			}
+		});
+
+		deleteProviderButton.setOnAction(event ->
+		{
+			Alert deleteWarning = new Alert(Alert.AlertType.WARNING);
+			deleteWarning.setTitle("Warning");
+			deleteWarning.setHeaderText("Warning: Deleting Provider");
+			deleteWarning.setContentText("Are you sure you want to delete provider '" + selectedProvider.getFirstName() + " " + selectedProvider.getLastName());
+
+			ButtonType delete = new ButtonType("Delete");
+			deleteWarning.getButtonTypes().setAll(ButtonType.CANCEL, delete);
+
+			Optional<ButtonType> result = deleteWarning.showAndWait();
+			if(result.isPresent())
+			{
+				if(result.get() == delete)
+				{
+					database.deleteProvider(selectedProvider);
+					mainListView.getItems().remove(selectedProvider);
+					if(mainListView.getSelectionModel() != null)
+						mainListView.getSelectionModel().clearSelection();
+					disableEditorView();
+				}
+			}
+		});
+
+
+		ChangeListener<Boolean> textFocusListener = (observable, oldValue, newValue) ->
+		{
+			System.out.println("Saved");
+			selectedProvider.setAll(firstNameField.getText(), lastNameField.getText(), titleField.getText());
+
+			((MyRefreshSkin)mainListView.getSkin()).refresh();
+		};
+
+		firstNameField.focusedProperty().addListener(textFocusListener);
+		lastNameField.focusedProperty().addListener(textFocusListener);
+		titleField.focusedProperty().addListener(textFocusListener);
+
 		providerSelectButton.setOnAction(event -> locationSelectButton.setSelected(!providerSelectButton.isSelected()));
 		locationSelectButton.setOnAction(event -> providerSelectButton.setSelected(!locationSelectButton.isSelected()));
+	}
+
+	private void disableEditorView()
+	{
+		providerEditorPane.setDisable(true);
+		firstNameField.clear();
+		lastNameField.clear();
+		titleField.clear();
+		providerUsedLocationsList.getItems().clear();
+		providerUnusedLocationsList.getItems().clear();
 	}
 
 	public void backButton()
@@ -133,6 +214,24 @@ public class AdminDirectoryController extends BaseController
 				Label providerLabel = new Label(item.getName());
 				setGraphic(providerLabel);
 			}
+			else
+			{
+				setGraphic(new Pane());
+			}
+		}
+	}
+
+	class MyRefreshSkin extends ListViewSkin<Provider>
+	{
+
+		public MyRefreshSkin(ListView<Provider> listView)
+		{
+			super(listView);
+		}
+
+		public void refresh()
+		{
+			super.flow.recreateCells();
 		}
 	}
 }

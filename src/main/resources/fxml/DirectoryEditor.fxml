@@ -45,7 +45,7 @@
                                           </Label>
                                           <HBox alignment="TOP_CENTER" prefWidth="200.0">
                                              <children>
-                                                <ToggleButton fx:id="providerSelectButton" mnemonicParsing="false" prefHeight="31.0" selected="true" text="Provider">
+                                                <ToggleButton fx:id="providerSelectButton" mnemonicParsing="false" prefHeight="30.0" selected="true" text="Provider">
                                                    <styleClass>
                                                       <String fx:value="bh-button" />
                                                       <String fx:value="bh-left-button" />
@@ -86,7 +86,7 @@
                                     <Insets left="5.0" right="5.0" top="10.0" />
                                  </HBox.margin>
                               </ListView>
-                              <StackPane fx:id="providerEditorPane" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="SOMETIMES">
+                              <StackPane fx:id="providerEditorPane" disable="true" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="SOMETIMES">
                                  <children>
                                     <VBox alignment="BASELINE_LEFT" fillWidth="false" spacing="10.0" StackPane.alignment="CENTER">
                                        <children>
@@ -129,23 +129,36 @@
                                                 <TextField fx:id="titleField" promptText="Title" styleClass="bh-text-field" />
                                              </children>
                                           </HBox>
-                                          <Label styleClass="bh-styled-label" text="Locations">
-                                             <font>
-                                                <Font name="Glacial Indifference Regular" size="30.0" />
-                                             </font>
-                                          </Label>
                                           <VBox>
                                              <children>
                                                 <HBox spacing="10.0">
                                                    <children>
-                                                      <ListView fx:id="providerUsedLocationsList" prefHeight="200.0" prefWidth="200.0" />
-                                                      <VBox alignment="CENTER" spacing="10.0">
+                                                      <VBox alignment="CENTER_LEFT">
                                                          <children>
-                                                            <Button fx:id="providerAddLocationButton" mnemonicParsing="false" styleClass="bh-button" text="&lt; Add" />
-                                                            <Button fx:id="providerRemoveLocationButton" mnemonicParsing="false" styleClass="bh-button" text="Remove &gt;" />
+                                                            <Label styleClass="bh-styled-label" text="Assigned Offices">
+                                                               <font>
+                                                                  <Font name="Glacial Indifference Regular" size="23.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ListView fx:id="providerUsedLocationsList" prefHeight="200.0" prefWidth="200.0" />
                                                          </children>
                                                       </VBox>
-                                                      <ListView fx:id="providerUnusedLocationsList" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" />
+                                                      <VBox alignment="CENTER" spacing="10.0">
+                                                         <children>
+                                                            <Button fx:id="providerAddLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="&lt; Add" />
+                                                            <Button fx:id="providerRemoveLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="Remove &gt;" />
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox alignment="CENTER_RIGHT">
+                                                         <children>
+                                                            <Label styleClass="bh-styled-label">
+                                                               <font>
+                                                                  <Font name="Glacial Indifference Regular" size="23.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ListView fx:id="providerUnusedLocationsList" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" />
+                                                         </children>
+                                                      </VBox>
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -154,12 +167,7 @@
                                              <children>
                                                 <Button fx:id="deleteProviderButton" mnemonicParsing="false" styleClass="bh-button" text="Delete Provider" textFill="RED">
                                                    <font>
-                                                      <Font name="Glacial Indifference Regular" size="13.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button fx:id="saveProviderButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="bh-button" text="Save Provider">
-                                                   <font>
-                                                      <Font name="Glacial Indifference Regular" size="17.0" />
+                                                      <Font name="Glacial Indifference Regular" size="16.0" />
                                                    </font>
                                                 </Button>
                                              </children>
