@@ -1188,21 +1188,19 @@ public class MapEditorToolController extends BaseController
 				}
 				currentButton = nodeB;
 				nodeB.setId("node-button-selected");
-				if(!(prevNode==null || prevNode.equals(currentNode)))
+				relatedServicesVbox.getChildren().clear();
+				for (String s : currentNode.getServices())
 				{
-					for (String s : currentNode.getServices())
+					HBox newH = new HBox();
+					Label newService = new Label(s);
+					Button deleteBut = new Button("X");
+					deleteBut.setOnAction(event ->
 					{
-						HBox newH = new HBox();
-						Label newService = new Label(s);
-						Button deleteBut = new Button("X");
-						deleteBut.setOnAction(event ->
-						{
-							currentNode.delService(newService.getText());
-							((VBox) newH.getParent()).getChildren().remove(newH);
-						});
-						newH.getChildren().addAll(newService, deleteBut);
-						relatedServicesVbox.getChildren().add(newH);
-					}
+						currentNode.delService(newService.getText());
+						((VBox) newH.getParent()).getChildren().remove(newH);
+					});
+					newH.getChildren().addAll(newService, deleteBut);
+					relatedServicesVbox.getChildren().add(newH);
 				}
 				break;
 		}
