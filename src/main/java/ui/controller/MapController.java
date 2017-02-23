@@ -124,7 +124,6 @@ public class MapController extends BaseController
 
 	public void initialize()
 	{
-		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getSelectedKiosk();
 		graph = new AStarGraph();
@@ -134,17 +133,6 @@ public class MapController extends BaseController
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
 		downFloor.setId("downbuttonTriangle");
-		Node searched = getSearchedFor();
-		if(searched!=null){
-			System.out.println(searched.getName());
-			BUILDINGID = searched.getBuilding();
-			jumpFloor(searched.getFloor());
-			selected = searched;
-			findingDirections = true;
-			showRoomInfo(searched);
-			focusView(searched);
-			setSearchedFor(null);
-		}
 
 		//set up the choicebox for changing buildings
 		ArrayList<String> buildings = database.getBuildings();
@@ -173,6 +161,19 @@ public class MapController extends BaseController
 
 		//add event filter to let scrolling do zoom instead
 		scroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+		Node searched = getSearchedFor();
+		if(searched!=null){
+			System.out.println(searched.getName());
+			BUILDINGID = searched.getBuilding();
+			jumpFloor(searched.getFloor());
+			selected = searched;
+			findingDirections = true;
+			focusView(searched);
+			showRoomInfo(searched);
+			setSearchedFor(null);
+		}else{
+			hideRoomInfo();
+		}
 
 	}
 

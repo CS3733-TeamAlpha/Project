@@ -1002,7 +1002,8 @@ public class Database implements Observer
 			//Load service info
 			results = statement.executeQuery("SELECT * FROM Services");
 			while (results.next())
-				nodeCache.get(results.getString(1)).services.add(results.getString(2));
+				if (results.getString(1) != null)
+					nodeCache.get(results.getString(1)).services.add(results.getString(2));
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to load pathable nodes!");

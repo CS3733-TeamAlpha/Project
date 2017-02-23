@@ -236,6 +236,9 @@ public class MapEditorToolController extends BaseController
 		//add event filter to let scrolling do zoom instead
 		mainScroll.addEventFilter(ScrollEvent.ANY, new ZoomHandler());
 
+		ArrayList<String> allServices = database.getServices();
+		serviceAddChoiceBox.setItems(FXCollections.observableArrayList(allServices.toArray()));
+
 	}
 
 	/**
@@ -521,6 +524,34 @@ public class MapEditorToolController extends BaseController
 
 	@FXML
 	private Label currentFloorLabel;
+
+	@FXML
+	private VBox relatedServicesVbox;
+
+	@FXML
+	private ChoiceBox serviceAddChoiceBox;
+
+	@FXML
+	/**
+	 * Calls when a user selects the wanted service in the choicebox and presses the add button
+	 */
+	private void addService()
+	{
+		String s = serviceAddChoiceBox.getValue().toString();
+		if(currentNode!=null)
+			currentNode.addService(s);
+
+		HBox newH = new HBox();
+		Label newService = new Label(s);
+		Button deleteBut = new Button("X");
+		deleteBut.setOnAction(event ->
+		{
+			currentNode.delService(newService.getText());
+			((VBox) newH.getParent()).getChildren().remove(newH);
+		});
+		newH.getChildren().addAll(newService,deleteBut);
+		relatedServicesVbox.getChildren().add(newH);
+	}
 
 	@FXML
 	/**
