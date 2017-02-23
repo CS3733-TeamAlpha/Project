@@ -298,6 +298,12 @@ public class Database implements Observer
 			node.getProviders().forEach((p) -> updateProvider(p));
 
 			//Update services
+			PreparedStatement resServices = connection.prepareStatement("UPDATE Services SET node=? WHERE name=?"); //Resolve services
+			for (String srv : node.getServices())
+			{
+				resServices.setString(1, node.getID());
+				resServices.setString(2, srv);
+			}
 			PreparedStatement delServices = connection.prepareStatement("DELETE FROM Services WHERE node=?");
 			delServices.setString(1, node.getID());
 			delServices.execute();
