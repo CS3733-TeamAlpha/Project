@@ -19,7 +19,6 @@ import javafx.util.Duration;
 import pathfinding.AStarGraph;
 import pathfinding.Graph;
 import pathfinding.TextualDirections;
-import ui.Accessibility;
 import ui.Paths;
 
 import javax.swing.*;
@@ -816,8 +815,13 @@ public class MapController extends BaseController
 	private void addLabels(LabelThingy thingy)
 	{
 		Label roomLabel = new Label(thingy.text);
-		roomLabel.setLayoutX(thingy.x-10);
-		roomLabel.setLayoutY(thingy.y-35);
+		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
+			roomLabel.setLayoutX(thingy.x-35);
+			roomLabel.setLayoutY(thingy.y-35);
+		} else {
+			roomLabel.setLayoutX(thingy.x-35);
+			roomLabel.setLayoutY(thingy.y+15);
+		}
 		roomLabel.setId("roomLabel");
 		editingFloor.getChildren().add(1, roomLabel);
 		loadedLabels.add(roomLabel);
