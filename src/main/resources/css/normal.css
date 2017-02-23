@@ -200,3 +200,18 @@
     -fx-background-insets: 0;
     -fx-shape: " ";
 }
+
+.bh-tooltip
+{
+    -fx-background-color: #000;
+    -fx-opacity: 0.8;
+    -fx-padding: 5px;
+    -fx-background-radius: 5px;
+}
+
+.bh-tooltip-text
+{
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 1;
+}
