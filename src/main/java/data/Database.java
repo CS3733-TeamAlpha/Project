@@ -19,6 +19,8 @@ public class Database implements Observer
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
+	private static final String DB_INSERT_PROVIDERS = "/db/APP_PROVIDERS.sql";
+	private static final String DB_INSERT_SERVICES = "/db/APP_SERVICES.sql";
 	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
 	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
 
@@ -1112,11 +1114,14 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
+		//TODO: set below to false, in order to avoid the carpet bombing
 		runScript(DB_DROP_ALL, true);
 		runScript(DB_CREATE_SQL, true);
 		runScript(DB_INSERT_NODES, true);
 		runScript(DB_INSERT_EDGES, true);
 		runScript(DB_INSERT_SQL, true);
+		runScript(DB_INSERT_PROVIDERS, true);
+		runScript(DB_INSERT_SERVICES, true);
 
 		try
 		{
