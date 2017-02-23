@@ -868,25 +868,6 @@ public class MapController extends BaseController
 
 		editingFloor.setLayoutX(0);
 		editingFloor.setLayoutY(0);
-
-//		editingFloor.setMinWidth(floorImage.getFitWidth());
-//		editingFloor.setMinHeight(floorImage.getFitHeight());
-//		editingFloor.setMaxWidth(floorImage.getFitWidth());
-//		editingFloor.setMaxHeight(floorImage.getFitHeight());
-//
-//		final double scale = 1;
-//		currentZoom = scale;
-//		editingFloor.setScaleX(scale);
-//		editingFloor.setScaleY(scale);
-//
-//		zoomWrapper.setMinWidth(floorImage.getFitWidth());
-//		zoomWrapper.setMinHeight(floorImage.getFitHeight());
-//		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
-//		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
-//
-//		editingFloor.setLayoutX(0);
-//		editingFloor.setLayoutY(0);
-
 	}
 
 	// TODO: Stole this from map editor, may want to fix
@@ -998,10 +979,11 @@ public class MapController extends BaseController
 	{
 		Label roomLabel = new Label(thingy.text);
 		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
-			roomLabel.setLayoutX(thingy.x-35);
+			roomLabel.setLayoutX(thingy.x - 35);
 			roomLabel.setLayoutY(thingy.y-35);
-		} else {
-			roomLabel.setLayoutX(thingy.x-35);
+		} else
+		{
+			roomLabel.setLayoutX(thingy.x -35);
 			roomLabel.setLayoutY(thingy.y+15);
 		}
 		roomLabel.setId("roomLabel");
