@@ -128,10 +128,10 @@ public class MapController extends BaseController
 		Node searched = getSearchedFor();
 		if(searched!=null){
 			System.out.println(searched.getName());
-			int floor = searched.getFloor();
-			String buildingid = searched.getBuilding();
-			setFloorImage(buildingid,floor);
+			BUILDINGID = searched.getBuilding();
+			jumpFloor(searched.getFloor());
 			selected = searched;
+			findingDirections = true;
 			showRoomInfo(searched);
 			focusView(searched);
 			setSearchedFor(null);
