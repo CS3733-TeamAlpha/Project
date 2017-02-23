@@ -31,6 +31,7 @@ public class MapController extends BaseController
 	public Label textDirectionsLabel;
 	//public ImageView floorImage;
 	static Graph graph;
+	public Button returnToKioskButton;
 	private boolean roomInfoShown;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 	private String wrapToolTip = "";

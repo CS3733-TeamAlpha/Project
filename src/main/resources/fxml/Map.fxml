@@ -54,7 +54,10 @@
                         <Font name="Glacial Indifference Regular" size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="servicesLabel" text="Services" />
+            <Label fx:id="servicesLabel" styleClass="bh-styled-label" text="Services" wrapText="true">
+               <font>
+                  <Font size="17.0" />
+               </font></Label>
                 <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" styleClass="bh-button" text="Find Directions">
                     <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -65,19 +68,31 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding></Button>
-                <HBox prefHeight="52.0" prefWidth="315.0">
-                    <children>
-                        <Button fx:id="previousStep" mnemonicParsing="false" onAction="#goPreviousStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Previous Step">
-                            <HBox.margin>
-                                <Insets right="15.0" />
-                            </HBox.margin>
-                        </Button>
-                        <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step" />
-                    </children>
-                    <VBox.margin>
-                        <Insets left="20.0" right="20.0" />
-                    </VBox.margin>
-                </HBox>
+            <StackPane>
+               <children>
+                      <HBox prefHeight="52.0" prefWidth="315.0">
+                          <children>
+                              <Button fx:id="previousStep" mnemonicParsing="false" onAction="#goPreviousStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Previous Step">
+                                  <HBox.margin>
+                                      <Insets right="15.0" />
+                                  </HBox.margin>
+                              </Button>
+                              <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step" />
+                          </children>
+                          <VBox.margin>
+                              <Insets left="20.0" right="20.0" />
+                          </VBox.margin>
+                      </HBox>
+                  <Button fx:id="returnToKioskButton" mnemonicParsing="false" prefHeight="52.0" styleClass="bh-button" text="Return to Directions" visible="false">
+                     <font>
+                        <Font name="Glacial Indifference Regular" size="27.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin>
+            </StackPane>
                 <ScrollPane hbarPolicy="NEVER" prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">
                     <content>
                         <Label fx:id="textDirectionsLabel" styleClass="hc-black" wrapText="true" />
