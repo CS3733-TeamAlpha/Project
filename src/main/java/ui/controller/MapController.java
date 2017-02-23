@@ -54,6 +54,7 @@ public class MapController extends BaseController
 	boolean hasNextStep = false;
 	boolean resetSteps = false;
 	boolean jumping = false;
+	boolean dontTriggerChoicebox = false;
 	int targetFloor = -1;
 	String targetBuilding = "";
 	private Pane currentTooltip = null;
@@ -69,24 +70,6 @@ public class MapController extends BaseController
 
 		@Override
 		public void handle(ScrollEvent scrollEvent) {
-			//change scale based on scroll event and set scale/width/heights accordingly
-
-			/*if(scrollEvent.getDeltaY() < 0){
-				currentZoom = MAXZOOM;
-			} else {
-				currentZoom = 1;
-			}*/
-
-
-//			editingFloor.setScaleX(currentZoom);
-//			editingFloor.setScaleY(currentZoom);
-//			zoomWrapper.setMinWidth(editingFloor.getWidth() * currentZoom);
-//			zoomWrapper.setMinHeight(editingFloor.getHeight() * currentZoom);
-////			zoomWrapper.setMaxWidth(editingFloor.getWidth() * scale);
-////			zoomWrapper.setMaxHeight(editingFloor.getHeight() * scale);
-//
-//			editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth()) / 2);
-//			editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight()) / 2);
 			scrollEvent.consume();
 		}
 
@@ -400,6 +383,18 @@ public class MapController extends BaseController
 		}
 		BUILDINGID = kiosk.getBuilding();
 		jumpFloor(kiosk.getFloor());
+
+		dontTriggerChoicebox = true;
+		if (BUILDINGID.equals(faulkner)) {
+			buildingChoice.getSelectionModel().select(0);
+		}
+		else if (BUILDINGID.equals(belkin)) {
+			buildingChoice.getSelectionModel().select(1);
+		}
+		else {
+			buildingChoice.getSelectionModel().select(2);
+		}
+
 		findingDirections = true;
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
@@ -528,6 +523,7 @@ public class MapController extends BaseController
 				{
 					jumpFloor(1);
 				}
+
 				//if we are already in target building, go to target floor
 				else if (BUILDINGID.equals(selected.getBuilding()))
 				{
@@ -552,6 +548,16 @@ public class MapController extends BaseController
 						currentFloorLabel.setText(Integer.toString(FLOORID));
 						setFloorImage(BUILDINGID, FLOORID);
 					}
+				}
+				dontTriggerChoicebox = true;
+				if (BUILDINGID.equals(faulkner)) {
+					buildingChoice.getSelectionModel().select(0);
+				}
+				else if (BUILDINGID.equals(belkin)) {
+					buildingChoice.getSelectionModel().select(1);
+				}
+				else {
+					buildingChoice.getSelectionModel().select(2);
 				}
 
 				findingDirections = true;
@@ -738,6 +744,17 @@ public class MapController extends BaseController
 					jumpFloor(1); // Go to first floor of selected's building
 				}
 
+				dontTriggerChoicebox = true;
+				if (BUILDINGID.equals(faulkner)) {
+					buildingChoice.getSelectionModel().select(0);
+				}
+				else if (BUILDINGID.equals(belkin)) {
+					buildingChoice.getSelectionModel().select(1);
+				}
+				else {
+					buildingChoice.getSelectionModel().select(2);
+				}
+
 				findingDirections = true;
 				showRoomInfo(selected);
 			}
@@ -781,41 +798,50 @@ public class MapController extends BaseController
 	 */
 	private void changeBuilding(String building)
 	{
-		//change selected building ID
-		BUILDINGID = database.getBuildingUUID(building);
-		//remove all buttons and lines on the current floor
-		purgeButtons();
+		if(dontTriggerChoicebox)
+		{
+			dontTriggerChoicebox = false;
+		} else
+		{
+			//change selected building ID
+			BUILDINGID = database.getBuildingUUID(building);
+			//remove all buttons and lines on the current floor
+			purgeButtons();
 
-		if(currentPath.size() != 0){
-			for(Line l: currentPath){
-				((AnchorPane) l.getParent()).getChildren().remove(l);
+			if (currentPath.size() != 0)
+			{
+				for (Line l : currentPath)
+				{
+					((AnchorPane) l.getParent()).getChildren().remove(l);
+				}
+				currentPath.clear();
 			}
-			currentPath.clear();
-		}
-		//default to floor 1 when changing buildings
-		FLOORID = 1;
-		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
-		{
-			MAXFLOOR = 7;
-		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
-		{
-			MAXFLOOR = 4;
-		} else {
-			MAXFLOOR = 1;
-		}
-		loadNodesFromDatabase();
-		currentFloorLabel.setText(Integer.toString(FLOORID));
-		setFloorImage(BUILDINGID, FLOORID);
+			//default to floor 1 when changing buildings
+			FLOORID = 1;
+			if (BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
+			{
+				MAXFLOOR = 7;
+			} else if (BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
+			{
+				MAXFLOOR = 4;
+			} else
+			{
+				MAXFLOOR = 1;
+			}
+			loadNodesFromDatabase();
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(BUILDINGID, FLOORID);
 
-		if(hasNextStep)
-		{
-			hasNextStep = false;
-			resetSteps = true;
-		}
-		jumping = false;
-		if(selected != null)
-		{
-			showRoomInfo(selected);
+			if (hasNextStep)
+			{
+				hasNextStep = false;
+				resetSteps = true;
+			}
+			jumping = false;
+			if (selected != null)
+			{
+				showRoomInfo(selected);
+			}
 		}
 	}
 
@@ -860,25 +886,6 @@ public class MapController extends BaseController
 
 		editingFloor.setLayoutX(0);
 		editingFloor.setLayoutY(0);
-
-//		editingFloor.setMinWidth(floorImage.getFitWidth());
-//		editingFloor.setMinHeight(floorImage.getFitHeight());
-//		editingFloor.setMaxWidth(floorImage.getFitWidth());
-//		editingFloor.setMaxHeight(floorImage.getFitHeight());
-//
-//		final double scale = 1;
-//		currentZoom = scale;
-//		editingFloor.setScaleX(scale);
-//		editingFloor.setScaleY(scale);
-//
-//		zoomWrapper.setMinWidth(floorImage.getFitWidth());
-//		zoomWrapper.setMinHeight(floorImage.getFitHeight());
-//		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
-//		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
-//
-//		editingFloor.setLayoutX(0);
-//		editingFloor.setLayoutY(0);
-
 	}
 
 	// TODO: Stole this from map editor, may want to fix
@@ -990,10 +997,11 @@ public class MapController extends BaseController
 	{
 		Label roomLabel = new Label(thingy.text);
 		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
-			roomLabel.setLayoutX(thingy.x-35);
+			roomLabel.setLayoutX(thingy.x - 35);
 			roomLabel.setLayoutY(thingy.y-35);
-		} else {
-			roomLabel.setLayoutX(thingy.x-35);
+		} else
+		{
+			roomLabel.setLayoutX(thingy.x -35);
 			roomLabel.setLayoutY(thingy.y+15);
 		}
 		roomLabel.setId("roomLabel");
