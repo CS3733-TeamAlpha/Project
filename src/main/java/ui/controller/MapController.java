@@ -3,6 +3,7 @@ package ui.controller;
 import data.Node;
 import javafx.animation.*;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -171,23 +172,40 @@ public class MapController extends BaseController
 		//add event filter to let scrolling do zoom instead
 		scroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 		Node searched = getSearchedFor();
-		if(searched!=null){
+		if(searched!=null)
+		{
 			System.out.println(searched.getName());
 			BUILDINGID = searched.getBuilding();
 			jumpFloor(searched.getFloor());
 			selected = searched;
 			findingDirections = true;
-			focusView(searched);
-			showRoomInfo(searched);
+			showRoomInfo(searched, false);
 			setSearchedFor(null);
+
+			new Thread(() ->
+			{
+				try
+				{
+					Thread.sleep(500);
+				} catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				Platform.runLater(() -> focusView(searched));
+			}).start();
+
 		}else{
 			hideRoomInfo();
 		}
 
 	}
 
-
 	public void showRoomInfo(Node n)
+	{
+		showRoomInfo(n, true);
+	}
+
+	public void showRoomInfo(Node n, boolean focus)
 	{
 		Node focusNode = null;
 		if(selected != n) //no selection, so set node that we're showing room info for as selected
@@ -276,7 +294,7 @@ public class MapController extends BaseController
 			roomInfoShown = true;
 		}
 
-		if(focusNode != null)
+		if(focusNode != null && focus)
 		{
 			focusView(focusNode);
 		}
@@ -310,7 +328,8 @@ public class MapController extends BaseController
 	 * focus the view of the map to center on the node
 	 * @param n The node to focus view on
 	 */
-	private void focusView(Node n){
+	private void focusView(Node n)
+	{
 		System.out.println(n.getName());
 		System.out.println(zoomWrapper.getWidth());
 		System.out.println(n.getX());
@@ -321,7 +340,6 @@ public class MapController extends BaseController
 		if(zoomWrapper.getWidth() > scroller.getWidth() ||
 				zoomWrapper.getHeight() > scroller.getHeight())
 		{
-
 			if(zoomWrapper.getWidth()-nX < scroller.getWidth()/2)
 			{
 				scroller.hvalueProperty().setValue(1);
@@ -870,25 +888,6 @@ public class MapController extends BaseController
 
 		editingFloor.setLayoutX(0);
 		editingFloor.setLayoutY(0);
-
-//		editingFloor.setMinWidth(floorImage.getFitWidth());
-//		editingFloor.setMinHeight(floorImage.getFitHeight());
-//		editingFloor.setMaxWidth(floorImage.getFitWidth());
-//		editingFloor.setMaxHeight(floorImage.getFitHeight());
-//
-//		final double scale = 1;
-//		currentZoom = scale;
-//		editingFloor.setScaleX(scale);
-//		editingFloor.setScaleY(scale);
-//
-//		zoomWrapper.setMinWidth(floorImage.getFitWidth());
-//		zoomWrapper.setMinHeight(floorImage.getFitHeight());
-//		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
-//		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
-//
-//		editingFloor.setLayoutX(0);
-//		editingFloor.setLayoutY(0);
-
 	}
 
 	// TODO: Stole this from map editor, may want to fix
@@ -1000,10 +999,11 @@ public class MapController extends BaseController
 	{
 		Label roomLabel = new Label(thingy.text);
 		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
-			roomLabel.setLayoutX(thingy.x-35);
+			roomLabel.setLayoutX(thingy.x - 35);
 			roomLabel.setLayoutY(thingy.y-35);
-		} else {
-			roomLabel.setLayoutX(thingy.x-35);
+		} else
+		{
+			roomLabel.setLayoutX(thingy.x -35);
 			roomLabel.setLayoutY(thingy.y+15);
 		}
 		roomLabel.setId("roomLabel");
