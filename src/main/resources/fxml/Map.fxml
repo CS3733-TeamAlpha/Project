@@ -54,7 +54,7 @@
                         <Font name="Glacial Indifference Regular" size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="servicesLabel" styleClass="bh-styled-label" text="Services" wrapText="true">
+            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" wrapText="true">
                <font>
                   <Font size="17.0" />
                </font></Label>
