@@ -21,6 +21,7 @@ public class Database implements Observer
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
 	private static final String DB_INSERT_PROVIDERS = "/db/APP_PROVIDERS.sql";
 	private static final String DB_INSERT_SERVICES = "/db/APP_SERVICES.sql";
+	private static final String DB_INSERT_PROVIDEROFFICES = "/db/APP_PROVIDEROFFICES.sql";
 	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
 	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
 
@@ -1122,6 +1123,7 @@ public class Database implements Observer
 		runScript(DB_INSERT_SQL, true);
 		runScript(DB_INSERT_PROVIDERS, true);
 		runScript(DB_INSERT_SERVICES, true);
+		runScript(DB_INSERT_PROVIDEROFFICES, true);
 
 		try
 		{
