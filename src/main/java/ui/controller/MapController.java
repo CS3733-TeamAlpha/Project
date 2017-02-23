@@ -34,6 +34,7 @@ public class MapController extends BaseController
 	private Graph graph;
 	private boolean roomInfoShown;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
+	private String wrapToolTip = "";
 
 	private Node selected;
 	private Node kiosk;
@@ -109,7 +110,12 @@ public class MapController extends BaseController
 	private Button nextStep;
 
 	ArrayList<Label> loadedLabels = new ArrayList<>();
-	ChoiceBox buildingChoice = null;
+	ChoiceBox buildingChoice = new ChoiceBox();
+
+	//these variables are set just to help deal with the building UUIDs
+	String faulkner = "00000000-0000-0000-0000-000000000000";
+	String belkin = "00000000-0000-0000-0000-111111111111";
+	String outside = "00000000-0000-0000-0000-222222222222";
 
 	public MapController()
 	{
@@ -144,13 +150,23 @@ public class MapController extends BaseController
 		ArrayList<String> buildings = database.getBuildings();
 		for(String s: buildings)
 			System.out.println(s);
-		buildingChoice = new ChoiceBox();
 		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
 		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);
 		buildingChoice.setLayoutY(106);
 		buildingChoice.setOnAction(event -> changeBuilding((String)buildingChoice.getValue()));
-//		buildingChoice.setValue("faulkner_main");
+
+		// sets the buildingChoice to display the correct initial floor
+		// this is pretty inelegant but whatever
+		if (BUILDINGID.equals(faulkner)) {
+			buildingChoice.getSelectionModel().select(0);
+		}
+		else if (BUILDINGID.equals(belkin)) {
+			buildingChoice.getSelectionModel().select(1);
+		}
+		else {
+			buildingChoice.getSelectionModel().select(2);
+		}
 
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
@@ -774,12 +790,19 @@ public class MapController extends BaseController
 			nodeB.hoverProperty().addListener(l->{
 				ToolTipManager.sharedInstance().setInitialDelay(0);
 				ToolTipManager.sharedInstance().setDismissDelay(100000);
-				String[] splittedName = n.getName().split(";");
-				//ToDO: switch the below index to 1 when the new data is implemented
-				String descNames = splittedName[0];
-				Tooltip t = new Tooltip(descNames);
+				if(n.getProviders().size() > 0) {
+					for (int i = 0; i < n.getProviders().size(); i++) {
+						wrapToolTip.concat(n.getProviders().get(i).getFirstName());
+						wrapToolTip.concat(", ");
+						wrapToolTip.concat(n.getProviders().get(i).getLastName());
+					}
+					Tooltip t = new Tooltip(wrapToolTip);
+					Tooltip.install(nodeB, t);
+				} else {
+					Tooltip t = new Tooltip("There are no providers");
+					Tooltip.install(nodeB, t);
+				}
 				nodeB.setCursor(Cursor.HAND);
-				Tooltip.install(nodeB, t);
 			});
 				nodeB.setOnAction(event -> showRoomInfo(n));
 			//add button to scene
