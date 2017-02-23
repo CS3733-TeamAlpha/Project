@@ -53,7 +53,11 @@ public class LoginController extends BaseController
 		cancelButton.setDisable(true);
 
 		boolean success;
-		String storedHash = database.getHashedPassword(usernameField.getText());
+		String storedHash = "";
+		// Keeps null pointer from showing up if incorrect username
+		if(database.getHashedPassword(usernameField.getText()) != null) {
+			storedHash = database.getHashedPassword(usernameField.getText());
+		}
 		success = !storedHash.isEmpty() && BCrypt.checkpw(passwordField.getText(), storedHash);
 
 		if (success)
