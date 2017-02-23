@@ -1,5 +1,6 @@
 package ui.controller;
 
+import data.Node;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +17,7 @@ import pathfinding.BreadthFirstGraph;
 import pathfinding.DepthFirstGraph;
 import ui.Paths;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -56,6 +58,28 @@ public class AdminPageController extends BaseController
 					break; //lol
 			}
 		});
+
+		ArrayList<Node> kiosks = new ArrayList<>();
+		database.getAllNodes().forEach((node) ->
+		{
+			if (node.getType() == 4 || node.getType() == 5)
+			{
+				kiosks.add(node);
+				kioskNodeSelector.getItems().add(node.getName());
+			}
+		});
+		kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
+		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldSelection, Number newSelection)
+			{
+				System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
+				database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
+				kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
+			}
+		});
+
 	}
 
 	public void editDirectory(ActionEvent actionEvent)

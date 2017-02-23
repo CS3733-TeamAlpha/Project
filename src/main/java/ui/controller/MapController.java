@@ -118,10 +118,11 @@ public class MapController extends BaseController
 
 	public void initialize()
 	{
+		System.out.println("MapController.initialize()");
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getSelectedKiosk();
-		System.out.println("MapController.initialize()");
+		System.out.println("Selected kiosk: " + kiosk.getName());
 		if (graph == null)
 			graph = new AStarGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
