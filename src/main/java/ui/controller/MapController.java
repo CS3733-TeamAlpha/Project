@@ -104,6 +104,8 @@ public class MapController extends BaseController
 	private Label roomDescription;
 	@FXML
 	private AnchorPane editingFloor;
+	@FXML
+	private AnchorPane zoomWrapper;
 
 	@FXML
 	private Button upFloor;
@@ -265,7 +267,6 @@ public class MapController extends BaseController
 		if(focusNode != null)
 		{
 			focusView(focusNode);
-			focusNode = null;
 		}
 		roomName.setText(n.getName());
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
@@ -288,94 +289,43 @@ public class MapController extends BaseController
 	 * @param n The node to focus view on
 	 */
 	private void focusView(Node n){
+		System.out.println(n.getName());
+		System.out.println(zoomWrapper.getWidth());
+		System.out.println(n.getX());
 
+		double nX = n.getX();
+		double nY = n.getY();
 
-		//double floorW = editingFloor.getWidth();//floorImage.getImage().getWidth();
-		//double floorH = editingFloor.getHeight();//floorImage.getImage().getHeight();
-
-		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))
-		{
-//			scroller.set != 2167){
-//				focusView(n);
-//			}
-			editingFloor.setPrefWidth(2167);
-			editingFloor.setPrefHeight(1300);
-//			editingFloor.setMaxWidth(2167);
-//			editingFloor.setMaxHeight(1300);
-		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))
-		{
-//			if(floorW != 1139){
-//				focusView(n);
-//			}
-//			scroller.setMinViewportWidth(1241);
-//			floorH = 1300;
-//			scroller.setMinViewportWidth(1300);
-
-			editingFloor.setPrefWidth(1139);
-			editingFloor.setPrefHeight(1300);
-//			editingFloor.setMaxWidth(1241);
-//			editingFloor.setMaxHeight(1300);
-		} else {
-//			if(floorW != 1241){
-//				focusView(n);
-//			};
-//			scroller.setMinViewportWidth(1139);
-//			floorH = 1300;
-//			scroller.setMinViewportWidth(1300);
-			editingFloor.setPrefWidth(1241);
-			editingFloor.setPrefHeight(1300);
-//			editingFloor.setMaxWidth(1139);
-//			editingFloor.setMaxHeight(1300);
-		}
-
-//		System.out.println("focus view");
-//		System.out.println("imge size?");
-//		System.out.println(floorW);
-//		System.out.println(floorH);
-//
-//		System.out.println("AnchorPane size");
-//		System.out.println(editingFloor.getWidth());
-//		System.out.println(editingFloor.getHeight());
-
-		double floorW = editingFloor.getPrefWidth();
-		double floorH = editingFloor.getPrefHeight();
-
-		System.out.println(floorW);
-		System.out.println(floorH);
-
-		if(floorW > scroller.getWidth() || floorH > scroller.getHeight())
+		if(zoomWrapper.getWidth() > scroller.getWidth() ||
+				zoomWrapper.getHeight() > scroller.getHeight())
 		{
 
-			//get xy coordinate, possibly will be updated later to work with zooming here
-			double focusX = n.getX();
-			double focusY = n.getY();
-
-			if(floorW-focusX < scroller.getWidth()/2)
+			if(zoomWrapper.getWidth()-nX < scroller.getWidth()/2)
 			{
 				scroller.hvalueProperty().setValue(1);
 			}
-			else if(focusX < (scroller.getWidth())/2)
+			else if(nX < (scroller.getWidth())/2)
 			{
 				scroller.hvalueProperty().setValue(0);
 			}
 			else
 			{
-				scroller.hvalueProperty().setValue((focusX-scroller.getWidth()/2)/
-						(floorW-scroller.getWidth()));
+				scroller.hvalueProperty().setValue((nX-scroller.getWidth()/2)/
+						(zoomWrapper.getWidth()-scroller.getWidth()));
 			}
 
-			if(focusY < (scroller.getHeight())/2)
+			if(nY < (scroller.getHeight())/2)
 			{
 				scroller.vvalueProperty().setValue(0);
 			}
-			else if(floorH-focusY < scroller.getHeight()/2)
+			else if(zoomWrapper.getHeight()-nY < scroller.getHeight()/2)
 			{
 				scroller.vvalueProperty().setValue(1);
 			}
 			else
 			{
-				scroller.vvalueProperty().setValue((focusY-scroller.getHeight()/2)/
-						(floorH-scroller.getHeight()));
+				scroller.vvalueProperty().setValue((nY-scroller.getHeight()/2)/
+						(zoomWrapper.getHeight()-scroller.getHeight()));
 			}
 		}
 	}
@@ -386,6 +336,7 @@ public class MapController extends BaseController
 	}
 
 	public void findDirectionsTo(){
+		clearPath(null);
 		if(hasNextStep)
 		{
 			hasNextStep = false;
@@ -578,69 +529,78 @@ public class MapController extends BaseController
 	 */
 	private void magicalJourney()
 	{
-		if(selected.getBuilding().equals(kiosk.getBuilding()))
+		nextStep.setDisable(true);
+		SequentialTransition sequence = new SequentialTransition();
+		//for each line calculate the vvalue the scroll bar should be at to "center" it in view
+		for (Line l : currentPath)
 		{
-			SequentialTransition sequence = new SequentialTransition();
-			//for each line calculate the vvalue the scroll bar should be at to "center" it in view
-			for (Line l : currentPath)
+			double duration = 350;
+
+			Timeline timeline = new Timeline();
+			double newH = 0;
+			double newV = 0;
+			double newX = l.getEndX();
+			double newY = l.getEndY();
+
+			System.out.println("line");
+			System.out.println(newX);
+			System.out.println(newY);
+
+			//all the way to the right
+			if (zoomWrapper.getWidth() - newX < scroller.getWidth() / 2)
 			{
-				double duration = 350;
-
-				Timeline timeline = new Timeline();
-				double newH = 0;
-				double newV = 0;
-				double newX = l.getEndX();
-				double newY = l.getEndY();
-
-				//all the way to the right
-				if (editingFloor.getWidth() - newX < scroller.getWidth() / 2)
-				{
-					newH = 1;
-				}
-				//all the way to the left
-				else if (newX < scroller.getWidth() / 2)
-				{
-					newH = 0;
-				}
-				//math
-				else
-				{
-					newH = (newX - scroller.getWidth() / 2) /
-							(editingFloor.getWidth() - scroller.getWidth());
-				}
-
-				//all the way to at the bottom
-				if (editingFloor.getHeight() - newY < scroller.getHeight() / 2)
-				{
-					newV = 1;
-				}
-				//all the way at the top
-				else if (newY < scroller.getHeight() / 2)
-				{
-					newV = 0;
-				}
-				//math
-				else
-				{
-					newV = (newY - scroller.getHeight() / 2) /
-							(editingFloor.getHeight() - scroller.getHeight());
-				}
-
-				//kinda unnecessary math. TODO: make it better
-				double dif = Math.sqrt(
-						Math.pow(scroller.getVvalue() - newV, 2) +
-								Math.pow(scroller.getHvalue() - newH, 2));
-				duration = duration * dif;
-
-				//keyframe stuff
-				KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
-				KeyValue kh = new KeyValue(scroller.hvalueProperty(), newH);
-				KeyFrame kf = new KeyFrame(Duration.millis(duration + 450), kv, kh);
-				timeline.getKeyFrames().add(kf);
-				sequence.getChildren().add(timeline);
+				newH = 1;
 			}
-			sequence.play();
+			//all the way to the left
+			else if (newX < scroller.getWidth() / 2)
+			{
+				newH = 0;
+			}
+			//math
+			else
+			{
+				newH = (newX - scroller.getWidth() / 2) /
+						(zoomWrapper.getWidth() - scroller.getWidth());
+			}
+
+			//all the way to at the bottom
+			if (zoomWrapper.getHeight() - newY < scroller.getHeight() / 2)
+			{
+				newV = 1;
+			}
+			//all the way at the top
+			else if (newY < scroller.getHeight() / 2)
+			{
+				newV = 0;
+			}
+			//math
+			else
+			{
+				newV = (newY - scroller.getHeight() / 2) /
+						(zoomWrapper.getHeight() - scroller.getHeight());
+			}
+
+			//kinda unnecessary math. TODO: make it better
+			double dif = Math.sqrt(
+					Math.pow(scroller.getVvalue() - newV, 2) +
+							Math.pow(scroller.getHvalue() - newH, 2));
+			duration = duration * dif;
+
+			//keyframe stuff
+			KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
+			KeyValue kh = new KeyValue(scroller.hvalueProperty(), newH);
+			KeyFrame kf = new KeyFrame(Duration.millis(duration + 450), kv, kh);
+			timeline.getKeyFrames().add(kf);
+			sequence.getChildren().add(timeline);
 		}
+		sequence.play();
+		sequence.setOnFinished(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				nextStep.setDisable(false);
+			}
+		});
 	}
 
 	/**
@@ -831,6 +791,24 @@ public class MapController extends BaseController
 		{
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
+
+		editingFloor.setMinWidth(floorImage.getFitWidth());
+		editingFloor.setMinHeight(floorImage.getFitHeight());
+		editingFloor.setMaxWidth(floorImage.getFitWidth());
+		editingFloor.setMaxHeight(floorImage.getFitHeight());
+
+		final double scale = 1;
+		currentZoom = scale;
+		editingFloor.setScaleX(scale);
+		editingFloor.setScaleY(scale);
+
+		zoomWrapper.setMinWidth(floorImage.getFitWidth());
+		zoomWrapper.setMinHeight(floorImage.getFitHeight());
+		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
+		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
+
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
 
 //		editingFloor.setMinWidth(floorImage.getFitWidth());
 //		editingFloor.setMinHeight(floorImage.getFitHeight());
