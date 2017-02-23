@@ -253,7 +253,7 @@ public class Database implements Observer
 	 *
 	 * @param node Node to be updated
 	 */
-	public void updateNode(Node node)
+	private void updateNode(Node node)
 	{
 		//This function is expensive because it has to delete all edges where this node is the start, and all provider
 		// & service records. Then it has to go back and re-insert them. There might be a more efficient way to do this,
@@ -1009,8 +1009,6 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 	}
-
-	/*Misc getters and setters*/
 
 	/**
 	 * Returns whether this database is connected or not.
