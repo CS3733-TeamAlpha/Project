@@ -108,6 +108,8 @@ public class MapController extends BaseController
 	private Button previousStep;
 	@FXML
 	private Button nextStep;
+	@FXML
+	private Label servicesLabel;
 
 	ArrayList<Label> loadedLabels = new ArrayList<>();
 	ChoiceBox buildingChoice = new ChoiceBox();
@@ -275,6 +277,11 @@ public class MapController extends BaseController
 			focusNode = null;
 		}
 		roomName.setText(n.getName());
+		String toAdd = "";
+		for(String s: n.getServices()){
+			toAdd += s + ", ";
+		}
+		servicesLabel.setText(toAdd.substring(0,toAdd.length()-2));
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 

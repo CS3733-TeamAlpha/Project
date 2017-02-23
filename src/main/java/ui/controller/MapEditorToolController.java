@@ -1188,7 +1188,7 @@ public class MapEditorToolController extends BaseController
 				}
 				currentButton = nodeB;
 				nodeB.setId("node-button-selected");
-				if(!prevNode.equals(currentNode))
+				if(!(prevNode==null || prevNode.equals(currentNode)))
 				{
 					for (String s : currentNode.getServices())
 					{
