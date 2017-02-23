@@ -11,7 +11,7 @@ public class BreadthFirstGraph extends Graph
 
 	public ArrayList<Node> findPath(Node start, Node end)
 	{
-
+		System.out.println("Activating breadth first search");
 		ArrayList<Node> result = new ArrayList<Node>();
 		HashMap<Node, Node> parentMap = new HashMap<Node, Node>();
 		parentMap.put(start, null);
