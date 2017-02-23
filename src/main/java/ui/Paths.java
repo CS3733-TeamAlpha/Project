@@ -4,7 +4,7 @@ public class Paths
 {
 
 	public static final String LOGIN_FXML = "/fxml/Login.fxml";
-	public static final String DIRECTORY_FXML = "/fxml/Directory.fxml";
+	public static final String DIRECTORY_EDITOR_FXML = "/fxml/DirectoryEditor.fxml";
 	public static final String MAP_FXML = "/fxml/Map.fxml";
 	public static final String MAP_EDITOR_FXML = "/fxml/MapEditorTool.fxml";
 	public static final String PROVIDER_BOX_FXML = "/fxml/ProviderBox.fxml";

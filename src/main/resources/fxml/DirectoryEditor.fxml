@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.AdminDirectoryController">
+    <children>
+        <Pane prefHeight="115.0" prefWidth="1280.0" styleClass="bh-white">
+            <children>
+                <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/BWHlogo.gif" />
+                    </image>
+                </ImageView>
+            </children>
+        </Pane>
+        <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
+      <AnchorPane VBox.vgrow="SOMETIMES">
+         <children>
+            <StackPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="SOMETIMES">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" StackPane.alignment="CENTER">
+                     <StackPane.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </StackPane.margin>
+                     <children>
+                        <StackPane>
+                           <children>
+                              <AnchorPane>
+                                 <children>
+                                    <VBox alignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <Label styleClass="bh-styled-label" text="View By">
+                                             <font>
+                                                <Font name="Glacial Indifference Regular" size="26.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="TOP_CENTER" prefWidth="200.0">
+                                             <children>
+                                                <ToggleButton fx:id="providerSelectButton" mnemonicParsing="false" prefHeight="30.0" selected="true" text="Provider">
+                                                   <styleClass>
+                                                      <String fx:value="bh-button" />
+                                                      <String fx:value="bh-left-button" />
+                                                   </styleClass>
+                                                    <font>
+                                                        <Font name="Glacial Indifference Regular" size="15.0" />
+                                                    </font>
+                                                </ToggleButton>
+                                                <ToggleButton fx:id="locationSelectButton" mnemonicParsing="false" prefHeight="30.0" text="Location">
+                                                   <styleClass>
+                                                      <String fx:value="bh-button" />
+                                                      <String fx:value="bh-right-button" />
+                                                   </styleClass>
+                                                   <font>
+                                                      <Font name="Glacial Indifference Regular" size="15.0" />
+                                                   </font>
+                                                </ToggleButton>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                              <Label styleClass="bh-styled-label" text="Directory Editor" StackPane.alignment="TOP_CENTER">
+                                 <font>
+                                    <Font name="Glacial Indifference Regular" size="60.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
+                        <HBox spacing="30.0" VBox.vgrow="SOMETIMES">
+                           <children>
+                              <ListView fx:id="mainListView" prefHeight="200.0" prefWidth="200.0">
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="5.0" top="10.0" />
+                                 </HBox.margin>
+                              </ListView>
+                              <StackPane fx:id="providerEditorPane" disable="true" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="SOMETIMES">
+                                 <children>
+                                    <VBox alignment="BASELINE_LEFT" fillWidth="false" spacing="10.0" StackPane.alignment="CENTER">
+                                       <children>
+                                          <Label styleClass="bh-styled-label" text="Edit Provider">
+                                             <font>
+                                                <Font name="Glacial Indifference Regular" size="45.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                          </Label>
+                                          <HBox>
+                                             <children>
+                                                <Label styleClass="bh-styled-label" text="First Name: ">
+                                                   <font>
+                                                      <Font name="Glacial Indifference Regular" size="22.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="firstNameField" promptText="First Name" styleClass="bh-text-field" />
+                                             </children>
+                                          </HBox>
+                                          <HBox layoutX="25.0" layoutY="90.0">
+                                             <children>
+                                                <Label styleClass="bh-styled-label" text="Last Name: ">
+                                                   <font>
+                                                      <Font name="Glacial Indifference Regular" size="22.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="lastNameField" promptText="Last Name" styleClass="bh-text-field" />
+                                             </children>
+                                          </HBox>
+                                          <HBox layoutX="25.0" layoutY="127.0">
+                                             <children>
+                                                <Label styleClass="bh-styled-label" text="Title: ">
+                                                   <font>
+                                                      <Font name="Glacial Indifference Regular" size="22.0" />
+                                                   </font>
+                                                </Label>
+                                                <Separator opacity="0.0" prefWidth="59.0" />
+                                                <TextField fx:id="titleField" promptText="Title" styleClass="bh-text-field" />
+                                             </children>
+                                          </HBox>
+                                          <VBox>
+                                             <children>
+                                                <HBox spacing="10.0">
+                                                   <children>
+                                                      <VBox alignment="CENTER_LEFT">
+                                                         <children>
+                                                            <Label styleClass="bh-styled-label" text="Assigned Offices">
+                                                               <font>
+                                                                  <Font name="Glacial Indifference Regular" size="23.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ListView fx:id="providerUsedLocationsList" prefHeight="200.0" prefWidth="200.0" />
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox alignment="CENTER" spacing="10.0">
+                                                         <children>
+                                                            <Button fx:id="providerAddLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="&lt; Add" />
+                                                            <Button fx:id="providerRemoveLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="Remove &gt;" />
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox alignment="CENTER_RIGHT">
+                                                         <children>
+                                                            <Label styleClass="bh-styled-label">
+                                                               <font>
+                                                                  <Font name="Glacial Indifference Regular" size="23.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ListView fx:id="providerUnusedLocationsList" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                          <HBox alignment="CENTER" spacing="10.0">
+                                             <children>
+                                                <Button fx:id="deleteProviderButton" mnemonicParsing="false" styleClass="bh-button" text="Delete Provider" textFill="RED">
+                                                   <font>
+                                                      <Font name="Glacial Indifference Regular" size="16.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="50.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+         </children>
+      </AnchorPane>
+    </children>
+</VBox>

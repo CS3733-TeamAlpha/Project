@@ -5,10 +5,8 @@ import org.apache.derby.tools.ij;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class for database access using java derby.
@@ -1129,5 +1127,10 @@ public class Database implements Observer
 			System.out.println("Couldn't find database creation script... that's an error.");
 			e.printStackTrace();
 		}
+	}
+
+	public List<Node> getAllServices()
+	{
+		return nodeCache.values().stream().filter(node -> node.getType() == 1).collect(Collectors.toList());
 	}
 }
