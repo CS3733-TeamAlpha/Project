@@ -613,10 +613,11 @@ public class MapController extends BaseController
 				((AnchorPane) l.getParent()).getChildren().remove(l);
 			}
 			currentPath.clear();
-			textDirectionsLabel.setText("");
 		}
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
+		textDirectionsLabel.setText("");
+
 	}
 
 	/**
