@@ -229,10 +229,23 @@ public class Database implements Observer
 			//Insert service info... this one should be much simpler
 			PreparedStatement insSrv = connection.prepareStatement("INSERT INTO Services VALUES(?, ?)");
 			insSrv.setString(1, node.getID());
-			for (String srv : node.getServices())
+			for (int i = 0; i < node.getServices().size(); i++)
 			{
-				insSrv.setString(2, srv);
-				insSrv.execute();
+				String srv = node.getServices().get(i);
+				try
+				{
+					insSrv.setString(2, srv);
+					insSrv.execute();
+				} catch (SQLException e2)
+				{
+					if (!e2.getSQLState().equals("23505"))
+						e2.printStackTrace();
+					else
+					{
+						System.out.println("Removing duplicate service " + srv + " from node");
+						node.services.remove(srv);
+					}
+				}
 			}
 
 			nodeCache.put(node.getID(), node);
@@ -296,6 +309,12 @@ public class Database implements Observer
 			node.getProviders().forEach((p) -> updateProvider(p));
 
 			//Update services
+			PreparedStatement resServices = connection.prepareStatement("UPDATE Services SET node=? WHERE name=?"); //Resolve services
+			for (String srv : node.getServices())
+			{
+				resServices.setString(1, node.getID());
+				resServices.setString(2, srv);
+			}
 			PreparedStatement delServices = connection.prepareStatement("DELETE FROM Services WHERE node=?");
 			delServices.setString(1, node.getID());
 			delServices.execute();
@@ -1000,7 +1019,8 @@ public class Database implements Observer
 			//Load service info
 			results = statement.executeQuery("SELECT * FROM Services");
 			while (results.next())
-				nodeCache.get(results.getString(1)).services.add(results.getString(2));
+				if (results.getString(1) != null)
+					nodeCache.get(results.getString(1)).services.add(results.getString(2));
 		} catch (SQLException e)
 		{
 			System.out.println("Error trying to load pathable nodes!");

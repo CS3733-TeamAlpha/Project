@@ -291,21 +291,19 @@ public class DatabaseTest
 		node.delService("quarks");
 		assertEquals(1, database.getServices().size());
 
-		//Verify that two nodes can have a service by the same name - nodes and services are 1-1
-		//This could cause issues with getting a service's location, but that's a problem for another (edge-casey) time.
+		//Verify that two nodes cannot have a service by the same name - nodes and services are 1-1
+		//Nodes should still be inserted, however.
 		Node node2 = new Node();
 		node2.addService("tenforward");
 		database.insertNode(node2);
-		assertEquals(2, database.getServices().size());
-
-		//Verify that deleting a node deletes its service
-		database.deleteNodeByUUID(node2.getID());
 		assertEquals(1, database.getServices().size());
+		assertNotNull(database.getNodeByUUID(node2.getID()));
 
 		//Verify location finding
 		assertEquals(node, database.getServiceLocation("tenforward"));
 
-		//Clean up
+		//Clean up and verify that deleting a node deletes its service
 		database.deleteNodeByUUID(node.getID());
+		assertEquals(0, database.getServices().size());
 	}
 }

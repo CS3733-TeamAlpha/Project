@@ -107,6 +107,8 @@ public class MapController extends BaseController
 	private Button previousStep;
 	@FXML
 	private Button nextStep;
+	@FXML
+	private Label servicesLabel;
 
 	ArrayList<Label> loadedLabels = new ArrayList<>();
 	ChoiceBox buildingChoice = new ChoiceBox();
@@ -135,17 +137,6 @@ public class MapController extends BaseController
 		//style up/down buttons
 		upFloor.setId("upbuttonTriangle");
 		downFloor.setId("downbuttonTriangle");
-		Node searched = getSearchedFor();
-		if(searched!=null){
-			System.out.println(searched.getName());
-			BUILDINGID = searched.getBuilding();
-			jumpFloor(searched.getFloor());
-			selected = searched;
-			findingDirections = true;
-			showRoomInfo(searched);
-			focusView(searched);
-			setSearchedFor(null);
-		}
 
 		//set up the choicebox for changing buildings
 		ArrayList<String> buildings = database.getBuildings();
@@ -174,6 +165,19 @@ public class MapController extends BaseController
 
 		//add event filter to let scrolling do zoom instead
 		scroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+		Node searched = getSearchedFor();
+		if(searched!=null){
+			System.out.println(searched.getName());
+			BUILDINGID = searched.getBuilding();
+			jumpFloor(searched.getFloor());
+			selected = searched;
+			findingDirections = true;
+			focusView(searched);
+			showRoomInfo(searched);
+			setSearchedFor(null);
+		}else{
+			hideRoomInfo();
+		}
 
 	}
 
@@ -275,6 +279,11 @@ public class MapController extends BaseController
 			focusNode = null;
 		}
 		roomName.setText(n.getName());
+		String toAdd = "";
+		for(String s: n.getServices()){
+			toAdd += s + ", ";
+		}
+		servicesLabel.setText(toAdd.substring(0,toAdd.length()-2));
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 
