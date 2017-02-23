@@ -281,10 +281,15 @@ public class MapController extends BaseController
 		}
 		roomName.setText(n.getName());
 		String toAdd = "";
-		for(String s: n.getServices()){
-			toAdd += s + ", ";
+		ArrayList<String> services = n.getServices();
+		for (int i = 0; i < services.size(); i++)
+		{
+			String s = services.get(i);
+			toAdd += s;
+			if(i < services.size()-1)
+				toAdd += ", ";
 		}
-		servicesLabel.setText(toAdd.substring(0,toAdd.length()-2));
+		servicesLabel.setText(toAdd);
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 
