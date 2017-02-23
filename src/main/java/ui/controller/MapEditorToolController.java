@@ -538,19 +538,22 @@ public class MapEditorToolController extends BaseController
 	private void addService()
 	{
 		String s = serviceAddChoiceBox.getValue().toString();
-		if(currentNode!=null)
-			currentNode.addService(s);
-
-		HBox newH = new HBox();
-		Label newService = new Label(s);
-		Button deleteBut = new Button("X");
-		deleteBut.setOnAction(event ->
+		if(!currentNode.getServices().contains(s))
 		{
-			currentNode.delService(newService.getText());
-			((VBox) newH.getParent()).getChildren().remove(newH);
-		});
-		newH.getChildren().addAll(newService,deleteBut);
-		relatedServicesVbox.getChildren().add(newH);
+			if (currentNode != null)
+				currentNode.addService(s);
+
+			HBox newH = new HBox();
+			Label newService = new Label(s);
+			Button deleteBut = new Button("X");
+			deleteBut.setOnAction(event ->
+			{
+				currentNode.delService(newService.getText());
+				((VBox) newH.getParent()).getChildren().remove(newH);
+			});
+			newH.getChildren().addAll(newService, deleteBut);
+			relatedServicesVbox.getChildren().add(newH);
+		}
 	}
 
 	@FXML
@@ -1175,6 +1178,7 @@ public class MapEditorToolController extends BaseController
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
 
+				Node prevNode = currentNode;
 				//set current node/button
 				currentNode = linkedNode;
 
@@ -1184,6 +1188,22 @@ public class MapEditorToolController extends BaseController
 				}
 				currentButton = nodeB;
 				nodeB.setId("node-button-selected");
+				if(!prevNode.equals(currentNode))
+				{
+					for (String s : currentNode.getServices())
+					{
+						HBox newH = new HBox();
+						Label newService = new Label(s);
+						Button deleteBut = new Button("X");
+						deleteBut.setOnAction(event ->
+						{
+							currentNode.delService(newService.getText());
+							((VBox) newH.getParent()).getChildren().remove(newH);
+						});
+						newH.getChildren().addAll(newService, deleteBut);
+						relatedServicesVbox.getChildren().add(newH);
+					}
+				}
 				break;
 		}
 	}
@@ -1204,6 +1224,8 @@ public class MapEditorToolController extends BaseController
 		typeField.setText("");
 		xField.setText("");
 		yField.setText("");
+
+		relatedServicesVbox.getChildren().clear();
 	}
 
 	/**
