@@ -34,6 +34,7 @@ public class MapController extends BaseController
 	private Graph graph;
 	private boolean roomInfoShown;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
+	private String wrapToolTip = "";
 
 	private Node selected;
 	private Node kiosk;
@@ -774,12 +775,19 @@ public class MapController extends BaseController
 			nodeB.hoverProperty().addListener(l->{
 				ToolTipManager.sharedInstance().setInitialDelay(0);
 				ToolTipManager.sharedInstance().setDismissDelay(100000);
-				String[] splittedName = n.getName().split(";");
-				//ToDO: switch the below index to 1 when the new data is implemented
-				String descNames = splittedName[0];
-				Tooltip t = new Tooltip(descNames);
+				if(n.getProviders().size() > 0) {
+					for (int i = 0; i < n.getProviders().size(); i++) {
+						wrapToolTip.concat(n.getProviders().get(i).getFirstName());
+						wrapToolTip.concat(", ");
+						wrapToolTip.concat(n.getProviders().get(i).getLastName());
+					}
+					Tooltip t = new Tooltip(wrapToolTip);
+					Tooltip.install(nodeB, t);
+				} else {
+					Tooltip t = new Tooltip("There are no providers");
+					Tooltip.install(nodeB, t);
+				}
 				nodeB.setCursor(Cursor.HAND);
-				Tooltip.install(nodeB, t);
 			});
 				nodeB.setOnAction(event -> showRoomInfo(n));
 			//add button to scene
