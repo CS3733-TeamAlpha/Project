@@ -11,3 +11,5 @@ derby.log
 TestFHAlpha/
 junit_testing_db
 classes/
+*.DS_Store
+*.iml
