@@ -79,9 +79,9 @@ public class AdminDirectoryController extends BaseController
 		mainListView.setCellFactory(param -> new ProviderCell());
 		mainListView.setItems(FXCollections.observableArrayList(providers));
 
+		Comparator<Node> alphabeticalNodeComparator = Comparator.comparing(Node::getName);
 
 		mainListView.setSkin(new MyRefreshSkin(mainListView));
-
 		mainListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
@@ -106,6 +106,9 @@ public class AdminDirectoryController extends BaseController
 						.collect(Collectors.toList());
 
 				providerUnusedLocationsList.setItems(FXCollections.observableList(unassignedLocations));
+
+				providerUsedLocationsList.getItems().sort(alphabeticalNodeComparator);
+				providerUnusedLocationsList.getItems().sort(alphabeticalNodeComparator);
 			}
 		});
 
@@ -118,6 +121,9 @@ public class AdminDirectoryController extends BaseController
 				selectedProvider.addLocation(location);
 				providerUnusedLocationsList.getItems().remove(location);
 				providerUsedLocationsList.getItems().add(location);
+
+				providerUsedLocationsList.getItems().sort(alphabeticalNodeComparator);
+				providerUnusedLocationsList.getItems().sort(alphabeticalNodeComparator);
 			}
 		});
 
@@ -130,6 +136,9 @@ public class AdminDirectoryController extends BaseController
 				selectedProvider.removeLocation(location.getID());
 				providerUnusedLocationsList.getItems().add(location);
 				providerUsedLocationsList.getItems().remove(location);
+
+				providerUsedLocationsList.getItems().sort(alphabeticalNodeComparator);
+				providerUnusedLocationsList.getItems().sort(alphabeticalNodeComparator);
 			}
 		});
 
