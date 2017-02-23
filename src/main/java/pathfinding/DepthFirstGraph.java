@@ -40,8 +40,7 @@ public class DepthFirstGraph extends Graph
 			{
 				while (parentMap.get(temp) != null)
 				{
-					if (filterNode(start, end, temp))
-						result.add(temp);
+					result.add(temp);
 					temp = parentMap.get(temp);
 				}
 				result.add(start);
