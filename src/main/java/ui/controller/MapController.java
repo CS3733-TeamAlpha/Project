@@ -568,6 +568,7 @@ public class MapController extends BaseController
 	private void magicalJourney()
 	{
 		nextStep.setDisable(true);
+		previousStep.setDisable(true);
 		SequentialTransition sequence = new SequentialTransition();
 		//for each line calculate the vvalue the scroll bar should be at to "center" it in view
 		for (Line l : currentPath)
@@ -637,6 +638,7 @@ public class MapController extends BaseController
 			@Override
 			public void handle(ActionEvent event) {
 				nextStep.setDisable(false);
+				previousStep.setDisable(false);
 			}
 		});
 	}
