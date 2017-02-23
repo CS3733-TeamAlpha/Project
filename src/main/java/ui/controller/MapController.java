@@ -127,7 +127,6 @@ public class MapController extends BaseController
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
 		kiosk = database.getSelectedKiosk();
-		System.out.println("Selected kiosk: " + kiosk.getName());
 		if (graph == null)
 			graph = new AStarGraph();
 		loadNodesFromDatabase(); //Get nodes in from database
