@@ -45,6 +45,7 @@ public class MapController extends BaseController
 	//public ImageView floorImage;
 	static Graph graph;
 	public Button returnToKioskButton;
+	private boolean roomInfoShown;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 	private String wrapToolTip = "";
 
@@ -53,8 +54,8 @@ public class MapController extends BaseController
 	boolean findingDirections = false;
 	boolean hasNextStep = false;
 	boolean resetSteps = false;
-	boolean stepping = false;
-	boolean dontDoSelection = false;
+	boolean jumping = false;
+	boolean dontTriggerChoicebox = false;
 	int targetFloor = -1;
 	String targetBuilding = "";
 	private Pane currentTooltip = null;
@@ -87,84 +88,37 @@ public class MapController extends BaseController
 	}
 
 	@FXML
-	private ScrollPane faulknerScroller;
-
+	private SplitPane roomviewSplit;
 	@FXML
-	private AnchorPane faulknerZoomWrapper;
-
+	private ScrollPane scroller;
 	@FXML
-	private AnchorPane faulknerEditingFloor;
-
+	private VBox roomInfo;
 	@FXML
-	private ImageView faulknerFloorImage;
-
+	private Label roomName;
 	@FXML
-	private ScrollPane outdoorsScroller;
-
+	private Label roomDescription;
 	@FXML
-	private AnchorPane outdoorsZoomWrapper;
-
+	private AnchorPane editingFloor;
 	@FXML
-	private AnchorPane outdoorsEditingFloor;
-
-	@FXML
-	private ImageView outdoorsFloorImage;
-
-	@FXML
-	private ScrollPane belkinScroller;
-
-	@FXML
-	private AnchorPane belkinZoomWrapper;
-
-	@FXML
-	private AnchorPane belkinEditingFloor;
-
-	@FXML
-	private ImageView belkinFloorImage;
+	private AnchorPane zoomWrapper;
 
 	@FXML
 	private Button upFloor;
-
 	@FXML
 	private Button downFloor;
-
 	@FXML
 	private Label currentFloorLabel;
-
 	@FXML
-	private VBox roomInfo;
-
+	private ImageView floorImage;
 	@FXML
-	private Label roomName;
-
+	private Button previousStep;
+	@FXML
+	private Button nextStep;
 	@FXML
 	private Label servicesLabel;
 
-	@FXML
-	private Button previousStep;
-
-	@FXML
-	private Button nextStep;
-
-	@FXML
-	private TabPane buildingTabs;
-
-	@FXML
-	private Tab faulknerTab;
-
-	@FXML
-	private Tab belkinTab;
-
-	@FXML
-	private Tab outdoorsTab;
-
-
-	ScrollPane scroller = faulknerScroller;
-	ImageView floorImage = faulknerFloorImage;
-	AnchorPane zoomWrapper = faulknerZoomWrapper;
-	AnchorPane editingFloor = faulknerEditingFloor;
-
 	ArrayList<Label> loadedLabels = new ArrayList<>();
+	ChoiceBox buildingChoice = new ChoiceBox();
 
 	//these variables are set just to help deal with the building UUIDs
 	String faulkner = "00000000-0000-0000-0000-000000000000";
@@ -174,14 +128,10 @@ public class MapController extends BaseController
 	public MapController()
 	{
 		super();
-
 	}
 
 	public void initialize()
 	{
-
-		initializeTabs();
-
 		System.out.println("MapController.initialize()");
 		hideRoomInfo();
 		//ArrayList<Node> nodes = database.getAllNodes();
@@ -199,6 +149,23 @@ public class MapController extends BaseController
 		ArrayList<String> buildings = database.getBuildings();
 		for(String s: buildings)
 			System.out.println(s);
+		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
+		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
+		buildingChoice.setLayoutX(49);
+		buildingChoice.setLayoutY(106);
+		buildingChoice.setOnAction(event -> changeBuilding((String)buildingChoice.getValue()));
+
+		// sets the buildingChoice to display the correct initial floor
+		// this is pretty inelegant but whatever
+		if (BUILDINGID.equals(faulkner)) {
+			buildingChoice.getSelectionModel().select(0);
+		}
+		else if (BUILDINGID.equals(belkin)) {
+			buildingChoice.getSelectionModel().select(1);
+		}
+		else {
+			buildingChoice.getSelectionModel().select(2);
+		}
 
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
@@ -208,6 +175,7 @@ public class MapController extends BaseController
 		Node searched = getSearchedFor();
 		if(searched!=null)
 		{
+			System.out.println(searched.getName());
 			BUILDINGID = searched.getBuilding();
 			jumpFloor(searched.getFloor());
 			selected = searched;
@@ -231,34 +199,6 @@ public class MapController extends BaseController
 			hideRoomInfo();
 		}
 
-	}
-
-	/**
-	 * Set up handlers for changing tabs and set default panes for interaction.
-	 * Default to faulkner
-	 */
-	private void initializeTabs(){
-		scroller = faulknerScroller;
-		floorImage = faulknerFloorImage;
-		zoomWrapper = faulknerZoomWrapper;
-		editingFloor = faulknerEditingFloor;
-		faulknerTab.setOnSelectionChanged(event -> {
-			if(faulknerTab.isSelected() && !dontDoSelection){
-				changeBuilding(faulkner);
-			}
-		});
-		belkinTab.setOnSelectionChanged(event -> {
-
-			if(belkinTab.isSelected()  && !dontDoSelection){
-				changeBuilding(belkin);
-			}
-		});
-		outdoorsTab.setOnSelectionChanged(event -> {
-
-			if(outdoorsTab.isSelected() && !dontDoSelection){
-				changeBuilding(outside);
-			}
-		});
 	}
 
 	public void showRoomInfo(Node n)
@@ -348,6 +288,12 @@ public class MapController extends BaseController
 			}
 			//findingDirections = false;
 		}
+		if (!roomInfoShown)
+		{
+			roomviewSplit.getItems().add(1, roomInfo);
+			roomviewSplit.setDividerPositions(.75);
+			roomInfoShown = true;
+		}
 
 		if(focusNode != null && focus)
 		{
@@ -369,11 +315,14 @@ public class MapController extends BaseController
 
 	public void hideRoomInfo()
 	{
+		roomviewSplit.getItems().remove(roomInfo);
+		roomInfoShown = false;
 
 		selected = null;
 
 		findingDirections = false;
 		hasNextStep = false;
+		jumping = false;
 	}
 
 	/**
@@ -382,6 +331,9 @@ public class MapController extends BaseController
 	 */
 	private void focusView(Node n)
 	{
+		System.out.println(n.getName());
+		System.out.println(zoomWrapper.getWidth());
+		System.out.println(n.getX());
 
 		double nX = n.getX();
 		double nY = n.getY();
@@ -431,20 +383,31 @@ public class MapController extends BaseController
 			hasNextStep = false;
 		}
 		BUILDINGID = kiosk.getBuilding();
-		changeBuilding(BUILDINGID);
 		jumpFloor(kiosk.getFloor());
+
+		dontTriggerChoicebox = true;
+		if (BUILDINGID.equals(faulkner)) {
+			buildingChoice.getSelectionModel().select(0);
+		}
+		else if (BUILDINGID.equals(belkin)) {
+			buildingChoice.getSelectionModel().select(1);
+		}
+		else {
+			buildingChoice.getSelectionModel().select(2);
+		}
+		dontTriggerChoicebox = false;
 
 		findingDirections = true;
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
+		jumping = true;
 		showRoomInfo(selected);
 		magicalJourney();
 	}
 
 
 	/**
-	 * Jump directly to the target floor.
-	 * This functino also purges and reload buttons for the appropriate floor
+	 * jump directly to the target floor
 	 */
 	void jumpFloor(int floor)
 	{
@@ -459,12 +422,19 @@ public class MapController extends BaseController
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
+	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goDownFloor(ActionEvent event) {
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
 		if(FLOORID > 1){
 			//remove all buttons and lines on the current floor
-			FLOORID--;
 			purgeButtons();
+			FLOORID--;
 			loadNodesFromDatabase();
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
@@ -474,6 +444,7 @@ public class MapController extends BaseController
 			hasNextStep = false;
 			resetSteps = true;
 		}
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
@@ -489,9 +460,16 @@ public class MapController extends BaseController
 	void goUpFloor (ActionEvent event){
 		int topFloor;
 
-		if(BUILDINGID.equals(belkin)) { //If we are in belkin house
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
+
+		if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111")) { //If we are in belkin house
 			topFloor = 4;
-		} else if(BUILDINGID.equals(faulkner)) { //If we are in Faulkner House
+		} else if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000")) { //If we are in Faulkner House
 			topFloor = 7;
 		} else { //Assume we are outside at this point
 			topFloor = 1;
@@ -504,14 +482,12 @@ public class MapController extends BaseController
 			currentFloorLabel.setText(Integer.toString(FLOORID));
 			setFloorImage(BUILDINGID, FLOORID);
 		}
-
-		//if a path has been searched, indicate the user has manually changed the view
 		if(hasNextStep)
 		{
 			hasNextStep = false;
 			resetSteps = true;
 		}
-
+		jumping = false;
 		if(selected != null)
 		{
 			showRoomInfo(selected);
@@ -525,14 +501,14 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goNextStep(ActionEvent event) {
+		jumping = true;
 		if(resetSteps)
 		{
 			//reset to start from the kiosk
 			resetSteps();
 		}
-		else if(hasNextStep) //if the searched path has next steps
+		else if(hasNextStep)
 		{
-			stepping = true;
 			//previousstep button starts disabled, so reenable after going to next step
 			previousStep.setDisable(false);
 			//clear lines
@@ -542,8 +518,6 @@ public class MapController extends BaseController
 				}
 				currentPath.clear();
 			}
-
-			//if target is not in the same building as kiosk
 			if(!selected.getBuilding().equals(kiosk.getBuilding()))
 			{
 				//if we're not on ground floor and we're in kiosk's building, go to bottom floor
@@ -560,18 +534,34 @@ public class MapController extends BaseController
 				else
 				{
 					//if we are in outside building, go into target building
-					if(BUILDINGID.equals(outside))
+					if(BUILDINGID.equals("00000000-0000-0000-0000-222222222222"))
 					{
+						purgeButtons();
 						BUILDINGID = selected.getBuilding();
-						changeBuilding(BUILDINGID);
+						loadNodesFromDatabase();
+						currentFloorLabel.setText(Integer.toString(FLOORID));
+						setFloorImage(BUILDINGID, FLOORID);
 					}
-					//otherwise go outside
-					else
+					else //otherwise go outside
 					{
-						BUILDINGID = outside;
-						changeBuilding(BUILDINGID);
+						purgeButtons();
+						BUILDINGID = "00000000-0000-0000-0000-222222222222";
+						loadNodesFromDatabase();
+						currentFloorLabel.setText(Integer.toString(FLOORID));
+						setFloorImage(BUILDINGID, FLOORID);
 					}
 				}
+				dontTriggerChoicebox = true;
+				if (BUILDINGID.equals(faulkner)) {
+					buildingChoice.getSelectionModel().select(0);
+				}
+				else if (BUILDINGID.equals(belkin)) {
+					buildingChoice.getSelectionModel().select(1);
+				}
+				else {
+					buildingChoice.getSelectionModel().select(2);
+				}
+				dontTriggerChoicebox = false;
 
 				findingDirections = true;
 				showRoomInfo(selected);
@@ -583,11 +573,9 @@ public class MapController extends BaseController
 				jumpFloor(selected.getFloor());
 				findingDirections = true;
 				showRoomInfo(selected);
-			}
-			stepping = false;
-		}
 
-		//if we're at the target building and floor, disable next step
+			}
+		}
 		if(BUILDINGID.equals(selected.getBuilding()) && FLOORID == selected.getFloor())
 		{
 			nextStep.setDisable(true);
@@ -623,8 +611,12 @@ public class MapController extends BaseController
 			double newX = l.getEndX();
 			double newY = l.getEndY();
 
+			System.out.println("line");
+			System.out.println(newX);
+			System.out.println(newY);
+
 			//all the way to the right
-			if (editingFloor.getWidth() - newX < scroller.getWidth() / 2)
+			if (zoomWrapper.getWidth() - newX < scroller.getWidth() / 2)
 			{
 				newH = 1;
 			}
@@ -637,11 +629,11 @@ public class MapController extends BaseController
 			else
 			{
 				newH = (newX - scroller.getWidth() / 2) /
-						(editingFloor.getWidth() - scroller.getWidth());
+						(zoomWrapper.getWidth() - scroller.getWidth());
 			}
 
 			//all the way to at the bottom
-			if (editingFloor.getHeight() - newY < scroller.getHeight() / 2)
+			if (zoomWrapper.getHeight() - newY < scroller.getHeight() / 2)
 			{
 				newV = 1;
 			}
@@ -654,7 +646,7 @@ public class MapController extends BaseController
 			else
 			{
 				newV = (newY - scroller.getHeight() / 2) /
-						(editingFloor.getHeight() - scroller.getHeight());
+						(zoomWrapper.getHeight() - scroller.getHeight());
 			}
 
 			//kinda unnecessary math. TODO: make it better
@@ -699,16 +691,22 @@ public class MapController extends BaseController
 	 */
 	private void resetSteps()
 	{
-		//reset to the start of the steps if user manually changed view while showing path
+		//idiot proof, reset to kiosk step
 		resetSteps = false;
-		//disable step buttons
 		previousStep.setDisable(true);
 		nextStep.setDisable(false);
-
+		if(currentPath.size() != 0){
+			for(Line l: currentPath){
+				((AnchorPane) l.getParent()).getChildren().remove(l);
+			}
+			currentPath.clear();
+		}
 		//reset all stuff so we go to the kiosk view
 		BUILDINGID = kiosk.getBuilding();
-		changeBuilding(BUILDINGID);
 		FLOORID = kiosk.getFloor();
+		purgeButtons();
+		loadNodesFromDatabase();
+		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
 		findingDirections = true;
 		showRoomInfo(selected);
@@ -721,16 +719,16 @@ public class MapController extends BaseController
 	 */
 	@FXML
 	public void goPreviousStep(ActionEvent event) {
+		jumping = true;
 		if(resetSteps)
 		{
-			//reset to start from the kiosk
+			//reset to kiosk view, first step
 			resetSteps();
 		}
-		else if(hasNextStep) //if the searched path has next steps
+		else if(hasNextStep)
 		{
-			stepping = true;
-			//previousstep button starts disabled, so reenable after going to next step
-			previousStep.setDisable(false);
+			//reenable nextstep button if we went to a previous step
+			nextStep.setDisable(false);
 			//clear lines
 			if(currentPath.size() != 0){
 				for(Line l: currentPath){
@@ -738,57 +736,58 @@ public class MapController extends BaseController
 				}
 				currentPath.clear();
 			}
-
-			//if target is not in the same building as kiosk
-			if(!selected.getBuilding().equals(kiosk.getBuilding()))
+			if(!selected.getBuilding().equals(kiosk.getBuilding())) // If selected is in a different building
 			{
-				//if we're on ground floor and we're in kiosk's building, go to kiosk floor
-				if(FLOORID == 1 && BUILDINGID.equals(kiosk.getBuilding()))
+				if(FLOORID == 1 && (BUILDINGID == kiosk.getBuilding())) // If we are in kiosk building
 				{
 					jumpFloor(kiosk.getFloor());
+				}
+				// If we are outside the previous step is going into the kiosk building
+				else if(BUILDINGID.equals("00000000-0000-0000-0000-222222222222"))
+				{
+					purgeButtons();
+					BUILDINGID = kiosk.getBuilding();
+					loadNodesFromDatabase();
+					currentFloorLabel.setText(Integer.toString(FLOORID));
+					setFloorImage(BUILDINGID, FLOORID);
+				} else if(FLOORID == 1) {
+					//if we are on the first floor of belkin/faulkner, the previus step is to go outside
+					purgeButtons();
+					BUILDINGID = "00000000-0000-0000-0000-222222222222";
+					loadNodesFromDatabase();
+					currentFloorLabel.setText(Integer.toString(FLOORID));
+					setFloorImage(BUILDINGID, FLOORID);
+				} else { // Must be on upper floor in selected's building
+					jumpFloor(1); // Go to first floor of selected's building
 				}
 
-				//if we are already in target building, go to target floor
-				else if (BUILDINGID.equals(kiosk.getBuilding()))
-				{
-					jumpFloor(kiosk.getFloor());
+				dontTriggerChoicebox = true;
+				if (BUILDINGID.equals(faulkner)) {
+					buildingChoice.getSelectionModel().select(0);
 				}
-				else
-				{
-					//if we are in outside building, go into kiosk building
-					if(BUILDINGID.equals(outside))
-					{
-						BUILDINGID = kiosk.getBuilding();
-						changeBuilding(BUILDINGID);
-					}
-					//otherwise go outside
-					else
-					{
-						BUILDINGID = outside;
-						changeBuilding(BUILDINGID);
-					}
+				else if (BUILDINGID.equals(belkin)) {
+					buildingChoice.getSelectionModel().select(1);
 				}
+				else {
+					buildingChoice.getSelectionModel().select(2);
+				}
+				dontTriggerChoicebox = false;
 
 				findingDirections = true;
 				showRoomInfo(selected);
 			}
-			//if selected is in same building as kiosk
 			else
 			{
-				//jump to correct floor
+				//jump to kiosk floor
 				jumpFloor(kiosk.getFloor());
 				findingDirections = true;
 				showRoomInfo(selected);
 			}
-			stepping = false;
 		}
-
-		//if we're all the way back at the kiosk, disable previous step
 		if(BUILDINGID.equals(kiosk.getBuilding()) && FLOORID == kiosk.getFloor())
 		{
 			previousStep.setDisable(true);
 		}
-		magicalJourney();
 	}
 
 	/**
@@ -812,75 +811,55 @@ public class MapController extends BaseController
 	}
 
 	/**
-	 * Change the building that is currently being edited.
-	 * This will change the tab that is currently selected
-	 * @param building String name of the buildng to view
+	 * Change the building that is currently being edited
+	 * @param building String name of the buliding to edit
 	 */
 	private void changeBuilding(String building)
 	{
-		//change selected building ID
-		BUILDINGID = building;
-		//remove all buttons and lines on the current floor
-
-		purgeButtons();
-
-		//default to floor 1 when changing buildings
-		FLOORID = 1;
-
-
-		//dontdoselection flag is set so that changing the tab selection doesn't incur infinite loop
-		dontDoSelection = true;
-
-		//change tab and set scroller/floorimage/zoomwrapper/editingfloor to the correct selections
-		if (BUILDINGID.equals(faulkner))//faulkner, max 7 floor
+		if(dontTriggerChoicebox)
 		{
-			scroller = faulknerScroller;
-			floorImage = faulknerFloorImage;
-			zoomWrapper = faulknerZoomWrapper;
-			editingFloor = faulknerEditingFloor;
-			if(buildingTabs.getSelectionModel().getSelectedIndex() != 0)
-			{
-				buildingTabs.getSelectionModel().select(0);
-			}
-			MAXFLOOR = 7;
-		} else if (BUILDINGID.equals(belkin))//belkin, max 4 floor
-		{
-			scroller = belkinScroller;
-			floorImage = belkinFloorImage;
-			zoomWrapper = belkinZoomWrapper;
-			editingFloor = belkinEditingFloor;
-			if(buildingTabs.getSelectionModel().getSelectedIndex() != 2)
-			{
-				buildingTabs.getSelectionModel().select(2);
-			}
-			MAXFLOOR = 4;
+			dontTriggerChoicebox = false;
 		} else
 		{
-			scroller = outdoorsScroller;
-			floorImage = outdoorsFloorImage;
-			zoomWrapper = outdoorsZoomWrapper;
-			editingFloor = outdoorsEditingFloor;
-			if(buildingTabs.getSelectionModel().getSelectedIndex() != 1)
+			//change selected building ID
+			BUILDINGID = database.getBuildingUUID(building);
+			//remove all buttons and lines on the current floor
+			purgeButtons();
+
+			if (currentPath.size() != 0)
 			{
-				buildingTabs.getSelectionModel().select(1);
+				for (Line l : currentPath)
+				{
+					((AnchorPane) l.getParent()).getChildren().remove(l);
+				}
+				currentPath.clear();
 			}
-			MAXFLOOR = 1;
-		}
+			//default to floor 1 when changing buildings
+			FLOORID = 1;
+			if (BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
+			{
+				MAXFLOOR = 7;
+			} else if (BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
+			{
+				MAXFLOOR = 4;
+			} else
+			{
+				MAXFLOOR = 1;
+			}
+			loadNodesFromDatabase();
+			currentFloorLabel.setText(Integer.toString(FLOORID));
+			setFloorImage(BUILDINGID, FLOORID);
 
-		dontDoSelection = false;
-
-		jumpFloor(FLOORID);
-
-		//if we have a next step and changebuilding wasn't called within the next/prev step functions
-		if (hasNextStep && !stepping)
-		{
-			hasNextStep = false;
-			resetSteps = true;
-		}
-
-		if (selected != null)
-		{
-			showRoomInfo(selected);
+			if (hasNextStep)
+			{
+				hasNextStep = false;
+				resetSteps = true;
+			}
+			jumping = false;
+			if (selected != null)
+			{
+				showRoomInfo(selected);
+			}
 		}
 	}
 
@@ -894,27 +873,47 @@ public class MapController extends BaseController
 	private void setFloorImage(String buildingid, int floor)
 	{
 
-		//faulkner
-		if(buildingid.equals(faulkner))
+		//faulkner building
+		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
-		//belkin
-		else if(buildingid.equals(belkin))
+		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
 		{
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
-		//outside
-		else if (buildingid.equals(outside))
+		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
 		{
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
+
+		editingFloor.setMinWidth(floorImage.getFitWidth());
+		editingFloor.setMinHeight(floorImage.getFitHeight());
+		editingFloor.setMaxWidth(floorImage.getFitWidth());
+		editingFloor.setMaxHeight(floorImage.getFitHeight());
+
+		final double scale = 1;
+		currentZoom = scale;
+		editingFloor.setScaleX(scale);
+		editingFloor.setScaleY(scale);
+
+		zoomWrapper.setMinWidth(floorImage.getFitWidth());
+		zoomWrapper.setMinHeight(floorImage.getFitHeight());
+		zoomWrapper.setMaxWidth(floorImage.getFitWidth());
+		zoomWrapper.setMaxHeight(floorImage.getFitHeight());
+
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
 	}
+
+	// TODO: Stole this from map editor, may want to fix
 
 
 	/**
 	 * Create a button on the scene and associate it with a node
+	 *
 	 * @param n the node to load into the scene
+	 * TODO: Stole this from map editor, may want to fix
 	 */
 	private void loadNode(Node n, ArrayList<LabelThingy> thingies)
 	{
@@ -1030,6 +1029,7 @@ public class MapController extends BaseController
 
 	/**
 	 * Load all nodes from the databasecontroller's list of nodes onto our scene
+	 * TODO: Stole this from map editor, may want to fix
 	 */
 	public void loadNodesFromDatabase()
 	{
@@ -1059,14 +1059,6 @@ public class MapController extends BaseController
 		}
 		//clear all entries in nodeButtonLinks
 		nodeButtons.clear();
-
-
-		if(currentPath.size() != 0){
-			for(Line l: currentPath){
-				((AnchorPane) l.getParent()).getChildren().remove(l);
-			}
-			currentPath.clear();
-		}
 
 		for(Label l : loadedLabels)
 		{
