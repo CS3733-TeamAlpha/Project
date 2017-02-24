@@ -19,7 +19,7 @@ public class Main extends Application
 	 	Parent root = FXMLLoader.load(getClass().getResource(Paths.STARTUP_FXML));
 		BaseController.setStage(primaryStage);
 		primaryStage.setTitle("Faulkner Hospital Map");
-		Scene scene = new Scene(root, 1280, 720);
+		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.setMaximized(true);
 
