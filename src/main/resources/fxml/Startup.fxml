@@ -37,19 +37,7 @@
       <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
       <StackPane VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane>
-               <children>
-                  <ImageView pickOnBounds="true" styleClass="hc-invisible" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <image>
-                        <Image url="@../images/Network2.jpg" />
-                     </image>
-                     <viewport>
-                        <Rectangle2D />
-                     </viewport>
-                  </ImageView>
-               </children>
-            </AnchorPane>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="bh-startup-frame" VBox.vgrow="ALWAYS">
                <bottom>
                   <AnchorPane BorderPane.alignment="BOTTOM_RIGHT">
                      <children>

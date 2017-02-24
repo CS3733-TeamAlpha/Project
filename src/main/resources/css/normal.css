@@ -229,3 +229,10 @@
 {
     -fx-background-color: white;
 }
+
+.bh-startup-frame
+{
+    -fx-background-image: url("../images/Network2.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 100% 100%;
+}
