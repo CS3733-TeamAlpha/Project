@@ -70,6 +70,30 @@ public class MapController extends BaseController
 
 		@Override
 		public void handle(ScrollEvent scrollEvent) {
+			final double scale = calculateScale(scrollEvent);
+			editingFloor.setScaleX(scale);
+			editingFloor.setScaleY(scale);
+			zoomWrapper.setPrefHeight(editingFloor.getHeight()*scale);
+			zoomWrapper.setPrefWidth(editingFloor.getWidth()*scale);
+
+			zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
+			zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
+			zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
+			zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+
+			if(zoomWrapper.getWidth() > scroller.getWidth())
+			{
+				editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth()) / 2);
+			}
+			else
+			{
+				System.out.println(scroller.getWidth());
+				System.out.println(zoomWrapper.getWidth());
+				System.out.println(floorImage.getImage().getWidth()*scale);
+				editingFloor.setLayoutX(((scroller.getWidth()-zoomWrapper.getWidth()/scale)/2));
+			}
+			editingFloor.setLayoutY((zoomWrapper.getHeight() - floorImage.getImage().getHeight()) / 2);
+
 			scrollEvent.consume();
 		}
 
@@ -203,8 +227,6 @@ public class MapController extends BaseController
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
 
-		//add event filter to let scrolling do zoom instead
-		scroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 		Node searched = getSearchedFor();
 		if(searched!=null)
 		{
@@ -259,6 +281,11 @@ public class MapController extends BaseController
 				changeBuilding(outside);
 			}
 		});
+
+		//add event filter to let scrolling do zoom instead
+		faulknerScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+		belkinScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+		outdoorsScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 	}
 
 	public void showRoomInfo(Node n)
