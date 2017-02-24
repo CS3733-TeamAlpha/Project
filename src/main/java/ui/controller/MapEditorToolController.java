@@ -342,6 +342,14 @@ public class MapEditorToolController extends BaseController
 				currentState = editorStates.DOINGNOTHING;
 				mainScroll.setPannable(true);
 			}
+			else if(e.getCode() == KeyCode.DELETE)
+			{
+				if(currentNode != null)
+				{
+					deleteNode(null);
+					currentState = editorStates.DOINGNOTHING;
+				}
+			}
 		});
 
 	}
