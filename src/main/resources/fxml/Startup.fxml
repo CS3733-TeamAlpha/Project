@@ -39,12 +39,12 @@
          <children>
             <AnchorPane>
                <children>
-                  <ImageView pickOnBounds="true" preserveRatio="true" styleClass="hc-invisible" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ImageView pickOnBounds="true" styleClass="hc-invisible" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <image>
                         <Image url="@../images/Network2.jpg" />
                      </image>
                      <viewport>
-                        <Rectangle2D height="593.0" width="1280.0" />
+                        <Rectangle2D />
                      </viewport>
                   </ImageView>
                </children>
