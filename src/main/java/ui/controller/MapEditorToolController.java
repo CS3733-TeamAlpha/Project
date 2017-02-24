@@ -147,13 +147,20 @@ public class MapEditorToolController extends BaseController
 				final double scale = calculateScale(scrollEvent);
 				editingFloor.setScaleX(scale);
 				editingFloor.setScaleY(scale);
+				zoomWrapper.setPrefHeight(editingFloor.getHeight()*scale);
+				zoomWrapper.setPrefWidth(editingFloor.getWidth()*scale);
+
 				zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
 				zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
 				zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
 				zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
 
-				editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
-				editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
+
+			System.out.println(zoomWrapper.getWidth());
+			System.out.println(zoomWrapper.getHeight());
+
+				editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth())/2);
+				editingFloor.setLayoutY((zoomWrapper.getHeight() - floorImage.getImage().getHeight())/2);
 				scrollEvent.consume();
 		}
 
@@ -278,14 +285,20 @@ public class MapEditorToolController extends BaseController
 		//faulkner building
 		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
+			floorImage.setFitWidth(Paths.regularFloorImages[floor-1].getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.regularFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
 		{
+			floorImage.setFitWidth(Paths.belkinFloorImages[floor-1].getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.belkinFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
 		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
 		{
+			floorImage.setFitWidth(Paths.outdoorImageProxy.getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.outdoorImageProxy.getFXImage().getHeight());
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 
@@ -294,10 +307,10 @@ public class MapEditorToolController extends BaseController
 		editingFloor.setMaxWidth(floorImage.getFitWidth());
 		editingFloor.setMaxHeight(floorImage.getFitHeight());
 
-		final double scale = 1;
-		currentZoom = scale;
-		editingFloor.setScaleX(scale);
-		editingFloor.setScaleY(scale);
+//		final double scale = 1;
+//		currentZoom = scale;
+//		editingFloor.setScaleX(scale);
+//		editingFloor.setScaleY(scale);
 
 		zoomWrapper.setMinWidth(floorImage.getFitWidth());
 		zoomWrapper.setMinHeight(floorImage.getFitHeight());

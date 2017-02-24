@@ -33,7 +33,7 @@
                                               <children>
                                                   <AnchorPane fx:id="faulknerEditingFloor" minHeight="1485.0" minWidth="2475.0">
                                                       <children>
-                                                          <ImageView fx:id="faulknerFloorImage" fitHeight="1485.0" fitWidth="2475.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                          <ImageView fx:id="faulknerFloorImage" fitHeight="1485.0" fitWidth="2475.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <image>
                                                       <Image url="@../NewFloors/hospital1.png" />
                                                    </image></ImageView>
@@ -55,9 +55,9 @@
                                  <content>
                                     <AnchorPane fx:id="outdoorsZoomWrapper">
                                        <children>
-                                          <AnchorPane fx:id="outdoorsEditingFloor" minHeight="0.0" minWidth="0.0">
+                                          <AnchorPane fx:id="outdoorsEditingFloor" minHeight="3600.0" minWidth="3436.0">
                                              <children>
-                                                <ImageView fx:id="outdoorsFloorImage" fitHeight="1485.0" fitWidth="2475.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <ImageView fx:id="outdoorsFloorImage" fitHeight="3600.0" fitWidth="3436.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <image>
                                                       <Image url="@../NewFloors/outsideFloor.png" />
                                                    </image>
@@ -79,9 +79,9 @@
                                  <content>
                                     <AnchorPane fx:id="belkinZoomWrapper">
                                        <children>
-                                          <AnchorPane fx:id="belkinEditingFloor" minHeight="0.0" minWidth="0.0">
+                                          <AnchorPane fx:id="belkinEditingFloor" minHeight="643.0" minWidth="563.0">
                                              <children>
-                                                <ImageView fx:id="belkinFloorImage" fitHeight="1485.0" fitWidth="2475.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <ImageView fx:id="belkinFloorImage" fitHeight="643.0" fitWidth="563.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <image>
                                                       <Image url="@../NewFloors/belkin1rsz.png" />
                                                    </image>
