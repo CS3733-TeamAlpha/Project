@@ -82,11 +82,16 @@ public class MapController extends BaseController
 		}
 	}
 
+	/**
+	 * rescale the floor/image and adjust its position to fit.
+	 * Currently doesn't keep any sort of image centering so view shifts strangely
+	 */
 	void rescale(){
 
 		double hRatio = scroller.getHeight()/floorImage.getImage().getHeight();
 		double wRatio = scroller.getWidth()/floorImage.getImage().getWidth();
 
+		//determine minzoom dynamically so we can zoom out to see whole map
 		double minZoom = Math.min(hRatio, wRatio);
 
 		if (currentZoom <= minZoom) {
@@ -97,6 +102,8 @@ public class MapController extends BaseController
 
 		editingFloor.setScaleX(currentZoom);
 		editingFloor.setScaleY(currentZoom);
+
+		//set sizing to zoomwrapper. maybe excessive set statements, but sometimes its fucky
 		zoomWrapper.setPrefHeight(editingFloor.getHeight()*currentZoom);
 		zoomWrapper.setPrefWidth(editingFloor.getWidth()*currentZoom);
 
@@ -105,10 +112,12 @@ public class MapController extends BaseController
 		zoomWrapper.setMaxWidth(editingFloor.getWidth()*currentZoom);
 		zoomWrapper.setMaxHeight(editingFloor.getHeight()*currentZoom);
 
+		//if width is larger than scroll area...
 		if(zoomWrapper.getWidth() > scroller.getWidth())
 		{
 			editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth()) / 2);
 		}
+		//otherwise center the image
 		else
 		{
 			editingFloor.setLayoutX(((scroller.getWidth()-zoomWrapper.getWidth()/currentZoom)/2));
@@ -266,6 +275,7 @@ public class MapController extends BaseController
 	 * Default to faulkner
 	 */
 	private void initializeTabs(){
+
 		scroller = faulknerScroller;
 		floorImage = faulknerFloorImage;
 		zoomWrapper = faulknerZoomWrapper;
@@ -416,34 +426,41 @@ public class MapController extends BaseController
 	private void focusView(Node n)
 	{
 
-		double nX = n.getX();
-		double nY = n.getY();
+		double nX = n.getX()*currentZoom;
+		double nY = n.getY()*currentZoom;
 
+		//check that width or height is actually larger than scroll area
 		if(zoomWrapper.getWidth() > scroller.getWidth() ||
 				zoomWrapper.getHeight() > scroller.getHeight())
 		{
+			//all the way to the right
 			if(zoomWrapper.getWidth()-nX < scroller.getWidth()/2)
 			{
 				scroller.hvalueProperty().setValue(1);
 			}
+			//all the way to the left
 			else if(nX < (scroller.getWidth())/2)
 			{
 				scroller.hvalueProperty().setValue(0);
 			}
+			//otherwise math
 			else
 			{
 				scroller.hvalueProperty().setValue((nX-scroller.getWidth()/2)/
 						(zoomWrapper.getWidth()-scroller.getWidth()));
 			}
 
+			//all the way to the top
 			if(nY < (scroller.getHeight())/2)
 			{
 				scroller.vvalueProperty().setValue(0);
 			}
+			//all the way to the bottom
 			else if(zoomWrapper.getHeight()-nY < scroller.getHeight()/2)
 			{
 				scroller.vvalueProperty().setValue(1);
 			}
+			//math
 			else
 			{
 				scroller.vvalueProperty().setValue((nY-scroller.getHeight()/2)/
@@ -472,6 +489,7 @@ public class MapController extends BaseController
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
 		showRoomInfo(selected);
+
 		magicalJourney();
 	}
 
@@ -626,6 +644,7 @@ public class MapController extends BaseController
 		{
 			nextStep.setDisable(true);
 		}
+
 		magicalJourney();
 	}
 
@@ -634,6 +653,17 @@ public class MapController extends BaseController
 	 */
 	private void magicalJourney()
 	{
+
+		//manually set layoutX and scaling to workaround weird sizing bug when changing tabs
+		currentZoom = 1;
+		rescale();
+		if(!BUILDINGID.equals(belkin))
+		{
+			editingFloor.setLayoutX(0);
+			editingFloor.setLayoutY(0);
+		}
+
+		//disable next/prev step while animating
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
 		Circle newCircle = new Circle();
@@ -644,6 +674,16 @@ public class MapController extends BaseController
 		if(currentPath.size() != 0){
 			newCircle.setCenterX(currentPath.get(0).getStartX());
 			newCircle.setCenterY(currentPath.get(0).getStartY());
+			double newH = 0;
+			double newV = 0;
+			double newX = currentPath.get(0).getStartX();
+			double newY = currentPath.get(0).getStartY();
+
+			newH = getNewH(newX);
+			newV = getNewV(newY);
+			//jump to correct initial position
+			scroller.setVvalue(newV);
+			scroller.setHvalue(newH);
 		}
 		SequentialTransition sequence = new SequentialTransition();
 		//for each line calculate the vvalue the scroll bar should be at to "center" it in view
@@ -657,39 +697,8 @@ public class MapController extends BaseController
 			double newX = l.getEndX();
 			double newY = l.getEndY();
 
-			//all the way to the right
-			if (editingFloor.getWidth() - newX < scroller.getWidth() / 2)
-			{
-				newH = 1;
-			}
-			//all the way to the left
-			else if (newX < scroller.getWidth() / 2)
-			{
-				newH = 0;
-			}
-			//math
-			else
-			{
-				newH = (newX - scroller.getWidth() / 2) /
-						(editingFloor.getWidth() - scroller.getWidth());
-			}
-
-			//all the way to at the bottom
-			if (editingFloor.getHeight() - newY < scroller.getHeight() / 2)
-			{
-				newV = 1;
-			}
-			//all the way at the top
-			else if (newY < scroller.getHeight() / 2)
-			{
-				newV = 0;
-			}
-			//math
-			else
-			{
-				newV = (newY - scroller.getHeight() / 2) /
-						(editingFloor.getHeight() - scroller.getHeight());
-			}
+			newH = getNewH(newX);
+			newV = getNewV(newY);
 
 			//kinda unnecessary math. TODO: make it better
 			double dif = Math.sqrt(
@@ -718,6 +727,49 @@ public class MapController extends BaseController
 		});
 	}
 
+	double getNewH(double newX)
+	{
+		double newH = 0;
+		if (editingFloor.getWidth() - newX < scroller.getWidth() / 2)
+		{
+			newH = 1;
+		}
+		//all the way to the left
+		else if (newX < scroller.getWidth() / 2)
+		{
+			newH = 0;
+		}
+		//math
+		else
+		{
+			newH = (newX - scroller.getWidth() / 2) /
+					(editingFloor.getWidth() - scroller.getWidth());
+		}
+		return newH;
+	}
+
+	double getNewV(double newY)
+	{
+		double newV = 0;
+		//all the way to at the bottom
+		if (editingFloor.getHeight() - newY < scroller.getHeight() / 2)
+		{
+			newV = 1;
+		}
+		//all the way at the top
+		else if (newY < scroller.getHeight() / 2)
+		{
+			newV = 0;
+		}
+		//math
+		else
+		{
+			newV = (newY - scroller.getHeight() / 2) /
+					(editingFloor.getHeight() - scroller.getHeight());
+		}
+		return newV;
+	}
+
 	/**
 	 * work in progress
 	 */
@@ -734,7 +786,7 @@ public class MapController extends BaseController
 	private void resetSteps()
 	{
 		//reset to the start of the steps if user manually changed view while showing path
-		resetSteps = false;
+
 		//disable step buttons
 		previousStep.setDisable(true);
 		nextStep.setDisable(false);
@@ -743,9 +795,11 @@ public class MapController extends BaseController
 		BUILDINGID = kiosk.getBuilding();
 		changeBuilding(BUILDINGID);
 		FLOORID = kiosk.getFloor();
-		setFloorImage(BUILDINGID, FLOORID);
+		jumpFloor(FLOORID);
 		findingDirections = true;
 		showRoomInfo(selected);
+
+		resetSteps = false;
 	}
 
 	/**
@@ -861,7 +915,6 @@ public class MapController extends BaseController
 		//default to floor 1 when changing buildings
 		FLOORID = 1;
 
-
 		//dontdoselection flag is set so that changing the tab selection doesn't incur infinite loop
 		dontDoSelection = true;
 
@@ -901,8 +954,17 @@ public class MapController extends BaseController
 			MAXFLOOR = 1;
 		}
 
+		currentZoom = 1;
 		rescale();
-
+		if(!BUILDINGID.equals(belkin))
+		{
+			editingFloor.setLayoutX(0);
+		}
+		else
+		{
+			editingFloor.setLayoutX(186);
+		}
+		editingFloor.setLayoutY(0);
 		dontDoSelection = false;
 
 		jumpFloor(FLOORID);
@@ -943,7 +1005,7 @@ public class MapController extends BaseController
 		//outside
 		else if (buildingid.equals(outside))
 		{
-			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
+			//floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 	}
 

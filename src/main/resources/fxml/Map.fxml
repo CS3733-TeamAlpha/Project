@@ -79,7 +79,7 @@
                                  <content>
                                     <AnchorPane fx:id="belkinZoomWrapper">
                                        <children>
-                                          <AnchorPane fx:id="belkinEditingFloor" minHeight="643.0" minWidth="563.0">
+                                          <AnchorPane fx:id="belkinEditingFloor" layoutX="186.0" minHeight="643.0" minWidth="563.0">
                                              <children>
                                                 <ImageView fx:id="belkinFloorImage" fitHeight="643.0" fitWidth="563.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <image>
