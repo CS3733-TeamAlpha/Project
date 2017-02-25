@@ -21,13 +21,13 @@
          <children>
               <StackPane alignment="TOP_CENTER" layoutX="23.0" layoutY="100.0" prefHeight="590.0" prefWidth="936.0" />
                   <Button layoutX="23.0" layoutY="25.0" mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" />
-            <TabPane fx:id="buildingTabs" layoutX="23.0" layoutY="65.0" prefHeight="625.0" prefWidth="936.0" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="buildingTabs" layoutX="23.0" layoutY="65.0" prefHeight="625.0" prefWidth="936.0" style="-fx-background-color: black;" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab fx:id="faulknerTab" styleClass="bh-button" text="Faulkner Main">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                                  <ScrollPane fx:id="faulknerScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="720.0" prefWidth="955.0" vbarPolicy="ALWAYS">
+                                  <ScrollPane fx:id="faulknerScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" vbarPolicy="ALWAYS">
                                       <content>
                                           <AnchorPane fx:id="faulknerZoomWrapper">
                                               <children>
@@ -51,7 +51,7 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="720.0" prefWidth="955.0" vbarPolicy="ALWAYS">
+                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" style="-fx-background-color: white;" vbarPolicy="ALWAYS">
                                  <content>
                                     <AnchorPane fx:id="outdoorsZoomWrapper">
                                        <children>
@@ -73,13 +73,13 @@
                   </Tab>
                 <Tab fx:id="belkinTab" styleClass="bh-button" text="Belkin House">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: black;">
                            <children>
-                              <ScrollPane fx:id="belkinScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="720.0" prefWidth="955.0" vbarPolicy="ALWAYS">
+                              <ScrollPane fx:id="belkinScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" vbarPolicy="ALWAYS">
                                  <content>
                                     <AnchorPane fx:id="belkinZoomWrapper">
                                        <children>
-                                          <AnchorPane fx:id="belkinEditingFloor" minHeight="643.0" minWidth="563.0">
+                                          <AnchorPane fx:id="belkinEditingFloor" layoutX="186.0" minHeight="643.0" minWidth="563.0">
                                              <children>
                                                 <ImageView fx:id="belkinFloorImage" fitHeight="643.0" fitWidth="563.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <image>
