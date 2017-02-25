@@ -12,7 +12,6 @@ public class AStarGraph extends Graph
 	 */
 	public ArrayList<Node> findPath(Node start, Node end)
 	{
-		System.out.println("Activating A* search");
 		if (start == null || end == null)
 			return null; //idiot check
 

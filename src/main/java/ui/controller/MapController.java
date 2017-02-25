@@ -70,44 +70,50 @@ public class MapController extends BaseController
 
 		@Override
 		public void handle(ScrollEvent scrollEvent) {
-			final double scale = calculateScale(scrollEvent);
-			editingFloor.setScaleX(scale);
-			editingFloor.setScaleY(scale);
-			zoomWrapper.setPrefHeight(editingFloor.getHeight()*scale);
-			zoomWrapper.setPrefWidth(editingFloor.getWidth()*scale);
-
-			zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
-			zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
-			zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
-			zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
-
-			if(zoomWrapper.getWidth() > scroller.getWidth())
-			{
-				editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth()) / 2);
-			}
-			else
-			{
-				System.out.println(scroller.getWidth());
-				System.out.println(zoomWrapper.getWidth());
-				System.out.println(floorImage.getImage().getWidth()*scale);
-				editingFloor.setLayoutX(((scroller.getWidth()-zoomWrapper.getWidth()/scale)/2));
-			}
-			editingFloor.setLayoutY((zoomWrapper.getHeight() - floorImage.getImage().getHeight()) / 2);
-
+			calculateScale(scrollEvent);
+			rescale();
 			scrollEvent.consume();
 		}
 
-		private double calculateScale(ScrollEvent scrollEvent) {
+		private void calculateScale(ScrollEvent scrollEvent) {
 			double scale = currentZoom + scrollEvent.getDeltaY() / 5000;
 
-			if (scale <= MINZOOM) {
-				scale = MINZOOM;
-			} else if (scale >= MAXZOOM) {
-				scale = MAXZOOM;
-			}
 			currentZoom = scale;
-			return scale;
 		}
+	}
+
+	void rescale(){
+
+		double hRatio = scroller.getHeight()/floorImage.getImage().getHeight();
+		double wRatio = scroller.getWidth()/floorImage.getImage().getWidth();
+
+		double minZoom = Math.min(hRatio, wRatio);
+
+		if (currentZoom <= minZoom) {
+			currentZoom = minZoom;
+		} else if (currentZoom >= MAXZOOM) {
+			currentZoom = MAXZOOM;
+		}
+
+		editingFloor.setScaleX(currentZoom);
+		editingFloor.setScaleY(currentZoom);
+		zoomWrapper.setPrefHeight(editingFloor.getHeight()*currentZoom);
+		zoomWrapper.setPrefWidth(editingFloor.getWidth()*currentZoom);
+
+		zoomWrapper.setMinWidth(editingFloor.getWidth()*currentZoom);
+		zoomWrapper.setMinHeight(editingFloor.getHeight()*currentZoom);
+		zoomWrapper.setMaxWidth(editingFloor.getWidth()*currentZoom);
+		zoomWrapper.setMaxHeight(editingFloor.getHeight()*currentZoom);
+
+		if(zoomWrapper.getWidth() > scroller.getWidth())
+		{
+			editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth()) / 2);
+		}
+		else
+		{
+			editingFloor.setLayoutX(((scroller.getWidth()-zoomWrapper.getWidth()/currentZoom)/2));
+		}
+		editingFloor.setLayoutY((zoomWrapper.getHeight() - floorImage.getImage().getHeight()) / 2);
 	}
 
 	@FXML
@@ -453,6 +459,7 @@ public class MapController extends BaseController
 
 	public void findDirectionsTo(){
 		clearPath(null);
+		resetSteps = false;
 		if(hasNextStep)
 		{
 			hasNextStep = false;
@@ -893,6 +900,8 @@ public class MapController extends BaseController
 			}
 			MAXFLOOR = 1;
 		}
+
+		rescale();
 
 		dontDoSelection = false;
 

@@ -129,6 +129,14 @@
 
 }
 
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: #BFBDBB;
+}
+
 .fake-list-view
 {
     -fx-border-width: 0px;
