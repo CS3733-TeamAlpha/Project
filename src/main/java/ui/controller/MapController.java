@@ -322,6 +322,14 @@ public class MapController extends BaseController
 		sequence.getChildren().add(timeline);
 		sequence.play();
 		yahImage.toFront();
+		selected = n;
+	}
+
+	@FXML
+	void gotoKiosk(ActionEvent event) {
+		clearPath(null);
+		initialFocusView(kiosk);
+		showRoomInfo(kiosk, false);
 	}
 
 	/**
@@ -551,22 +559,25 @@ public class MapController extends BaseController
 	}
 
 	public void findDirectionsTo(){
-		clearPath(null);
-		resetSteps = false;
-		if(hasNextStep)
+		if(selected != null)
 		{
-			hasNextStep = false;
+			clearPath(null);
+			resetSteps = false;
+			if (hasNextStep)
+			{
+				hasNextStep = false;
+			}
+			BUILDINGID = kiosk.getBuilding();
+			changeBuilding(BUILDINGID);
+			jumpFloor(kiosk.getFloor());
+
+			findingDirections = true;
+			nextStep.setDisable(true);
+			previousStep.setDisable(true);
+			showRoomInfo(selected);
+
+			magicalJourney();
 		}
-		BUILDINGID = kiosk.getBuilding();
-		changeBuilding(BUILDINGID);
-		jumpFloor(kiosk.getFloor());
-
-		findingDirections = true;
-		nextStep.setDisable(true);
-		previousStep.setDisable(true);
-		showRoomInfo(selected);
-
-		magicalJourney();
 	}
 
 
@@ -780,7 +791,7 @@ public class MapController extends BaseController
 			double dif = Math.sqrt(
 					Math.pow(l.getStartX()-l.getEndX(), 2) +
 							Math.pow(l.getStartY()-l.getEndY(), 2));
-			duration = 10 * dif;
+			duration = 6.5 * dif;
 			System.out.println(dif);
 
 			//keyframe stuff

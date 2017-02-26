@@ -42,13 +42,14 @@ public class Paths
 	public static final String DOCTORICON = "/images/DoctorIcon2.png";
 	public static final String RESTROOMICON = "/images/UniRestroomIcon.png";
 	public static final String KIOSKICON = "/images/KioskIcon.png";
+	public static final String SELECTEDKIOSKICON = "/images/selectedKiosk2.png";
 	public static final String ADDNODE = "/images/addNodeSmall.png";
 	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
 	public static final String CHAINNODES = "/images/chainNodeSmall.png";
 	public static final String ICON = "/images/icon.png";
 
-	public static final String YOUAREHEREICON = "/images/placeholderYAH.jpg";
+	public static final String YOUAREHEREICON = "/images/hereIcon1.png";
 
 	public static ProxyImage yahImageProxy = new ProxyImage(Paths.YOUAREHEREICON);
 
@@ -99,6 +100,7 @@ public class Paths
 	public static ProxyImage elevatorImageProxy = new ProxyImage(Paths.ELEVATORICON);
 	public static ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
 	public static ProxyImage kioskImageProxy = new ProxyImage(Paths.KIOSKICON);
+	public static ProxyImage skioskImageProxy = new ProxyImage(Paths.SELECTEDKIOSKICON);
 
 	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
 
