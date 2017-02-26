@@ -29,9 +29,9 @@
                            <children>
                                   <ScrollPane fx:id="faulknerScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" vbarPolicy="ALWAYS">
                                       <content>
-                                          <AnchorPane fx:id="faulknerZoomWrapper">
+                                          <AnchorPane fx:id="faulknerZoomWrapper" maxHeight="1485.0" maxWidth="2475.0" minHeight="1485.0" minWidth="2475.0" prefHeight="1485.0" prefWidth="2475.0">
                                               <children>
-                                                  <AnchorPane fx:id="faulknerEditingFloor" minHeight="1485.0" minWidth="2475.0">
+                                                  <AnchorPane fx:id="faulknerEditingFloor" maxHeight="1485.0" maxWidth="2475.0" minHeight="1485.0" minWidth="2475.0" prefHeight="1485.0" prefWidth="2475.0">
                                                       <children>
                                                           <ImageView fx:id="faulknerFloorImage" fitHeight="1485.0" fitWidth="2475.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <image>

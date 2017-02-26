@@ -243,14 +243,9 @@ public class MapController extends BaseController
 		previousStep.setDisable(true);
 
 		Node searched = getSearchedFor();
-		if(searched!=null)
+
+		if(searched != null)
 		{
-			BUILDINGID = searched.getBuilding();
-			jumpFloor(searched.getFloor());
-			selected = searched;
-			findingDirections = true;
-			showRoomInfo(searched, false);
-			setSearchedFor(null);
 
 			new Thread(() ->
 			{
@@ -261,13 +256,54 @@ public class MapController extends BaseController
 				{
 					e.printStackTrace();
 				}
-				Platform.runLater(() -> focusView(searched));
+				Platform.runLater(() -> initialSearchFocusView(searched));
 			}).start();
 
 		}else{
-			hideRoomInfo();
+
+			new Thread(() ->
+			{
+				try
+				{
+					Thread.sleep(500);
+				} catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				Platform.runLater(() -> initialFocusView(kiosk));
+			}).start();
 		}
 
+	}
+
+	/**
+	 * Function used for workaround for bug that makes focusView in initialize completely fuck up
+	 * the map's scaling and scrollbars
+	 * @param n Node to focus on, in this case the kiosk
+	 */
+	private void initialFocusView(Node n)
+	{
+		BUILDINGID = n.getBuilding();
+		changeBuilding(BUILDINGID);
+		jumpFloor(n.getFloor());
+		focusView(n);
+	}
+
+	/**
+	 * Function used for workaround for bug that makes focusView in initialize completely fuck up
+	 * the map's scaling and scrollbars
+	 * @param n Node to focus on, in this case the searched node
+	 */
+	private void initialSearchFocusView(Node n)
+	{
+		BUILDINGID = n.getBuilding();
+		changeBuilding(BUILDINGID);
+		jumpFloor(n.getFloor());
+		selected = n;
+		findingDirections = true;
+		showRoomInfo(n, false);
+		setSearchedFor(null);
+		focusView(n);
 	}
 
 	/**
@@ -275,6 +311,10 @@ public class MapController extends BaseController
 	 * Default to faulkner
 	 */
 	private void initializeTabs(){
+
+		faulknerFloorImage.setImage(Paths.regularFloorImages[0].getFXImage());
+		belkinFloorImage.setImage(Paths.belkinFloorImages[0].getFXImage());
+		outdoorsFloorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 
 		scroller = faulknerScroller;
 		floorImage = faulknerFloorImage;
@@ -302,6 +342,7 @@ public class MapController extends BaseController
 		faulknerScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 		belkinScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 		outdoorsScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+
 	}
 
 	public void showRoomInfo(Node n)
