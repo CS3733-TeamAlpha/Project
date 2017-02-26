@@ -26,7 +26,7 @@
                            <children>
                               <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0" onMouseMoved="#redrawCanvas">
                                  <children>
-                                    <ImageView fx:id="floorImage" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#clickFloorImage" onMouseDragged="#displayContextMenu" onMouseReleased="#releaseMouse" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <ImageView fx:id="floorImage" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#clickFloorImage" onMouseDragged="#displayContextMenu" onMouseReleased="#releaseMouse" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                            </children>

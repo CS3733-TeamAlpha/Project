@@ -39,9 +39,6 @@ public class MapEditorToolController extends BaseController
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
 
-
-
-
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
@@ -303,10 +300,10 @@ public class MapEditorToolController extends BaseController
 		editingFloor.setMaxWidth(floorImage.getFitWidth());
 		editingFloor.setMaxHeight(floorImage.getFitHeight());
 
-//		final double scale = 1;
-//		currentZoom = scale;
-//		editingFloor.setScaleX(scale);
-//		editingFloor.setScaleY(scale);
+		final double scale = 1;
+		currentZoom = scale;
+		editingFloor.setScaleX(scale);
+		editingFloor.setScaleY(scale);
 
 		zoomWrapper.setMinWidth(floorImage.getFitWidth());
 		zoomWrapper.setMinHeight(floorImage.getFitHeight());
@@ -779,6 +776,7 @@ public class MapEditorToolController extends BaseController
 		//make a new button to associate with the node
 		Button nodeB = new Button();
 		nodeB.setId("node-button-unselected");
+		nodeB.setFocusTraversable(false);
 
 		//modify xy position with offset so that button is centered on the node's real location
 		nodeB.setLayoutX(x - XOFFSET);
@@ -1123,6 +1121,7 @@ public class MapEditorToolController extends BaseController
 
 		//experimental style changes to make the button a circle
 		nodeB.setId("node-button-unselected");
+		nodeB.setFocusTraversable(false);
 
 		//set button XY coordinates
 		nodeB.setLayoutX(n.getX() - XOFFSET);
@@ -1618,7 +1617,7 @@ public class MapEditorToolController extends BaseController
 			}
 
 			database.deleteNodeByUUID(currentNode.getID());
-        	((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+        	editingFloor.getChildren().remove(currentButton);
         	nodeButtonLinks.remove(currentButton);
         	//hide details view
         	hideNodeDetails();
