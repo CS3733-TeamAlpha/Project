@@ -48,6 +48,10 @@ public class Paths
 	public static final String CHAINNODES = "/images/chainNodeSmall.png";
 	public static final String ICON = "/images/icon.png";
 
+	public static final String YOUAREHEREICON = "/images/placeholderYAH.jpg";
+
+	public static ProxyImage yahImageProxy = new ProxyImage(Paths.YOUAREHEREICON);
+
 	// Make proxyimages to store floor pictures
 	public static ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
 	public static ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);

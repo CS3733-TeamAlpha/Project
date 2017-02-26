@@ -42,6 +42,8 @@ public abstract class BaseController
 
 	ProxyImage outdoorsProxy = Paths.outdoorImageProxy;
 
+	ProxyImage yahProxy = Paths.yahImageProxy;
+
 	//default to floor1 of faulkner
 	int FLOORID = 1;
 	String BUILDINGID = "00000000-0000-0000-0000-000000000000";

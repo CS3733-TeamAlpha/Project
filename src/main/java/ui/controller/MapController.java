@@ -243,6 +243,9 @@ public class MapController extends BaseController
 		previousStep.setDisable(true);
 
 		Node searched = getSearchedFor();
+
+		//make a fade transition on all editing floor images, so that we can hide the initial
+		//jarring jump to the kiosk/searchednode
 		FadeTransition ftf = new FadeTransition(Duration.millis(1000), faulknerEditingFloor);
 		ftf.setFromValue(0);
 		ftf.setToValue(1);
@@ -299,6 +302,26 @@ public class MapController extends BaseController
 		changeBuilding(BUILDINGID);
 		jumpFloor(n.getFloor());
 		focusView(n);
+
+		//make the kiosk's location more obvious
+		//TODO: get an image that has some kind of pointer (think googlemaps) at the bottom/center
+		ImageView yahImage = new ImageView(yahProxy.getFXImage());
+		yahImage.setX(n.getX() - yahImage.getImage().getWidth()/2);
+		yahImage.setY(n.getY() - yahImage.getImage().getHeight());
+		editingFloor.getChildren().add(yahImage);
+
+		//animate a fade after a delay
+		SequentialTransition sequence = new SequentialTransition();
+		Timeline timeline = new Timeline();
+		KeyValue solid = new KeyValue(yahImage.opacityProperty(), 1);
+		KeyFrame kf1 = new KeyFrame(Duration.millis(1500), solid);
+		timeline.getKeyFrames().add(kf1);
+		KeyValue invis = new KeyValue(yahImage.opacityProperty(), 0);
+		KeyFrame kf2 = new KeyFrame(Duration.millis(2500), invis);
+		timeline.getKeyFrames().add(kf2);
+		sequence.getChildren().add(timeline);
+		sequence.play();
+		yahImage.toFront();
 	}
 
 	/**
