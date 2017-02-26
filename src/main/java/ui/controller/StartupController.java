@@ -3,16 +3,19 @@ package ui.controller;
 import data.Node;
 import data.SearchResult;
 import data.SearchType;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import ui.Accessibility;
+import javafx.stage.Stage;
+import ui.Main;
 import ui.Paths;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 public class StartupController extends BaseController
@@ -85,6 +88,30 @@ public class StartupController extends BaseController
 	public void showLogin()
 	{
 		loadFXML(Paths.LOGIN_FXML);
+	}
+
+	public void showAbout()
+	{
+		//Can't be done using the normal loadFXML function as this should be launched in a second window, NOT replace
+		//the current one. This is also quite nicely "inspired" by a post on stackoverflow (no ctrl-c used!)
+		Parent root = null;
+		try
+		{
+			root = FXMLLoader.load(Main.class.getResource("/fxml/About.fxml"));
+
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		if (root == null)
+		{
+			System.out.println("Somehow, root is null!");
+			return;
+		}
+		Stage stage = new Stage();
+		stage.setTitle("About");
+		stage.setScene(new Scene(root, 592, 279));
+		stage.show();
 	}
 
 //	public void toggleHighContrast()
