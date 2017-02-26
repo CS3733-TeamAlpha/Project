@@ -5,14 +5,11 @@ import data.SearchResult;
 import data.SearchType;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import ui.Accessibility;
 import ui.Paths;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StartupController extends BaseController

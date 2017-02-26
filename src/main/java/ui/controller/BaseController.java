@@ -79,6 +79,7 @@ public abstract class BaseController
 	public static void setStage(Stage s)
 	{
 		stage = s;
+		stage.getIcons().add(new javafx.scene.image.Image(Main.class.getResourceAsStream("/images/icon.png")));
 	}
 
 	protected void loadFXML(String path)
