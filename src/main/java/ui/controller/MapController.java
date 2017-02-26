@@ -243,31 +243,110 @@ public class MapController extends BaseController
 		previousStep.setDisable(true);
 
 		Node searched = getSearchedFor();
-		if(searched!=null)
+
+		//make a fade transition on all editing floor images, so that we can hide the initial
+		//jarring jump to the kiosk/searchednode
+		FadeTransition ftf = new FadeTransition(Duration.millis(1000), faulknerEditingFloor);
+		ftf.setFromValue(0);
+		ftf.setToValue(1);
+		FadeTransition ftb = new FadeTransition(Duration.millis(1000), belkinEditingFloor);
+		ftb.setFromValue(0);
+		ftb.setToValue(1);
+		FadeTransition fto = new FadeTransition(Duration.millis(1000), outdoorsEditingFloor);
+		fto.setFromValue(0);
+		fto.setToValue(1);
+		ftf.play();
+		ftb.play();
+		fto.play();
+
+		if(searched != null)
 		{
-			BUILDINGID = searched.getBuilding();
-			jumpFloor(searched.getFloor());
-			selected = searched;
-			findingDirections = true;
-			showRoomInfo(searched, false);
-			setSearchedFor(null);
 
 			new Thread(() ->
 			{
 				try
 				{
-					Thread.sleep(500);
+					Thread.sleep(100);
 				} catch (InterruptedException e)
 				{
 					e.printStackTrace();
 				}
-				Platform.runLater(() -> focusView(searched));
+				Platform.runLater(() -> initialSearchFocusView(searched));
 			}).start();
 
 		}else{
-			hideRoomInfo();
+
+			new Thread(() ->
+			{
+				try
+				{
+					Thread.sleep(100);
+				} catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				Platform.runLater(() -> initialFocusView(kiosk));
+			}).start();
 		}
 
+	}
+
+	/**
+	 * Function used for workaround for bug that makes focusView in initialize completely fuck up
+	 * the map's scaling and scrollbars
+	 * @param n Node to focus on, in this case the kiosk
+	 */
+	private void initialFocusView(Node n)
+	{
+		BUILDINGID = n.getBuilding();
+		changeBuilding(BUILDINGID);
+		jumpFloor(n.getFloor());
+		focusView(n);
+
+		//make the kiosk's location more obvious
+		//TODO: get an image that has some kind of pointer (think googlemaps) at the bottom/center
+		ImageView yahImage = new ImageView(yahProxy.getFXImage());
+		yahImage.setX(n.getX() - yahImage.getImage().getWidth()/2);
+		yahImage.setY(n.getY() - yahImage.getImage().getHeight());
+		editingFloor.getChildren().add(yahImage);
+
+		//animate a fade after a delay
+		SequentialTransition sequence = new SequentialTransition();
+		Timeline timeline = new Timeline();
+		KeyValue solid = new KeyValue(yahImage.opacityProperty(), 1);
+		KeyFrame kf1 = new KeyFrame(Duration.millis(1500), solid);
+		timeline.getKeyFrames().add(kf1);
+		KeyValue invis = new KeyValue(yahImage.opacityProperty(), 0);
+		KeyFrame kf2 = new KeyFrame(Duration.millis(2500), invis);
+		timeline.getKeyFrames().add(kf2);
+		sequence.getChildren().add(timeline);
+		sequence.play();
+		yahImage.toFront();
+		selected = n;
+	}
+
+	@FXML
+	void gotoKiosk(ActionEvent event) {
+		clearPath(null);
+		initialFocusView(kiosk);
+		showRoomInfo(kiosk, false);
+	}
+
+	/**
+	 * Function used for workaround for bug that makes focusView in initialize completely fuck up
+	 * the map's scaling and scrollbars
+	 * @param n Node to focus on, in this case the searched node
+	 */
+	private void initialSearchFocusView(Node n)
+	{
+		BUILDINGID = n.getBuilding();
+		changeBuilding(BUILDINGID);
+		jumpFloor(n.getFloor());
+		selected = n;
+		findingDirections = true;
+		showRoomInfo(n, false);
+		setSearchedFor(null);
+		focusView(n);
 	}
 
 	/**
@@ -275,6 +354,10 @@ public class MapController extends BaseController
 	 * Default to faulkner
 	 */
 	private void initializeTabs(){
+
+		faulknerFloorImage.setImage(Paths.regularFloorImages[0].getFXImage());
+		belkinFloorImage.setImage(Paths.belkinFloorImages[0].getFXImage());
+		outdoorsFloorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 
 		scroller = faulknerScroller;
 		floorImage = faulknerFloorImage;
@@ -302,6 +385,7 @@ public class MapController extends BaseController
 		faulknerScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 		belkinScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
 		outdoorsScroller.addEventFilter(ScrollEvent.ANY, new MapZoomHandler());
+
 	}
 
 	public void showRoomInfo(Node n)
@@ -475,22 +559,25 @@ public class MapController extends BaseController
 	}
 
 	public void findDirectionsTo(){
-		clearPath(null);
-		resetSteps = false;
-		if(hasNextStep)
+		if(selected != null)
 		{
-			hasNextStep = false;
+			clearPath(null);
+			resetSteps = false;
+			if (hasNextStep)
+			{
+				hasNextStep = false;
+			}
+			BUILDINGID = kiosk.getBuilding();
+			changeBuilding(BUILDINGID);
+			jumpFloor(kiosk.getFloor());
+
+			findingDirections = true;
+			nextStep.setDisable(true);
+			previousStep.setDisable(true);
+			showRoomInfo(selected);
+
+			magicalJourney();
 		}
-		BUILDINGID = kiosk.getBuilding();
-		changeBuilding(BUILDINGID);
-		jumpFloor(kiosk.getFloor());
-
-		findingDirections = true;
-		nextStep.setDisable(true);
-		previousStep.setDisable(true);
-		showRoomInfo(selected);
-
-		magicalJourney();
 	}
 
 
@@ -704,7 +791,7 @@ public class MapController extends BaseController
 			double dif = Math.sqrt(
 					Math.pow(l.getStartX()-l.getEndX(), 2) +
 							Math.pow(l.getStartY()-l.getEndY(), 2));
-			duration = 10 * dif;
+			duration = 6.5 * dif;
 			System.out.println(dif);
 
 			//keyframe stuff
