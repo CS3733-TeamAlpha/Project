@@ -702,16 +702,17 @@ public class MapController extends BaseController
 
 			//kinda unnecessary math. TODO: make it better
 			double dif = Math.sqrt(
-					Math.pow(scroller.getVvalue() - newV, 2) +
-							Math.pow(scroller.getHvalue() - newH, 2));
-			duration = duration * dif;
+					Math.pow(l.getStartX()-l.getEndX(), 2) +
+							Math.pow(l.getStartY()-l.getEndY(), 2));
+			duration = 10 * dif;
+			System.out.println(dif);
 
 			//keyframe stuff
 			KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
 			KeyValue kh = new KeyValue(scroller.hvalueProperty(), newH);
 			KeyValue cx = new KeyValue(newCircle.centerXProperty(), l.getEndX());
 			KeyValue cy = new KeyValue(newCircle.centerYProperty(), l.getEndY());
-			KeyFrame kf = new KeyFrame(Duration.millis(duration + 450), kv, kh, cx, cy);
+			KeyFrame kf = new KeyFrame(Duration.millis(duration), kv, kh, cx, cy);
 			timeline.getKeyFrames().add(kf);
 			sequence.getChildren().add(timeline);
 		}
