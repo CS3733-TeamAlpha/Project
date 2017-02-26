@@ -243,6 +243,18 @@ public class MapController extends BaseController
 		previousStep.setDisable(true);
 
 		Node searched = getSearchedFor();
+		FadeTransition ftf = new FadeTransition(Duration.millis(1000), faulknerEditingFloor);
+		ftf.setFromValue(0);
+		ftf.setToValue(1);
+		FadeTransition ftb = new FadeTransition(Duration.millis(1000), belkinEditingFloor);
+		ftb.setFromValue(0);
+		ftb.setToValue(1);
+		FadeTransition fto = new FadeTransition(Duration.millis(1000), outdoorsEditingFloor);
+		fto.setFromValue(0);
+		fto.setToValue(1);
+		ftf.play();
+		ftb.play();
+		fto.play();
 
 		if(searched != null)
 		{
@@ -251,7 +263,7 @@ public class MapController extends BaseController
 			{
 				try
 				{
-					Thread.sleep(500);
+					Thread.sleep(100);
 				} catch (InterruptedException e)
 				{
 					e.printStackTrace();
@@ -265,7 +277,7 @@ public class MapController extends BaseController
 			{
 				try
 				{
-					Thread.sleep(500);
+					Thread.sleep(100);
 				} catch (InterruptedException e)
 				{
 					e.printStackTrace();
