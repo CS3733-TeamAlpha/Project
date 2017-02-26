@@ -16,6 +16,7 @@ public class Database implements Observer
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 	private static final String DB_DROP_ALL = "/db/DBDropAll.sql";
+	private static final String DB_INSERT_BUILDING = "/db/APP_BUILDINGS.sql";
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
@@ -1146,6 +1147,7 @@ public class Database implements Observer
 
 		runScript(DB_DROP_ALL, false);
 		runScript(DB_CREATE_SQL, false);
+		runScript(DB_INSERT_BUILDING, false);
 		runScript(DB_INSERT_NODES, false);
 		runScript(DB_INSERT_EDGES, false);
 		runScript(DB_INSERT_SQL, false);
