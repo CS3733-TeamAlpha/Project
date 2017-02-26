@@ -46,6 +46,7 @@ public class Paths
 	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
 	public static final String CHAINNODES = "/images/chainNodeSmall.png";
+	public static final String ICON = "/images/icon.png";
 
 	// Make proxyimages to store floor pictures
 	public static ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
