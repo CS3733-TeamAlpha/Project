@@ -58,7 +58,7 @@
                   <Label layoutX="159.0" layoutY="79.0" text="Samuel Smith, Ari Elfenbein, Brandon Lam" />
                   <Label layoutX="109.0" layoutY="113.0" text="Special thanks to Brigham &amp; Women's Faulkener Hospital" />
                   <Label layoutX="159.0" layoutY="129.0" text="and Andrew Shinn for their time and input" />
-                  <Button fx:id="closeButton" layoutX="532.0" layoutY="160.0" mnemonicParsing="false" text="Close" />
+                  <Button fx:id="closeButton" layoutX="532.0" layoutY="160.0" mnemonicParsing="false" onMouseClicked="#close" text="Close" />
                </children>
             </Pane>
          </center>
