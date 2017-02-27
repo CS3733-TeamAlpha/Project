@@ -110,7 +110,7 @@ public class StartupController extends BaseController
 		}
 		Stage stage = new Stage();
 		stage.setTitle("About");
-		stage.setScene(new Scene(root, 592, 279));
+		stage.setScene(new Scene(root, 557, 279));
 		stage.show();
 	}
 

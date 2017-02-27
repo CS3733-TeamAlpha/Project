@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="279.0" prefWidth="592.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.AboutController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="279.0" prefWidth="557.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.AboutController">
    <children>
       <Pane prefHeight="59.0" prefWidth="487.0">
          <children>
@@ -18,7 +18,7 @@
                   <Image url="@../images/BWHlogo.gif" />
                </image>
             </ImageView>
-            <ImageView fitHeight="40.0" fitWidth="173.0" layoutX="454.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="40.0" fitWidth="173.0" layoutX="419.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/WPILogo.png" />
                </image>
@@ -47,17 +47,18 @@
                         <Font size="9.0" />
                      </font>
                   </Label>
-                  <Label layoutX="18.0" layoutY="6.0" text="Project Manager: Michael Prindle " />
-                  <Label layoutX="21.0" layoutY="22.0" text="Product Owner: Andrew Gelinas " />
-                  <Label layoutX="7.0" layoutY="38.0" text="Documentation Analyst: Adam White" />
-                  <Label layoutX="322.0" layoutY="6.0" text="Lead Engineer: Christopher Myers" />
-                  <Label layoutX="297.0" layoutY="22.0" text="Assistant Lead Enginner: Colin Willoughby" />
-                  <Label layoutX="349.0" layoutY="38.0" text="Spaghetti Coder: Sola Shirai" />
-                  <Label layoutX="231.0" layoutY="63.0" text="Software Engineers:" />
-                  <Label layoutX="159.0" layoutY="79.0" text="Samuel Smith, Ari Elfenbein, Brandon Lam" />
-                  <Label layoutX="109.0" layoutY="113.0" text="Special thanks to Brigham &amp; Women's Faulkener Hospital" />
-                  <Label layoutX="159.0" layoutY="129.0" text="and Andrew Shinn for their time and input" />
-                  <Button fx:id="closeButton" layoutX="532.0" layoutY="160.0" mnemonicParsing="false" onMouseClicked="#close" text="Close" />
+                  <Label layoutX="6.0" layoutY="4.0" text="Project Manager: Michael Prindle " />
+                  <Label layoutX="15.0" layoutY="20.0" prefHeight="16.0" prefWidth="211.0" text="Product Owner: Andrew Gelinas " />
+                  <Label layoutX="24.0" layoutY="37.0" prefWidth="241.0" text="Docs. Analyst: Adam White" />
+                  <Label layoutX="318.0" layoutY="4.0" text="Lead Engineer: Christopher Myers" />
+                  <Label layoutX="272.0" layoutY="22.0" text="Assist. Lead Enginner: Colin Willoughby" />
+                  <Label layoutX="307.0" layoutY="38.0" text="Spaghetti Coder: Sola Shirai" />
+                  <Label layoutX="213.0" layoutY="58.0" text="Software Engineers:" />
+                  <Label layoutX="140.0" layoutY="74.0" text="Samuel Smith, Ari Elfenbein, Brandon Lam" />
+                  <Label layoutX="91.0" layoutY="103.0" text="Special thanks to Brigham &amp; Women's Faulkener Hospital" />
+                  <Label layoutX="141.0" layoutY="119.0" text="and Andrew Shinn for their time and input" />
+                  <Button fx:id="closeButton" layoutX="492.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#close" text="Close" />
+                  <Label layoutX="35.0" layoutY="53.0" />
                </children>
             </Pane>
          </center>
