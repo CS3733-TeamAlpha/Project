@@ -4,8 +4,6 @@ import data.Node;
 
 import java.util.ArrayList;
 
-import static ui.ProviderBox.database;
-
 public class TextualDirections
 {
 	/**
@@ -18,6 +16,8 @@ public class TextualDirections
 	//TODO: test
 	public static ArrayList<String> getDirections(ArrayList<Node> path, double scaleFactor, ArrayList<Node> totalPath)
 	{
+		String outdoors = "00000000-0000-0000-0000-222222222222";
+
 		if(path == null || path.size() == 0)
 		{
 			return null;
@@ -51,9 +51,17 @@ public class TextualDirections
 				i--;
 			}else if(tempN.equals("the hallway"))
 			{
-				toReturn.add(angles[tempA] + " and walk down " + tempN);
+				//change text to be sidewalk if we are outside
+				if(path.get(i-2).getBuilding().equals(outdoors))
+				{
+					toReturn.add(angles[tempA] + " and walk down the sidewalk.");
+				}
+				else
+				{
+					toReturn.add(angles[tempA] + " and walk down " + tempN);
+				}
 			}else{
-				toReturn.add(angles[tempA] + " towards the " +tempN);
+				toReturn.add(angles[tempA] + " towards \"" +tempN + "\"");
 			}
 			lastName = tempN;
 			lastAngle = tempA;
@@ -68,7 +76,7 @@ public class TextualDirections
 			toReturn.add("Take the elevator to floor " + totalPath.get(lastIndex-1).getFloor());
 		} else if (path.get(0).getType() > 5 && path.get(0).getType() < 20) //building entrance/exit
 		{
-			if(path.get(0).getBuilding().equals("00000000-0000-0000-0000-222222222222"))
+			if(path.get(0).getBuilding().equals(outdoors))
 			{
 				toReturn.add("Proceed to enter the building.");
 			} else
