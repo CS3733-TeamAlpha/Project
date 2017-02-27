@@ -37,7 +37,7 @@
          <center>
             <Pane prefHeight="207.0" prefWidth="592.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="7.0" layoutY="162.0" text="Computer Science Dpartment, Worcester Polytechnic Institute">
+                  <Label layoutX="7.0" layoutY="162.0" text="Computer Science Department, Worcester Polytechnic Institute">
                      <font>
                         <Font size="9.0" />
                      </font>
