@@ -37,6 +37,7 @@ import ui.Paths;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class MapController extends BaseController
 {
@@ -286,7 +287,6 @@ public class MapController extends BaseController
 				Platform.runLater(() -> initialFocusView(kiosk));
 			}).start();
 		}
-
 	}
 
 	/**
@@ -503,11 +503,26 @@ public class MapController extends BaseController
 	private ArrayList<Node> trimPathToBuildingFloor(ArrayList<Node> path)
 	{
 		ArrayList<Node> trimPath = new ArrayList<Node>();
-		for(Node n: path)
-		{
-			if(n.getBuilding().equals(BUILDINGID) && n.getFloor() == FLOORID)
-			{
-				trimPath.add(n);
+		//checks if the node has no path associated with it
+		if(path ==null) {
+			//put the desired popup below
+			System.out.println("Straight empty son");
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: This Node has no connections to it");
+			alert.setContentText("Please contact your admin about setting up a connection to this location");
+
+			ButtonType ok = new ButtonType("OK");
+
+			alert.getButtonTypes().setAll(ok);
+
+			Optional<ButtonType> result = alert.showAndWait();
+		}else {
+			//if node does have path
+			for(Node n: path) {
+				if (n.getBuilding().equals(BUILDINGID) && n.getFloor() == FLOORID) {
+					trimPath.add(n);
+				}
 			}
 		}
 		return trimPath;
