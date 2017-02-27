@@ -236,8 +236,6 @@ public class MapController extends BaseController
 
 		//set up the choicebox for changing buildings
 		ArrayList<String> buildings = database.getBuildings();
-		for(String s: buildings)
-			System.out.println(s);
 
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
@@ -813,7 +811,6 @@ public class MapController extends BaseController
 					Math.pow(l.getStartX()-l.getEndX(), 2) +
 							Math.pow(l.getStartY()-l.getEndY(), 2));
 			duration = 6.5 * dif;
-			System.out.println(dif);
 
 			//keyframe stuff
 			KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
@@ -1100,7 +1097,6 @@ public class MapController extends BaseController
 	 */
 	private void setFloorImage(String buildingid, int floor)
 	{
-		System.out.println("floor"+floor);
 		//faulkner
 		if(buildingid.equals(faulkner))
 		{
