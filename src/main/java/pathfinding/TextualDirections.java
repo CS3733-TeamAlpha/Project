@@ -4,6 +4,8 @@ import data.Node;
 
 import java.util.ArrayList;
 
+import static ui.ProviderBox.database;
+
 public class TextualDirections
 {
 	/**
@@ -14,18 +16,28 @@ public class TextualDirections
 	 */
 	//TODO: edge cases like only two nodes
 	//TODO: test
-	public static ArrayList<String> getDirections(ArrayList<Node> path, double scaleFactor)
+	public static ArrayList<String> getDirections(ArrayList<Node> path, double scaleFactor, ArrayList<Node> totalPath)
 	{
-		if(path == null)
+		if(path == null || path.size() == 0)
 		{
 			return null;
 		}
 		ArrayList<String> toReturn = new ArrayList<>();
 		int length = path.size()-1;
+		//special case we are already at destination
+		if(length <= 1)
+		{
+			if(length == 1)
+			{
+				toReturn.add("Leave " + path.get(1).getName());
+			}
+			toReturn.add("You have arrived at " + path.get(0).getName());
+			return toReturn;
+		}
 
 		String[] angles = {"Sharp left","Turn left","Bear left","Continue straight","Bear right","Turn right","Sharp right"};
 
-		toReturn.add("Leave kiosk and " + angles[path.get(length).angle(path.get(length-1),path.get(length-2))].toLowerCase());
+		toReturn.add("Leave " + path.get(length).getName() + " and " + angles[path.get(length).angle(path.get(length-1),path.get(length-2))].toLowerCase());
 		String lastName = "";
 		int lastAngle = -1;
 		for (int i = length-2; i>=2 ; i--)
@@ -47,7 +59,23 @@ public class TextualDirections
 			lastAngle = tempA;
 		}
 
-		toReturn.add("You have arrived at " + path.get(0).getName());
+		//Case to print for the last item in the trimmed path
+		if(path.get(0) == totalPath.get(0)) //at destination
+		{
+			toReturn.add("You have arrived at " + path.get(0).getName());
+		} else if (path.get(0).getType() == 2) { //elevator. TODO: stairs should be related
+			Integer lastIndex = totalPath.indexOf(path.get(0));
+			toReturn.add("Take the elevator to floor " + totalPath.get(lastIndex-1).getFloor());
+		} else if (path.get(0).getType() > 5 && path.get(0).getType() < 20) //building entrance/exit
+		{
+			if(path.get(0).getBuilding().equals("00000000-0000-0000-0000-222222222222"))
+			{
+				toReturn.add("Proceed to enter the building.");
+			} else
+			{
+				toReturn.add("Proceed to the exit the building.");
+			}
+		}
 
 		return toReturn;
 	}

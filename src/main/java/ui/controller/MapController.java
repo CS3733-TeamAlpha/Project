@@ -406,17 +406,7 @@ public class MapController extends BaseController
 		{
 			ArrayList<Node> path = graph.findPath(kiosk,selected);
 
-			ArrayList<String> textDirections = TextualDirections.getDirections(graph.findPath(kiosk, selected), 0.1);
-			StringBuilder build = new StringBuilder();
-			if(textDirections != null)
-			{
-				for (String sentence : textDirections)
-				{
-					build.append(sentence);
-					build.append("\n");
-				}
-			}
-			textDirectionsLabel.setText(build.toString());
+			path = trimPathToBuildingFloor(path);
 
 			if(path == null){
 				System.out.println("No path found");
@@ -424,6 +414,19 @@ public class MapController extends BaseController
 				textDirectionsLabel.setText("No path found");
 			}else
 			{
+				ArrayList<String> textDirections =
+						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected));
+				StringBuilder build = new StringBuilder();
+				if(textDirections != null)
+				{
+					for (String sentence : textDirections)
+					{
+						build.append(sentence);
+						build.append("\n");
+					}
+				}
+				textDirectionsLabel.setText(build.toString());
+
 				if(currentPath.size() != 0){
 					for(Line l: currentPath){
 						((AnchorPane) l.getParent()).getChildren().remove(l);
@@ -492,6 +495,24 @@ public class MapController extends BaseController
 		}
 		servicesLabel.setText(toAdd);
 		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
+	}
+
+	/**
+	 * Remove nodes in path that are not in the current building/floor
+	 * @param path The list of nodes representing the path to the destination
+	 * @return nodes in the path that are in the current buildingfloor
+	 */
+	private ArrayList<Node> trimPathToBuildingFloor(ArrayList<Node> path)
+	{
+		ArrayList<Node> trimPath = new ArrayList<Node>();
+		for(Node n: path)
+		{
+			if(n.getBuilding().equals(BUILDINGID) && n.getFloor() == FLOORID)
+			{
+				trimPath.add(n);
+			}
+		}
+		return trimPath;
 	}
 
 	public void hideRoomInfo()
@@ -1079,7 +1100,7 @@ public class MapController extends BaseController
 	 */
 	private void setFloorImage(String buildingid, int floor)
 	{
-
+		System.out.println("floor"+floor);
 		//faulkner
 		if(buildingid.equals(faulkner))
 		{
