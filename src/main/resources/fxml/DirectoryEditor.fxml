@@ -32,40 +32,7 @@
                            <children>
                               <AnchorPane>
                                  <children>
-                                    <VBox alignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <Label styleClass="bh-styled-label" text="View By">
-                                             <font>
-                                                <Font name="Glacial Indifference Regular" size="26.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox alignment="TOP_CENTER" prefWidth="200.0">
-                                             <children>
-                                                <ToggleButton fx:id="providerSelectButton" focusTraversable="false" mnemonicParsing="false" prefHeight="30.0" selected="true" text="Provider">
-                                                   <styleClass>
-                                                      <String fx:value="bh-button" />
-                                                      <String fx:value="bh-left-button" />
-                                                   </styleClass>
-                                                    <font>
-                                                        <Font name="Glacial Indifference Regular" size="15.0" />
-                                                    </font>
-                                                </ToggleButton>
-                                                <ToggleButton fx:id="locationSelectButton" focusTraversable="false" mnemonicParsing="false" prefHeight="30.0" text="Location">
-                                                   <styleClass>
-                                                      <String fx:value="bh-button" />
-                                                      <String fx:value="bh-right-button" />
-                                                   </styleClass>
-                                                   <font>
-                                                      <Font name="Glacial Indifference Regular" size="15.0" />
-                                                   </font>
-                                                </ToggleButton>
-                                             </children>
-                                             <VBox.margin>
-                                                <Insets top="5.0" />
-                                             </VBox.margin>
-                                          </HBox>
-                                       </children>
-                                    </VBox>
+                                    <VBox alignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                               <Label styleClass="bh-styled-label" text="Directory Editor" StackPane.alignment="TOP_CENTER">
@@ -79,6 +46,11 @@
                            <children>
                               <VBox alignment="TOP_CENTER">
                                  <children>
+                                    <Label styleClass="bh-styled-label" text="Providers">
+                                       <font>
+                                          <Font name="Glacial Indifference Regular" size="30.0" />
+                                       </font>
+                                    </Label>
                                     <ListView fx:id="mainListView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
                                        <HBox.margin>
                                           <Insets left="5.0" right="5.0" top="10.0" />

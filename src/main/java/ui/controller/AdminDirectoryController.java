@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 public class AdminDirectoryController extends BaseController
 {
 	public Button backButton;
-	public ToggleButton providerSelectButton;
-	public ToggleButton locationSelectButton;
 	public ListView<Provider> mainListView;
 	public TextField firstNameField;
 	public TextField lastNameField;
@@ -180,9 +178,6 @@ public class AdminDirectoryController extends BaseController
 		firstNameField.focusedProperty().addListener(textFocusListener);
 		lastNameField.focusedProperty().addListener(textFocusListener);
 		titleField.focusedProperty().addListener(textFocusListener);
-
-		providerSelectButton.setOnAction(event -> locationSelectButton.setSelected(!providerSelectButton.isSelected()));
-		locationSelectButton.setOnAction(event -> providerSelectButton.setSelected(!locationSelectButton.isSelected()));
 
 		addProviderButton.setOnAction(event ->
 		{
