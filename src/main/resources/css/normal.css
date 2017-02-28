@@ -172,6 +172,11 @@
     -fx-background-color: #29708e;
 }
 
+.bh-map-sidebar
+{
+    -fx-background-color: rgba(41,112,142, 200);
+}
+
 .bh-styled-label
 {
     -fx-text-fill: white;
