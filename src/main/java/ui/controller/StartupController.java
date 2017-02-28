@@ -8,7 +8,6 @@ import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -143,7 +142,7 @@ public class StartupController extends BaseController
 	{
 		//Get emergency directions to the nearest
 		EmergencyExitGraph graph = new EmergencyExitGraph();
-		setSearchedFor(graph.findPath(database.getSelectedKiosk(), null).get(0));
+		setSearchedFor(graph.findPath(database.getSelectedKiosk(), null, false).get(0));
 		loadFXML(Paths.MAP_FXML);
 	}
 //	public void toggleHighContrast()

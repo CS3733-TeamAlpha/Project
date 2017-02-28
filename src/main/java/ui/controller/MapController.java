@@ -4,20 +4,12 @@ import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
 import data.Node;
 import javafx.animation.*;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
@@ -31,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pathfinding.AStarGraph;
@@ -39,7 +30,6 @@ import pathfinding.Graph;
 import pathfinding.TextualDirections;
 import ui.Paths;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
@@ -67,6 +57,7 @@ public class MapController extends BaseController
 
 	private Pane currentTooltip = null;
 	private Button currentHoveredNode = null;
+	private boolean usingStairs = false;
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
@@ -211,6 +202,8 @@ public class MapController extends BaseController
 	@FXML
 	private Tab outdoorsTab;
 
+	@FXML
+	private CheckBox stairsCheckbox;
 
 	ScrollPane scroller = faulknerScroller;
 	ImageView floorImage = faulknerFloorImage;
@@ -227,7 +220,6 @@ public class MapController extends BaseController
 	public MapController()
 	{
 		super();
-
 	}
 
 	public void initialize()
@@ -300,6 +292,8 @@ public class MapController extends BaseController
 				Platform.runLater(() -> initialFocusView(kiosk));
 			}).start();
 		}
+
+		stairsCheckbox.setSelected(usingStairs);
 	}
 
 	/**
@@ -432,7 +426,7 @@ public class MapController extends BaseController
 		}
 		if(findingDirections)
 		{
-			ArrayList<Node> path = graph.findPath(kiosk,selected);
+			ArrayList<Node> path = graph.findPath(kiosk, selected, usingStairs);
 
 			path = trimPathToBuildingFloor(path);
 
@@ -443,7 +437,7 @@ public class MapController extends BaseController
 			}else
 			{
 				ArrayList<String> textDirections =
-						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected));
+						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected, usingStairs));
 				StringBuilder build = new StringBuilder();
 				if(textDirections != null)
 				{
@@ -1362,6 +1356,16 @@ public class MapController extends BaseController
 		loadedLabels.clear();
 	}
 
+	/**
+	 * Changes the status of whether stairs are being used, then re-plots the path.
+	 */
+	@FXML
+	private void changeUseStairs()
+	{
+		usingStairs = stairsCheckbox.isSelected();
+		clearPath(null);
+		findDirectionsTo();
+	}
 
 	class LabelThingy
 	{

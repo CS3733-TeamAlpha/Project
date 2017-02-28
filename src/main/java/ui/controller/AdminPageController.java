@@ -14,7 +14,6 @@ import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import pathfinding.AStarGraph;
 import pathfinding.BreadthFirstGraph;
-import pathfinding.DepthFirstGraph;
 import ui.Paths;
 
 import java.util.ArrayList;
@@ -40,13 +39,10 @@ public class AdminPageController extends BaseController
 
 		algorithmSelector.getItems().add("A*");
 		algorithmSelector.getItems().add("Breadth First");
-		algorithmSelector.getItems().add("Depth First");
 		if (MapController.graph == null || MapController.graph.getClass().equals(AStarGraph.class))
 			algorithmSelector.getSelectionModel().selectFirst();
 		else if (MapController.graph.getClass().equals(BreadthFirstGraph.class))
 			algorithmSelector.getSelectionModel().select(1);
-		else if (MapController.graph.getClass().equals(DepthFirstGraph.class))
-			algorithmSelector.getSelectionModel().select(2);
 		algorithmSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldValue, newValue) ->
 		{
 			System.out.println("Switching from " + oldValue + " to " + newValue);
@@ -58,9 +54,6 @@ public class AdminPageController extends BaseController
 				case 1:
 					MapController.graph = new BreadthFirstGraph();
 					break;
-				case 2:
-					MapController.graph = new DepthFirstGraph();
-					break; //lol
 			}
 		});
 
