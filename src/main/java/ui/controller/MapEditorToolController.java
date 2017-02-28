@@ -1015,7 +1015,6 @@ public class MapEditorToolController extends BaseController
 			case MOVINGNODE:
 				currentNode.notifyObservers();
 			default:
-				System.out.println("asdf");
 				currentState = editorStates.DOINGNOTHING;
 				break;
 		}
