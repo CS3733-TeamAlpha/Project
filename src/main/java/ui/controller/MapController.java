@@ -56,8 +56,10 @@ public class MapController extends BaseController
 	boolean resetSteps = false;
 	boolean stepping = false;
 	boolean dontDoSelection = false;
-	int targetFloor = -1;
-	String targetBuilding = "";
+
+	SequentialTransition magicalSequence = new SequentialTransition();
+	Circle magicalCircle = new Circle();
+
 	private Pane currentTooltip = null;
 	private Button currentHoveredNode = null;
 
@@ -805,14 +807,13 @@ public class MapController extends BaseController
 		//disable next/prev step while animating
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
-		Circle newCircle = new Circle();
-		newCircle.setRadius(14f);
-		newCircle.setFill(Color.RED);
-		editingFloor.getChildren().add(newCircle);
-		newCircle.toFront();
+		magicalCircle.setRadius(14f);
+		magicalCircle.setFill(Color.RED);
+		editingFloor.getChildren().add(magicalCircle);
+		magicalCircle.toFront();
 		if(currentPath.size() != 0){
-			newCircle.setCenterX(currentPath.get(0).getStartX());
-			newCircle.setCenterY(currentPath.get(0).getStartY());
+			magicalCircle.setCenterX(currentPath.get(0).getStartX());
+			magicalCircle.setCenterY(currentPath.get(0).getStartY());
 			double newH = 0;
 			double newV = 0;
 			double newX = currentPath.get(0).getStartX();
@@ -824,7 +825,7 @@ public class MapController extends BaseController
 			scroller.setVvalue(newV);
 			scroller.setHvalue(newH);
 		}
-		SequentialTransition sequence = new SequentialTransition();
+		magicalSequence = new SequentialTransition();
 		//for each line calculate the vvalue the scroll bar should be at to "center" it in view
 		for (Line l : currentPath)
 		{
@@ -848,20 +849,20 @@ public class MapController extends BaseController
 			//keyframe stuff
 			KeyValue kv = new KeyValue(scroller.vvalueProperty(), newV);
 			KeyValue kh = new KeyValue(scroller.hvalueProperty(), newH);
-			KeyValue cx = new KeyValue(newCircle.centerXProperty(), l.getEndX());
-			KeyValue cy = new KeyValue(newCircle.centerYProperty(), l.getEndY());
+			KeyValue cx = new KeyValue(magicalCircle.centerXProperty(), l.getEndX());
+			KeyValue cy = new KeyValue(magicalCircle.centerYProperty(), l.getEndY());
 			KeyFrame kf = new KeyFrame(Duration.millis(duration), kv, kh, cx, cy);
 			timeline.getKeyFrames().add(kf);
-			sequence.getChildren().add(timeline);
+			magicalSequence.getChildren().add(timeline);
 		}
-		sequence.play();
-		sequence.setOnFinished(new EventHandler<ActionEvent>() {
+		magicalSequence.play();
+		magicalSequence.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				nextStep.setDisable(false);
 				previousStep.setDisable(false);
-				editingFloor.getChildren().remove(newCircle);
+				editingFloor.getChildren().remove(magicalCircle);
 			}
 		});
 	}
@@ -1036,6 +1037,9 @@ public class MapController extends BaseController
 		previousStep.setDisable(true);
 		textDirectionsLabel.setText("");
 
+		editingFloor.getChildren().remove(magicalCircle);
+		magicalSequence.stop();
+		magicalSequence.getChildren().clear();
 	}
 
 	/**
