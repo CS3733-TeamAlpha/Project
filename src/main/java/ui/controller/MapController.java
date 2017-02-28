@@ -71,8 +71,14 @@ public class MapController extends BaseController
 
 		@Override
 		public void handle(ScrollEvent scrollEvent) {
+			double preZoom = currentZoom;
 			calculateScale(scrollEvent);
 			rescale();
+			if(preZoom != currentZoom)
+			{
+				scroller.setHvalue(scroller.getHvalue() + (currentZoom - preZoom)/2);
+				scroller.setVvalue(scroller.getVvalue() + (currentZoom - preZoom)/2);
+			}
 			scrollEvent.consume();
 		}
 
@@ -321,6 +327,18 @@ public class MapController extends BaseController
 		sequence.play();
 		yahImage.toFront();
 		selected = n;
+	}
+
+	/**
+	 * Workaround function to fix the map's scrollbar position when zooming in/out.
+	 * Triggered by a timer in the scrollhandler
+	 * @param h scroller's old Hvalue
+	 * @param v scroller's old Vvalue
+	 */
+	private void fixStupidZoom(double h, double v)
+	{
+		scroller.setHvalue(h);
+		scroller.setVvalue(v);
 	}
 
 	@FXML
