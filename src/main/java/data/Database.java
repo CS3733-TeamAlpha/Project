@@ -16,6 +16,7 @@ public class Database implements Observer
 	//Constants
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 	private static final String DB_DROP_ALL = "/db/DBDropAll.sql";
+	private static final String DB_INSERT_BUILDING = "/db/APP_BUILDINGS.sql";
 	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
@@ -434,6 +435,11 @@ public class Database implements Observer
 	{
 		try
 		{
+			//Remove service connections but leave the services, required since there is no cascade delete on services and services use a foreign key system
+			PreparedStatement unlinkServices = connection.prepareStatement("UPDATE Services SET node=NULL WHERE node=?");
+			unlinkServices.setString(1, uuid);
+			unlinkServices.execute();
+
 			statement.execute("DELETE FROM Nodes WHERE node_uuid='" + uuid + "'");
 
 			//Needed because there can be no FOREIGN KEY constraint on the edges dst column. If there were, it would
@@ -733,6 +739,11 @@ public class Database implements Observer
 		return ret;
 	}
 
+	public Provider getProviderByID(String id)
+	{
+		return providerCache.get(id);
+	}
+
 	/**
 	 * Updates a provider in the database.
 	 * @param p Provider to update.
@@ -861,6 +872,24 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	/**
+	 * Delete a service by name.
+	 * @param name Name of the service to delete.
+	 */
+	public void delService(String name)
+	{
+		try
+		{
+			PreparedStatement pstmt = connection.prepareStatement("DELETE FROM Services WHERE name=?");
+			pstmt.setString(1, name);
+			pstmt.execute();
+		} catch (SQLException e)
+		{
+			System.out.println("Error trying to delete a service!");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -1053,8 +1082,8 @@ public class Database implements Observer
 		{
 			searchText = searchText.toLowerCase();
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID FROM Nodes WHERE LOWER(NAME) LIKE ? UNION " +
-					"SELECT (lastName || ', ' ||  firstName || '; ' || title) AS name, provider_uuid FROM Providers WHERE LOWER(lastName || ', ' ||  firstName || '; ' || title) LIKE ?" + ((top6)? " FETCH FIRST 6 ROWS ONLY" : ""));
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID, 'Location' AS SearchType FROM Nodes WHERE LOWER(NAME) LIKE ? UNION " +
+					"SELECT (lastName || ', ' ||  firstName || '; ' || title) AS name, provider_uuid, 'Provider' AS SearchType FROM Providers WHERE LOWER(lastName || ', ' ||  firstName || '; ' || title) LIKE ?" + ((top6)? " FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");
 			ResultSet results = pstmt.executeQuery();
@@ -1063,6 +1092,7 @@ public class Database implements Observer
 				SearchResult res = new SearchResult();
 				res.displayText = results.getString("name");
 				res.id = results.getString(2);
+				res.searchType = SearchType.valueOf(results.getString(3));
 				searchResults.add(res);
 			}
 
@@ -1115,15 +1145,15 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
-		//TODO: set below to false, in order to avoid the carpet bombing
-		runScript(DB_DROP_ALL, true);
-		runScript(DB_CREATE_SQL, true);
-		runScript(DB_INSERT_NODES, true);
-		runScript(DB_INSERT_EDGES, true);
-		runScript(DB_INSERT_SQL, true);
-		runScript(DB_INSERT_PROVIDERS, true);
-		runScript(DB_INSERT_SERVICES, true);
-		runScript(DB_INSERT_PROVIDEROFFICES, true);
+		runScript(DB_DROP_ALL, false);
+		runScript(DB_CREATE_SQL, false);
+		runScript(DB_INSERT_BUILDING, false);
+		runScript(DB_INSERT_NODES, false);
+		runScript(DB_INSERT_EDGES, false);
+		runScript(DB_INSERT_SQL, false);
+		runScript(DB_INSERT_PROVIDERS, false);
+		runScript(DB_INSERT_SERVICES, false);
+		runScript(DB_INSERT_PROVIDEROFFICES, false);
 
 		try
 		{

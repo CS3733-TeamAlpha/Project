@@ -302,8 +302,10 @@ public class DatabaseTest
 		//Verify location finding
 		assertEquals(node, database.getServiceLocation("tenforward"));
 
-		//Clean up and verify that deleting a node deletes its service
+		//Clean up and verify that services don't get deleted along with their nodes
 		database.deleteNodeByUUID(node.getID());
+		assertEquals(1, database.getServices().size());
+		database.delService("tenforward");
 		assertEquals(0, database.getServices().size());
 	}
 }

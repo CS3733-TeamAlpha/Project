@@ -39,9 +39,6 @@ public class MapEditorToolController extends BaseController
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
 
-
-
-
     //currently selected node and button
     private Node currentNode = null;
     private Button currentButton = null;
@@ -144,17 +141,20 @@ public class MapEditorToolController extends BaseController
 
 		@Override
 		public void handle(ScrollEvent scrollEvent) {
-				final double scale = calculateScale(scrollEvent);
-				editingFloor.setScaleX(scale);
-				editingFloor.setScaleY(scale);
-				zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
-				zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
-				zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
-				zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+			final double scale = calculateScale(scrollEvent);
+			editingFloor.setScaleX(scale);
+			editingFloor.setScaleY(scale);
+			zoomWrapper.setPrefHeight(editingFloor.getHeight()*scale);
+			zoomWrapper.setPrefWidth(editingFloor.getWidth()*scale);
 
-				editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
-				editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
-				scrollEvent.consume();
+			zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
+			zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
+			zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
+			zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+
+			editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth())/2);
+			editingFloor.setLayoutY((zoomWrapper.getHeight() - floorImage.getImage().getHeight())/2);
+			scrollEvent.consume();
 		}
 
 		private double calculateScale(ScrollEvent scrollEvent) {
@@ -278,14 +278,20 @@ public class MapEditorToolController extends BaseController
 		//faulkner building
 		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
 		{
+			floorImage.setFitWidth(Paths.regularFloorImages[floor-1].getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.regularFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
 		{
+			floorImage.setFitWidth(Paths.belkinFloorImages[floor-1].getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.belkinFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
 		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
 		{
+			floorImage.setFitWidth(Paths.outdoorImageProxy.getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.outdoorImageProxy.getFXImage().getHeight());
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 
@@ -332,6 +338,14 @@ public class MapEditorToolController extends BaseController
 				}
 				currentState = editorStates.DOINGNOTHING;
 				mainScroll.setPannable(true);
+			}
+			else if(e.getCode() == KeyCode.DELETE)
+			{
+				if(currentNode != null)
+				{
+					deleteNode(null);
+					currentState = editorStates.DOINGNOTHING;
+				}
 			}
 		});
 
@@ -762,6 +776,7 @@ public class MapEditorToolController extends BaseController
 		//make a new button to associate with the node
 		Button nodeB = new Button();
 		nodeB.setId("node-button-unselected");
+		nodeB.setFocusTraversable(false);
 
 		//modify xy position with offset so that button is centered on the node's real location
 		nodeB.setLayoutX(x - XOFFSET);
@@ -1106,6 +1121,7 @@ public class MapEditorToolController extends BaseController
 
 		//experimental style changes to make the button a circle
 		nodeB.setId("node-button-unselected");
+		nodeB.setFocusTraversable(false);
 
 		//set button XY coordinates
 		nodeB.setLayoutX(n.getX() - XOFFSET);
@@ -1601,7 +1617,7 @@ public class MapEditorToolController extends BaseController
 			}
 
 			database.deleteNodeByUUID(currentNode.getID());
-        	((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
+        	editingFloor.getChildren().remove(currentButton);
         	nodeButtonLinks.remove(currentButton);
         	//hide details view
         	hideNodeDetails();

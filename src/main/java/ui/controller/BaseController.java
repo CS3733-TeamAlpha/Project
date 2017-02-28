@@ -42,6 +42,8 @@ public abstract class BaseController
 
 	ProxyImage outdoorsProxy = Paths.outdoorImageProxy;
 
+	ProxyImage yahProxy = Paths.yahImageProxy;
+
 	//default to floor1 of faulkner
 	int FLOORID = 1;
 	String BUILDINGID = "00000000-0000-0000-0000-000000000000";
@@ -79,6 +81,7 @@ public abstract class BaseController
 	public static void setStage(Stage s)
 	{
 		stage = s;
+		stage.getIcons().add(new javafx.scene.image.Image(Main.class.getResourceAsStream(Paths.ICON)));
 	}
 
 	protected void loadFXML(String path)
@@ -168,13 +171,19 @@ public abstract class BaseController
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		} else if (type == 4 || type == 5)
+		} else if (type == 4)
 		{
 			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
 			buttonImage.setScaleX(0.15);
 			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		} else if (type == 0)
+		} else if (type == 5)
+		{
+			ImageView buttonImage = new ImageView(Paths.skioskImageProxy.getFXImage());
+			buttonImage.setScaleX(0.15);
+			buttonImage.setScaleY(0.15);
+			b.setGraphic(buttonImage);
+		}else if (type == 0)
 		{
 		}
 	}
