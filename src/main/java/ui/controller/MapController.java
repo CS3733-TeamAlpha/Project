@@ -50,6 +50,7 @@ public class MapController extends BaseController
 	String targetBuilding = "";
 	private Pane currentTooltip = null;
 	private Button currentHoveredNode = null;
+	private boolean usingStairs = false;
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
@@ -188,6 +189,8 @@ public class MapController extends BaseController
 	@FXML
 	private Tab outdoorsTab;
 
+	@FXML
+	private CheckBox stairsCheckbox;
 
 	ScrollPane scroller = faulknerScroller;
 	ImageView floorImage = faulknerFloorImage;
@@ -204,7 +207,6 @@ public class MapController extends BaseController
 	public MapController()
 	{
 		super();
-
 	}
 
 	public void initialize()
@@ -277,6 +279,8 @@ public class MapController extends BaseController
 				Platform.runLater(() -> initialFocusView(kiosk));
 			}).start();
 		}
+
+		stairsCheckbox.setSelected(usingStairs);
 	}
 
 	/**
@@ -392,7 +396,7 @@ public class MapController extends BaseController
 		}
 		if(findingDirections)
 		{
-			ArrayList<Node> path = graph.findPath(kiosk, selected, false);
+			ArrayList<Node> path = graph.findPath(kiosk, selected, usingStairs);
 
 			path = trimPathToBuildingFloor(path);
 
@@ -403,7 +407,7 @@ public class MapController extends BaseController
 			}else
 			{
 				ArrayList<String> textDirections =
-						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected, false));
+						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected, usingStairs));
 				StringBuilder build = new StringBuilder();
 				if(textDirections != null)
 				{
@@ -1283,6 +1287,16 @@ public class MapController extends BaseController
 		loadedLabels.clear();
 	}
 
+	/**
+	 * Changes the status of whether stairs are being used, then re-plots the path.
+	 */
+	@FXML
+	private void changeUseStairs()
+	{
+		usingStairs = stairsCheckbox.isSelected();
+		clearPath(null);
+		findDirectionsTo();
+	}
 
 	class LabelThingy
 	{
