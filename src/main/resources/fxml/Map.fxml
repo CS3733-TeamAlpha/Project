@@ -173,6 +173,7 @@
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
             </Button>
+            <CheckBox fx:id="stairsCheckbox" mnemonicParsing="false" onAction="#changeUseStairs" text="Use stairs?" />
             </children>
          <HBox.margin>
             <Insets />
