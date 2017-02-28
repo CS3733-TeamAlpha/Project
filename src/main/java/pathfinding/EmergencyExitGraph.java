@@ -45,6 +45,7 @@ public class EmergencyExitGraph extends Graph{
             Node temp = nodeQueue.poll();
             if (temp.getType() >= 6 && temp.getType() <= 19)
             {
+                end = temp; //so we don't nullptr on the filter node thingy
                 while (parentMap.get(temp) != null)
                 {
                     if (filterNode(start, end, temp))
