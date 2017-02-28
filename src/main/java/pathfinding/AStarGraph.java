@@ -10,7 +10,7 @@ public class AStarGraph extends Graph
 	/**
 	 * {@inheritDoc}
 	 */
-	public ArrayList<Node> findPath(Node start, Node end)
+	public ArrayList<Node> findPath(Node start, Node end, boolean useStairs)
 	{
 		if (start == null || end == null)
 			return null; //idiot check
@@ -44,11 +44,7 @@ public class AStarGraph extends Graph
 				if (closedList.contains(expTempNode))
 					continue; //Don't explore nodes that have already been explored
 
-				//Straight shot optimization -- if curNode isn't on the same floor as start or end, this node must be
-				//on a different floor than curNode. Otherwise, skip.
-				//if ((curNode.node.getFloor() != start.getFloor() || curNode.node.getFloor() != end.getFloor())
-				//		&& expTempNode.getFloor() == curNode.node.getFloor())
-				//	continue;
+				//Make sure that we're not exploring elevators when we're not supposed to be
 
 				//Check to see if we've found the end node yet
 				if (expTempNode == end)

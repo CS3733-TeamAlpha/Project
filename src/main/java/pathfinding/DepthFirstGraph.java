@@ -9,7 +9,7 @@ import java.util.LinkedList;
 public class DepthFirstGraph extends Graph
 {
 
-	public ArrayList<Node> findPath(Node start, Node end)
+	public ArrayList<Node> findPath(Node start, Node end, boolean useStairs)
 	{
 		System.out.println("Activating depth first search");
 		ArrayList<Node> result = new ArrayList<Node>();

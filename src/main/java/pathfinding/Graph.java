@@ -11,9 +11,10 @@ public abstract class Graph
 	 *
 	 * @param start Node to start pathing from.
 	 * @param end   Node to attempt to path to.
+	 * @param useStairs Whether stairs or elevators should be used. If true, only stairs will be used. If false, only elevators will be used (stairs in a many-floor building suck!)
 	 * @return Ordered collection of nodes forming a complete path from start to finish, or null upon error/no-path.
 	 */
-	public abstract ArrayList<Node> findPath(Node start, Node end);
+	public abstract ArrayList<Node> findPath(Node start, Node end, boolean useStairs);
 
 	/**
 	 * For internal use by Graph subclasses only. Given a start node and an end node, this will return true if the
