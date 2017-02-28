@@ -8,6 +8,7 @@ import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -24,6 +25,7 @@ public class StartupController extends BaseController
 //	public ImageView eyeImage;
 	public ImageView lockImage;
 	private ContextMenu contextMenu;
+	private ContextMenu providerLocationContextMenu;
 	public TextField searchBox;
 
 	public StartupController()
@@ -36,24 +38,45 @@ public class StartupController extends BaseController
 		contextMenu = new ContextMenu();
 		contextMenu.setMaxWidth(searchBox.getWidth());
 
+		providerLocationContextMenu = new ContextMenu();
+		providerLocationContextMenu.setMaxWidth(searchBox.getWidth());
+
 		searchBox.textProperty().addListener(((observable, oldValue, newValue) ->
 		{
 			List<SearchResult> results = database.getResultsForSearch(newValue, true);
 			contextMenu.getItems().remove(0, contextMenu.getItems().size());
+			providerLocationContextMenu.getItems().clear();
 			for(SearchResult result : results)
 			{
 				MenuItem item = new MenuItem(result.displayText);
 				contextMenu.getItems().add(item);
 				item.setOnAction(event ->
 				{
+					//if provider, make a new contextmenu of locations that provider is at
 					if(result.searchType == SearchType.Provider)
 					{
+						providerLocationContextMenu.hide();
 						List<Node> locations = database.getProviderByID(result.id).getLocations();
 						if(locations.size() > 0)
 						{
-							setSearchedFor(locations.get(0));
-							loadFXML(Paths.MAP_FXML);
+							for(Node loc: locations)
+							{
+								MenuItem litem = new MenuItem(result.displayText + ": " +loc.getName());
+								providerLocationContextMenu.getItems().add(litem);
+								litem.setOnAction(e ->
+								{
+									setSearchedFor(loc);
+									loadFXML(Paths.MAP_FXML);
+								});
+							}
 						}
+						//if no locations, indicate as such
+						else
+						{
+							MenuItem litem = new MenuItem("No Locations");
+							providerLocationContextMenu.getItems().add(litem);
+						}
+						providerLocationContextMenu.show(searchBox, Side.BOTTOM, 0, 0);
 					}
 					else if(result.searchType == SearchType.Location)
 					{
@@ -67,6 +90,7 @@ public class StartupController extends BaseController
 			if(newValue.length() == 0)
 			{
 				contextMenu.hide();
+				providerLocationContextMenu.hide();
 			}
 			else if(!contextMenu.isShowing())
 			{
