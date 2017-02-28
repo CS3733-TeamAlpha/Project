@@ -1,6 +1,7 @@
 package pathfinding;
 
 import data.Node;
+import data.NodeTypes;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -44,7 +45,11 @@ public class AStarGraph extends Graph
 				if (closedList.contains(expTempNode))
 					continue; //Don't explore nodes that have already been explored
 
-				//Make sure that we're not exploring elevators when we're not supposed to be
+				//Make sure that we're not exploring elevators or stairs when we're not supposed to be
+				if (useStairs && expTempNode.getType() == NodeTypes.ELEVATOR.val())
+					continue;
+				if (!useStairs && expTempNode.getType() == NodeTypes.STAIRWAY.val())
+					continue;
 
 				//Check to see if we've found the end node yet
 				if (expTempNode == end)

@@ -1,6 +1,7 @@
 package pathfinding;
 
 import data.Node;
+import data.NodeTypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,10 @@ public class DepthFirstGraph extends Graph
 		while (!nodeQueue.isEmpty())
 		{
 			Node temp = nodeQueue.removeLast();
+			if (useStairs && temp.getType() == NodeTypes.ELEVATOR.val())
+				continue;
+			if (!useStairs && temp.getType() == NodeTypes.STAIRWAY.val())
+				continue;
 			if (temp == end)
 			{
 				while (parentMap.get(temp) != null)
