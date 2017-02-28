@@ -1311,6 +1311,15 @@ public class MapController extends BaseController
 			currentPath.clear();
 		}
 
+		//remove dot and stop animation if purgebuttons is called
+		//TODO: don't try to refactor this poorly by just using clearpath. probably will mess something up
+		if(editingFloor.getChildren().contains(magicalCircle))
+		{
+			editingFloor.getChildren().remove(magicalCircle);
+		}
+		magicalSequence.stop();
+		magicalSequence.getChildren().clear();
+
 		for(Label l : loadedLabels)
 		{
 			((AnchorPane) l.getParent()).getChildren().remove(l);
