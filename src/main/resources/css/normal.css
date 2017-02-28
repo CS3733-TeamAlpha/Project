@@ -1,6 +1,6 @@
 @font-face
 {
-    font-family: 'Glacial Indifference';
+    font-family: 'GlacialIndifference';
     src: url('../fonts/GlacialIndifference-Regular.otf');
 }
 
@@ -85,9 +85,7 @@
 }
 #roomLabel
 {
--fx-font: 15px GlacialIndifference;
-    -fx-text-fill: white;
--fx-background-color: #29708e;
+    -fx-text-fill: rgb(117, 117, 117);
     -fx-padding: 1px;
 }
 

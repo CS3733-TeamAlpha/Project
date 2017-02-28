@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -8,7 +9,7 @@
 
 <HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <children>
-      <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
+      <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
          <children>
             <TabPane fx:id="buildingTabs" layoutX="23.0" layoutY="65.0" style="-fx-background-color: black;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <tabs>
@@ -101,7 +102,7 @@
                 </VBox>
          </children>
       </AnchorPane>
-        <VBox fx:id="roomInfo" alignment="TOP_CENTER" spacing="5.0" styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="roomInfo" alignment="TOP_CENTER" maxWidth="340.0" spacing="5.0" styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane>
                <children>

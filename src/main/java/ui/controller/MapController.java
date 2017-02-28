@@ -1,5 +1,7 @@
 package ui.controller;
 
+import com.sun.javafx.tk.FontLoader;
+import com.sun.javafx.tk.Toolkit;
 import data.Node;
 import javafx.animation.*;
 import javafx.animation.FadeTransition;
@@ -17,6 +19,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -28,6 +32,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pathfinding.AStarGraph;
 import pathfinding.Graph;
@@ -576,39 +581,47 @@ public class MapController extends BaseController
 		if(zoomWrapper.getWidth() > scroller.getWidth() ||
 				zoomWrapper.getHeight() > scroller.getHeight())
 		{
+			double newHval, newVval;
 			//all the way to the right
 			if(zoomWrapper.getWidth()-nX < scroller.getWidth()/2)
 			{
-				scroller.hvalueProperty().setValue(1);
+				newHval = 1;
 			}
 			//all the way to the left
 			else if(nX < (scroller.getWidth())/2)
 			{
-				scroller.hvalueProperty().setValue(0);
+				newHval = 0;
 			}
 			//otherwise math
 			else
 			{
-				scroller.hvalueProperty().setValue((nX-scroller.getWidth()/2)/
-						(zoomWrapper.getWidth()-scroller.getWidth()));
+				newHval = (nX-scroller.getWidth()/2)/
+						(zoomWrapper.getWidth()-scroller.getWidth());
 			}
 
 			//all the way to the top
 			if(nY < (scroller.getHeight())/2)
 			{
-				scroller.vvalueProperty().setValue(0);
+				newVval = 0;
 			}
 			//all the way to the bottom
 			else if(zoomWrapper.getHeight()-nY < scroller.getHeight()/2)
 			{
-				scroller.vvalueProperty().setValue(1);
+				newVval = 1;
 			}
 			//math
 			else
 			{
-				scroller.vvalueProperty().setValue((nY-scroller.getHeight()/2)/
-						(zoomWrapper.getHeight()-scroller.getHeight()));
+				newVval = (nY-scroller.getHeight()/2)/
+						(zoomWrapper.getHeight()-scroller.getHeight());
 			}
+
+			Timeline animated = new Timeline();
+			KeyValue hKey = new KeyValue(scroller.hvalueProperty(), newHval, Interpolator.EASE_OUT);
+			KeyValue vKey = new KeyValue(scroller.vvalueProperty(), newVval, Interpolator.EASE_OUT);
+			KeyFrame frame = new KeyFrame(Duration.millis(300), hKey, vKey);
+			animated.getKeyFrames().add(frame);
+			animated.play();
 		}
 	}
 
@@ -1262,13 +1275,30 @@ public class MapController extends BaseController
 
 	private void addLabels(LabelThingy thingy)
 	{
+		InnerShadow innerShadow = new InnerShadow();
+		innerShadow.setColor(Color.BLACK);
+
+		DropShadow ds = new DropShadow();
+		ds.setSpread(0.75);
+		ds.setRadius(15);
+		ds.setColor(Color.color(1, 1, 1));
+		ds.setInput(innerShadow);
+
 		Label roomLabel = new Label(thingy.text);
-		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
-			roomLabel.setLayoutX(thingy.x - 35);
-			roomLabel.setLayoutY(thingy.y-35);
-		} else
+		roomLabel.setEffect(ds);
+		roomLabel.setFont(new Font("GlacialIndifference", 14));
+
+		FontLoader fontLoader = Toolkit.getToolkit().getFontLoader();
+		int roundedXOffset = (int)Math.round(fontLoader.computeStringWidth(roomLabel.getText(), roomLabel.getFont()) / 2.0);
+
+		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology"))
 		{
-			roomLabel.setLayoutX(thingy.x -35);
+			roomLabel.setLayoutX(thingy.x - roundedXOffset);
+			roomLabel.setLayoutY(thingy.y-35);
+		}
+		else
+		{
+			roomLabel.setLayoutX(thingy.x - roundedXOffset);
 			roomLabel.setLayoutY(thingy.y+15);
 		}
 		roomLabel.setId("roomLabel");
