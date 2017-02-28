@@ -308,7 +308,6 @@ public class MapController extends BaseController
 		focusView(n);
 
 		//make the kiosk's location more obvious
-		//TODO: get an image that has some kind of pointer (think googlemaps) at the bottom/center
 		ImageView yahImage = new ImageView(yahProxy.getFXImage());
 		yahImage.setX(n.getX() - yahImage.getImage().getWidth()/2);
 		yahImage.setY(n.getY() - yahImage.getImage().getHeight());
@@ -326,6 +325,7 @@ public class MapController extends BaseController
 		sequence.getChildren().add(timeline);
 		sequence.play();
 		yahImage.toFront();
+
 		selected = n;
 	}
 
@@ -355,14 +355,19 @@ public class MapController extends BaseController
 	 */
 	private void initialSearchFocusView(Node n)
 	{
-		BUILDINGID = n.getBuilding();
+		//go to kiosk to, beginning of path
+		BUILDINGID = kiosk.getBuilding();
 		changeBuilding(BUILDINGID);
-		jumpFloor(n.getFloor());
+		jumpFloor(kiosk.getFloor());
+		focusView(kiosk);
+
 		selected = n;
 		findingDirections = true;
 		showRoomInfo(n, false);
 		setSearchedFor(null);
-		focusView(n);
+
+		//begin magical journey
+		magicalJourney();
 	}
 
 	/**
