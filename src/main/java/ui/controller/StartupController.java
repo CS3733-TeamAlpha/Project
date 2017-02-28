@@ -12,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import pathfinding.EmergencyExitGraph;
 import ui.Main;
 import ui.Paths;
 
@@ -114,6 +115,13 @@ public class StartupController extends BaseController
 		stage.show();
 	}
 
+	public void emergencyDirections()
+	{
+		//Get emergency directions to the nearest
+		EmergencyExitGraph graph = new EmergencyExitGraph();
+		setSearchedFor(graph.findPath(database.getSelectedKiosk(), null).get(0));
+		loadFXML(Paths.MAP_FXML);
+	}
 //	public void toggleHighContrast()
 //	{
 //		Accessibility.toggleHighContrast(this);
