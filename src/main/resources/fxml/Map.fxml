@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
+<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <children>
       <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
          <children>
@@ -55,7 +55,7 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" style="-fx-background-color: white;" vbarPolicy="ALWAYS">
+                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" style="-fx-background-color: white;" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
                                     <AnchorPane fx:id="outdoorsZoomWrapper">
                                        <children>
@@ -79,7 +79,7 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: black;">
                            <children>
-                              <ScrollPane fx:id="belkinScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" vbarPolicy="ALWAYS">
+                              <ScrollPane fx:id="belkinScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
                                     <AnchorPane fx:id="belkinZoomWrapper">
                                        <children>
