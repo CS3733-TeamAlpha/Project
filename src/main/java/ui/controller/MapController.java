@@ -1,5 +1,7 @@
 package ui.controller;
 
+import com.sun.javafx.tk.FontLoader;
+import com.sun.javafx.tk.Toolkit;
 import data.Node;
 import javafx.animation.*;
 import javafx.animation.FadeTransition;
@@ -17,6 +19,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -28,6 +32,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pathfinding.AStarGraph;
 import pathfinding.Graph;
@@ -1253,13 +1258,30 @@ public class MapController extends BaseController
 
 	private void addLabels(LabelThingy thingy)
 	{
+		InnerShadow innerShadow = new InnerShadow();
+		innerShadow.setColor(Color.BLACK);
+
+		DropShadow ds = new DropShadow();
+		ds.setSpread(0.75);
+		ds.setRadius(15);
+		ds.setColor(Color.color(1, 1, 1));
+		ds.setInput(innerShadow);
+
 		Label roomLabel = new Label(thingy.text);
-		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
-			roomLabel.setLayoutX(thingy.x - 35);
-			roomLabel.setLayoutY(thingy.y-35);
-		} else
+		roomLabel.setEffect(ds);
+		roomLabel.setFont(new Font("GlacialIndifference", 14));
+
+		FontLoader fontLoader = Toolkit.getToolkit().getFontLoader();
+		int roundedXOffset = (int)Math.round(fontLoader.computeStringWidth(roomLabel.getText(), roomLabel.getFont()) / 2.0);
+
+		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology"))
 		{
-			roomLabel.setLayoutX(thingy.x -35);
+			roomLabel.setLayoutX(thingy.x - roundedXOffset);
+			roomLabel.setLayoutY(thingy.y-35);
+		}
+		else
+		{
+			roomLabel.setLayoutX(thingy.x - roundedXOffset);
 			roomLabel.setLayoutY(thingy.y+15);
 		}
 		roomLabel.setId("roomLabel");
