@@ -239,6 +239,14 @@ public class MapEditorToolController extends BaseController
 		ArrayList<String> allServices = database.getServices();
 		serviceAddChoiceBox.setItems(FXCollections.observableArrayList(allServices.toArray()));
 
+		//Add list of available node types to the node type scroll box. Choiceboxes always end well, right?
+		typeChoicebox.getItems().add("Hallway");
+		typeChoicebox.getItems().add("Office");
+		typeChoicebox.getItems().add("Elevator");
+		typeChoicebox.getItems().add("Restroom");
+		typeChoicebox.getItems().add("Kiosk");
+		typeChoicebox.getItems().add("Selected Kisok");
+		typeChoicebox.getItems().add("Stairway");
 	}
 
 	/**
@@ -504,7 +512,7 @@ public class MapEditorToolController extends BaseController
 	private TextField nameField;
 
 	@FXML
-	private TextField typeField;
+	private ChoiceBox typeChoicebox;
 
 	@FXML
 	private TextField xField;
@@ -1189,7 +1197,10 @@ public class MapEditorToolController extends BaseController
 			default:
 				//modify text fields to display node info
 				nameField.setText(linkedNode.getName());
-				typeField.setText(Integer.toString(linkedNode.getType()));
+				if (linkedNode.getType() < 6)
+					typeChoicebox.getSelectionModel().select(linkedNode.getType());
+				else if (linkedNode.getType() == 20)
+					typeChoicebox.getSelectionModel().select(6);
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
 
@@ -1234,7 +1245,7 @@ public class MapEditorToolController extends BaseController
 		currentButton = null;
 
 		nameField.setText("");
-		typeField.setText("");
+		typeChoicebox.getSelectionModel().clearSelection();
 		xField.setText("");
 		yField.setText("");
 
@@ -1330,14 +1341,15 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * update a node's Type and update its corresponding image
 	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
-	 * @param event
 	 */
 	@FXML
-	void updateNodeType(ActionEvent event)
+	void updateNodeType()
 	{
 		try
 		{
-			int newType = Integer.parseInt(typeField.getText());
+			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
+			if (newType == 6)
+				newType = 20; //the 6th type is actually a stairway, but we call it #20 because... reasons
 			if (newType < 20 && newType >= 0)
 			{
 				if (newType == 5) //changing to selected kiosk

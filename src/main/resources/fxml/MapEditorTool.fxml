@@ -52,7 +52,7 @@
                         <Label layoutX="4.0" layoutY="4.0" text="Selected Node Name" />
                         <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
                         <Label layoutX="2.0" layoutY="61.0" text="Selected Node Type" />
-                  	<ChoiceBox fx:id="typeChoiceBox" layoutY="77.0" onMouseClicked="#updateNodeType" prefWidth="150.0" />
+                  	<ChoiceBox fx:id="typeChoicebox" layoutY="77.0" onMouseClicked="#updateNodeType" prefWidth="150.0" />
                         <Label layoutX="5.0" layoutY="113.0" text="Node X Coordinate" />
                         <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
                         <Label layoutX="5.0" layoutY="169.0" text="Node Y Coordinate" />
