@@ -48,6 +48,8 @@ public class MapEditorToolController extends BaseController
 	private Node currentNode = null;
 	private Button currentButton = null;
 
+	//boolean to prevent choicebox from calling updatenodetype function when it shouldnt be
+	private boolean dontupdate = false;
 
 	//boolean to determine whether or not to automatically connect newly added nodes
 	//to the nearest hallway node
@@ -261,7 +263,10 @@ public class MapEditorToolController extends BaseController
 		typeChoicebox.getItems().add("Parking lot");	//7
 		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
 		{
-			updateNodeType(); //why can't we just directly call this from fxml? don't ask me, ask jfx...
+			if(!dontupdate) //prevent node types from changing when selecting a new node
+			{
+				updateNodeType(); //why can't we just directly call this from fxml? don't ask me, ask jfx...
+			}
 		});
 	}
 
@@ -1211,12 +1216,15 @@ public class MapEditorToolController extends BaseController
 				currentState = editorStates.DOINGNOTHING;
 				break;
 			default:
+				//set dontupdate so that previously selected node doesn't have its type changed
+				dontupdate = true;
 				//modify text fields to display node info
 				nameField.setText(linkedNode.getName());
 				if (linkedNode.getType() < 6)
 					typeChoicebox.getSelectionModel().select(linkedNode.getType());
 				else if (linkedNode.getType() == 20)
 					typeChoicebox.getSelectionModel().select(6);
+				dontupdate = false;
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
 
