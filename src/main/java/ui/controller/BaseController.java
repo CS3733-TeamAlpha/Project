@@ -183,7 +183,7 @@ public abstract class BaseController
 			return;
 		}
 		else
-			buttonImage = new ImageView(Paths.removeNodeImageProxy.getFXImage()); //failure condition
+			buttonImage = new ImageView(Paths.doorImageProxy.getFXImage()); //failure condition
 
 		buttonImage.setScaleX(0.15);
 		buttonImage.setScaleY(0.15);
