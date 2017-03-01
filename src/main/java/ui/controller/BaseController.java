@@ -90,7 +90,10 @@ public abstract class BaseController
 	protected void loadFXML(String path)
 	{
 		if (watchdog != null)
+		{
 			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog.disconnect();
+		}
 
 		Parent root = null;
 		try

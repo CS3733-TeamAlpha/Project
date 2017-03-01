@@ -101,6 +101,7 @@ public class AdminPageController extends BaseController
 			uiTimeout = timeoutSpinner.getValue();
 			//Make timeout apply to the current UI
 			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog.disconnect();
 			watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 			watchdog.registerScene(stage.getScene(), Event.ANY);
 		});
