@@ -95,7 +95,7 @@ public class AdminPageController extends BaseController
 		});
 
 		//Timeout spinner
-		SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 3600, uiTimeout, 5);
+		SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(15, 3600, uiTimeout, 5);
 		valueFactory.valueProperty().addListener((observableValue, integer, t1) ->
 		{
 			uiTimeout = timeoutSpinner.getValue();
