@@ -61,8 +61,8 @@ public class Paths
 	public static ProxyImage f2BelkinProxy = new ProxyImage(Paths.FLOOR2_BELKIN);
 	public static ProxyImage f3BelkinProxy = new ProxyImage(Paths.FLOOR3_BELKIN);
 	public static ProxyImage f4BelkinProxy = new ProxyImage(Paths.FLOOR4_BELKIN);
-	public static ProxyImage[] regularFloorImages = { f1ImageProxy, f2ImageProxy, f3ImageProxy, f4ImageProxy, f5ImageProxy, f6ImageProxy, f7ImageProxy };
-	public static ProxyImage[] belkinFloorImages = { f1BelkinProxy, f2BelkinProxy, f3BelkinProxy, f4BelkinProxy };
+	public static ProxyImage[] regularFloorImages = {f1ImageProxy, f2ImageProxy, f3ImageProxy, f4ImageProxy, f5ImageProxy, f6ImageProxy, f7ImageProxy};
+	public static ProxyImage[] belkinFloorImages = {f1BelkinProxy, f2BelkinProxy, f3BelkinProxy, f4BelkinProxy};
 
 	//GUI element image proxies
 	public static ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
