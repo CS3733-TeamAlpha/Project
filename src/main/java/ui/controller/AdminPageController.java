@@ -230,7 +230,7 @@ public class AdminPageController extends BaseController
 		if(result.isPresent() && result.get() == ok)
 		{
 			//Reset the database in the background. Can't use runLater as this is a much more complex task (or it will be soon)
-			Task task = new Task<Void>()
+			Task resetTask = new Task<Void>()
 			{
 				@Override
 				protected Void call()
@@ -238,19 +238,33 @@ public class AdminPageController extends BaseController
 					System.out.println("Trying to reset in separate thread");
 					database.resetDatabase();
 					System.out.println("Reset successful");
-					Alert cleared = new Alert(Alert.AlertType.INFORMATION);
-					cleared.setTitle("Data Reset");
-					cleared.setHeaderText("Data Reset Successfully");
-					cleared.showAndWait();
-					return null;
+				return null;
 				}
 			};
-			Thread thread = new Thread(task);
+			Thread thread = new Thread(resetTask);
 			thread.start();
-		}
-		else
-		{
-			//Nothing to do here, user canceled
+
+			Alert progressAlert = new Alert(Alert.AlertType.INFORMATION);
+			ProgressBar progressBar = new ProgressBar();
+
+			GridPane grid = new GridPane();
+			grid.setPrefWidth(350);
+			grid.setHgap(10);
+			grid.setVgap(10);
+			grid.setPadding(new Insets(20, 0, 10, 30));
+			grid.add(progressBar, 0, 0);
+
+			progressAlert.getDialogPane().setContent(grid);
+			progressBar.setProgress(0);
+			progressAlert.showAndWait();
+			while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
+				progressBar.setProgress(database.getResetProgress());
+			progressAlert.close();
+
+			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
+			cleared.setTitle("Data Reset");
+			cleared.setHeaderText("Data Reset Successfully");
+			cleared.showAndWait();
 		}
 	}
 

@@ -35,6 +35,8 @@ public class Database implements Observer
 	private Hashtable<String, Node> nodeCache;
 	private Hashtable<String, Provider> providerCache;
 
+	private double resetStatus;
+
 	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
 	private PreparedStatement checkExist;
 	private PreparedStatement insertNode;
@@ -71,6 +73,7 @@ public class Database implements Observer
 		connection = null;
 		nodeCache = new Hashtable<>();
 		providerCache = new Hashtable<>();
+		resetStatus = 0;
 
 		checkExist = null;
 		insertNode = null;
@@ -1133,7 +1136,9 @@ public class Database implements Observer
 
 	public void resetDatabase()
 	{
+		resetStatus = 0;
 		nodeCache.clear();
+		resetStatus = .10;
 		try
 		{
 			statement.close();
@@ -1146,14 +1151,23 @@ public class Database implements Observer
 		}
 
 		runScript(DB_DROP_ALL, false);
+		resetStatus = .20;
 		runScript(DB_CREATE_SQL, false);
+		resetStatus = .30;
 		runScript(DB_INSERT_BUILDING, false);
+		resetStatus = .40;
 		runScript(DB_INSERT_NODES, false);
+		resetStatus = .50;
 		runScript(DB_INSERT_EDGES, false);
+		resetStatus = .60;
 		runScript(DB_INSERT_SQL, false);
+		resetStatus = .70;
 		runScript(DB_INSERT_PROVIDERS, false);
+		resetStatus = .80;
 		runScript(DB_INSERT_SERVICES, false);
+		resetStatus = .90;
 		runScript(DB_INSERT_PROVIDEROFFICES, false);
+		resetStatus = 1.00;
 
 		try
 		{
@@ -1189,5 +1203,10 @@ public class Database implements Observer
 	public List<Node> getAllServices()
 	{
 		return nodeCache.values().stream().filter(node -> node.getType() == 1).collect(Collectors.toList());
+	}
+
+	public double getResetProgress()
+	{
+		return resetStatus;
 	}
 }
