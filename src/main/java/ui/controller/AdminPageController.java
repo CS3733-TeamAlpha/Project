@@ -66,7 +66,16 @@ public class AdminPageController extends BaseController
 				kioskNodeSelector.getItems().add(node.getName());
 			}
 		});
-		kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
+		Node kiosk = database.getSelectedKiosk();
+		if(kiosk != null)
+		{
+			kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
+		} else
+		{	//if no kiosk is currently set as selected, select the first entry in the choicebox and set
+			//it as the selected kiosk
+			kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
+			database.setSelectedKiosk(kiosks.get(0));
+		}
 		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
 		{
 			@Override

@@ -836,11 +836,11 @@ public class MapController extends BaseController
 		//disable next/prev step while animating
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
-		magicalCircle.setRadius(14f);
-		magicalCircle.setFill(Color.RED);
-		editingFloor.getChildren().add(magicalCircle);
-		magicalCircle.toFront();
 		if(currentPath.size() != 0){
+			magicalCircle.setRadius(14f);
+			magicalCircle.setFill(Color.RED);
+			editingFloor.getChildren().add(magicalCircle);
+			magicalCircle.toFront();
 			magicalCircle.setCenterX(currentPath.get(0).getStartX());
 			magicalCircle.setCenterY(currentPath.get(0).getStartY());
 			double newH = 0;

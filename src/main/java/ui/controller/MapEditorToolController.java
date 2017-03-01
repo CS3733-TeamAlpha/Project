@@ -258,7 +258,7 @@ public class MapEditorToolController extends BaseController
 		typeChoicebox.getItems().add("Elevator");		//2
 		typeChoicebox.getItems().add("Restroom");		//3
 		typeChoicebox.getItems().add("Kiosk");			//4
-		typeChoicebox.getItems().add("Selected Kisok");	//5
+		typeChoicebox.getItems().add("Selected Kiosk");	//5
 		typeChoicebox.getItems().add("Stairway");		//6
 		typeChoicebox.getItems().add("Parking lot");	//7
 		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
