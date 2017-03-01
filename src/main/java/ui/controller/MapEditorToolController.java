@@ -96,7 +96,6 @@ public class MapEditorToolController extends BaseController
 			{
 				if(currentButton != e.getSource() && currentButton != null)
 				{
-					System.out.println("dont happen");
 					currentButton.setId("node-button-unselected");
 				}
 				currentButton = (Button)e.getSource();
@@ -198,7 +197,7 @@ public class MapEditorToolController extends BaseController
 		//create canvas and graphicscontext
 		//these will be used later for drawing lines in realtime and drag&drop visuals
 		Group root = new Group();
-		canvas = new Canvas(2200, 1300);
+		canvas = new Canvas(2475, 2475);
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent e){
 				clickFloorImage(e);
@@ -1015,22 +1014,18 @@ public class MapEditorToolController extends BaseController
 				switch(contextSelection){
 					case 0:
 						//top option
-						System.out.println("top");
 						currentState = editorStates.CHAINADDING;
 						break;
 					case 1:
 						//right option
-						System.out.println("right");
 						currentState = editorStates.ADDINGNEIGHBOR;
 						break;
 					case 2:
 						//bottom option
-						System.out.println("bot");
 						currentState = editorStates.REMOVINGNEIGHBOR;
 						break;
 					case 3:
 						//left option
-						System.out.println("left");
 						deleteNode();
 						currentState = editorStates.DOINGNOTHING;
 						break;

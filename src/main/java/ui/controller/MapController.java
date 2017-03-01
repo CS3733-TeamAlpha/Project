@@ -625,12 +625,20 @@ public class MapController extends BaseController
 						(zoomWrapper.getHeight()-scroller.getHeight());
 			}
 
-			Timeline animated = new Timeline();
-			KeyValue hKey = new KeyValue(scroller.hvalueProperty(), newHval, Interpolator.EASE_OUT);
-			KeyValue vKey = new KeyValue(scroller.vvalueProperty(), newVval, Interpolator.EASE_OUT);
-			KeyFrame frame = new KeyFrame(Duration.millis(300), hKey, vKey);
-			animated.getKeyFrames().add(frame);
-			animated.play();
+			if(!stepping)
+			{
+				Timeline animated = new Timeline();
+				KeyValue hKey = new KeyValue(scroller.hvalueProperty(), newHval, Interpolator.EASE_OUT);
+				KeyValue vKey = new KeyValue(scroller.vvalueProperty(), newVval, Interpolator.EASE_OUT);
+				KeyFrame frame = new KeyFrame(Duration.millis(300), hKey, vKey);
+				animated.getKeyFrames().add(frame);
+				animated.play();
+			}
+			else //if building/floor was changed while animation, jump instantly to focus
+			{
+				scroller.setHvalue(newHval);
+				scroller.setVvalue(newVval);
+			}
 		}
 	}
 
