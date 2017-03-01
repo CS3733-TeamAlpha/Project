@@ -252,6 +252,12 @@ public class MapController extends BaseController
 		ds.setColor(Color.BLACK);
 		backButton.setEffect(ds);
 
+		ds = new DropShadow();
+		ds.setSpread(0.75);
+		ds.setRadius(15);
+		ds.setColor(Color.color(1, 1, 1));
+		currentFloorLabel.setEffect(ds);
+
 		Node searched = getSearchedFor();
 
 		//make a fade transition on all editing floor images, so that we can hide the initial
