@@ -97,7 +97,7 @@
                 </Tab>
               </tabs>
             </TabPane>
-                  <Button mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
                 <VBox alignment="TOP_CENTER" pickOnBounds="false" spacing="5.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="100.0">
                     <children>
                         <Button fx:id="upFloor" mnemonicParsing="false" onAction="#goUpFloor" styleClass="bh-button" />
