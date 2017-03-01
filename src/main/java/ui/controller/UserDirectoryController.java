@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import sun.plugin.javascript.navig.Anchor;
 import ui.Paths;
 
 import java.util.ArrayList;
