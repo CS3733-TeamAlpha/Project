@@ -2,6 +2,7 @@ package ui.controller;
 
 import data.Database;
 import data.NodeTypes;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -88,6 +89,8 @@ public abstract class BaseController
 
 	protected void loadFXML(String path)
 	{
+		if (watchdog != null)
+			watchdog.unregisterScene(stage.getScene(), Event.ANY);
 		Parent root = null;
 		try
 		{

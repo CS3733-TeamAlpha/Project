@@ -6,6 +6,7 @@ import data.Node;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -227,6 +228,7 @@ public class MapController extends BaseController
 	public void initialize()
 	{
 		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		initializeTabs();
 
 		System.out.println("MapController.initialize()");

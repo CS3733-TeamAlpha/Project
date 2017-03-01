@@ -1,6 +1,7 @@
 package ui.controller;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -26,6 +27,7 @@ public class ManageAccountsController extends BaseController
 	public void initialize()
 	{
 		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		reloadList();
 	}
 

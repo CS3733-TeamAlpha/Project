@@ -1,6 +1,7 @@
 package ui.controller;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -33,6 +34,7 @@ public class LoginController extends BaseController
 	{
 		Platform.runLater(() -> usernameField.requestFocus());
 		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.unregisterScene(stage.getScene(), Event.ANY);
 		usernameField.textProperty().addListener((observable, oldValue, newValue) ->
 				loginButton.setDisable(newValue.isEmpty()));
 

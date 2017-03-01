@@ -3,6 +3,7 @@ package ui.controller;
 import data.Node;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -197,6 +198,8 @@ public class MapEditorToolController extends BaseController
 	public void initialize()
 	{
 		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
+
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();
 
