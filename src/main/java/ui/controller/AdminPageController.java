@@ -258,22 +258,21 @@ public class AdminPageController extends BaseController
 			progressBar.setProgress(0);
 			progressAlert.setTitle("Reset Progress");
 			progressAlert.setHeaderText("Reset Progress");
-			Platform.runLater(() -> progressAlert.showAndWait());
+			Platform.runLater(() -> progressAlert.show());
 			Task updateTask = new Task<Void>()
 			{
 				@Override
-				public Void call()
+				public Void call() throws InterruptedException //idc
 				{
 					while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
 						progressBar.setProgress(database.getResetProgress());
 					progressBar.setProgress(1);
-					progressAlert.setHeaderText("Reset successful");
+					progressAlert.close();
 					return null;
 				}
 			};
 			thread = new Thread(updateTask);
 			thread.start();
-			progressAlert.close();
 		}
 	}
 
