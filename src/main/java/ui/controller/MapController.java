@@ -60,7 +60,7 @@ public class MapController extends BaseController
 
 	private Pane currentTooltip = null;
 	private Button currentHoveredNode = null;
-	private boolean usingStairs = false;
+	static boolean usingStairs = false; //ugly static hack
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 

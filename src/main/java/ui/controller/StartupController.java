@@ -143,6 +143,7 @@ public class StartupController extends BaseController
 		//Get emergency directions to the nearest
 		EmergencyExitGraph graph = new EmergencyExitGraph();
 		setSearchedFor(graph.findPath(database.getSelectedKiosk(), null, false).get(0));
+		MapController.usingStairs = true;
 		loadFXML(Paths.MAP_FXML);
 	}
 }
