@@ -859,6 +859,7 @@ public class MapController extends BaseController
 			magicalCircle.toFront();
 			magicalCircle.setCenterX(currentPath.get(0).getStartX());
 			magicalCircle.setCenterY(currentPath.get(0).getStartY());
+			magicalCircle.setOpacity(1);
 			double newH = 0;
 			double newV = 0;
 			double newX = currentPath.get(0).getStartX();
@@ -902,6 +903,13 @@ public class MapController extends BaseController
 			timeline.getKeyFrames().add(wd);
 			magicalSequence.getChildren().add(timeline);
 		}
+		//make circle fade out as the last animation item, fix bug caused by stupid javafx shit
+		KeyValue cc = new KeyValue(magicalCircle.opacityProperty(), 0);
+		KeyFrame cckf = new KeyFrame(Duration.millis(300), cc);
+		Timeline lastTimeline = new Timeline();
+		lastTimeline.getKeyFrames().add(cckf);
+		magicalSequence.getChildren().add(lastTimeline);
+
 		magicalSequence.play();
 		magicalSequence.setOnFinished(new EventHandler<ActionEvent>() {
 
