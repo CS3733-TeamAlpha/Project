@@ -49,7 +49,10 @@ public class TextualDirections
 			}else if(path.get(i).getType()==2 && path.get(i-1).getType()==2){
 				toReturn.add("Take the elevator to floor " + path.get(i-1).getFloor());
 				i--;
-			}else if(tempN.equals("the hallway"))
+			}else if(path.get(i).getType()==20 && path.get(i-1).getType()==20){
+				toReturn.add("Take the stairs to floor " + path.get(i-1).getFloor());
+			}
+			else if(tempN.equals("the hallway"))
 			{
 				//change text to be sidewalk if we are outside
 				if(path.get(i-2).getBuilding().equals(outdoors))
@@ -71,10 +74,15 @@ public class TextualDirections
 		if(path.get(0) == totalPath.get(0)) //at destination
 		{
 			toReturn.add("You have arrived at " + path.get(0).getName());
-		} else if (path.get(0).getType() == 2) { //elevator. TODO: stairs should be related
+		} else if (path.get(0).getType() == 2) { //elevator
 			Integer lastIndex = totalPath.indexOf(path.get(0));
 			toReturn.add("Take the elevator to floor " + totalPath.get(lastIndex-1).getFloor());
-		} else if (path.get(0).getType() > 5 && path.get(0).getType() < 20) //building entrance/exit
+
+		} else if (path.get(0).getType() == 20)
+		{ //stairs
+			Integer lastIndex = totalPath.indexOf(path.get(0));
+			toReturn.add("Take the stairs to floor " + totalPath.get(lastIndex - 1).getFloor());
+		}else if (path.get(0).getType() > 5 && path.get(0).getType() < 20) //building entrance/exit
 		{
 			if(path.get(0).getBuilding().equals(outdoors))
 			{
