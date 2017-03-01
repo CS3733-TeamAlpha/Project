@@ -49,10 +49,7 @@ public abstract class BaseController
 	public BaseController()
 	{
 		if (database == null)
-		{
 			database = new Database("FHAlpha");
-			ProviderBox.database = database;
-		}
 	}
 
 	public abstract void initialize();
