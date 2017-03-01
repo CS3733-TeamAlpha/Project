@@ -267,7 +267,6 @@ public class AdminPageController extends BaseController
 					while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
 						progressBar.setProgress(database.getResetProgress());
 					progressBar.setProgress(1);
-					progressAlert.close();
 					return null;
 				}
 			};
