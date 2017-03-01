@@ -53,25 +53,19 @@ public class AdminDirectoryController extends BaseController
 		providerUnusedLocationsList.getFocusModel().focusedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
-			{
 				providerUsedLocationsList.getSelectionModel().clearSelection();
-			}
 		});
 		providerUsedLocationsList.getFocusModel().focusedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
-			{
 				providerUnusedLocationsList.getSelectionModel().clearSelection();
-			}
 		});
 
 		providerUnusedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
-			{
 				providerAddLocationButton.setDisable(false);
 				providerRemoveLocationButton.setDisable(true);
-			}
 		});
 
 		providerUsedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
@@ -94,7 +88,6 @@ public class AdminDirectoryController extends BaseController
 			if(newValue != null)
 			{
 				providerEditorPane.setDisable(false);
-
 				providerEditorPane.setVisible(true);
 
 				selectedProvider = newValue;
@@ -113,7 +106,6 @@ public class AdminDirectoryController extends BaseController
 						.collect(Collectors.toList());
 
 				providerUnusedLocationsList.setItems(FXCollections.observableList(unassignedLocations));
-
 				providerUsedLocationsList.getItems().sort(alphabeticalNodeComparator);
 				providerUnusedLocationsList.getItems().sort(alphabeticalNodeComparator);
 			}
@@ -160,7 +152,7 @@ public class AdminDirectoryController extends BaseController
 			deleteWarning.getButtonTypes().setAll(ButtonType.CANCEL, delete);
 
 			Optional<ButtonType> result = deleteWarning.showAndWait();
-			if(result.isPresent())
+			if (result.isPresent())
 			{
 				if(result.get() == delete)
 				{
@@ -177,7 +169,6 @@ public class AdminDirectoryController extends BaseController
 		ChangeListener<Boolean> textFocusListener = (observable, oldValue, newValue) ->
 		{
 			selectedProvider.setAll(firstNameField.getText(), lastNameField.getText(), titleField.getText());
-
 			((MyRefreshSkin)mainListView.getSkin()).refresh();
 		};
 
