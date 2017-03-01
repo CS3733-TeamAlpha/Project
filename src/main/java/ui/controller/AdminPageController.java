@@ -2,6 +2,7 @@ package ui.controller;
 
 import data.Node;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -228,16 +229,50 @@ public class AdminPageController extends BaseController
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.isPresent() && result.get() == ok)
 		{
-			database.resetDatabase();
+			//Reset the database in the background. Can't use runLater as this is a much more complex task (or it will be soon)
+			Task resetTask = new Task<Void>()
+			{
+				@Override
+				protected Void call()
+				{
+					System.out.println("Trying to reset in separate thread");
+					database.resetDatabase();
+					System.out.println("Reset successful");
+				return null;
+				}
+			};
+			Thread thread = new Thread(resetTask);
+			thread.start();
 
-			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
-			cleared.setTitle("Data Reset");
-			cleared.setHeaderText("Data Reset Successfully");
-			cleared.show();
-		}
-		else
-		{
-			//Nothing to do here, user canceled
+			Alert progressAlert = new Alert(Alert.AlertType.INFORMATION);
+			ProgressBar progressBar = new ProgressBar();
+
+			GridPane grid = new GridPane();
+			grid.setPrefWidth(350);
+			grid.setHgap(10);
+			grid.setVgap(10);
+			grid.setPadding(new Insets(20, 0, 10, 30));
+			grid.add(progressBar, 0, 0);
+
+			progressAlert.getDialogPane().setContent(grid);
+			progressBar.setProgress(0);
+			progressBar.setPrefWidth(300);
+			progressAlert.setTitle("Reset Progress");
+			progressAlert.setHeaderText("Reset Progress");
+			Platform.runLater(() -> progressAlert.show());
+			Task updateTask = new Task<Void>()
+			{
+				@Override
+				public Void call() throws InterruptedException //idc
+				{
+					while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
+						progressBar.setProgress(database.getResetProgress());
+					progressBar.setProgress(1);
+					return null;
+				}
+			};
+			thread = new Thread(updateTask);
+			thread.start();
 		}
 	}
 
