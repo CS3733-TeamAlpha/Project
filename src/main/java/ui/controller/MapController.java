@@ -522,7 +522,7 @@ public class MapController extends BaseController
 		ArrayList<String> services = n.getServices();
 		for (int i = 0; i < services.size(); i++)
 		{
-			String s = services.get(i);
+			String s = services.get(i).trim();
 			toAdd += s;
 			if(i < services.size()-1)
 				toAdd += ", ";
