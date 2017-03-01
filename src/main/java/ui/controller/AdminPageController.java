@@ -256,15 +256,24 @@ public class AdminPageController extends BaseController
 
 			progressAlert.getDialogPane().setContent(grid);
 			progressBar.setProgress(0);
-			progressAlert.showAndWait();
-			while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
-				progressBar.setProgress(database.getResetProgress());
+			progressAlert.setTitle("Reset Progress");
+			progressAlert.setHeaderText("Reset Progress");
+			Platform.runLater(() -> progressAlert.showAndWait());
+			Task updateTask = new Task<Void>()
+			{
+				@Override
+				public Void call()
+				{
+					while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
+						progressBar.setProgress(database.getResetProgress());
+					progressBar.setProgress(1);
+					progressAlert.setHeaderText("Reset successful");
+					return null;
+				}
+			};
+			thread = new Thread(updateTask);
+			thread.start();
 			progressAlert.close();
-
-			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
-			cleared.setTitle("Data Reset");
-			cleared.setHeaderText("Data Reset Successfully");
-			cleared.showAndWait();
 		}
 	}
 
