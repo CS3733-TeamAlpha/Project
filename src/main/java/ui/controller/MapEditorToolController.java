@@ -33,18 +33,23 @@ public class MapEditorToolController extends BaseController
 	//link buttons to node objects
 	private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
 
+	//constants for UUIDs
+	final String FAULKNER_UUID = "00000000-0000-0000-0000-000000000000";
+	final String BELKIN_UUID = "00000000-0000-0000-0000-111111111111";
+	final String OUTSIDE_UUID = "00000000-0000-0000-0000-222222222222";
+
 	//constants to be used for drawing radial contextmenu
 	double CONTEXTWIDTH = 60.0;
 	double CONTEXTRAD = 90.0;
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
 
-    //currently selected node and button
-    private Node currentNode = null;
-    private Button currentButton = null;
+	//currently selected node and button
+	private Node currentNode = null;
+	private Button currentButton = null;
 
 
-    //boolean to determine whether or not to automatically connect newly added nodes
+	//boolean to determine whether or not to automatically connect newly added nodes
 	//to the nearest hallway node
 	private boolean AUTOCONNECT = false;
 
@@ -227,6 +232,12 @@ public class MapEditorToolController extends BaseController
 		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);
 		buildingChoice.setLayoutY(106);
+		if (BUILDINGID.equals(FAULKNER_UUID))
+			buildingChoice.getSelectionModel().select(0);
+		else if (BUILDINGID.equals(BELKIN_UUID))
+			buildingChoice.getSelectionModel().select(1);
+		else
+			buildingChoice.getSelectionModel().select(2);
 		buildingChoice.setOnAction(event ->
 				{
 					changeBuilding((String)buildingChoice.getValue());
@@ -253,10 +264,10 @@ public class MapEditorToolController extends BaseController
 		purgeButtonsAndLines();
 		//default to floor 1 when changing buildings
 		FLOORID = 1;
-		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
+		if(BUILDINGID.equals(FAULKNER_UUID))//faulkner, max 7 floor
 		{
 			MAXFLOOR = 7;
-		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
+		} else if(BUILDINGID.equals(BELKIN_UUID))//faulkner, max 4 floor
 		{
 			MAXFLOOR = 4;
 		} else {
@@ -276,19 +287,19 @@ public class MapEditorToolController extends BaseController
 	private void setFloorImage(String buildingid, int floor)
 	{
 		//faulkner building
-		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
+		if(buildingid.equals(FAULKNER_UUID))
 		{
 			floorImage.setFitWidth(Paths.regularFloorImages[floor-1].getFXImage().getWidth());
 			floorImage.setFitHeight(Paths.regularFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
-		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
+		else if(buildingid.equals(BELKIN_UUID))
 		{
 			floorImage.setFitWidth(Paths.belkinFloorImages[floor-1].getFXImage().getWidth());
 			floorImage.setFitHeight(Paths.belkinFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
-		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
+		else if (buildingid.equals(OUTSIDE_UUID))
 		{
 			floorImage.setFitWidth(Paths.outdoorImageProxy.getFXImage().getWidth());
 			floorImage.setFitHeight(Paths.outdoorImageProxy.getFXImage().getHeight());
@@ -1252,64 +1263,64 @@ public class MapEditorToolController extends BaseController
 
 
 	/**
-     * update a node's X coordinate, both visually and in the node's properties
-     */
+	 * update a node's X coordinate, both visually and in the node's properties
+	 */
 	@FXML
-    void updateNodeX(ActionEvent event)
-    {
-        try
-        {
-            currentButton.setLayoutX(Double.parseDouble(xField.getText())-XOFFSET);
-            currentNode.setX(Double.parseDouble(xField.getText()));
+	void updateNodeX(ActionEvent event)
+	{
+		try
+		{
+			currentButton.setLayoutX(Double.parseDouble(xField.getText())-XOFFSET);
+			currentNode.setX(Double.parseDouble(xField.getText()));
 
-            //redraw lines for any node that has currentNode as a neighbor
-            //store nodes that need to be redrawn in a list as a workaround
-            //for concurrentmodificationexception
-            ArrayList<Node> toRedraw = new ArrayList<Node>();
-            for(Node n: lineGroups.keySet()){
-                if(n.getNeighbors().contains(currentNode))
-                    toRedraw.add(n);
-            }
+			//redraw lines for any node that has currentNode as a neighbor
+			//store nodes that need to be redrawn in a list as a workaround
+			//for concurrentmodificationexception
+			ArrayList<Node> toRedraw = new ArrayList<Node>();
+			for(Node n: lineGroups.keySet()){
+				if(n.getNeighbors().contains(currentNode))
+					toRedraw.add(n);
+			}
 
-            for(Node n : toRedraw)
-                drawToNeighbors(n);
-            drawToNeighbors(currentNode);
-        }
-        catch (NumberFormatException e)
-        {
-            System.out.println("Not a double");
-        }
-    }
+			for(Node n : toRedraw)
+				drawToNeighbors(n);
+			drawToNeighbors(currentNode);
+		}
+		catch (NumberFormatException e)
+		{
+			System.out.println("Not a double");
+		}
+	}
 
-    /**
-     * update a node's Y coordinate, both visually and in the node's properties
-     */
+	/**
+	 * update a node's Y coordinate, both visually and in the node's properties
+	 */
 	@FXML
-    void updateNodeY(ActionEvent event) {
-        try
-        {
-            if(currentButton != null && currentNode != null)
-            {
-                currentButton.setLayoutY(Double.parseDouble(yField.getText())-YOFFSET);
-                currentNode.setY(Double.parseDouble(yField.getText()));
+	void updateNodeY(ActionEvent event) {
+		try
+		{
+			if(currentButton != null && currentNode != null)
+			{
+				currentButton.setLayoutY(Double.parseDouble(yField.getText())-YOFFSET);
+				currentNode.setY(Double.parseDouble(yField.getText()));
 
-                //redraw lines for any node that has currentNode as a neighbor
-                //store nodes that need to be redrawn in a list as a workaround
-                //for concurrentmodificationexception
-                ArrayList<Node> toRedraw = new ArrayList<Node>();
-                for(Node n: lineGroups.keySet()){
-                    if(n.getNeighbors().contains(currentNode))
-                        toRedraw.add(n);
-                }
+				//redraw lines for any node that has currentNode as a neighbor
+				//store nodes that need to be redrawn in a list as a workaround
+				//for concurrentmodificationexception
+				ArrayList<Node> toRedraw = new ArrayList<Node>();
+				for(Node n: lineGroups.keySet()){
+					if(n.getNeighbors().contains(currentNode))
+						toRedraw.add(n);
+				}
 
-                for(Node n: toRedraw)
-                    drawToNeighbors(n);
-                drawToNeighbors(currentNode);
-            }
-        } catch (NumberFormatException e){
-            System.out.println("Not a double");
-        }
-    }
+				for(Node n: toRedraw)
+					drawToNeighbors(n);
+				drawToNeighbors(currentNode);
+			}
+		} catch (NumberFormatException e){
+			System.out.println("Not a double");
+		}
+	}
 
 	/**
 	 * update a node's Name string
@@ -1593,33 +1604,33 @@ public class MapEditorToolController extends BaseController
 		loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
-    /**
-     * Add the current node to the deleteNodesList to be deleted from the database
-     */
+	/**
+	 * Add the current node to the deleteNodesList to be deleted from the database
+	 */
 	@FXML
-    void deleteNode(ActionEvent event) {
-        if(currentNode != null)
-        {
-            //if this node had any neighbors remove lines
-            if (lineGroups.containsKey(currentNode))
-            {
-                for (Group g : lineGroups.get(currentNode))
-                    ((AnchorPane) g.getParent()).getChildren().remove(g); //Removes all lines going from the deleted node
-                lineGroups.remove(currentNode); //Remove current Node from lineGroups if it is inside lineGroups
-            }
+	void deleteNode(ActionEvent event) {
+		if(currentNode != null)
+		{
+			//if this node had any neighbors remove lines
+			if (lineGroups.containsKey(currentNode))
+			{
+				for (Group g : lineGroups.get(currentNode))
+					((AnchorPane) g.getParent()).getChildren().remove(g); //Removes all lines going from the deleted node
+				lineGroups.remove(currentNode); //Remove current Node from lineGroups if it is inside lineGroups
+			}
 
-            //Delete arrows pointing to the deleted node
-            for (Node n : currentNode.getNeighbors()){
-            	//Ugh, say goodbye to the beautiful cascade delete on edges in the database...
+			//Delete arrows pointing to the deleted node
+			for (Node n : currentNode.getNeighbors()){
+				//Ugh, say goodbye to the beautiful cascade delete on edges in the database...
 				n.delNeighbor(currentNode);
 				drawToNeighbors(n);
 			}
 
 			database.deleteNodeByUUID(currentNode.getID());
-        	editingFloor.getChildren().remove(currentButton);
-        	nodeButtonLinks.remove(currentButton);
-        	//hide details view
-        	hideNodeDetails();
-        }
-    }
+			editingFloor.getChildren().remove(currentButton);
+			nodeButtonLinks.remove(currentButton);
+			//hide details view
+			hideNodeDetails();
+		}
+	}
 }
