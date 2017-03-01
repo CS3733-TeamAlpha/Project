@@ -181,7 +181,4 @@ public abstract class BaseController
 		buttonImage.setScaleY(0.15);
 		b.setGraphic(buttonImage);
 	}
-
-
-
 }
