@@ -29,8 +29,8 @@ public class AStarGraph extends Graph
 		ASTNode astEnd = new ASTNode(end, -1);
 		astStart.f = start.distance(end);
 
-		PriorityQueue<ASTNode> openList = new PriorityQueue<ASTNode>();
-		ArrayList<Node> closedList = new ArrayList<Node>();
+		PriorityQueue<ASTNode> openList = new PriorityQueue<>();
+		ArrayList<Node> closedList = new ArrayList<>();
 		openList.add(astStart);
 
 		boolean complete = false;
@@ -88,7 +88,7 @@ public class AStarGraph extends Graph
 			return null;
 
 		//Backtrack from the end node, assembling an ordered list as we go
-		ArrayList<Node> path = new ArrayList<Node>();
+		ArrayList<Node> path = new ArrayList<>();
 		for (ASTNode node = astEnd; node != null; node = node.parent)
 			if (filterNode(start, end, node.node))
 				path.add(node.node);

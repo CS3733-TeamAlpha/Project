@@ -6,10 +6,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class EmergencyExitGraphTest
+public class EmergencyExitFinderTest
 {
 	@Test
-	public void EmergencyExitGraphTest()
+	public void findExitTest()
 	{
 		Node[] nodes = new Node[10];
 
@@ -26,12 +26,10 @@ public class EmergencyExitGraphTest
 		nodes[7].setType(6);
 		nodes[9].setType(6);
 
-		EmergencyExitGraph graph = new EmergencyExitGraph();
+		EmergencyExitFinder exitFinder = new EmergencyExitFinder();
 
-		assertNotNull(graph.findPath(nodes[0], null, true));
-		assertEquals(nodes[7], graph.findPath(nodes[0], null, true).get(0));
-
+		assertNotNull(exitFinder.findExit(nodes[0]));
+		assertEquals(nodes[7], exitFinder.findExit(nodes[0]));
 	}
-
 }
 

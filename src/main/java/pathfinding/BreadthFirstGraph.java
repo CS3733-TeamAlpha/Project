@@ -13,10 +13,10 @@ public class BreadthFirstGraph extends Graph
 	public ArrayList<Node> findPath(Node start, Node end, boolean useStairs)
 	{
 		System.out.println("Activating breadth first search");
-		ArrayList<Node> result = new ArrayList<Node>();
-		HashMap<Node, Node> parentMap = new HashMap<Node, Node>();
+		ArrayList<Node> result = new ArrayList<>();
+		HashMap<Node, Node> parentMap = new HashMap<>();
 		parentMap.put(start, null);
-		LinkedList<Node> nodeQueue = new LinkedList<Node>();
+		LinkedList<Node> nodeQueue = new LinkedList<>();
 
 		if (start == null || end == null)
 			return null;
