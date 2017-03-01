@@ -17,7 +17,7 @@ import java.util.Observable;
  *
  * Resource used: https://stackoverflow.com/questions/27162374/javafx-2-user-idle-detection
  */
-public class Watchdog extends Observable
+public class Watchdog
 {
 	private Timeline idleTime;
 	private EventHandler userEventHandler;
