@@ -23,8 +23,6 @@ public class Database implements Observer
 	private static final String DB_INSERT_PROVIDERS = "/db/APP_PROVIDERS.sql";
 	private static final String DB_INSERT_SERVICES = "/db/APP_SERVICES.sql";
 	private static final String DB_INSERT_PROVIDEROFFICES = "/db/APP_PROVIDEROFFICES.sql";
-	private static final int NODE_TYPE_KIOSK_NOT_SELECTED = 4;
-	private static final int NODE_TYPE_KIOSK_SELECTED = 5;
 
 	//Database things
 	private String dbName;
@@ -32,19 +30,16 @@ public class Database implements Observer
 	private Statement statement;
 	private Connection connection;
 
+	//Misc common storage
 	private Hashtable<String, Node> nodeCache;
 	private Hashtable<String, Provider> providerCache;
-
 	private double resetStatus;
 
-	//Saved prepared statements that may be frequently used. TODO: Optimize and make more things preparedStatements?
-	private PreparedStatement checkExist;
-	private PreparedStatement insertNode;
-	private PreparedStatement insertEdge;
-	private PreparedStatement deleteFrom;
-
-	//Neato observer stuff
-
+	/**
+	 * Observer stuff, used by the database to keep track of providers and nodes
+	 * @param observable Node or a provider
+	 * @param o Not used.
+	 */
 	@Override
 	public void update(Observable observable, Object o)
 	{
@@ -75,10 +70,6 @@ public class Database implements Observer
 		providerCache = new Hashtable<>();
 		resetStatus = 0;
 
-		checkExist = null;
-		insertNode = null;
-		insertEdge = null;
-		deleteFrom = null;
 		connect();
 	}
 
@@ -157,10 +148,10 @@ public class Database implements Observer
 		{
 			//Create prepared statements.
 			//TODO: Factor out commonly used queries into reusable private fields.
-			checkExist = connection.prepareStatement("SELECT node_uuid FROM Nodes WHERE NODE_UUID=?");
-			insertNode = connection.prepareStatement("INSERT INTO Nodes VALUES(?, ?, ?, ?, ?, ?, ?)");
-			insertEdge = connection.prepareStatement("INSERT INTO Edges VALUES(?, ?)");
-			deleteFrom = connection.prepareStatement("DELETE FROM Nodes WHERE node_uuid=?");
+			PreparedStatement checkExist = connection.prepareStatement("SELECT node_uuid FROM Nodes WHERE NODE_UUID=?");
+			PreparedStatement insertNode = connection.prepareStatement("INSERT INTO Nodes VALUES(?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement insertEdge = connection.prepareStatement("INSERT INTO Edges VALUES(?, ?)");
+			PreparedStatement deleteFrom = connection.prepareStatement("DELETE FROM Nodes WHERE node_uuid=?");
 
 			//Set up most preparedstatetments safely... no sql injection here
 			checkExist.setString(1, node.getID());
@@ -185,8 +176,6 @@ public class Database implements Observer
 			//Now insert neighbor relationships by UUID
 			for (Node nbr : node.getNeighbors())
 			{
-				//insertNeighbor.setString(2, nbr.getID());
-				//insertNeighbor.execute();
 				insertEdge.setString(2, nbr.getID());
 				insertEdge.execute();
 			}
@@ -277,7 +266,6 @@ public class Database implements Observer
 		// & service records. Then it has to go back and re-insert them. There might be a more efficient way to do this,
 		//but this method works for now. I suspect that going through to see what needs updating is less efficient anyways
 
-		//TODO: HOLY MOTHER OF CTHULHU, MAKE THIS FUNCTION FAST AGAIN! USE UPDATE!
 		try
 		{
 			//Update the node
@@ -313,7 +301,7 @@ public class Database implements Observer
 			}
 
 			//Insert providers if they don't already exist. This algorithm sucks because java derby sucks. **** you, derby.
-			node.getProviders().forEach((p) -> updateProvider(p));
+			node.getProviders().forEach(this::updateProvider);
 
 			//Update services
 			PreparedStatement resServices = connection.prepareStatement("UPDATE Services SET node=? WHERE name=?"); //Resolve services
@@ -349,10 +337,8 @@ public class Database implements Observer
 	 */
 	public Node getNodeByUUID(String uuid)
 	{
-		//Check the node cache first
 		if (nodeCache.containsKey(uuid))
 			return nodeCache.get(uuid);
-
 		return null;
 	}
 
@@ -364,7 +350,7 @@ public class Database implements Observer
 	 * @param x X coordinate of node to search for
 	 * @param y Y coordinate of node to search for
 	 * @param floor Floor on which the search node should reside
-	 * @return
+	 * @return An elevator node
 	 */
 	public Node getElevatorNodeByFloorCoordinates(double x, double y, int floor)
 	{
@@ -393,14 +379,13 @@ public class Database implements Observer
 	/**
 	 * Get the node that is selected as the kiosk to be used for this app.
 	 * The selected kiosk has a type of 5, while non-selected kiosks have a value of 4
-	 * @return
+	 * @return Node corresponding to the selected kiosk.
 	 */
 	public Node getSelectedKiosk()
 	{
 		Node kiosk = null;
 		try
 		{
-
 			//The node with type 5 is selected. Assume only one such node exists
 			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=5");
 
@@ -416,9 +401,7 @@ public class Database implements Observer
 	}
 
 	/**
-	 * Compatibilty hack for DirectoryController
-	 * TODO: EXTERMINATE
-	 *
+	 * Gets ALL nodes in the database. That's a lot of nodes.
 	 * @return ArrayList of all nodes in the database.
 	 */
 	public ArrayList<Node> getAllNodes()
@@ -431,7 +414,6 @@ public class Database implements Observer
 
 	/**
 	 * Deletes the node of the given UUID. Also cascade deletes anything associated with this node as well.
-	 *
 	 * @param uuid UUID of node to delete.
 	 */
 	public void deleteNodeByUUID(String uuid)
@@ -456,7 +438,6 @@ public class Database implements Observer
 
 			//That should've performed a cascade delete on the database, so now we just need to remove cache
 			//references to this node, which should run in O(n) time, unfortunately.
-			//TODO: Find a way of optimizing this algorithm.
 			Node node = nodeCache.get(uuid);
 
 			//Notify the providers they are no longer associated with this location
@@ -486,10 +467,6 @@ public class Database implements Observer
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE floor=" + floor);
-
-			//Constructing new nodes will take longer than just grabbing them from the cache, plus we want these to be
-			//graph-safe anyways. TODO: Maybe switch to getNodeByUUID instead?
-
 			while (results.next())
 				retlist.add(nodeCache.get(results.getString(1)));
 		} catch (SQLException e)
@@ -553,7 +530,7 @@ public class Database implements Observer
 	 * Gets all nodes on a given floor of a given building.
 	 *
 	 * @param buildingUUID UUID of building to grab from. If the UUID is not known, use getBuildingUUID.
-	 * @param floor        Floor number as an int.
+	 * @param floor Floor number as an int.
 	 * @return ArrayList of nodes found on this floor. If no nodes could be found, the array is empty. Never returns null.
 	 */
 	public ArrayList<Node> getNodesInBuildingFloor(String buildingUUID, int floor)
@@ -583,7 +560,7 @@ public class Database implements Observer
 	 * First check for other nodes on the same floor/building, then determine nearest.
 	 * Only hallway nodes are considered.
 	 * @param n The node to find the nearest node to
-	 * @return
+	 * @return Hallway node nearest to the provided node.
 	 */
 	public Node getNearestHallwayNode(Node n)
 	{
@@ -603,7 +580,7 @@ public class Database implements Observer
 
 	/**
 	 * Remove entrance node neighbor relations, if they exist.
-	 * This function should only occur when a previously linked entrace has its type changed.
+	 * This function should only occur when a previously linked entrance has its type changed.
 	 * @param n
 	 * @param type
 	 */
@@ -643,8 +620,7 @@ public class Database implements Observer
 		try
 		{
 			//works with the assumption that only one pair with the same type will exist
-			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type="+
-					type);
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=" + type);
 
 			if (results.next())
 			{
@@ -652,7 +628,6 @@ public class Database implements Observer
 				linkNode.addNeighbor(n);
 				n.addNeighbor(linkNode);
 			}
-
 		}
 		catch (SQLException e)
 		{
@@ -662,12 +637,11 @@ public class Database implements Observer
 
 	/**
 	 * Gets an ArrayList of building names
-	 *
 	 * @return ArrayList of building names. Who'd have thought?
 	 */
 	public ArrayList<String> getBuildings()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> ret = new ArrayList<>();
 		try
 		{
 			ResultSet results = statement.executeQuery("SELECT name FROM Buildings");
@@ -826,7 +800,6 @@ public class Database implements Observer
 			System.out.println("Error trying to delete provider!");
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -986,9 +959,7 @@ public class Database implements Observer
 			ResultSet results = statement.executeQuery("SELECT username FROM LOGINS");
 
 			while(results.next())
-			{
 				userNames.add(results.getString("username"));
-			}
 
 			return userNames;
 		}
@@ -1114,19 +1085,11 @@ public class Database implements Observer
 	{
 		try
 		{
-			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type="+
-					NODE_TYPE_KIOSK_SELECTED);
+			ResultSet results = statement.executeQuery("SELECT node_uuid FROM Nodes WHERE type=" + NodeTypes.KIOSK_SELECTED.val());
 
 			while (results.next())
-			{
-				Node oldKiosk = nodeCache.get(results.getString(1));
-				oldKiosk.setType(NODE_TYPE_KIOSK_NOT_SELECTED);
-				updateNode(oldKiosk);
-			}
-
-			nodeCache.get(kiosk.getID()).setType(NODE_TYPE_KIOSK_SELECTED);
-			updateNode(nodeCache.get(kiosk.getID()));
-
+				nodeCache.get(results.getString(1)).setType(NodeTypes.KIOSK.val());
+			nodeCache.get(kiosk.getID()).setType(NodeTypes.KIOSK_SELECTED.val());
 		}
 		catch (SQLException e)
 		{
@@ -1150,6 +1113,8 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
+		//Reset status is updated so often here because the factory reset progress bar popup queries in concurrently
+		//alongside this function
 		runScript(DB_DROP_ALL, false);
 		resetStatus = .20;
 		runScript(DB_CREATE_SQL, false);
@@ -1195,7 +1160,7 @@ public class Database implements Observer
 			}, "UTF-8");
 		} catch (IOException e)
 		{
-			System.out.println("Couldn't find database creation script... that's an error.");
+			System.out.println("Couldn't find database script " + filepath + "... that's an error.");
 			e.printStackTrace();
 		}
 	}

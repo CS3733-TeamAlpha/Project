@@ -1,6 +1,7 @@
 package ui.controller;
 
 import data.Node;
+import data.NodeTypes;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -73,7 +74,7 @@ public class AdminPageController extends BaseController
 		ArrayList<Node> kiosks = new ArrayList<>();
 		database.getAllNodes().forEach((node) ->
 		{
-			if (node.getType() == 4 || node.getType() == 5)
+			if (node.getType() == NodeTypes.KIOSK.val() || node.getType() == NodeTypes.KIOSK_SELECTED.val())
 			{
 				kiosks.add(node);
 				kioskNodeSelector.getItems().add(node.getName());
