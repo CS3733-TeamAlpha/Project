@@ -11,8 +11,7 @@ import java.util.stream.Collectors;
  */
 public class Provider extends Observable
 {
-	String firstName, lastName, title;
-	String uuid;
+	private String firstName, lastName, title, uuid;
 	HashMap<String, Node> locations;
 
 	/**
@@ -62,7 +61,7 @@ public class Provider extends Observable
 	 */
 	public Provider(String firstName, String lastName, String uuid, String title)
 	{
-		this (firstName, lastName, uuid, title, new HashMap<String, Node>());
+		this (firstName, lastName, uuid, title, new HashMap<>());
 	}
 
 	public String getTitle()
@@ -156,12 +155,6 @@ public class Provider extends Observable
 		}
 	}
 
-	public List<String> getLocationStringArray()
-	{
-		//Sorry for the extended syntax. This line extracts all the node names out of the locations hashmap, and returns a string array
-		return locations.values().stream().map(Node::getName).collect(Collectors.toList());
-	}
-
 	public String getStringLocations()
 	{
 		StringBuilder build = new StringBuilder();
@@ -169,24 +162,9 @@ public class Provider extends Observable
 		for(int i = 0; i < keySet.length; i++)
 		{
 			build.append(locations.get(keySet[i]).getName());
-			if(i != locations.size()-1)
+			if(i != locations.size() - 1)
 				build.append("\n");
 		}
 		return build.toString();
-	}
-
-	/**
-	 * The point in having this is preventing direct access to our Node List, since we want
-	 * to be the one responsible for keeping it updated
-	 * @return A Hashmap relating Node IDs to Node Names
-	 */
-	public HashMap<String, String> getNodeIdNameMap()
-	{
-		HashMap<String, String> map = new HashMap<>();
-		for(String key : locations.keySet())
-		{
-			map.put(key, locations.get(key).getName());
-		}
-		return map;
 	}
 }

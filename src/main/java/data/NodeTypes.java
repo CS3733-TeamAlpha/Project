@@ -19,7 +19,4 @@ public enum NodeTypes
 	private int val;
 	NodeTypes(int val) { this.val = val;}
 	public int val() { return val; }
-
-	//Returns true if a given node is special, since we don't actually store an enumeration for that.
-	public boolean isSpecial() { return val >= 6 || val <= 19; }
 }
