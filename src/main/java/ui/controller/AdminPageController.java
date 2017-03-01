@@ -2,6 +2,7 @@ package ui.controller;
 
 import data.Node;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -227,12 +228,24 @@ public class AdminPageController extends BaseController
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.isPresent() && result.get() == ok)
 		{
-			database.resetDatabase();
-
-			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
-			cleared.setTitle("Data Reset");
-			cleared.setHeaderText("Data Reset Successfully");
-			cleared.show();
+			//Reset the database in the background. Can't use runLater as this is a much more complex task (or it will be soon)
+			Task task = new Task<Void>()
+			{
+				@Override
+				protected Void call()
+				{
+					System.out.println("Trying to reset in separate thread");
+					database.resetDatabase();
+					System.out.println("Reset successful");
+					Alert cleared = new Alert(Alert.AlertType.INFORMATION);
+					cleared.setTitle("Data Reset");
+					cleared.setHeaderText("Data Reset Successfully");
+					cleared.showAndWait();
+					return null;
+				}
+			};
+			Thread thread = new Thread(task);
+			thread.start();
 		}
 		else
 		{
