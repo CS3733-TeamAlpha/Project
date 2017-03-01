@@ -885,7 +885,7 @@ public class MapController extends BaseController
 			newH = getNewH(newX);
 			newV = getNewV(newY);
 
-			//kinda unnecessary math. TODO: make it better
+			//kinda unnecessary math.
 			double dif = Math.sqrt(
 					Math.pow(l.getStartX()-l.getEndX(), 2) +
 							Math.pow(l.getStartY()-l.getEndY(), 2));
@@ -897,7 +897,9 @@ public class MapController extends BaseController
 			KeyValue cx = new KeyValue(magicalCircle.centerXProperty(), l.getEndX());
 			KeyValue cy = new KeyValue(magicalCircle.centerYProperty(), l.getEndY());
 			KeyFrame kf = new KeyFrame(Duration.millis(duration), kv, kh, cx, cy);
+			KeyFrame wd = new KeyFrame(Duration.millis(0), e->{watchdog.notIdle();});
 			timeline.getKeyFrames().add(kf);
+			timeline.getKeyFrames().add(wd);
 			magicalSequence.getChildren().add(timeline);
 		}
 		magicalSequence.play();
