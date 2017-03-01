@@ -227,13 +227,17 @@ public class MapController extends BaseController
 
 	public void initialize()
 	{
-		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->
+		if (watchdog == null)
 		{
-			loadFXML(Paths.STARTUP_FXML);
-			clearPath(null);
-			setSearchedFor(null);
-		});
-		watchdog.registerScene(stage.getScene(), Event.ANY);
+			watchdog = new Watchdog(Duration.seconds(uiTimeout), () ->
+			{
+				loadFXML(Paths.STARTUP_FXML);
+				clearPath(null);
+				setSearchedFor(null);
+			});
+			watchdog.registerScene(stage.getScene(), Event.ANY);
+		}
+		watchdog.notIdle();
 		initializeTabs();
 
 		System.out.println("MapController.initialize()");

@@ -33,8 +33,12 @@ public class LoginController extends BaseController
 	public void initialize()
 	{
 		Platform.runLater(() -> usernameField.requestFocus());
-		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
-		watchdog.unregisterScene(stage.getScene(), Event.ANY);
+		if (watchdog == null)
+		{
+			watchdog = new Watchdog(Duration.seconds(uiTimeout), () -> loadFXML(Paths.STARTUP_FXML));
+			watchdog.registerScene(stage.getScene(), Event.ANY);
+		}
+		watchdog.notIdle();
 		usernameField.textProperty().addListener((observable, oldValue, newValue) ->
 				loginButton.setDisable(newValue.isEmpty()));
 
