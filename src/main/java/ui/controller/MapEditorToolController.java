@@ -686,7 +686,7 @@ public class MapEditorToolController extends BaseController
 		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
 		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID > 1 &&
-				currentNode != null && currentNode.getType() == 2)
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//find the lower elevator node and connect to it if it exists
 			Node lowerNode = null;
@@ -701,7 +701,7 @@ public class MapEditorToolController extends BaseController
 			}
 			currentState = editorStates.DOINGNOTHING;
 		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID > 1 &&
-				currentNode != null && currentNode.getType() == 2)
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//get the lower elevator node and remove it from neighbor if it exists
 			Node lowerNode = null;
@@ -741,7 +741,7 @@ public class MapEditorToolController extends BaseController
 		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
 		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < MAXFLOOR &&
-				currentNode != null && currentNode.getType() == 2)
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//get the upper elevator node and connect if it exists
 			Node upperNode = null;
@@ -754,7 +754,7 @@ public class MapEditorToolController extends BaseController
 			}
 			currentState = editorStates.DOINGNOTHING;
 		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < MAXFLOOR &&
-				currentNode != null && currentNode.getType() == 2)
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//get the upper elevator node and remove it from neighbor if it exists
 			Node upperNode = null;
@@ -1384,7 +1384,7 @@ public class MapEditorToolController extends BaseController
 			if (newType > 5 && newType < 20) //links between buildings
 			{
 				database.connectEntrances(currentNode, newType);
-			} else if(currentNode.getType() > 5) //remove links between buildings if changing type to not be a link
+			} else if(currentNode.getType() > 5 && currentNode.getType() < 20) //remove links between buildings if changing type to not be a link
 			{
 				database.removeEntranceConnection(currentNode, currentNode.getType());
 			}
