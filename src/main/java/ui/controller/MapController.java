@@ -553,6 +553,9 @@ public class MapController extends BaseController
 			alert.getButtonTypes().setAll(ok);
 
 			Optional<ButtonType> result = alert.showAndWait();
+			findingDirections = false;
+			clearPath(null);
+			return null;
 		}else {
 			//if node does have path
 			for(Node n: path) {
@@ -1369,8 +1372,6 @@ public class MapController extends BaseController
 	private void changeUseStairs()
 	{
 		usingStairs = stairsCheckbox.isSelected();
-		clearPath(null);
-		findDirectionsTo();
 	}
 
 	class LabelThingy
