@@ -21,7 +21,7 @@ public class LoginState
 	 */
 	public static void login(String account)
 	{
-		adminLoggedIn = Paths.isAdmin(account);
+		adminLoggedIn = account.equals(Paths.ADMIN_NAME);
 		loggedIn = true;
 		loggedInAccount = account;
 	}

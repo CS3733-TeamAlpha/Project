@@ -80,8 +80,6 @@ public class Paths
 	public static ProxyImage doorImageProxy = new ProxyImage(Paths.DOOR);
 	public static ProxyImage yahImageProxy = new ProxyImage(Paths.YOUAREHEREICON);
 
-	public static boolean isAdmin(String userName)
-	{
-		return userName.equals("admin");
-	}
+	//Misc constants
+	public static final String ADMIN_NAME = "admin";
 }

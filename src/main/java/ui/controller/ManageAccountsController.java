@@ -73,7 +73,7 @@ public class ManageAccountsController extends BaseController
 		accountLabel.setText(accountName);
 
 		Button deleteButton = (Button) root.lookup("#deleteButton");
-		if(Paths.isAdmin(accountName))
+		if(accountName.equals(Paths.ADMIN_NAME))
 		{
 			deleteButton.setVisible(false);
 		}
