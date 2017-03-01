@@ -26,12 +26,8 @@ public class ManageAccountsController extends BaseController
 	@Override
 	public void initialize()
 	{
-		if (watchdog == null)
-		{
-			watchdog = new Watchdog(Duration.seconds(uiTimeout), () -> loadFXML(Paths.STARTUP_FXML));
-			watchdog.registerScene(stage.getScene(), Event.ANY);
-		}
-		watchdog.notIdle();
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		reloadList();
 	}
 

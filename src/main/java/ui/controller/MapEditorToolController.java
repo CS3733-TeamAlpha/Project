@@ -196,12 +196,8 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	public void initialize()
 	{
-		if (watchdog == null)
-		{
-			watchdog = new Watchdog(Duration.seconds(uiTimeout), () -> loadFXML(Paths.STARTUP_FXML));
-			watchdog.registerScene(stage.getScene(), Event.ANY);
-		}
-		watchdog.notIdle();
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();

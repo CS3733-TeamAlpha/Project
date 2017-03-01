@@ -39,12 +39,8 @@ public class AdminDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
-		if (watchdog == null)
-		{
-			watchdog = new Watchdog(Duration.seconds(uiTimeout), () -> loadFXML(Paths.STARTUP_FXML));
-			watchdog.registerScene(stage.getScene(), Event.ANY);
-		}
-		watchdog.notIdle();
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 
 		List<Provider> providers = database.getProviders();
 		providers = providers.stream().sorted(Comparator.comparing(Provider::getLastName)).collect(Collectors.toList());

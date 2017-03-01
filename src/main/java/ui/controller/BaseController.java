@@ -89,6 +89,9 @@ public abstract class BaseController
 
 	protected void loadFXML(String path)
 	{
+		if (watchdog != null)
+			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+
 		Parent root = null;
 		try
 		{
