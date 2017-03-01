@@ -50,6 +50,7 @@ public class Paths
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
 	public static final String CHAINNODES = "/images/chainNodeSmall.png";
 	public static final String ICON = "/images/icon.png";
+	public static final String DOOR = "/images/doorIcon.png";
 
 	public static final String YOUAREHEREICON = "/images/hereIcon1.png";
 
@@ -106,6 +107,7 @@ public class Paths
 	public static ProxyImage stairwayImageProxy = new ProxyImage(Paths.STAIRWAYICON);
 	public static ProxyImage parkinglotImageProxy = new ProxyImage(Paths.PARKINGLOTICON);
 	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
+	public static ProxyImage doorImageProxy = new ProxyImage(Paths.DOOR);
 
 	public static boolean isAdmin(String userName)
 	{

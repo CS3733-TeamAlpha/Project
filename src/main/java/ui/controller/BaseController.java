@@ -13,9 +13,6 @@ import ui.*;
 
 import java.io.IOException;
 
-/**
- * Created by Ari on 2/14/17.
- */
 public abstract class BaseController
 {
 	protected static Stage stage;
@@ -90,7 +87,10 @@ public abstract class BaseController
 	protected void loadFXML(String path)
 	{
 		if (watchdog != null)
+		{
 			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog.disconnect();
+		}
 
 		Parent root = null;
 		try
@@ -180,7 +180,7 @@ public abstract class BaseController
 			return;
 		}
 		else
-			buttonImage = new ImageView(Paths.removeNodeImageProxy.getFXImage()); //failure condition
+			buttonImage = new ImageView(Paths.doorImageProxy.getFXImage());
 
 		buttonImage.setScaleX(0.15);
 		buttonImage.setScaleY(0.15);

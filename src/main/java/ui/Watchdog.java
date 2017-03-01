@@ -59,5 +59,11 @@ public class Watchdog extends Observable
 			idleTime.playFromStart();
 	}
 
-
+	/**
+	 * PERMANENTLY disconnect from the watchdog
+	 */
+	public void disconnect()
+	{
+		idleTime.stop();
+	}
 }

@@ -7,9 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ui.controller.BaseController;
 
-/**
- * Created by Ari on 2/4/17.
- */
 public class Main extends Application
 {
 
