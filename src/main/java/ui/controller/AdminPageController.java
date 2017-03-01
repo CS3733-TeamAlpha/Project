@@ -82,9 +82,12 @@ public class AdminPageController extends BaseController
 			kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
 		else
 		{	//if no kiosk is currently set as selected, select the first entry in the choicebox and set
-			//it as the selected kiosk
-			kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
-			database.setSelectedKiosk(kiosks.get(0));
+			//it as the selected kiosk... only if there ARE any kiosks
+			if (!kiosks.isEmpty())
+			{
+				kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
+				database.setSelectedKiosk(kiosks.get(0));
+			}
 		}
 		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldSelection, newSelection) ->
 		{
@@ -230,10 +233,8 @@ public class AdminPageController extends BaseController
 				@Override
 				protected Void call()
 				{
-					System.out.println("Trying to reset in separate thread");
 					database.resetDatabase();
-					System.out.println("Reset successful");
-				return null;
+					return null;
 				}
 			};
 			Thread thread = new Thread(resetTask);
