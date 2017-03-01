@@ -44,7 +44,7 @@ public class Paths
 	public static final String KIOSKICON = "/images/KioskIcon.png";
 	public static final String SELECTEDKIOSKICON = "/images/selectedKiosk2.png";
 	public static final String STAIRWAYICON = "/images/StairsIcon.png";
-	public static final String PARKINGLOTICON = "/images/doorIcon.png";
+	public static final String PARKINGLOTICON = "/images/parkingIcon.png";
 	public static final String ADDNODE = "/images/addNodeSmall.png";
 	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
