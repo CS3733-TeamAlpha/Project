@@ -170,7 +170,10 @@ public abstract class BaseController
 		else if (type == NodeTypes.PARKINGLOT.val())
 			buttonImage = new ImageView(Paths.parkinglotImageProxy.getFXImage());
 		else if (type == 0)
+		{
+			b.setGraphic(buttonImage);
 			return;
+		}
 		else
 			buttonImage = new ImageView(Paths.removeNodeImageProxy.getFXImage()); //failure condition
 
