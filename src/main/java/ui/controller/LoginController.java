@@ -1,17 +1,17 @@
 package ui.controller;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import ui.Paths;
+import ui.Watchdog;
 
-/**
- * Created by Ari on 2/7/17.
- */
 public class LoginController extends BaseController
 {
 	public Label resultText;
@@ -33,7 +33,8 @@ public class LoginController extends BaseController
 	public void initialize()
 	{
 		Platform.runLater(() -> usernameField.requestFocus());
-
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.unregisterScene(stage.getScene(), Event.ANY);
 		usernameField.textProperty().addListener((observable, oldValue, newValue) ->
 				loginButton.setDisable(newValue.isEmpty()));
 

@@ -6,11 +6,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Duration;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,8 @@ public class UserDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		filteredData = new FilteredList<>(observableList, p -> true);
 		SortedList<Provider> sortedProviders = new SortedList<Provider>(filteredData);
 		sortedProviders.comparatorProperty().bind(tableView.comparatorProperty());

@@ -2,19 +2,20 @@ package ui.controller;
 
 import data.Node;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import pathfinding.AStarGraph;
 import pathfinding.BreadthFirstGraph;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -28,15 +29,25 @@ public class AdminPageController extends BaseController
 	@FXML
 	ChoiceBox kioskNodeSelector;
 
+	@FXML
+	Spinner<Integer> timeoutSpinner;
+
 	public Button changePasswordButton;
 
 	public void initialize()
 	{
+		//UI watchdog
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->{
+			loadFXML(Paths.STARTUP_FXML);
+			LoginState.logout();
+		});
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		if(LoginState.isAdminLoggedIn())
 		{
 			changePasswordButton.setText("Manage Accounts");
 		}
 
+		//Path algorithm selector
 		algorithmSelector.getItems().add("A*");
 		algorithmSelector.getItems().add("Breadth First");
 		if (MapController.graph == null || MapController.graph.getClass().equals(AStarGraph.class))
@@ -57,6 +68,7 @@ public class AdminPageController extends BaseController
 			}
 		});
 
+		//Kiosk selector
 		ArrayList<Node> kiosks = new ArrayList<>();
 		database.getAllNodes().forEach((node) ->
 		{
@@ -68,25 +80,31 @@ public class AdminPageController extends BaseController
 		});
 		Node kiosk = database.getSelectedKiosk();
 		if(kiosk != null)
-		{
 			kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
-		} else
+		else
 		{	//if no kiosk is currently set as selected, select the first entry in the choicebox and set
 			//it as the selected kiosk
 			kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
 			database.setSelectedKiosk(kiosks.get(0));
 		}
-		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
+		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldSelection, newSelection) ->
 		{
-			@Override
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldSelection, Number newSelection)
-			{
-				System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
-				database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
-				kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
-			}
+			System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
+			database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
+			kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
 		});
 
+		//Timeout spinner
+		SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 3600, uiTimeout, 5);
+		valueFactory.valueProperty().addListener((observableValue, integer, t1) ->
+		{
+			uiTimeout = timeoutSpinner.getValue();
+			//Make timeout apply to the current UI
+			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+			watchdog.registerScene(stage.getScene(), Event.ANY);
+		});
+		timeoutSpinner.setValueFactory(valueFactory);
 	}
 
 	public void editDirectory(ActionEvent actionEvent)

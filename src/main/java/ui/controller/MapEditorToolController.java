@@ -3,6 +3,7 @@ package ui.controller;
 import data.Node;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -14,12 +15,17 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 import ui.Accessibility;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -190,6 +196,8 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();

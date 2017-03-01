@@ -2,6 +2,7 @@ package ui.controller;
 
 import data.Database;
 import data.NodeTypes;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -21,7 +22,8 @@ public abstract class BaseController
 	private boolean currentSceneSupportsHC = true;
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_EDITOR_FXML, Paths.USER_DIRECTORY_FXML};
 	protected static Database database;
-
+	protected static int uiTimeout = 30; //default seconds to revert
+	protected Watchdog watchdog;
 	private static Node searchedFor;
 
 	// Make proxyimages to store floor pictures
@@ -87,6 +89,9 @@ public abstract class BaseController
 
 	protected void loadFXML(String path)
 	{
+		if (watchdog != null)
+			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+
 		Parent root = null;
 		try
 		{
@@ -181,7 +186,4 @@ public abstract class BaseController
 		buttonImage.setScaleY(0.15);
 		b.setGraphic(buttonImage);
 	}
-
-
-
 }
