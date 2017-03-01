@@ -285,7 +285,6 @@ public class MapController extends BaseController
 
 		if(searched != null)
 		{
-
 			new Thread(() ->
 			{
 				try
@@ -299,7 +298,6 @@ public class MapController extends BaseController
 			}).start();
 
 		}else{
-
 			new Thread(() ->
 			{
 				try
