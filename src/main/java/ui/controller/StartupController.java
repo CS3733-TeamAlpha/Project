@@ -12,7 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import pathfinding.EmergencyExitGraph;
+import pathfinding.EmergencyExitFinder;
 import ui.Main;
 import ui.Paths;
 
@@ -140,8 +140,8 @@ public class StartupController extends BaseController
 	public void emergencyDirections()
 	{
 		//Get emergency directions to the nearest
-		EmergencyExitGraph graph = new EmergencyExitGraph();
-		setSearchedFor(graph.findPath(database.getSelectedKiosk(), null, false).get(0));
+		EmergencyExitFinder eExit = new EmergencyExitFinder();
+		setSearchedFor(eExit.findExit(database.getSelectedKiosk()));
 		MapController.usingStairs = true;
 		loadFXML(Paths.MAP_FXML);
 	}

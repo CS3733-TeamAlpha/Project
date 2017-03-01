@@ -1,6 +1,8 @@
 package ui;
 
-
-public interface Image {
-	void display();
+/**
+ * Why do I exist?
+ */
+public interface Image
+{
 }

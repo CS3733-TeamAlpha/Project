@@ -1,6 +1,7 @@
 package ui.controller;
 
 import data.Node;
+import data.NodeTypes;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -44,9 +45,7 @@ public class AdminPageController extends BaseController
 		});
 		watchdog.registerScene(stage.getScene(), Event.ANY);
 		if(LoginState.isAdminLoggedIn())
-		{
 			changePasswordButton.setText("Manage Accounts");
-		}
 
 		//Path algorithm selector
 		algorithmSelector.getItems().add("A*");
@@ -57,7 +56,6 @@ public class AdminPageController extends BaseController
 			algorithmSelector.getSelectionModel().select(1);
 		algorithmSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldValue, newValue) ->
 		{
-			System.out.println("Switching from " + oldValue + " to " + newValue);
 			switch ((int)newValue)
 			{
 				case 0:
@@ -73,20 +71,23 @@ public class AdminPageController extends BaseController
 		ArrayList<Node> kiosks = new ArrayList<>();
 		database.getAllNodes().forEach((node) ->
 		{
-			if (node.getType() == 4 || node.getType() == 5)
+			if (node.getType() == NodeTypes.KIOSK.val() || node.getType() == NodeTypes.KIOSK_SELECTED.val())
 			{
 				kiosks.add(node);
 				kioskNodeSelector.getItems().add(node.getName());
 			}
 		});
 		Node kiosk = database.getSelectedKiosk();
-		if(kiosk != null)
+		if (kiosk != null)
 			kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
 		else
 		{	//if no kiosk is currently set as selected, select the first entry in the choicebox and set
-			//it as the selected kiosk
-			kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
-			database.setSelectedKiosk(kiosks.get(0));
+			//it as the selected kiosk... only if there ARE any kiosks
+			if (!kiosks.isEmpty())
+			{
+				kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
+				database.setSelectedKiosk(kiosks.get(0));
+			}
 		}
 		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldSelection, newSelection) ->
 		{
@@ -122,9 +123,7 @@ public class AdminPageController extends BaseController
 	public void changePassword(ActionEvent actionEvent)
 	{
 		if(LoginState.isAdminLoggedIn())
-		{
 			loadFXML(Paths.MANAGE_ACCOUNTS_FXML);
-		}
 		else
 		{
 			Alert alert = new Alert(Alert.AlertType.NONE);
@@ -223,7 +222,6 @@ public class AdminPageController extends BaseController
 
 		ButtonType ok = new ButtonType("OK");
 		ButtonType cancel = new ButtonType("Cancel");
-
 		alert.getButtonTypes().setAll(ok, cancel);
 
 		Optional<ButtonType> result = alert.showAndWait();
@@ -235,10 +233,8 @@ public class AdminPageController extends BaseController
 				@Override
 				protected Void call()
 				{
-					System.out.println("Trying to reset in separate thread");
 					database.resetDatabase();
-					System.out.println("Reset successful");
-				return null;
+					return null;
 				}
 			};
 			Thread thread = new Thread(resetTask);
@@ -259,7 +255,7 @@ public class AdminPageController extends BaseController
 			progressBar.setPrefWidth(300);
 			progressAlert.setTitle("Reset Progress");
 			progressAlert.setHeaderText("Reset Progress");
-			Platform.runLater(() -> progressAlert.show());
+			Platform.runLater(progressAlert::show);
 			Task updateTask = new Task<Void>()
 			{
 				@Override

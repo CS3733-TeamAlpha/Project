@@ -2,18 +2,21 @@ package ui;
 
 public class Paths
 {
-
+	//FXML files
 	public static final String LOGIN_FXML = "/fxml/Login.fxml";
 	public static final String DIRECTORY_EDITOR_FXML = "/fxml/DirectoryEditor.fxml";
 	public static final String MAP_FXML = "/fxml/Map.fxml";
 	public static final String MAP_EDITOR_FXML = "/fxml/MapEditorTool.fxml";
-	public static final String PROVIDER_BOX_FXML = "/fxml/ProviderBox.fxml";
 	public static final String STARTUP_FXML = "/fxml/Startup.fxml";
 	public static final String ADMIN_PAGE_FXML = "/fxml/AdminPage.fxml";
 	public static final String USER_DIRECTORY_FXML = "/fxml/UserDirectory.fxml";
 	public static final String ACCOUNT_BOX_FXML = "/fxml/AccountBox.fxml";
 	public static final String MANAGE_ACCOUNTS_FXML = "/fxml/ManageAccounts.fxml";
 
+	//CSS files
+	public static final String NORMAL_CSS = "css/normal.css";
+
+	//Floor images
 	public static final String FLOOR1_NORMAL = "/floors/hospital1.png";
 	public static final String FLOOR2_NORMAL = "/floors/hospital2.png";
 	public static final String FLOOR3_NORMAL = "/floors/hospital3.png";
@@ -21,22 +24,13 @@ public class Paths
 	public static final String FLOOR5_NORMAL = "/floors/hospital5.png";
 	public static final String FLOOR6_NORMAL = "/floors/hospital6.png";
 	public static final String FLOOR7_NORMAL = "/floors/hospital7.png";
-
-	public static final String OUTDOORS = "/floors/outsideFloor.png";
-
-	public static final String FLOOR1_CONTRAST = "/Floors/floor1Contrast.png";
-	public static final String FLOOR2_CONTRAST = "/Floors/floor2Contrast.png";
-	public static final String FLOOR3_CONTRAST = "/Floors/floor3Contrast.png";
-	public static final String FLOOR4_CONTRAST = "/Floors/floor4Contrast.png";
-	public static final String FLOOR5_CONTRAST = "/Floors/floor5Contrast.png";
-	public static final String FLOOR6_CONTRAST = "/Floors/floor6Contrast.png";
-	public static final String FLOOR7_CONTRAST = "/Floors/floor7Contrast.png";
-
 	public static final String FLOOR1_BELKIN = "/floors/belkin1Double.png";
 	public static final String FLOOR2_BELKIN = "/floors/belkin2Double.png";
 	public static final String FLOOR3_BELKIN = "/floors/belkin3Double.png";
 	public static final String FLOOR4_BELKIN = "/floors/belkin4Double.png";
+	public static final String OUTDOORS = "/floors/outsideFloor.png";
 
+	//GUI element icons
 	public static final String HALLWAYICON = "/images/nodeIcon.png";
 	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
 	public static final String DOCTORICON = "/images/DoctorIcon2.png";
@@ -51,12 +45,10 @@ public class Paths
 	public static final String CHAINNODES = "/images/chainNodeSmall.png";
 	public static final String ICON = "/images/icon.png";
 	public static final String DOOR = "/images/doorIcon.png";
-
 	public static final String YOUAREHEREICON = "/images/hereIcon1.png";
 
-	public static ProxyImage yahImageProxy = new ProxyImage(Paths.YOUAREHEREICON);
 
-	// Make proxyimages to store floor pictures
+	//Floor image proxies
 	public static ProxyImage f1ImageProxy = new ProxyImage(Paths.FLOOR1_NORMAL);
 	public static ProxyImage f2ImageProxy = new ProxyImage(Paths.FLOOR2_NORMAL);
 	public static ProxyImage f3ImageProxy = new ProxyImage(Paths.FLOOR3_NORMAL);
@@ -64,36 +56,14 @@ public class Paths
 	public static ProxyImage f5ImageProxy = new ProxyImage(Paths.FLOOR5_NORMAL);
 	public static ProxyImage f6ImageProxy = new ProxyImage(Paths.FLOOR6_NORMAL);
 	public static ProxyImage f7ImageProxy = new ProxyImage(Paths.FLOOR7_NORMAL);
-
-	public static ProxyImage[] regularFloorImages =
-			{
-					f1ImageProxy, f2ImageProxy, f3ImageProxy, f4ImageProxy, f5ImageProxy, f6ImageProxy, f7ImageProxy
-			};
-
-	public static ProxyImage f1ContrastProxy = new ProxyImage(Paths.FLOOR1_CONTRAST);
-	public static ProxyImage f2ContrastProxy = new ProxyImage(Paths.FLOOR2_CONTRAST);
-	public static ProxyImage f3ContrastProxy = new ProxyImage(Paths.FLOOR3_CONTRAST);
-	public static ProxyImage f4ContrastProxy = new ProxyImage(Paths.FLOOR4_CONTRAST);
-	public static ProxyImage f5ContrastProxy = new ProxyImage(Paths.FLOOR5_CONTRAST);
-	public static ProxyImage f6ContrastProxy = new ProxyImage(Paths.FLOOR6_CONTRAST);
-	public static ProxyImage f7ContrastProxy = new ProxyImage(Paths.FLOOR7_CONTRAST);
-
-	public static ProxyImage[] contrastFloorImages =
-			{
-					f1ContrastProxy, f2ContrastProxy, f3ContrastProxy, f4ContrastProxy, f5ContrastProxy, f6ContrastProxy, f7ContrastProxy
-			};
-
 	public static ProxyImage f1BelkinProxy = new ProxyImage(Paths.FLOOR1_BELKIN);
 	public static ProxyImage f2BelkinProxy = new ProxyImage(Paths.FLOOR2_BELKIN);
 	public static ProxyImage f3BelkinProxy = new ProxyImage(Paths.FLOOR3_BELKIN);
 	public static ProxyImage f4BelkinProxy = new ProxyImage(Paths.FLOOR4_BELKIN);
+	public static ProxyImage[] regularFloorImages = {f1ImageProxy, f2ImageProxy, f3ImageProxy, f4ImageProxy, f5ImageProxy, f6ImageProxy, f7ImageProxy};
+	public static ProxyImage[] belkinFloorImages = {f1BelkinProxy, f2BelkinProxy, f3BelkinProxy, f4BelkinProxy};
 
-	public static ProxyImage[] belkinFloorImages =
-			{
-					f1BelkinProxy, f2BelkinProxy, f3BelkinProxy, f4BelkinProxy
-			};
-
-	// Make proxyimages for icons
+	//GUI element image proxies
 	public static ProxyImage removeNodeImageProxy = new ProxyImage(Paths.REMOVENODE);
 	public static ProxyImage chainImageProxy = new ProxyImage(Paths.CHAINNODES);
 	public static ProxyImage addNeighborImageProxy = new ProxyImage(Paths.ADDNODE);
@@ -108,9 +78,8 @@ public class Paths
 	public static ProxyImage parkinglotImageProxy = new ProxyImage(Paths.PARKINGLOTICON);
 	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
 	public static ProxyImage doorImageProxy = new ProxyImage(Paths.DOOR);
+	public static ProxyImage yahImageProxy = new ProxyImage(Paths.YOUAREHEREICON);
 
-	public static boolean isAdmin(String userName)
-	{
-		return userName.equals("admin");
-	}
+	//Misc constants
+	public static final String ADMIN_NAME = "admin";
 }

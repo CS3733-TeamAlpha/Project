@@ -19,14 +19,12 @@ public class Main extends Application
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.setMaximized(true);
-
-		primaryStage.getScene().getStylesheets().add(Accessibility.NORMAL_CSS);
-
+		primaryStage.getScene().getStylesheets().add(Paths.NORMAL_CSS);
 		primaryStage.show();
 	}
 
-
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		launch(args);
 	}
 }
