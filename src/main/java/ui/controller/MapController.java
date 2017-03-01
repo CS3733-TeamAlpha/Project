@@ -1111,18 +1111,8 @@ public class MapController extends BaseController
 
 		currentZoom = 1;
 		rescale();
-		if(!BUILDINGID.equals(belkin))
-		{
-			editingFloor.setLayoutX(0);
-			editingFloor.setLayoutY(0);
-		}
-		else
-		{
-			editingFloor.setLayoutX((belkinScroller.getWidth()-
-					belkinFloorImage.getImage().getWidth())/2);
-			editingFloor.setLayoutY((belkinScroller.getHeight()-
-					belkinFloorImage.getImage().getHeight())/2);
-		}
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
 		dontDoSelection = false;
 
 		jumpFloor(FLOORID);
