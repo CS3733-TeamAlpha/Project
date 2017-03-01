@@ -34,9 +34,9 @@ public class MapEditorToolController extends BaseController
 	private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
 
 	//constants for UUIDs
-	final String Faulkner_UUID = "00000000-0000-0000-0000-000000000000";
-	final String Belkin_UUID = "00000000-0000-0000-0000-111111111111";
-	final String Outside_UUID = "00000000-0000-0000-0000-222222222222";
+	final String FAULKNER_UUID = "00000000-0000-0000-0000-000000000000";
+	final String BELKIN_UUID = "00000000-0000-0000-0000-111111111111";
+	final String OUTSIDE_UUID = "00000000-0000-0000-0000-222222222222";
 
 	//constants to be used for drawing radial contextmenu
 	double CONTEXTWIDTH = 60.0;
@@ -232,9 +232,9 @@ public class MapEditorToolController extends BaseController
 		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);
 		buildingChoice.setLayoutY(106);
-		if (BUILDINGID.equals(Faulkner_UUID))
+		if (BUILDINGID.equals(FAULKNER_UUID))
 			buildingChoice.getSelectionModel().select(0);
-		else if (BUILDINGID.equals(Belkin_UUID))
+		else if (BUILDINGID.equals(BELKIN_UUID))
 			buildingChoice.getSelectionModel().select(1);
 		else
 			buildingChoice.getSelectionModel().select(2);
@@ -264,10 +264,10 @@ public class MapEditorToolController extends BaseController
 		purgeButtonsAndLines();
 		//default to floor 1 when changing buildings
 		FLOORID = 1;
-		if(BUILDINGID.equals(Faulkner_UUID))//faulkner, max 7 floor
+		if(BUILDINGID.equals(FAULKNER_UUID))//faulkner, max 7 floor
 		{
 			MAXFLOOR = 7;
-		} else if(BUILDINGID.equals(Belkin_UUID))//faulkner, max 4 floor
+		} else if(BUILDINGID.equals(BELKIN_UUID))//faulkner, max 4 floor
 		{
 			MAXFLOOR = 4;
 		} else {
@@ -287,19 +287,19 @@ public class MapEditorToolController extends BaseController
 	private void setFloorImage(String buildingid, int floor)
 	{
 		//faulkner building
-		if(buildingid.equals(Faulkner_UUID))
+		if(buildingid.equals(FAULKNER_UUID))
 		{
 			floorImage.setFitWidth(Paths.regularFloorImages[floor-1].getFXImage().getWidth());
 			floorImage.setFitHeight(Paths.regularFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
-		else if(buildingid.equals(Belkin_UUID))
+		else if(buildingid.equals(BELKIN_UUID))
 		{
 			floorImage.setFitWidth(Paths.belkinFloorImages[floor-1].getFXImage().getWidth());
 			floorImage.setFitHeight(Paths.belkinFloorImages[floor-1].getFXImage().getHeight());
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
-		else if (buildingid.equals(Outside_UUID))
+		else if (buildingid.equals(OUTSIDE_UUID))
 		{
 			floorImage.setFitWidth(Paths.outdoorImageProxy.getFXImage().getWidth());
 			floorImage.setFitHeight(Paths.outdoorImageProxy.getFXImage().getHeight());
