@@ -32,10 +32,10 @@ public class Paths
 	public static final String FLOOR6_CONTRAST = "/Floors/floor6Contrast.png";
 	public static final String FLOOR7_CONTRAST = "/Floors/floor7Contrast.png";
 
-	public static final String FLOOR1_BELKIN = "/NewFloors/belkin1rsz.png";
-	public static final String FLOOR2_BELKIN = "/NewFloors/belkin2rsz.png";
-	public static final String FLOOR3_BELKIN = "/NewFloors/belkin3rsz.png";
-	public static final String FLOOR4_BELKIN = "/NewFloors/belkin4rsz.png";
+	public static final String FLOOR1_BELKIN = "/NewFloors/belkin1Double.png";
+	public static final String FLOOR2_BELKIN = "/NewFloors/belkin2Double.png";
+	public static final String FLOOR3_BELKIN = "/NewFloors/belkin3Double.png";
+	public static final String FLOOR4_BELKIN = "/NewFloors/belkin4Double.png";
 
 	public static final String HALLWAYICON = "/images/nodeIcon.png";
 	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
