@@ -1,22 +1,18 @@
 package ui.controller;
 
+import com.sun.javafx.tk.FontLoader;
+import com.sun.javafx.tk.Toolkit;
 import data.Node;
 import javafx.animation.*;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -27,14 +23,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pathfinding.AStarGraph;
 import pathfinding.Graph;
 import pathfinding.TextualDirections;
 import ui.Paths;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
@@ -62,6 +57,7 @@ public class MapController extends BaseController
 
 	private Pane currentTooltip = null;
 	private Button currentHoveredNode = null;
+	private boolean usingStairs = false;
 
 	private ArrayList<Line> currentPath = new ArrayList<Line>();
 
@@ -206,6 +202,8 @@ public class MapController extends BaseController
 	@FXML
 	private Tab outdoorsTab;
 
+	@FXML
+	private CheckBox stairsCheckbox;
 
 	ScrollPane scroller = faulknerScroller;
 	ImageView floorImage = faulknerFloorImage;
@@ -222,7 +220,6 @@ public class MapController extends BaseController
 	public MapController()
 	{
 		super();
-
 	}
 
 	public void initialize()
@@ -295,6 +292,8 @@ public class MapController extends BaseController
 				Platform.runLater(() -> initialFocusView(kiosk));
 			}).start();
 		}
+
+		stairsCheckbox.setSelected(usingStairs);
 	}
 
 	/**
@@ -310,7 +309,6 @@ public class MapController extends BaseController
 		focusView(n);
 
 		//make the kiosk's location more obvious
-		//TODO: get an image that has some kind of pointer (think googlemaps) at the bottom/center
 		ImageView yahImage = new ImageView(yahProxy.getFXImage());
 		yahImage.setX(n.getX() - yahImage.getImage().getWidth()/2);
 		yahImage.setY(n.getY() - yahImage.getImage().getHeight());
@@ -328,6 +326,7 @@ public class MapController extends BaseController
 		sequence.getChildren().add(timeline);
 		sequence.play();
 		yahImage.toFront();
+
 		selected = n;
 	}
 
@@ -357,14 +356,19 @@ public class MapController extends BaseController
 	 */
 	private void initialSearchFocusView(Node n)
 	{
-		BUILDINGID = n.getBuilding();
+		//go to kiosk to, beginning of path
+		BUILDINGID = kiosk.getBuilding();
 		changeBuilding(BUILDINGID);
-		jumpFloor(n.getFloor());
+		jumpFloor(kiosk.getFloor());
+		focusView(kiosk);
+
 		selected = n;
 		findingDirections = true;
 		showRoomInfo(n, false);
 		setSearchedFor(null);
-		focusView(n);
+
+		//begin magical journey
+		magicalJourney();
 	}
 
 	/**
@@ -422,7 +426,7 @@ public class MapController extends BaseController
 		}
 		if(findingDirections)
 		{
-			ArrayList<Node> path = graph.findPath(kiosk,selected);
+			ArrayList<Node> path = graph.findPath(kiosk, selected, usingStairs);
 
 			path = trimPathToBuildingFloor(path);
 
@@ -433,7 +437,7 @@ public class MapController extends BaseController
 			}else
 			{
 				ArrayList<String> textDirections =
-						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected));
+						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected, usingStairs));
 				StringBuilder build = new StringBuilder();
 				if(textDirections != null)
 				{
@@ -571,39 +575,47 @@ public class MapController extends BaseController
 		if(zoomWrapper.getWidth() > scroller.getWidth() ||
 				zoomWrapper.getHeight() > scroller.getHeight())
 		{
+			double newHval, newVval;
 			//all the way to the right
 			if(zoomWrapper.getWidth()-nX < scroller.getWidth()/2)
 			{
-				scroller.hvalueProperty().setValue(1);
+				newHval = 1;
 			}
 			//all the way to the left
 			else if(nX < (scroller.getWidth())/2)
 			{
-				scroller.hvalueProperty().setValue(0);
+				newHval = 0;
 			}
 			//otherwise math
 			else
 			{
-				scroller.hvalueProperty().setValue((nX-scroller.getWidth()/2)/
-						(zoomWrapper.getWidth()-scroller.getWidth()));
+				newHval = (nX-scroller.getWidth()/2)/
+						(zoomWrapper.getWidth()-scroller.getWidth());
 			}
 
 			//all the way to the top
 			if(nY < (scroller.getHeight())/2)
 			{
-				scroller.vvalueProperty().setValue(0);
+				newVval = 0;
 			}
 			//all the way to the bottom
 			else if(zoomWrapper.getHeight()-nY < scroller.getHeight()/2)
 			{
-				scroller.vvalueProperty().setValue(1);
+				newVval = 1;
 			}
 			//math
 			else
 			{
-				scroller.vvalueProperty().setValue((nY-scroller.getHeight()/2)/
-						(zoomWrapper.getHeight()-scroller.getHeight()));
+				newVval = (nY-scroller.getHeight()/2)/
+						(zoomWrapper.getHeight()-scroller.getHeight());
 			}
+
+			Timeline animated = new Timeline();
+			KeyValue hKey = new KeyValue(scroller.hvalueProperty(), newHval, Interpolator.EASE_OUT);
+			KeyValue vKey = new KeyValue(scroller.vvalueProperty(), newVval, Interpolator.EASE_OUT);
+			KeyFrame frame = new KeyFrame(Duration.millis(300), hKey, vKey);
+			animated.getKeyFrames().add(frame);
+			animated.play();
 		}
 	}
 
@@ -1099,18 +1111,9 @@ public class MapController extends BaseController
 
 		currentZoom = 1;
 		rescale();
-		if(!BUILDINGID.equals(BELKIN_UUID))
-		{
-			editingFloor.setLayoutX(0);
-			editingFloor.setLayoutY(0);
-		}
-		else
-		{
-			editingFloor.setLayoutX((belkinScroller.getWidth()-
-					belkinFloorImage.getImage().getWidth())/2);
-			editingFloor.setLayoutY((belkinScroller.getHeight()-
-					belkinFloorImage.getImage().getHeight())/2);
-		}
+
+		editingFloor.setLayoutX(0);
+		editingFloor.setLayoutY(0);
 		dontDoSelection = false;
 
 		jumpFloor(FLOORID);
@@ -1257,13 +1260,30 @@ public class MapController extends BaseController
 
 	private void addLabels(LabelThingy thingy)
 	{
+		InnerShadow innerShadow = new InnerShadow();
+		innerShadow.setColor(Color.BLACK);
+
+		DropShadow ds = new DropShadow();
+		ds.setSpread(0.75);
+		ds.setRadius(15);
+		ds.setColor(Color.color(1, 1, 1));
+		ds.setInput(innerShadow);
+
 		Label roomLabel = new Label(thingy.text);
-		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology")) {
-			roomLabel.setLayoutX(thingy.x - 35);
-			roomLabel.setLayoutY(thingy.y-35);
-		} else
+		roomLabel.setEffect(ds);
+		roomLabel.setFont(new Font("GlacialIndifference", 14));
+
+		FontLoader fontLoader = Toolkit.getToolkit().getFontLoader();
+		int roundedXOffset = (int)Math.round(fontLoader.computeStringWidth(roomLabel.getText(), roomLabel.getFont()) / 2.0);
+
+		if (thingy.text.length()%2 == 0 || thingy.text.equals("Radiology"))
 		{
-			roomLabel.setLayoutX(thingy.x -35);
+			roomLabel.setLayoutX(thingy.x - roundedXOffset);
+			roomLabel.setLayoutY(thingy.y-35);
+		}
+		else
+		{
+			roomLabel.setLayoutX(thingy.x - roundedXOffset);
 			roomLabel.setLayoutY(thingy.y+15);
 		}
 		roomLabel.setId("roomLabel");
@@ -1327,6 +1347,16 @@ public class MapController extends BaseController
 		loadedLabels.clear();
 	}
 
+	/**
+	 * Changes the status of whether stairs are being used, then re-plots the path.
+	 */
+	@FXML
+	private void changeUseStairs()
+	{
+		usingStairs = stairsCheckbox.isSelected();
+		clearPath(null);
+		findDirectionsTo();
+	}
 
 	class LabelThingy
 	{

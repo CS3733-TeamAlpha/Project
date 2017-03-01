@@ -1082,7 +1082,7 @@ public class Database implements Observer
 		{
 			searchText = searchText.toLowerCase();
 			ArrayList<SearchResult> searchResults = new ArrayList<>();
-			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID, 'Location' AS SearchType FROM Nodes WHERE LOWER(NAME) LIKE ? UNION " +
+			PreparedStatement pstmt = connection.prepareStatement("SELECT Name, node_uuid AS UUID, 'Location' AS SearchType FROM Nodes WHERE LOWER(NAME) LIKE ? AND LOWER(NAME) != 'new 0' UNION " +
 					"SELECT (lastName || ', ' ||  firstName || '; ' || title) AS name, provider_uuid, 'Provider' AS SearchType FROM Providers WHERE LOWER(lastName || ', ' ||  firstName || '; ' || title) LIKE ?" + ((top6)? " FETCH FIRST 6 ROWS ONLY" : ""));
 			pstmt.setString(1, "%" + searchText + "%");
 			pstmt.setString(2, "%" + searchText + "%");

@@ -34,10 +34,10 @@ public class DatabasePathfindingTest
 	public void testLinkPersistence(){
 		Node node1 = new Node();
 		Node node2 = new Node();
-		assertNull(graph.findPath(node1, node2)); //Idiot check... you never know when programs drop 100 IQ on the spot
+		assertNull(graph.findPath(node1, node2, false)); //Idiot check... you never know when programs drop 100 IQ on the spot
 		node1.addNeighbor(node2);
 		node2.addNeighbor(node1);
-		assertNotNull(graph.findPath(node1, node2)); //Idiot check round 2
+		assertNotNull(graph.findPath(node1, node2, false)); //Idiot check round 2
 
 		//Add these nodes to the database
 		database.insertNode(node1);
@@ -56,7 +56,7 @@ public class DatabasePathfindingTest
 		assertTrue(dNode2.getNeighbors().contains(dNode1));
 
 		//Graph test
-		assertNotNull(graph.findPath(dNode1, dNode2));
+		assertNotNull(graph.findPath(dNode1, dNode2, false));
 
 		//Clean up
 		database.deleteNodeByUUID(node1.getID());
@@ -98,8 +98,8 @@ public class DatabasePathfindingTest
 		System.out.println("Finished constructing graph");
 
 		//Make sure we can find a path between upper left and lower right. If this fails, the below tests will too
-		assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[9][9]));
-		assertEquals(19, graph.findPath(gridNodes[0][0], gridNodes[9][9]).size());
+		assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[9][9], false));
+		assertEquals(19, graph.findPath(gridNodes[0][0], gridNodes[9][9], false).size());
 		System.out.println("Finished base test of graph");
 
 		//Now put them all in the database...
@@ -125,8 +125,8 @@ public class DatabasePathfindingTest
 		}
 		System.out.println("Finished retrieving nodes from database");
 		//Now try and find the same path found above using these nodes extracted from the database
-		assertNotNull(graph.findPath(dGridNodes[0][0], dGridNodes[9][9]));
-		assertEquals(19, graph.findPath(dGridNodes[0][0], dGridNodes[9][9]).size());
+		assertNotNull(graph.findPath(dGridNodes[0][0], dGridNodes[9][9], false));
+		assertEquals(19, graph.findPath(dGridNodes[0][0], dGridNodes[9][9], false).size());
 
 		//Now just clean up
 		for (int i = 0; i < 10; i++)
