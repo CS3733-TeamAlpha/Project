@@ -37,7 +37,10 @@ public class AdminPageController extends BaseController
 	public void initialize()
 	{
 		//UI watchdog
-		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->{
+			loadFXML(Paths.STARTUP_FXML);
+			LoginState.logout();
+		});
 		watchdog.registerScene(stage.getScene(), Event.ANY);
 		if(LoginState.isAdminLoggedIn())
 		{
