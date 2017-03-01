@@ -35,7 +35,6 @@
 .bh-admin-button, .bh-admin-button:hover
 {
     -fx-background-color: #ffffff;
-    -fx-border-color: #666;
     -fx-text-fill: #333;
     -fx-focus-traversable: false;
     -fx-font-family: "Glacial Indifference";
