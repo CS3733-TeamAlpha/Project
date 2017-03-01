@@ -21,7 +21,6 @@ import java.util.List;
 
 public class StartupController extends BaseController
 {
-//	public ImageView eyeImage;
 	public ImageView lockImage;
 	private ContextMenu contextMenu;
 	private ContextMenu providerLocationContextMenu;

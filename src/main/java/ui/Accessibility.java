@@ -21,10 +21,4 @@ public class Accessibility
 		controller.updateCSS();
 	}
 
-//	public static void toggleHighContrast(BaseController controller)
-//	{
-//		highContrast = !highContrast;
-//		controller.updateCSS();
-//	}
-
 }
