@@ -12,9 +12,8 @@ import javafx.util.Duration;
 import java.util.Observable;
 
 /**
- * Watchdog class that is fed by any user action and notifies (using observer -- it's simple and effective, I guess)
- * the UI controller that it should switch back to the main screen. I confess that I don't entirely understand how this
- * jfx code works, so some documentation may be lacking
+ * Watchdog class that is fed by any user action and notifies the UI controller that it should switch back to the main
+ * screen. I confess that I don't entirely understand how this jfx code works, so some documentation may be lacking.
  *
  * Resource used: https://stackoverflow.com/questions/27162374/javafx-2-user-idle-detection
  */

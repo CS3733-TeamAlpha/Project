@@ -4,16 +4,18 @@ import com.sun.javafx.scene.control.skin.ListViewSkin;
 import data.Node;
 import data.Provider;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import ui.Paths;
+import ui.Watchdog;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AdminDirectoryController extends BaseController
@@ -36,6 +38,7 @@ public class AdminDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		List<Provider> providers = database.getProviders();
 		providers = providers.stream().sorted(Comparator.comparing(Provider::getLastName)).collect(Collectors.toList());
 

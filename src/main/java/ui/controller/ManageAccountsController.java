@@ -8,8 +8,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.mindrot.jbcrypt.BCrypt;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class ManageAccountsController extends BaseController
 	@Override
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		reloadList();
 	}
 

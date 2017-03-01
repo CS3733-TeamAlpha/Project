@@ -10,7 +10,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Duration;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class UserDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		filteredData = new FilteredList<>(observableList, p -> true);
 		SortedList<Provider> sortedProviders = new SortedList<Provider>(filteredData);
 		sortedProviders.comparatorProperty().bind(tableView.comparatorProperty());

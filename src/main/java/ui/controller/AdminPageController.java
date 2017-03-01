@@ -10,11 +10,13 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import pathfinding.AStarGraph;
 import pathfinding.BreadthFirstGraph;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,6 +34,7 @@ public class AdminPageController extends BaseController
 
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		if(LoginState.isAdminLoggedIn())
 		{
 			changePasswordButton.setText("Manage Accounts");

@@ -29,6 +29,7 @@ import pathfinding.AStarGraph;
 import pathfinding.Graph;
 import pathfinding.TextualDirections;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -225,7 +226,7 @@ public class MapController extends BaseController
 
 	public void initialize()
 	{
-
+		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		initializeTabs();
 
 		System.out.println("MapController.initialize()");
