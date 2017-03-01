@@ -454,7 +454,7 @@ public class MapController extends BaseController
 			}else
 			{
 				ArrayList<String> textDirections =
-						TextualDirections.getDirections(path, 0.1, graph.findPath(kiosk, selected, usingStairs));
+						TextualDirections.getDirections(path, graph.findPath(kiosk, selected, usingStairs));
 				StringBuilder build = new StringBuilder();
 				if(textDirections != null)
 				{
