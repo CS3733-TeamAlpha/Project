@@ -256,6 +256,7 @@ public class AdminPageController extends BaseController
 
 			progressAlert.getDialogPane().setContent(grid);
 			progressBar.setProgress(0);
+			progressBar.setPrefWidth(300);
 			progressAlert.setTitle("Reset Progress");
 			progressAlert.setHeaderText("Reset Progress");
 			Platform.runLater(() -> progressAlert.show());
