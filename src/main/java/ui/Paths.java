@@ -43,6 +43,8 @@ public class Paths
 	public static final String RESTROOMICON = "/images/UniRestroomIcon.png";
 	public static final String KIOSKICON = "/images/KioskIcon.png";
 	public static final String SELECTEDKIOSKICON = "/images/selectedKiosk2.png";
+	public static final String STAIRWAYICON = "/images/StairsIcon.png";
+	public static final String PARKINGLOTICON = "/images/doorIcon.png";
 	public static final String ADDNODE = "/images/addNodeSmall.png";
 	public static final String REMOVENEIGHBOR = "/images/RemoveConnectionSmall.png";
 	public static final String REMOVENODE = "/images/removeNodeSmall.png";
@@ -101,7 +103,8 @@ public class Paths
 	public static ProxyImage hallwayImageProxy = new ProxyImage(Paths.HALLWAYICON);
 	public static ProxyImage kioskImageProxy = new ProxyImage(Paths.KIOSKICON);
 	public static ProxyImage skioskImageProxy = new ProxyImage(Paths.SELECTEDKIOSKICON);
-
+	public static ProxyImage stairwayImageProxy = new ProxyImage(Paths.STAIRWAYICON);
+	public static ProxyImage parkinglotImageProxy = new ProxyImage(Paths.PARKINGLOTICON);
 	public static ProxyImage outdoorImageProxy = new ProxyImage(Paths.OUTDOORS);
 
 	public static boolean isAdmin(String userName)

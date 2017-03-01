@@ -251,13 +251,14 @@ public class MapEditorToolController extends BaseController
 		serviceAddChoiceBox.setItems(FXCollections.observableArrayList(allServices.toArray()));
 
 		//Add list of available node types to the node type scroll box. Choiceboxes always end well, right?
-		typeChoicebox.getItems().add("Hallway");
-		typeChoicebox.getItems().add("Office");
-		typeChoicebox.getItems().add("Elevator");
-		typeChoicebox.getItems().add("Restroom");
-		typeChoicebox.getItems().add("Kiosk");
-		typeChoicebox.getItems().add("Selected Kisok");
-		typeChoicebox.getItems().add("Stairway");
+		typeChoicebox.getItems().add("Hallway");		//0
+		typeChoicebox.getItems().add("Office");			//1
+		typeChoicebox.getItems().add("Elevator");		//2
+		typeChoicebox.getItems().add("Restroom");		//3
+		typeChoicebox.getItems().add("Kiosk");			//4
+		typeChoicebox.getItems().add("Selected Kisok");	//5
+		typeChoicebox.getItems().add("Stairway");		//6
+		typeChoicebox.getItems().add("Parking lot");	//7
 		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
 		{
 			updateNodeType(); //why can't we just directly call this from fxml? don't ask me, ask jfx...
@@ -1366,30 +1367,27 @@ public class MapEditorToolController extends BaseController
 				return;
 			}
 			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
-			if (newType == 6)
-				newType = 20; //the 6th type is actually a stairway, but we call it #20 because... reasons
-			if (newType < 20 && newType >= 0)
+			if (newType >= 6)
+				newType += 14; //the 6th type is actually a stairway, but we call it #20 because... reasons
+			if (newType == 5) //changing to selected kiosk
 			{
-				if (newType == 5) //changing to selected kiosk
+				database.setSelectedKiosk(currentNode);
+			}
+			if (newType > 5 && newType < 20) //links between buildings
+			{
+				database.connectEntrances(currentNode, newType);
+			} else if(currentNode.getType() > 5) //remove links between buildings if changing type to not be a link
+			{
+				database.removeEntranceConnection(currentNode, currentNode.getType());
+			}
+			//update type
+			currentNode.setType(newType);
+			for(Button b: nodeButtonLinks.keySet())
+			{
+				if(nodeButtonLinks.get(b) == currentNode)
 				{
-					database.setSelectedKiosk(currentNode);
-				}
-				if (newType > 5 && newType < 20) //links between buildings
-				{
-					database.connectEntrances(currentNode, newType);
-				} else if(currentNode.getType() > 5) //remove links between buildings if changing type to not be a link
-				{
-					database.removeEntranceConnection(currentNode, currentNode.getType());
-				}
-				//update type
-				currentNode.setType(newType);
-				for(Button b: nodeButtonLinks.keySet())
-				{
-					if(nodeButtonLinks.get(b) == currentNode)
-					{
-						setButtonImage(b, newType);
-						break;
-					}
+					setButtonImage(b, newType);
+					break;
 				}
 			}
 		} catch (NumberFormatException e)

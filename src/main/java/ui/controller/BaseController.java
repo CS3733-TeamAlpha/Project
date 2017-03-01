@@ -1,6 +1,7 @@
 package ui.controller;
 
 import data.Database;
+import data.NodeTypes;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -153,39 +154,29 @@ public abstract class BaseController
 	 */
 	protected void setButtonImage(Button b, int type)
 	{
-		if (type == 1)
-		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 4)
-		{
-			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 5)
-		{
-			ImageView buttonImage = new ImageView(Paths.skioskImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		}else if (type == 0)
-		{
-		}
+		ImageView buttonImage = null;
+		if (type == NodeTypes.DOCTOR_OFFICE.val())
+			buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
+		else if (type == NodeTypes.ELEVATOR.val())
+			buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
+		else if (type == NodeTypes.RESTROOM.val())
+			buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
+		else if (type == NodeTypes.KIOSK.val())
+			buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
+		else if (type == NodeTypes.KIOSK_SELECTED.val())
+			buttonImage = new ImageView(Paths.skioskImageProxy.getFXImage());
+		else if (type == NodeTypes.STAIRWAY.val())
+			buttonImage = new ImageView(Paths.stairwayImageProxy.getFXImage());
+		else if (type == NodeTypes.PARKINGLOT.val())
+			buttonImage = new ImageView(Paths.parkinglotImageProxy.getFXImage());
+		else if (type == 0)
+			return;
+		else
+			buttonImage = new ImageView(Paths.removeNodeImageProxy.getFXImage()); //failure condition
+
+		buttonImage.setScaleX(0.15);
+		buttonImage.setScaleY(0.15);
+		b.setGraphic(buttonImage);
 	}
 
 
