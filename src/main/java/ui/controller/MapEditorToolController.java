@@ -1,5 +1,6 @@
 package ui.controller;
 
+import data.Node;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,7 +18,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import data.Node;
 import ui.Accessibility;
 import ui.Paths;
 
@@ -250,6 +250,18 @@ public class MapEditorToolController extends BaseController
 		ArrayList<String> allServices = database.getServices();
 		serviceAddChoiceBox.setItems(FXCollections.observableArrayList(allServices.toArray()));
 
+		//Add list of available node types to the node type scroll box. Choiceboxes always end well, right?
+		typeChoicebox.getItems().add("Hallway");
+		typeChoicebox.getItems().add("Office");
+		typeChoicebox.getItems().add("Elevator");
+		typeChoicebox.getItems().add("Restroom");
+		typeChoicebox.getItems().add("Kiosk");
+		typeChoicebox.getItems().add("Selected Kisok");
+		typeChoicebox.getItems().add("Stairway");
+		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
+		{
+			updateNodeType(); //why can't we just directly call this from fxml? don't ask me, ask jfx...
+		});
 	}
 
 	/**
@@ -354,7 +366,7 @@ public class MapEditorToolController extends BaseController
 			{
 				if(currentNode != null)
 				{
-					deleteNode(null);
+					deleteNode();
 					currentState = editorStates.DOINGNOTHING;
 				}
 			}
@@ -515,7 +527,7 @@ public class MapEditorToolController extends BaseController
 	private TextField nameField;
 
 	@FXML
-	private TextField typeField;
+	private ChoiceBox typeChoicebox;
 
 	@FXML
 	private TextField xField;
@@ -581,13 +593,13 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	@FXML
 	/**
 	 * Function is fired when a drop action is detected, i.e. node is being moved or
 	 * new node is being made by drag and drop
-	 * @params x The x position of the node
-	 * @params y The y position of the node
+	 * @param x The x position of the node
+	 * @param y The y position of the node
 	 */
+	@FXML
 	private void dropNode(Double x, Double y) {
 		switch(currentState)
 		{
@@ -626,10 +638,10 @@ public class MapEditorToolController extends BaseController
 		currentState = editorStates.DOINGNOTHING;
 	}
 
-	@FXML
 	/**
 	 * Floor image clicked, hide node details.
 	 */
+	@FXML
 	void clickFloorImage(MouseEvent e)
 	{
 		switch (currentState)
@@ -659,11 +671,11 @@ public class MapEditorToolController extends BaseController
 
 	}
 
-	@FXML
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
 	 */
+	@FXML
 	void goDownFloor(ActionEvent event) {
 		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
@@ -713,11 +725,11 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	@FXML
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
 	 */
+	@FXML
 	void goUpFloor(ActionEvent event)
 	{
 		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
@@ -1013,7 +1025,7 @@ public class MapEditorToolController extends BaseController
 					case 3:
 						//left option
 						System.out.println("left");
-						deleteNode(null);
+						deleteNode();
 						currentState = editorStates.DOINGNOTHING;
 						break;
 					default:
@@ -1200,7 +1212,10 @@ public class MapEditorToolController extends BaseController
 			default:
 				//modify text fields to display node info
 				nameField.setText(linkedNode.getName());
-				typeField.setText(Integer.toString(linkedNode.getType()));
+				if (linkedNode.getType() < 6)
+					typeChoicebox.getSelectionModel().select(linkedNode.getType());
+				else if (linkedNode.getType() == 20)
+					typeChoicebox.getSelectionModel().select(6);
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
 
@@ -1245,7 +1260,7 @@ public class MapEditorToolController extends BaseController
 		currentButton = null;
 
 		nameField.setText("");
-		typeField.setText("");
+		typeChoicebox.getSelectionModel().clearSelection();
 		xField.setText("");
 		yField.setText("");
 
@@ -1261,12 +1276,11 @@ public class MapEditorToolController extends BaseController
 		AUTOCONNECT = toggleAutoConnect.isSelected();
 	}
 
-
 	/**
 	 * update a node's X coordinate, both visually and in the node's properties
 	 */
 	@FXML
-	void updateNodeX(ActionEvent event)
+	void updateNodeX()
 	{
 		try
 		{
@@ -1296,7 +1310,7 @@ public class MapEditorToolController extends BaseController
 	 * update a node's Y coordinate, both visually and in the node's properties
 	 */
 	@FXML
-	void updateNodeY(ActionEvent event) {
+	void updateNodeY() {
 		try
 		{
 			if(currentButton != null && currentNode != null)
@@ -1326,7 +1340,7 @@ public class MapEditorToolController extends BaseController
 	 * update a node's Name string
 	 */
 	@FXML
-	void updateNodeData(ActionEvent event)
+	void updateNodeData()
 	{
 		try
 		{
@@ -1341,14 +1355,19 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * update a node's Type and update its corresponding image
 	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
-	 * @param event
 	 */
-	@FXML
-	void updateNodeType(ActionEvent event)
+	void updateNodeType()
 	{
 		try
 		{
-			int newType = Integer.parseInt(typeField.getText());
+			if (currentNode == null)
+			{
+				System.out.println("AHH! Cthulhu!");
+				return;
+			}
+			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
+			if (newType == 6)
+				newType = 20; //the 6th type is actually a stairway, but we call it #20 because... reasons
 			if (newType < 20 && newType >= 0)
 			{
 				if (newType == 5) //changing to selected kiosk
@@ -1575,7 +1594,7 @@ public class MapEditorToolController extends BaseController
 	 * Set controller to addingNeighbor state
 	 */
 	@FXML
-	void addNeighbor(ActionEvent event)
+	void addNeighbor()
 	{
 		if (currentNode != null)//Don't do anything unless a node is selected
 		{
@@ -1587,7 +1606,7 @@ public class MapEditorToolController extends BaseController
 	 * Set controller to removingNeighbor state
 	 */
 	@FXML
-	void removeNeighbor(ActionEvent event)
+	void removeNeighbor()
 	{
 		if (currentNode != null)  //Don't do anything unless a node is selected
 		{
@@ -1608,7 +1627,7 @@ public class MapEditorToolController extends BaseController
 	 * Add the current node to the deleteNodesList to be deleted from the database
 	 */
 	@FXML
-	void deleteNode(ActionEvent event) {
+	void deleteNode() {
 		if(currentNode != null)
 		{
 			//if this node had any neighbors remove lines
