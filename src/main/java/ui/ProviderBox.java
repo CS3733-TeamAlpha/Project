@@ -61,7 +61,7 @@ public class ProviderBox extends HBox
 		Node toAdd = null;
 		for(Node n: database.getAllNodes()){
 			if(n.getName().equals(s))
-				toAdd = n; //TODO: Jesus christ, this can be sped up.
+				toAdd = n;
 		}
 		provider.addLocation(toAdd);
 		refreshBox();

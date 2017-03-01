@@ -37,19 +37,15 @@ public class AdminPageController extends BaseController
 	public void initialize()
 	{
 		//UI watchdog
-		if (watchdog == null)
-		{
-			watchdog = new Watchdog(Duration.seconds(uiTimeout), () ->
-			{
-				loadFXML(Paths.STARTUP_FXML);
-				LoginState.logout();
-			});
-			watchdog.registerScene(stage.getScene(), Event.ANY);
-		}
-		watchdog.notIdle();
-
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->{
+			loadFXML(Paths.STARTUP_FXML);
+			LoginState.logout();
+		});
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		if(LoginState.isAdminLoggedIn())
+		{
 			changePasswordButton.setText("Manage Accounts");
+		}
 
 		//Path algorithm selector
 		algorithmSelector.getItems().add("A*");
@@ -99,12 +95,13 @@ public class AdminPageController extends BaseController
 		});
 
 		//Timeout spinner
-		SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 3600, uiTimeout, 5);
+		SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(15, 3600, uiTimeout, 5);
 		valueFactory.valueProperty().addListener((observableValue, integer, t1) ->
 		{
 			uiTimeout = timeoutSpinner.getValue();
 			//Make timeout apply to the current UI
 			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog.disconnect();
 			watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 			watchdog.registerScene(stage.getScene(), Event.ANY);
 		});

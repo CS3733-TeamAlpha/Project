@@ -227,17 +227,13 @@ public class MapController extends BaseController
 
 	public void initialize()
 	{
-		if (watchdog == null)
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->
 		{
-			watchdog = new Watchdog(Duration.seconds(uiTimeout), () ->
-			{
-				loadFXML(Paths.STARTUP_FXML);
-				clearPath(null);
-				setSearchedFor(null);
-			});
-			watchdog.registerScene(stage.getScene(), Event.ANY);
-		}
-		watchdog.notIdle();
+			loadFXML(Paths.STARTUP_FXML);
+			clearPath(null);
+			setSearchedFor(null);
+		});
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		initializeTabs();
 
 		System.out.println("MapController.initialize()");
@@ -500,7 +496,7 @@ public class MapController extends BaseController
 						line.setEndX(path.get(i+1).getX()+PATH_LINE_OFFSET);
 						line.setEndY(path.get(i+1).getY()+PATH_LINE_OFFSET);
 						line.setStrokeWidth(10);
-//						// Change color for line if it is high contrast
+						// Change color for line if it is high contrast
 
 						line.setStroke(Color.BLUE);
 						editingFloor.getChildren().add(1,line);
@@ -537,7 +533,6 @@ public class MapController extends BaseController
 				toAdd += ", ";
 		}
 		servicesLabel.setText(toAdd);
-		//roomDescription.setText(n.getData().get(1)); //TODO: implement a proper node description field
 	}
 
 	/**
@@ -721,7 +716,6 @@ public class MapController extends BaseController
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
-	 * TODO: Stole this from map editor, may want to fix
 	 */
 	void goUpFloor (ActionEvent event){
 		int topFloor;
@@ -1374,7 +1368,7 @@ public class MapController extends BaseController
 		}
 
 		//remove dot and stop animation if purgebuttons is called
-		//TODO: don't try to refactor this poorly by just using clearpath. probably will mess something up
+		//don't try to refactor this poorly by just using clearpath. probably will mess something up
 		if(editingFloor.getChildren().contains(magicalCircle))
 		{
 			editingFloor.getChildren().remove(magicalCircle);

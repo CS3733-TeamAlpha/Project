@@ -7,9 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by Sam on 2/15/2017.
- */
 public class RealImage implements Image {
 	private String fileName;
 	private BufferedImage img;
@@ -32,7 +29,6 @@ public class RealImage implements Image {
 	@Override
 	public void display() {
 		System.out.println("Displaying " + fileName);
-		// TODO: Make display return the required format to update the map image
 	}
 
 	private void loadFromDisk(String fileName) {
