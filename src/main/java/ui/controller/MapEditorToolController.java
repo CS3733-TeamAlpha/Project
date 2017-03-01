@@ -1,5 +1,6 @@
 package ui.controller;
 
+import data.Node;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,11 +14,13 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import data.Node;
 import ui.Accessibility;
 import ui.Paths;
 
@@ -247,6 +250,10 @@ public class MapEditorToolController extends BaseController
 		typeChoicebox.getItems().add("Kiosk");
 		typeChoicebox.getItems().add("Selected Kisok");
 		typeChoicebox.getItems().add("Stairway");
+		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
+		{
+			updateNodeType(); //why can't we just directly call this from fxml? don't ask me, ask jfx...
+		});
 	}
 
 	/**
@@ -351,7 +358,7 @@ public class MapEditorToolController extends BaseController
 			{
 				if(currentNode != null)
 				{
-					deleteNode(null);
+					deleteNode();
 					currentState = editorStates.DOINGNOTHING;
 				}
 			}
@@ -578,13 +585,13 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	@FXML
 	/**
 	 * Function is fired when a drop action is detected, i.e. node is being moved or
 	 * new node is being made by drag and drop
-	 * @params x The x position of the node
-	 * @params y The y position of the node
+	 * @param x   The x position of the node
+	 * @param y The y position of the node
 	 */
+	@FXML
 	private void dropNode(Double x, Double y) {
 		switch(currentState)
 		{
@@ -623,10 +630,10 @@ public class MapEditorToolController extends BaseController
 		currentState = editorStates.DOINGNOTHING;
 	}
 
-	@FXML
 	/**
 	 * Floor image clicked, hide node details.
 	 */
+	@FXML
 	void clickFloorImage(MouseEvent e)
 	{
 		switch (currentState)
@@ -656,11 +663,11 @@ public class MapEditorToolController extends BaseController
 
 	}
 
-	@FXML
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
 	 */
+	@FXML
 	void goDownFloor(ActionEvent event) {
 		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
@@ -710,11 +717,11 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	@FXML
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
 	 */
+	@FXML
 	void goUpFloor(ActionEvent event)
 	{
 		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
@@ -1010,7 +1017,7 @@ public class MapEditorToolController extends BaseController
 					case 3:
 						//left option
 						System.out.println("left");
-						deleteNode(null);
+						deleteNode();
 						currentState = editorStates.DOINGNOTHING;
 						break;
 					default:
@@ -1261,12 +1268,11 @@ public class MapEditorToolController extends BaseController
 		AUTOCONNECT = toggleAutoConnect.isSelected();
 	}
 
-
 	/**
      * update a node's X coordinate, both visually and in the node's properties
      */
 	@FXML
-    void updateNodeX(ActionEvent event)
+    void updateNodeX()
     {
         try
         {
@@ -1296,7 +1302,7 @@ public class MapEditorToolController extends BaseController
      * update a node's Y coordinate, both visually and in the node's properties
      */
 	@FXML
-    void updateNodeY(ActionEvent event) {
+    void updateNodeY() {
         try
         {
             if(currentButton != null && currentNode != null)
@@ -1326,7 +1332,7 @@ public class MapEditorToolController extends BaseController
 	 * update a node's Name string
 	 */
 	@FXML
-	void updateNodeData(ActionEvent event)
+	void updateNodeData()
 	{
 		try
 		{
@@ -1342,11 +1348,15 @@ public class MapEditorToolController extends BaseController
 	 * update a node's Type and update its corresponding image
 	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
 	 */
-	@FXML
 	void updateNodeType()
 	{
 		try
 		{
+			if (currentNode == null)
+			{
+				System.out.println("AHH! Cthulhu!");
+				return;
+			}
 			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
 			if (newType == 6)
 				newType = 20; //the 6th type is actually a stairway, but we call it #20 because... reasons
@@ -1576,7 +1586,7 @@ public class MapEditorToolController extends BaseController
 	 * Set controller to addingNeighbor state
 	 */
 	@FXML
-	void addNeighbor(ActionEvent event)
+	void addNeighbor()
 	{
 		if (currentNode != null)//Don't do anything unless a node is selected
 		{
@@ -1588,7 +1598,7 @@ public class MapEditorToolController extends BaseController
 	 * Set controller to removingNeighbor state
 	 */
 	@FXML
-	void removeNeighbor(ActionEvent event)
+	void removeNeighbor()
 	{
 		if (currentNode != null)  //Don't do anything unless a node is selected
 		{
@@ -1609,7 +1619,7 @@ public class MapEditorToolController extends BaseController
      * Add the current node to the deleteNodesList to be deleted from the database
      */
 	@FXML
-    void deleteNode(ActionEvent event) {
+    void deleteNode() {
         if(currentNode != null)
         {
             //if this node had any neighbors remove lines
