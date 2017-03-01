@@ -191,7 +191,10 @@
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
             </Button>
-                <CheckBox fx:id="stairsCheckbox" mnemonicParsing="false" onAction="#changeUseStairs" text="Use stairs?" />
+                <CheckBox fx:id="stairsCheckbox" mnemonicParsing="false" onAction="#changeUseStairs" styleClass="bh-styled-label" text="Use stairs?">
+               <font>
+                  <Font size="19.0" />
+               </font></CheckBox>
             </children>
          <HBox.margin>
             <Insets />
