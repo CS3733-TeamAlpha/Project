@@ -14,15 +14,15 @@ public class Paths
 	public static final String ACCOUNT_BOX_FXML = "/fxml/AccountBox.fxml";
 	public static final String MANAGE_ACCOUNTS_FXML = "/fxml/ManageAccounts.fxml";
 
-	public static final String FLOOR1_NORMAL = "/NewFloors/hospital1.png";
-	public static final String FLOOR2_NORMAL = "/NewFloors/hospital2.png";
-	public static final String FLOOR3_NORMAL = "/NewFloors/hospital3.png";
-	public static final String FLOOR4_NORMAL = "/NewFloors/hospital4.png";
-	public static final String FLOOR5_NORMAL = "/NewFloors/hospital5.png";
-	public static final String FLOOR6_NORMAL = "/NewFloors/hospital6.png";
-	public static final String FLOOR7_NORMAL = "/NewFloors/hospital7.png";
+	public static final String FLOOR1_NORMAL = "/floors/hospital1.png";
+	public static final String FLOOR2_NORMAL = "/floors/hospital2.png";
+	public static final String FLOOR3_NORMAL = "/floors/hospital3.png";
+	public static final String FLOOR4_NORMAL = "/floors/hospital4.png";
+	public static final String FLOOR5_NORMAL = "/floors/hospital5.png";
+	public static final String FLOOR6_NORMAL = "/floors/hospital6.png";
+	public static final String FLOOR7_NORMAL = "/floors/hospital7.png";
 
-	public static final String OUTDOORS = "/NewFloors/outsideFloor.png";
+	public static final String OUTDOORS = "/floors/outsideFloor.png";
 
 	public static final String FLOOR1_CONTRAST = "/Floors/floor1Contrast.png";
 	public static final String FLOOR2_CONTRAST = "/Floors/floor2Contrast.png";
@@ -32,10 +32,10 @@ public class Paths
 	public static final String FLOOR6_CONTRAST = "/Floors/floor6Contrast.png";
 	public static final String FLOOR7_CONTRAST = "/Floors/floor7Contrast.png";
 
-	public static final String FLOOR1_BELKIN = "/NewFloors/belkin1Double.png";
-	public static final String FLOOR2_BELKIN = "/NewFloors/belkin2Double.png";
-	public static final String FLOOR3_BELKIN = "/NewFloors/belkin3Double.png";
-	public static final String FLOOR4_BELKIN = "/NewFloors/belkin4Double.png";
+	public static final String FLOOR1_BELKIN = "/floors/belkin1Double.png";
+	public static final String FLOOR2_BELKIN = "/floors/belkin2Double.png";
+	public static final String FLOOR3_BELKIN = "/floors/belkin3Double.png";
+	public static final String FLOOR4_BELKIN = "/floors/belkin4Double.png";
 
 	public static final String HALLWAYICON = "/images/nodeIcon.png";
 	public static final String ELEVATORICON = "/images/ElevatorIcon.png";
