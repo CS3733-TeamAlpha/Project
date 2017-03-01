@@ -32,23 +32,19 @@
                <bottom>
                   <AnchorPane BorderPane.alignment="BOTTOM_RIGHT">
                      <children>
-                        <Pane styleClass="bh-lock-icon" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="50.0">
-                           <children>
-                              <ImageView fx:id="lockImage" fitHeight="37.0" fitWidth="31.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true" styleClass="bh-lock-icon" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="30.0">
-                                 <image>
-                                    <Image url="@../images/ic_lock.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </Pane>
-                        <ImageView fitHeight="45.0" fitWidth="31.0" layoutY="92.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="490.0" layoutY="92.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="490.0" AnchorPane.rightAnchor="690.0">
                            <image>
-                              <Image url="@../images/about-question.png" />
+                              <Image url="@../images/info.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="eExitButton" fitHeight="30.0" fitWidth="76.0" layoutX="31.0" layoutY="93.0" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="eExitButton" fitHeight="100.0" fitWidth="100.0" layoutX="590.0" layoutY="92.0" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/fire.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="lockImage" fitHeight="100.0" fitWidth="100.0" layoutX="690.0" layoutY="92.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true" styleClass="bh-lock-icon">
+                           <image>
+                              <Image url="@../images/ic_lock.png" />
                            </image>
                         </ImageView>
                      </children>
