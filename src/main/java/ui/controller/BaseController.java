@@ -81,12 +81,8 @@ public abstract class BaseController
 		//Update the high contrast option
 		currentSceneSupportsHC = true;
 		for (int i = 0; i < highContrastBlackList.length; i++)
-		{
 			if (highContrastBlackList[i].equals(path))
-			{
 				currentSceneSupportsHC = false;
-			}
-		}
 	}
 
 	protected void setSearchedFor(Node n)
