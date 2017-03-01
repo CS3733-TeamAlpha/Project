@@ -22,7 +22,7 @@ public abstract class BaseController
 	private boolean currentSceneSupportsHC = true;
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_EDITOR_FXML, Paths.USER_DIRECTORY_FXML};
 	protected static Database database;
-	protected static int defaultTimeout = 30; //30 seconds to revert
+	protected static int uiTimeout = 30; //default seconds to revert
 	protected Watchdog watchdog;
 	private static Node searchedFor;
 
@@ -91,6 +91,7 @@ public abstract class BaseController
 	{
 		if (watchdog != null)
 			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+
 		Parent root = null;
 		try
 		{

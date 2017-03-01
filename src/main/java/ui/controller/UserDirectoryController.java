@@ -45,7 +45,7 @@ public class UserDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
-		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		watchdog.registerScene(stage.getScene(), Event.ANY);
 		filteredData = new FilteredList<>(observableList, p -> true);
 		SortedList<Provider> sortedProviders = new SortedList<Provider>(filteredData);

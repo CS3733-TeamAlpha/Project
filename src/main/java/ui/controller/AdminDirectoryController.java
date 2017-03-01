@@ -39,7 +39,7 @@ public class AdminDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
-		watchdog = new Watchdog(Duration.seconds(defaultTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
 		watchdog.registerScene(stage.getScene(), Event.ANY);
 
 		List<Provider> providers = database.getProviders();
