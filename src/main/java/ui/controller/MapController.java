@@ -451,7 +451,6 @@ public class MapController extends BaseController
 			path = trimPathToBuildingFloor(path);
 
 			if(path == null){
-				System.out.println("No path found");
 				focusNode = kiosk;
 				textDirectionsLabel.setText("No path found");
 			}else
@@ -852,7 +851,8 @@ public class MapController extends BaseController
 		//disable next/prev step while animating
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
-		if(currentPath.size() != 0){
+		if(currentPath.size() != 0)
+		{
 			magicalCircle.setRadius(14f);
 			magicalCircle.setFill(Color.RED);
 			editingFloor.getChildren().add(magicalCircle);
@@ -911,15 +911,11 @@ public class MapController extends BaseController
 		magicalSequence.getChildren().add(lastTimeline);
 
 		magicalSequence.play();
-		magicalSequence.setOnFinished(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event)
-			{
-				nextStep.setDisable(nextDisabled);
-				previousStep.setDisable(prevDisabled);
-				editingFloor.getChildren().remove(magicalCircle);
-			}
+		magicalSequence.setOnFinished(event ->
+		{
+			nextStep.setDisable(nextDisabled);
+			previousStep.setDisable(prevDisabled);
+			editingFloor.getChildren().remove(magicalCircle);
 		});
 	}
 
