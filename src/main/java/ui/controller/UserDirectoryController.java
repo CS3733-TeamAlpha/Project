@@ -9,6 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import sun.plugin.javascript.navig.Anchor;
 import ui.Paths;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class UserDirectoryController extends BaseController
 	public TableColumn<Provider, String> firstNameColumn;
 	public TableColumn<Provider, String> lastNameColumn;
 	public TableColumn<Provider, String> titleColumn;
-	public TableColumn<Provider, String> locationsColumn;
+	public TableColumn<Provider, Anchor> locationsColumn;
 	public TableView tableView;
 	public TextField searchBar;
 
@@ -43,6 +44,10 @@ public class UserDirectoryController extends BaseController
 		lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
 		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 		locationsColumn.setCellValueFactory(new PropertyValueFactory<>("StringLocations"));
+		locationsColumn.getCellObservableValue(0).addListener((observable, oldValue, newValue) ->
+		{
+			System.out.println("??");
+		});
 
 		tableView.setItems(sortedProviders);
 		tableView.getSortOrder().add(lastNameColumn);
