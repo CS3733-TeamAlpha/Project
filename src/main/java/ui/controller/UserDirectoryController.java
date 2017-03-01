@@ -1,17 +1,19 @@
 package ui.controller;
 
+import data.Node;
 import data.Provider;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXML;
+import javafx.geometry.Side;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ui.Paths;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserDirectoryController extends BaseController
 {
@@ -25,6 +27,11 @@ public class UserDirectoryController extends BaseController
 	private ObservableList<Provider> observableList;
 	private FilteredList<Provider> filteredData;
 	private ArrayList<Provider> fullList;
+
+	@FXML
+	private Button getDirButton;
+
+	private ContextMenu providerLocationsContextMenu = new ContextMenu();
 
 	public UserDirectoryController()
 	{
@@ -65,5 +72,33 @@ public class UserDirectoryController extends BaseController
 	public void backButton()
 	{
 		loadFXML(Paths.STARTUP_FXML);
+	}
+
+	public void getProviderDirections()
+	{
+		if(tableView.getSelectionModel().getSelectedItem() != null)
+		{
+			Provider selected = (Provider)tableView.getSelectionModel().getSelectedItem();
+			List<Node> locations = selected.getLocations();
+			if(locations.size() == 1)
+			{
+				setSearchedFor(locations.get(0));
+				loadFXML(Paths.MAP_FXML);
+			} else if (locations.size() > 1)
+			{
+				providerLocationsContextMenu.getItems().clear();
+				for(Node loc: locations)
+				{
+					MenuItem litem = new MenuItem(loc.getName());
+					providerLocationsContextMenu.getItems().add(litem);
+					litem.setOnAction(e ->
+					{
+						setSearchedFor(loc);
+						loadFXML(Paths.MAP_FXML);
+					});
+				}
+				providerLocationsContextMenu.show(getDirButton, Side.BOTTOM, 0, 0);
+			}
+		}
 	}
 }
