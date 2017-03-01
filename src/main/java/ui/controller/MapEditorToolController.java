@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -268,6 +269,7 @@ public class MapEditorToolController extends BaseController
 		typeChoicebox.getItems().add("Selected Kiosk");	//5
 		typeChoicebox.getItems().add("Stairway");		//6
 		typeChoicebox.getItems().add("Parking lot");	//7
+		typeChoicebox.getItems().add("Entry/Exit Pair");//8
 		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
 		{
 			if(!dontupdate) //prevent node types from changing when selecting a new node
@@ -1227,6 +1229,10 @@ public class MapEditorToolController extends BaseController
 					typeChoicebox.getSelectionModel().select(linkedNode.getType());
 				else if (linkedNode.getType() == 20)
 					typeChoicebox.getSelectionModel().select(6);
+				else if (linkedNode.getType() == 21)
+					typeChoicebox.getSelectionModel().select(7);
+				else
+					typeChoicebox.getSelectionModel().select(8);
 				dontupdate = false;
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
@@ -1378,15 +1384,35 @@ public class MapEditorToolController extends BaseController
 				return;
 			}
 			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
-			if (newType >= 6)
+			if (newType == 6 || newType == 7)
 				newType += 14; //the 6th type is actually a stairway, but we call it #20 because... reasons
 			if (newType == 5) //changing to selected kiosk
 			{
 				database.setSelectedKiosk(currentNode);
 			}
-			if (newType > 5 && newType < 20) //links between buildings
+			if (newType == 8) //links between buildings
 			{
-				database.connectEntrances(currentNode, newType);
+				ContextMenu cm = new ContextMenu();
+				for(int i=6; i<20; i++)
+				{
+					MenuItem litem = new MenuItem(Integer.toString(i));
+					cm.getItems().add(litem);
+					litem.setOnAction(e ->
+					{
+						currentNode.setType(Integer.parseInt(litem.getText()));
+						database.connectEntrances(currentNode, currentNode.getType());
+						for(Button b: nodeButtonLinks.keySet())
+						{
+							if(nodeButtonLinks.get(b) == currentNode)
+							{
+								setButtonImage(b, currentNode.getType());
+								break;
+							}
+						}
+					});
+				}
+				cm.show(typeChoicebox, Side.BOTTOM, 0, 0);
+				return;
 			} else if(currentNode.getType() > 5 && currentNode.getType() < 20) //remove links between buildings if changing type to not be a link
 			{
 				database.removeEntranceConnection(currentNode, currentNode.getType());
