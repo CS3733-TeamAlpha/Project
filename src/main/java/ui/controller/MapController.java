@@ -41,6 +41,7 @@ public class MapController extends BaseController
 	//public ImageView floorImage;
 	static Graph graph;
 	public Button returnToKioskButton;
+	public Button backButton;
 	private HashMap<Button, Node> nodeButtons = new HashMap<Button, Node>();
 	private String wrapToolTip = "";
 
@@ -245,6 +246,11 @@ public class MapController extends BaseController
 
 		nextStep.setDisable(true);
 		previousStep.setDisable(true);
+
+
+		DropShadow ds = new DropShadow();
+		ds.setColor(Color.BLACK);
+		backButton.setEffect(ds);
 
 		Node searched = getSearchedFor();
 
@@ -806,6 +812,8 @@ public class MapController extends BaseController
 	 */
 	private void magicalJourney()
 	{
+		boolean nextDisabled = nextStep.isDisabled();
+		boolean prevDisabled = previousStep.isDisabled();
 
 		//manually set layoutX and scaling to workaround weird sizing bug when changing tabs
 		currentZoom = 1;
@@ -871,9 +879,10 @@ public class MapController extends BaseController
 		magicalSequence.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
-			public void handle(ActionEvent event) {
-				nextStep.setDisable(false);
-				previousStep.setDisable(false);
+			public void handle(ActionEvent event)
+			{
+				nextStep.setDisable(nextDisabled);
+				previousStep.setDisable(prevDisabled);
 				editingFloor.getChildren().remove(magicalCircle);
 			}
 		});
@@ -969,8 +978,8 @@ public class MapController extends BaseController
 		else if(hasNextStep) //if the searched path has next steps
 		{
 			stepping = true;
-			//previousstep button starts disabled, so reenable after going to next step
-			previousStep.setDisable(false);
+			//next step button starts disabled, so reenable after going to prev step
+			nextStep.setDisable(false);
 			//clear lines
 			if(currentPath.size() != 0){
 				for(Line l: currentPath){

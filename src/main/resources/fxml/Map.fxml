@@ -9,7 +9,7 @@
 
 <HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <children>
-      <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+      <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
          <children>
             <TabPane fx:id="buildingTabs" layoutX="23.0" layoutY="65.0" style="-fx-background-color: black;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <tabs>
@@ -88,7 +88,7 @@
                 </Tab>
               </tabs>
             </TabPane>
-                  <Button mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
                 <VBox alignment="TOP_CENTER" pickOnBounds="false" spacing="5.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="100.0">
                     <children>
                         <Button fx:id="upFloor" mnemonicParsing="false" onAction="#goUpFloor" styleClass="bh-button" />
@@ -102,7 +102,7 @@
                 </VBox>
          </children>
       </AnchorPane>
-        <VBox fx:id="roomInfo" alignment="TOP_CENTER" maxWidth="340.0" spacing="5.0" styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="roomInfo" alignment="TOP_CENTER" spacing="5.0" styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane>
                <children>
@@ -173,7 +173,6 @@
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
             </Button>
-            <CheckBox fx:id="stairsCheckbox" mnemonicParsing="false" onAction="#changeUseStairs" text="Use stairs?" />
             </children>
          <HBox.margin>
             <Insets />

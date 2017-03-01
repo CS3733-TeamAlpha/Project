@@ -21,6 +21,12 @@
     -fx-cursor: hand;
 }
 
+.bh-outline-button
+{
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+}
+
 .bh-button:pressed
 {
     -fx-background-color: #aaa;
