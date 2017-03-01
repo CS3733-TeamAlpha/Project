@@ -215,9 +215,9 @@ public class MapController extends BaseController
 	ArrayList<Label> loadedLabels = new ArrayList<>();
 
 	//these variables are set just to help deal with the building UUIDs
-	String faulkner = "00000000-0000-0000-0000-000000000000";
-	String belkin = "00000000-0000-0000-0000-111111111111";
-	String outside = "00000000-0000-0000-0000-222222222222";
+	final String Faulkner_UUID = "00000000-0000-0000-0000-000000000000";
+	final String Belkin_UUID = "00000000-0000-0000-0000-111111111111";
+	final String Outside_UUID = "00000000-0000-0000-0000-222222222222";
 
 	public MapController()
 	{
@@ -383,19 +383,19 @@ public class MapController extends BaseController
 		editingFloor = faulknerEditingFloor;
 		faulknerTab.setOnSelectionChanged(event -> {
 			if(faulknerTab.isSelected() && !dontDoSelection){
-				changeBuilding(faulkner);
+				changeBuilding(Faulkner_UUID);
 			}
 		});
 		belkinTab.setOnSelectionChanged(event -> {
 
 			if(belkinTab.isSelected()  && !dontDoSelection){
-				changeBuilding(belkin);
+				changeBuilding(Belkin_UUID);
 			}
 		});
 		outdoorsTab.setOnSelectionChanged(event -> {
 
 			if(outdoorsTab.isSelected() && !dontDoSelection){
-				changeBuilding(outside);
+				changeBuilding(Outside_UUID);
 			}
 		});
 
@@ -682,9 +682,9 @@ public class MapController extends BaseController
 	void goUpFloor (ActionEvent event){
 		int topFloor;
 
-		if(BUILDINGID.equals(belkin)) { //If we are in belkin house
+		if(BUILDINGID.equals(Belkin_UUID)) { //If we are in belkin house
 			topFloor = 4;
-		} else if(BUILDINGID.equals(faulkner)) { //If we are in Faulkner House
+		} else if(BUILDINGID.equals(Faulkner_UUID)) { //If we are in Faulkner House
 			topFloor = 7;
 		} else { //Assume we are outside at this point
 			topFloor = 1;
@@ -753,7 +753,7 @@ public class MapController extends BaseController
 				else
 				{
 					//if we are in outside building, go into target building
-					if(BUILDINGID.equals(outside))
+					if(BUILDINGID.equals(Outside_UUID))
 					{
 						BUILDINGID = selected.getBuilding();
 						changeBuilding(BUILDINGID);
@@ -761,7 +761,7 @@ public class MapController extends BaseController
 					//otherwise go outside
 					else
 					{
-						BUILDINGID = outside;
+						BUILDINGID = Outside_UUID;
 						changeBuilding(BUILDINGID);
 					}
 				}
@@ -798,7 +798,7 @@ public class MapController extends BaseController
 		//manually set layoutX and scaling to workaround weird sizing bug when changing tabs
 		currentZoom = 1;
 		rescale();
-		if(!BUILDINGID.equals(belkin))
+		if(!BUILDINGID.equals(Belkin_UUID))
 		{
 			editingFloor.setLayoutX(0);
 			editingFloor.setLayoutY(0);
@@ -984,7 +984,7 @@ public class MapController extends BaseController
 				else
 				{
 					//if we are in outside building, go into kiosk building
-					if(BUILDINGID.equals(outside))
+					if(BUILDINGID.equals(Outside_UUID))
 					{
 						BUILDINGID = kiosk.getBuilding();
 						changeBuilding(BUILDINGID);
@@ -992,7 +992,7 @@ public class MapController extends BaseController
 					//otherwise go outside
 					else
 					{
-						BUILDINGID = outside;
+						BUILDINGID = Outside_UUID;
 						changeBuilding(BUILDINGID);
 					}
 				}
@@ -1062,7 +1062,7 @@ public class MapController extends BaseController
 		dontDoSelection = true;
 
 		//change tab and set scroller/floorimage/zoomwrapper/editingfloor to the correct selections
-		if (BUILDINGID.equals(faulkner))//faulkner, max 7 floor
+		if (BUILDINGID.equals(Faulkner_UUID))//faulkner, max 7 floor
 		{
 			scroller = faulknerScroller;
 			floorImage = faulknerFloorImage;
@@ -1073,7 +1073,7 @@ public class MapController extends BaseController
 				buildingTabs.getSelectionModel().select(0);
 			}
 			MAXFLOOR = 7;
-		} else if (BUILDINGID.equals(belkin))//belkin, max 4 floor
+		} else if (BUILDINGID.equals(Belkin_UUID))//belkin, max 4 floor
 		{
 			scroller = belkinScroller;
 			floorImage = belkinFloorImage;
@@ -1099,7 +1099,7 @@ public class MapController extends BaseController
 
 		currentZoom = 1;
 		rescale();
-		if(!BUILDINGID.equals(belkin))
+		if(!BUILDINGID.equals(Belkin_UUID))
 		{
 			editingFloor.setLayoutX(0);
 			editingFloor.setLayoutY(0);
@@ -1138,17 +1138,17 @@ public class MapController extends BaseController
 	private void setFloorImage(String buildingid, int floor)
 	{
 		//faulkner
-		if(buildingid.equals(faulkner))
+		if(buildingid.equals(Faulkner_UUID))
 		{
 			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
 		}
 		//belkin
-		else if(buildingid.equals(belkin))
+		else if(buildingid.equals(Belkin_UUID))
 		{
 			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
 		}
 		//outside
-		else if (buildingid.equals(outside))
+		else if (buildingid.equals(Outside_UUID))
 		{
 			//floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
