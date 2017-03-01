@@ -145,8 +145,4 @@ public class StartupController extends BaseController
 		setSearchedFor(graph.findPath(database.getSelectedKiosk(), null, false).get(0));
 		loadFXML(Paths.MAP_FXML);
 	}
-//	public void toggleHighContrast()
-//	{
-//		Accessibility.toggleHighContrast(this);
-//	}
 }
