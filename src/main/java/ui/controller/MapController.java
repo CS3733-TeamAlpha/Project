@@ -327,7 +327,7 @@ public class MapController extends BaseController
 		focusView(n);
 
 		//make the kiosk's location more obvious
-		ImageView yahImage = new ImageView(yahProxy.getFXImage());
+		ImageView yahImage = new ImageView(Paths.yahImageProxy.getFXImage());
 		yahImage.setX(n.getX() - yahImage.getImage().getWidth()/2);
 		yahImage.setY(n.getY() - yahImage.getImage().getHeight());
 		editingFloor.getChildren().add(yahImage);

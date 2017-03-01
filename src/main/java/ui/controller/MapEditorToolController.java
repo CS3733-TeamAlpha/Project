@@ -24,7 +24,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-import ui.Accessibility;
 import ui.Paths;
 import ui.Watchdog;
 
@@ -1494,10 +1493,6 @@ public class MapEditorToolController extends BaseController
 			{
 				Line line = new Line();
 				line.setStrokeWidth(LINEWIDTH);
-				if (Accessibility.isHighContrast())
-				{
-					line.setStroke(Color.WHITE);
-				}
 				line.setStartX(source.getX());
 				line.setStartY(source.getY());
 				line.setEndX(neighbor.getX());

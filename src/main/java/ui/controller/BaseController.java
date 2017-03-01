@@ -23,27 +23,6 @@ public abstract class BaseController
 	protected Watchdog watchdog;
 	private static Node searchedFor;
 
-	// Make proxyimages to store floor pictures
-	ProxyImage f1ImageProxy = Paths.f1ImageProxy;
-	ProxyImage f2ImageProxy = Paths.f2ImageProxy;
-	ProxyImage f3ImageProxy = Paths.f3ImageProxy;
-	ProxyImage f4ImageProxy = Paths.f4ImageProxy;
-	ProxyImage f5ImageProxy = Paths.f5ImageProxy;
-	ProxyImage f6ImageProxy = Paths.f6ImageProxy;
-	ProxyImage f7ImageProxy = Paths.f7ImageProxy;
-
-	ProxyImage f1ContrastProxy = Paths.f1ContrastProxy;
-	ProxyImage f2ContrastProxy = Paths.f2ContrastProxy;
-	ProxyImage f3ContrastProxy = Paths.f3ContrastProxy;
-	ProxyImage f4ContrastProxy = Paths.f4ContrastProxy;
-	ProxyImage f5ContrastProxy = Paths.f5ContrastProxy;
-	ProxyImage f6ContrastProxy = Paths.f6ContrastProxy;
-	ProxyImage f7ContrastProxy = Paths.f7ContrastProxy;
-
-	ProxyImage outdoorsProxy = Paths.outdoorImageProxy;
-
-	ProxyImage yahProxy = Paths.yahImageProxy;
-
 	//default to floor1 of faulkner
 	int FLOORID = 1;
 	String BUILDINGID = "00000000-0000-0000-0000-000000000000";
@@ -110,34 +89,6 @@ public abstract class BaseController
 			{
 				currentSceneSupportsHC = false;
 			}
-		}
-		updateCSS();
-	}
-
-	public void updateCSS()
-	{
-		if (currentSceneSupportsHC && Accessibility.isHighContrast())
-		{
-			enableHighContrastCss();
-		} else
-		{
-			disableHighContrastCss();
-		}
-	}
-
-	private void disableHighContrastCss()
-	{
-		if (stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
-		{
-			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
-		}
-	}
-
-	private void enableHighContrastCss()
-	{
-		if (!stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
-		{
-			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
 		}
 	}
 
