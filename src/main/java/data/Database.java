@@ -2,8 +2,7 @@ package data;
 
 import org.apache.derby.tools.ij;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +22,7 @@ public class Database implements Observer
 	private static final String DB_INSERT_PROVIDERS = "/db/APP_PROVIDERS.sql";
 	private static final String DB_INSERT_SERVICES = "/db/APP_SERVICES.sql";
 	private static final String DB_INSERT_PROVIDEROFFICES = "/db/APP_PROVIDEROFFICES.sql";
+	private static final String DB_DROP_ROWS = "/db/DBDropRows.sql";
 
 	//Database things
 	private String dbName;
@@ -1144,12 +1144,26 @@ public class Database implements Observer
 		reloadCache();
 	}
 
-	private void runScript(String filepath, boolean showOutput)
+	public void loadSaveState(String filePath)
 	{
 		try
 		{
-			//http://apache-database.10148.n7.nabble.com/run-script-from-java-w-ij-td100234.html
-			ij.runScript(connection, getClass().getResource(filepath).openStream(), "UTF-8", new OutputStream()
+			runScript(new FileInputStream(new File(DB_DROP_ROWS)), true);
+			runScript(new FileInputStream(new File(filePath)), true);
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	private void runScript(InputStream scriptStream, boolean showOutput)
+	{
+		//http://apache-database.10148.n7.nabble.com/run-script-from-java-w-ij-td100234.html
+		try
+		{
+			ij.runScript(connection, scriptStream, "UTF-8", new OutputStream()
 			{
 				@Override
 				public void write(int i) throws IOException
@@ -1158,7 +1172,20 @@ public class Database implements Observer
 						System.out.write(i);
 				}
 			}, "UTF-8");
-		} catch (IOException e)
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void runScript(String filepath, boolean showOutput)
+	{
+		try
+		{
+			runScript(getClass().getResource(filepath).openStream(), showOutput);
+		}
+		catch (IOException e)
 		{
 			System.out.println("Couldn't find database script " + filepath + "... that's an error.");
 			e.printStackTrace();

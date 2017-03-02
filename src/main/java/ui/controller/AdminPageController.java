@@ -1,5 +1,6 @@
 package ui.controller;
 
+import data.DatabaseSaver;
 import data.Node;
 import data.NodeTypes;
 import javafx.application.Platform;
@@ -275,5 +276,12 @@ public class AdminPageController extends BaseController
 	public void logout(ActionEvent actionEvent)
 	{
 		loadFXML(Paths.STARTUP_FXML);
+	}
+
+	public void saveDatabase(ActionEvent actionEvent)
+	{
+		database.disconnect();
+		DatabaseSaver.saveDatabase("FHAlpha");
+		database.connect();
 	}
 }
