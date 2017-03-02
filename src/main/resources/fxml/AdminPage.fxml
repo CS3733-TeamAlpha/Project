@@ -34,7 +34,7 @@
                <children>
                   <HBox fx:id="editDirectoryFrame" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane styleClass="bh-admin-icon" onMouseClicked="#editDirectory">
+                        <StackPane onMouseClicked="#editDirectory" styleClass="bh-admin-icon">
                            <children>
                               <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
                                  <image>
@@ -131,7 +131,7 @@
                   </HBox>
                   <HBox fx:id="factoryResetFrame" layoutX="540.0" layoutY="142.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane styleClass="bh-admin-icon" onMouseClicked="#factoryReset">
+                        <StackPane onMouseClicked="#factoryReset" styleClass="bh-admin-icon">
                            <children>
                               <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
                                  <image>
@@ -157,7 +157,7 @@
                   </HBox>
                   <HBox fx:id="logoutFrame" layoutX="15.0" layoutY="259.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane maxHeight="99.0" styleClass="bh-admin-icon" onMouseClicked="#logout">
+                        <StackPane maxHeight="99.0" onMouseClicked="#logout" styleClass="bh-admin-icon">
                            <children>
                               <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -218,7 +218,7 @@
                                        <font>
                                           <Font size="22.0" />
                                        </font></Label>
-                                    <Spinner fx:id="timeoutSpinner" prefHeight="26.0" prefWidth="60.0">
+                                    <Spinner fx:id="timeoutSpinner" minWidth="80.0" prefHeight="26.0" prefWidth="80.0">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor></Spinner>
