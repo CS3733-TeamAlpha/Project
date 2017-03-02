@@ -1,18 +1,16 @@
 package ui.controller;
 
-import data.DatabaseSaver;
 import data.Node;
 import data.NodeTypes;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
@@ -22,7 +20,6 @@ import ui.Paths;
 import ui.Watchdog;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 
 public class AdminPageController extends BaseController
@@ -112,17 +109,17 @@ public class AdminPageController extends BaseController
 		timeoutSpinner.setValueFactory(valueFactory);
 	}
 
-	public void editDirectory(ActionEvent actionEvent)
+	public void editDirectory()
 	{
 		loadFXML(Paths.DIRECTORY_EDITOR_FXML);
 	}
 
-	public void editMap(ActionEvent actionEvent)
+	public void editMap()
 	{
 		loadFXML(Paths.MAP_EDITOR_FXML);
 	}
 
-	public void changePassword(ActionEvent actionEvent)
+	public void changePassword()
 	{
 		if(LoginState.isAdminLoggedIn())
 			loadFXML(Paths.MANAGE_ACCOUNTS_FXML);
@@ -215,12 +212,12 @@ public class AdminPageController extends BaseController
 		}
 	}
 
-	public void factoryReset(ActionEvent actionEvent)
+	public void factoryReset()
 	{
 		loadFXML(Paths.MANAGE_DATA_FXML);
 	}
 
-	public void logout(ActionEvent actionEvent)
+	public void logout()
 	{
 		loadFXML(Paths.STARTUP_FXML);
 	}

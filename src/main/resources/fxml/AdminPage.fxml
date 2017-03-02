@@ -34,17 +34,23 @@
                <children>
                   <HBox fx:id="editDirectoryFrame" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane styleClass="bh-admin-icon">
+                        <StackPane styleClass="bh-admin-icon" onMouseClicked="#editDirectory">
                            <children>
-                              <ImageView fitHeight="80.0" fitWidth="80.0" onMouseClicked="#editDirectory" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
                                  <image>
                                     <Image url="@../images/directory.png" />
                                  </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </ImageView>
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </StackPane>
                         <Button mnemonicParsing="false" onAction="#editDirectory" prefHeight="99.0" prefWidth="402.0" styleClass="bh-admin-button" text="Edit Directory">
                            <font>
@@ -64,9 +70,9 @@
                   </HBox>
                   <HBox fx:id="editMapFrame" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane prefHeight="100.0" prefWidth="100.0" styleClass="bh-admin-icon">
+                        <StackPane onMouseClicked="#editMap" prefHeight="100.0" prefWidth="100.0" styleClass="bh-admin-icon">
                            <children>
-                              <ImageView fitHeight="80.0" fitWidth="80.0" onMouseClicked="#editMap" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/floor1_preview.png" />
                                  </image>
@@ -93,17 +99,23 @@
                   </HBox>
                   <HBox fx:id="changePasswordFrame" layoutX="15.0" layoutY="137.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane styleClass="bh-admin-icon">
+                        <StackPane onMouseClicked="#changePassword" styleClass="bh-admin-icon">
                            <children>
-                              <ImageView fitHeight="80.0" fitWidth="80.0" onMouseClicked="#changePassword" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/lock_large.png" />
                                  </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </ImageView>
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </StackPane>
                         <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS">
                            <cursor>
@@ -119,9 +131,9 @@
                   </HBox>
                   <HBox fx:id="factoryResetFrame" layoutX="540.0" layoutY="142.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane styleClass="bh-admin-icon">
+                        <StackPane styleClass="bh-admin-icon" onMouseClicked="#factoryReset">
                            <children>
-                              <ImageView fitHeight="80.0" fitWidth="80.0" onMouseClicked="#factoryReset" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
                                  <image>
                                     <Image url="@../images/warning.png" />
                                  </image>
@@ -145,9 +157,9 @@
                   </HBox>
                   <HBox fx:id="logoutFrame" layoutX="15.0" layoutY="259.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <StackPane maxHeight="99.0" styleClass="bh-admin-icon">
+                        <StackPane maxHeight="99.0" styleClass="bh-admin-icon" onMouseClicked="#logout">
                            <children>
-                              <ImageView fitHeight="80.0" fitWidth="80.0" onMouseClicked="#logout" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/logout.png" />
                                  </image>
@@ -156,6 +168,9 @@
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </StackPane>
                         <Button mnemonicParsing="false" onAction="#logout" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Logout" HBox.hgrow="ALWAYS">
                            <cursor>
