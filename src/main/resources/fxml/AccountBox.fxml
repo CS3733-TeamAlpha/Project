@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
@@ -12,7 +13,13 @@
             <Font size="17.0" />
          </font>
       </Label>
-      <Button fx:id="deleteButton" layoutX="289.0" layoutY="12.0" mnemonicParsing="false" text="Delete" AnchorPane.rightAnchor="153.0" />
-      <Button fx:id="changePasswordButton" layoutX="357.0" layoutY="12.0" mnemonicParsing="false" text="Change Password" AnchorPane.rightAnchor="14.0" />
+      <Button fx:id="deleteButton" layoutX="289.0" layoutY="12.0" mnemonicParsing="false" text="Delete" AnchorPane.rightAnchor="153.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Button fx:id="changePasswordButton" layoutX="357.0" layoutY="12.0" mnemonicParsing="false" text="Change Password" AnchorPane.rightAnchor="14.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
    </children>
 </AnchorPane>
