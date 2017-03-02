@@ -150,7 +150,6 @@
 .fake-list-view
 {
     -fx-border-width: 0px;
-    -fx-background-color: white;
 }
 
 .fake-list-cell

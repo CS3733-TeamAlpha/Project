@@ -1143,9 +1143,22 @@ public class Database implements Observer
 
 	public void loadSaveState(String filePath)
 	{
+		nodeCache.clear();
 		try
 		{
-			runScript(new FileInputStream(new File(DB_DROP_ROWS)), true);
+			statement.close();
+			connection.close();
+			connection = DriverManager.getConnection("jdbc:derby:" + dbName + ";create=true");
+		} catch (SQLException e)
+		{
+			//whatever
+			e.printStackTrace();
+		}
+
+		try
+		{
+			runScript(DB_DROP_ALL, true);
+			runScript(DB_CREATE_SQL, false);
 			runScript(new FileInputStream(new File(filePath)), true);
 		}
 		catch (FileNotFoundException e)
@@ -1153,6 +1166,15 @@ public class Database implements Observer
 			e.printStackTrace();
 		}
 
+		try
+		{
+			statement = connection.createStatement();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		reloadCache();
 	}
 
 	private void runScript(InputStream scriptStream, boolean showOutput)
