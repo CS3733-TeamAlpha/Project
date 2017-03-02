@@ -1,6 +1,7 @@
 package pathfinding;
 
 import data.Node;
+import data.NodeTypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +10,13 @@ import java.util.LinkedList;
 public class BreadthFirstGraph extends Graph
 {
 
-	public ArrayList<Node> findPath(Node start, Node end)
+	public ArrayList<Node> findPath(Node start, Node end, boolean useStairs)
 	{
 		System.out.println("Activating breadth first search");
-		ArrayList<Node> result = new ArrayList<Node>();
-		HashMap<Node, Node> parentMap = new HashMap<Node, Node>();
+		ArrayList<Node> result = new ArrayList<>();
+		HashMap<Node, Node> parentMap = new HashMap<>();
 		parentMap.put(start, null);
-		LinkedList<Node> nodeQueue = new LinkedList<Node>();
+		LinkedList<Node> nodeQueue = new LinkedList<>();
 
 		if (start == null || end == null)
 			return null;
@@ -36,6 +37,13 @@ public class BreadthFirstGraph extends Graph
 		while (!nodeQueue.isEmpty())
 		{
 			Node temp = nodeQueue.poll();
+			if (useStairs && (temp.getType() == NodeTypes.ELEVATOR.val() &&
+					temp != end))
+				continue;
+			if (!useStairs && (temp.getType() == NodeTypes.STAIRWAY.val() &&
+					temp != end))
+				continue;
+
 			if (temp == end)
 			{
 				while (parentMap.get(temp) != null)

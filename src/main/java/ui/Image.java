@@ -1,8 +1,8 @@
 package ui;
 
 /**
- * Created by Sam on 2/15/2017.
+ * This is just for the class diagram... you're welcome Adam
  */
-public interface Image {
-	void display();
+public interface Image
+{
 }

@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -25,21 +28,37 @@
            </children>
        </Pane>
        <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" VBox.vgrow="NEVER" />
-      <BorderPane VBox.vgrow="ALWAYS">
+      <BorderPane styleClass="bh-background-pane" VBox.vgrow="ALWAYS">
          <center>
             <FlowPane maxHeight="500.0" maxWidth="1050.0" prefHeight="200.0" prefWidth="500.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox prefWidth="500.0" styleClass="bh-admin-box">
+                  <HBox fx:id="editDirectoryFrame" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="100.0" onMouseClicked="#editDirectory" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/directory.png" />
-                           </image>
-                        </ImageView>
+                        <StackPane onMouseClicked="#editDirectory" styleClass="bh-admin-icon">
+                           <children>
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
+                                 <image>
+                                    <Image url="@../images/directory.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </StackPane>
                         <Button mnemonicParsing="false" onAction="#editDirectory" prefHeight="99.0" prefWidth="402.0" styleClass="bh-admin-button" text="Edit Directory">
                            <font>
                               <Font name="Glacial Indifference Regular" size="30.0" />
                            </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Button>
                      </children>
                      <VBox.margin>
@@ -49,14 +68,27 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </FlowPane.margin>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                  <HBox fx:id="editMapFrame" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#editMap" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/floor1_preview.png" />
-                           </image>
-                        </ImageView>
-                        <Button mnemonicParsing="false" onAction="#editMap" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Edit Map" HBox.hgrow="ALWAYS" />
+                        <StackPane onMouseClicked="#editMap" prefHeight="100.0" prefWidth="100.0" styleClass="bh-admin-icon">
+                           <children>
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/floor1_preview.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </StackPane>
+                        <Button mnemonicParsing="false" onAction="#editMap" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Edit Map" HBox.hgrow="ALWAYS">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                      </children>
                      <VBox.margin>
                         <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
@@ -65,14 +97,30 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </FlowPane.margin>
                   </HBox>
-                  <HBox layoutX="15.0" layoutY="137.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                  <HBox fx:id="changePasswordFrame" layoutX="15.0" layoutY="137.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#changePassword" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/lock_large.png" />
-                           </image>
-                        </ImageView>
-                        <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS" />
+                        <StackPane onMouseClicked="#changePassword" styleClass="bh-admin-icon">
+                           <children>
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/lock_large.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </StackPane>
+                        <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#changePassword" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Change Password" HBox.hgrow="ALWAYS">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                      </children>
                      <VBox.margin>
                         <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
@@ -81,27 +129,53 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </FlowPane.margin>
                   </HBox>
-                  <HBox layoutX="540.0" layoutY="142.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                  <HBox fx:id="factoryResetFrame" layoutX="540.0" layoutY="142.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#factoryReset" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/warning.png" />
-                           </image>
-                        </ImageView>
-                        <Button mnemonicParsing="false" onAction="#factoryReset" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Factory Reset" HBox.hgrow="ALWAYS" />
+                        <StackPane onMouseClicked="#factoryReset" styleClass="bh-admin-icon">
+                           <children>
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" styleClass="bh-admin-icon">
+                                 <image>
+                                    <Image url="@../images/warning.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </StackPane>
+                        <Button mnemonicParsing="false" onAction="#factoryReset" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Manage Data" HBox.hgrow="ALWAYS">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                      </children>
                      <FlowPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </FlowPane.margin>
                   </HBox>
-                  <HBox layoutX="15.0" layoutY="259.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
+                  <HBox fx:id="logoutFrame" layoutX="15.0" layoutY="259.0" prefHeight="100.0" prefWidth="500.0" styleClass="bh-admin-box">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" onMouseClicked="#logout" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/logout.png" />
-                           </image>
-                        </ImageView>
-                        <Button mnemonicParsing="false" onAction="#logout" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Logout" HBox.hgrow="ALWAYS" />
+                        <StackPane maxHeight="99.0" onMouseClicked="#logout" styleClass="bh-admin-icon">
+                           <children>
+                              <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/logout.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </StackPane>
+                        <Button mnemonicParsing="false" onAction="#logout" prefHeight="99.0" prefWidth="527.0" styleClass="bh-admin-button" text="Logout" HBox.hgrow="ALWAYS">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -112,28 +186,55 @@
                   </HBox>
                   <HBox prefHeight="120.0" prefWidth="510.0">
                      <children>
-                        <VBox prefHeight="120.0" prefWidth="514.0">
+                        <VBox prefHeight="120.0" prefWidth="514.0" spacing="15.0">
                            <children>
-                              <HBox prefHeight="28.0" prefWidth="510.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="28.0" prefWidth="510.0" spacing="5.0">
                                  <children>
-                                    <Label text="Path Algorithm:" />
-                                    <ChoiceBox fx:id="algorithmSelector" prefWidth="150.0" />
+                                    <Label styleClass="bh-styled-label" text="Path Algorithm:">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font></Label>
+                                    <ChoiceBox fx:id="algorithmSelector" prefWidth="150.0" styleClass="bh-dropdown">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></ChoiceBox>
                                  </children>
                               </HBox>
-                              <HBox prefHeight="100.0" prefWidth="200.0">
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
                                  <children>
-                                    <Label prefHeight="16.0" prefWidth="102.0" text="Kiosk Node:" />
-                                    <ChoiceBox fx:id="kioskNodeSelector" prefWidth="150.0" />
+                                    <Label styleClass="bh-styled-label" text="Kiosk Node:">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font></Label>
+                                    <ChoiceBox fx:id="kioskNodeSelector" prefWidth="150.0" styleClass="bh-dropdown">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></ChoiceBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="28.0" prefWidth="510.0" spacing="5.0">
+                                 <children>
+                                    <Label styleClass="bh-styled-label" text="UI Timeout (seconds):">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font></Label>
+                                    <Spinner fx:id="timeoutSpinner" minWidth="80.0" prefHeight="26.0" prefWidth="80.0">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor></Spinner>
                                  </children>
                               </HBox>
                            </children>
+                           <HBox.margin>
+                              <Insets left="15.0" top="15.0" />
+                           </HBox.margin>
                         </VBox>
                      </children></HBox>
                </children>
             </FlowPane>
          </center>
          <top>
-            <Label text="Administrator Panel" BorderPane.alignment="CENTER">
+            <Label styleClass="bh-styled-label" text="Administrator Panel" BorderPane.alignment="CENTER">
                <font>
                   <Font size="62.0" />
                </font>

@@ -1,6 +1,7 @@
 package ui.controller;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -8,8 +9,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.mindrot.jbcrypt.BCrypt;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,12 +20,13 @@ import java.util.Optional;
 
 public class ManageAccountsController extends BaseController
 {
-	public Button backButton;
 	public VBox listBox;
 
 	@Override
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		reloadList();
 	}
 
@@ -37,13 +41,9 @@ public class ManageAccountsController extends BaseController
 			AnchorPane anchorPane = generateListItem(account);
 			listBox.getChildren().add(anchorPane);
 			if(i % 2 == 1)
-			{
 				anchorPane.getStyleClass().add("fake-list-alternate");
-			}
-			if(i == allAccounts.size()-1)
-			{
+			if(i == allAccounts.size() - 1)
 				anchorPane.getStyleClass().add("fake-list-cell-last");
-			}
 		}
 	}
 
@@ -68,35 +68,33 @@ public class ManageAccountsController extends BaseController
 		accountLabel.setText(accountName);
 
 		Button deleteButton = (Button) root.lookup("#deleteButton");
-		if(Paths.isAdmin(accountName))
-		{
+		if(accountName.equals(Paths.ADMIN_NAME))
 			deleteButton.setVisible(false);
-		}
 		else
 		{
 			deleteButton.setOnAction(event ->
+			{
+				Alert deleteWarning = new Alert(Alert.AlertType.WARNING);
+				deleteWarning.setTitle("Warning: Account Deleting");
+				deleteWarning.setHeaderText("Warning: Deleting account '" + accountName + "'");
+				deleteWarning.setContentText("This operation cannot be undone");
+
+				deleteWarning.getButtonTypes().addAll(ButtonType.CANCEL);
+				Optional<ButtonType> result = deleteWarning.showAndWait();
+				if (result.isPresent())
+				{
+					if(result.get() == ButtonType.OK)
 					{
-						Alert deleteWarning = new Alert(Alert.AlertType.WARNING);
-						deleteWarning.setTitle("Warning: Account Deleting");
-						deleteWarning.setHeaderText("Warning: Deleting account '" + accountName + "'");
-						deleteWarning.setContentText("This operation cannot be undone");
+						database.deleteAccount(accountName);
 
-						deleteWarning.getButtonTypes().addAll(ButtonType.CANCEL);
-						Optional<ButtonType> result = deleteWarning.showAndWait();
-						if (result.isPresent())
-						{
-							if(result.get() == ButtonType.OK)
-							{
-								database.deleteAccount(accountName);
-
-								Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
-								confirmation.setTitle("Account Deleted");
-								confirmation.setHeaderText("Account deleted successfully");
-								confirmation.show();
-								reloadList();
-							}
-						}
-					});
+						Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
+						confirmation.setTitle("Account Deleted");
+						confirmation.setHeaderText("Account deleted successfully");
+						confirmation.show();
+						reloadList();
+					}
+				}
+			});
 		}
 
 		Button changePasswordButton = (Button) root.lookup("#changePasswordButton");

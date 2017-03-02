@@ -1,6 +1,6 @@
 @font-face
 {
-    font-family: 'Glacial Indifference';
+    font-family: 'GlacialIndifference';
     src: url('../fonts/GlacialIndifference-Regular.otf');
 }
 
@@ -21,6 +21,12 @@
     -fx-cursor: hand;
 }
 
+.bh-outline-button
+{
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+}
+
 .bh-button:pressed
 {
     -fx-background-color: #aaa;
@@ -28,12 +34,18 @@
 
 .bh-admin-button, .bh-admin-button:hover
 {
-    -fx-background-color: #eee;
-    -fx-border-color: #666;
+    -fx-background-color: #ffffff;
     -fx-text-fill: #333;
     -fx-focus-traversable: false;
     -fx-font-family: "Glacial Indifference";
     -fx-font-size: 30pt;
+    -fx-background-radius: 0px 5px 5px 0px;
+}
+
+.bh-admin-icon
+{
+    -fx-background-radius: 5px 0px 0px 5px;
+    -fx-background-color: white;
 }
 
 .text-field:focused, .text-field
@@ -78,9 +90,7 @@
 }
 #roomLabel
 {
--fx-font: 15px GlacialIndifference;
-    -fx-text-fill: white;
--fx-background-color: #29708e;
+    -fx-text-fill: rgb(117, 117, 117);
     -fx-padding: 1px;
 }
 
@@ -129,10 +139,17 @@
 
 }
 
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: #BFBDBB;
+}
+
 .fake-list-view
 {
     -fx-border-width: 0px;
-    -fx-background-color: white;
 }
 
 .fake-list-cell
@@ -155,6 +172,11 @@
 .bh-background-pane
 {
     -fx-background-color: #29708e;
+}
+
+.bh-map-sidebar
+{
+    -fx-background-color: rgba(41,112,142, 200);
 }
 
 .bh-styled-label
@@ -216,4 +238,21 @@
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-opacity: 1;
+}
+
+.bh-dropdown
+{
+    -fx-background-color: white;
+}
+
+.bh-startup-frame
+{
+    -fx-background-image: url("../images/Network2.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 100% 100%;
+}
+
+.bh-lock-icon
+{
+    -fx-background-color: #29708e;
 }

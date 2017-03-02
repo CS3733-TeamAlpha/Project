@@ -1,63 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<SplitPane fx:id="roomviewSplit" centerShape="false" dividerPositions="0.75" pickOnBounds="false" prefHeight="720.0" prefWidth="1280.0" scaleShape="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
-    <items>
-        <StackPane alignment="TOP_CENTER">
-            <children>
-                <ScrollPane fx:id="scroller" hbarPolicy="ALWAYS" pannable="true" vbarPolicy="ALWAYS" StackPane.alignment="TOP_LEFT">
-                    <content>
-                        <AnchorPane fx:id="zoomWrapper">
-                            <children>
-                                <AnchorPane fx:id="editingFloor" minHeight="0.0" minWidth="0.0">
-                                    <children>
-                                        <ImageView fx:id="floorImage" fitHeight="1300.0" fitWidth="2250.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <image>
-                                                <Image url="@/images/floor3.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </AnchorPane>
-                            </children>
+<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
+   <children>
+      <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
+         <children>
+            <TabPane fx:id="buildingTabs" layoutX="23.0" layoutY="65.0" style="-fx-background-color: black;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <tabs>
+                <Tab fx:id="faulknerTab" styleClass="bh-button" text="Faulkner Main">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                                  <ScrollPane fx:id="faulknerScroller" hbarPolicy="ALWAYS" pannable="true" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <content>
+                                          <AnchorPane fx:id="faulknerZoomWrapper" maxHeight="1485.0" maxWidth="2475.0" minHeight="1485.0" minWidth="2475.0" prefHeight="1485.0" prefWidth="2475.0">
+                                              <children>
+                                                  <AnchorPane fx:id="faulknerEditingFloor" maxHeight="1485.0" maxWidth="2475.0" minHeight="1485.0" minWidth="2475.0" prefHeight="1485.0" prefWidth="2475.0">
+                                                      <children>
+                                                          <ImageView fx:id="faulknerFloorImage" fitHeight="1485.0" fitWidth="2475.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <image>
+                                                      <Image url="@../floors/hospital1.png" />
+                                                   </image></ImageView>
+                                                      </children>
+                                                  </AnchorPane>
+                                              </children>
+                                          </AnchorPane>
+                                      </content>
+                                  </ScrollPane>
+                           </children>
                         </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab fx:id="outdoorsTab" styleClass="bh-button" text="Outdoors">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" style="-fx-background-color: white;" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <AnchorPane fx:id="outdoorsZoomWrapper">
+                                       <children>
+                                          <AnchorPane fx:id="outdoorsEditingFloor" minHeight="2455.0" minWidth="2000.0">
+                                             <children>
+                                                <ImageView fx:id="outdoorsFloorImage" fitHeight="2455.0" fitWidth="2000.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <image>
+                                                      <Image url="@../floors/outsideFloor.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </ScrollPane>
+                           </children></AnchorPane>
                     </content>
-                </ScrollPane>
-                <Pane pickOnBounds="false">
+                  </Tab>
+                <Tab fx:id="belkinTab" styleClass="bh-button" text="Belkin House">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: black;">
+                           <children>
+                              <ScrollPane fx:id="belkinScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <AnchorPane fx:id="belkinZoomWrapper">
+                                       <children>
+                                          <AnchorPane fx:id="belkinEditingFloor" minHeight="1286.0" minWidth="1126.0">
+                                             <children>
+                                                <ImageView fx:id="belkinFloorImage" fitHeight="1286.0" fitWidth="1126.0" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <image>
+                                                      <Image url="@../floors/belkin1Double.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+                <VBox alignment="TOP_CENTER" pickOnBounds="false" spacing="5.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="100.0">
                     <children>
-                        <Button layoutX="14.0" layoutY="7.0" mnemonicParsing="false" onAction="#showStartup" text="&lt; Back" />
-                        <Button fx:id="upFloor" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" onAction="#goUpFloor" />
-                        <Button fx:id="downFloor" layoutX="14.0" layoutY="143.0" mnemonicParsing="false" onAction="#goDownFloor" />
-                        <Label fx:id="currentFloorLabel" layoutX="17.0" layoutY="105.0" text="1">
+                        <Button fx:id="upFloor" mnemonicParsing="false" onAction="#goUpFloor" styleClass="bh-button">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                        <Label fx:id="currentFloorLabel" text="1">
                             <font>
                                 <Font size="26.0" />
                             </font>
                         </Label>
+                        <Button fx:id="downFloor" mnemonicParsing="false" onAction="#goDownFloor" styleClass="bh-button">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                     </children>
-                </Pane>
-            </children>
-        </StackPane>
-        <VBox fx:id="roomInfo" alignment="TOP_CENTER" spacing="5.0" styleClass="bh-background-pane">
+                </VBox>
+         </children>
+      </AnchorPane>
+        <VBox fx:id="roomInfo" alignment="TOP_CENTER" maxWidth="350.0" prefWidth="350.0" spacing="5.0" styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane>
-                    <children>
-                        <Button mnemonicParsing="false" onAction="#hideRoomInfo" prefHeight="28.0" prefWidth="65.0" styleClass="bh-button" text="Hide &gt;" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                    </children>
+               <children>
+                  <Pane prefHeight="23.0" prefWidth="200.0" />
+               </children>
                 </AnchorPane>
-                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" wrapText="true">
+                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" textAlignment="CENTER" wrapText="true">
                     <font>
                         <Font name="Glacial Indifference Regular" size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" wrapText="true">
+            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="17.0" />
-               </font></Label>
+               </font>
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </VBox.margin>
+            </Label>
                 <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findDirectionsTo" styleClass="bh-button" text="Find Directions">
                     <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -67,7 +140,11 @@
                     </font>
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                    </padding></Button>
+                    </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
             <StackPane>
                <children>
                       <HBox prefHeight="52.0" prefWidth="315.0">
@@ -76,8 +153,14 @@
                                   <HBox.margin>
                                       <Insets right="15.0" />
                                   </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                               </Button>
-                              <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step" />
+                              <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                           </children>
                           <VBox.margin>
                               <Insets left="20.0" right="20.0" />
@@ -93,17 +176,38 @@
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
             </StackPane>
-                <ScrollPane hbarPolicy="NEVER" prefHeight="344.0" prefWidth="315.0" styleClass="hc-black">
+                <ScrollPane hbarPolicy="NEVER" prefHeight="342.0" prefWidth="294.0" styleClass="hc-black">
                     <content>
                         <Label fx:id="textDirectionsLabel" styleClass="hc-black" wrapText="true" />
                     </content>
                     <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                    </VBox.margin></ScrollPane>
+                    </VBox.margin>
+            </ScrollPane>
                 <Button mnemonicParsing="false" onAction="#clearPath" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Clear Path">
                     <VBox.margin>
                         <Insets left="20.0" right="20.0" />
-                    </VBox.margin></Button>
-            </children></VBox>
-    </items>
-</SplitPane>
+                    </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#gotoKiosk" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Return to Kiosk">
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="useStairsButton" mnemonicParsing="false" onAction="#changeUseStairs" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Use Stairs">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+            </children>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </VBox>
+   </children>
+</HBox>

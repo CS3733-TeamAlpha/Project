@@ -1,6 +1,7 @@
 package pathfinding;
 
 import data.Node;
+import data.NodeTypes;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -10,9 +11,8 @@ public class AStarGraph extends Graph
 	/**
 	 * {@inheritDoc}
 	 */
-	public ArrayList<Node> findPath(Node start, Node end)
+	public ArrayList<Node> findPath(Node start, Node end, boolean useStairs)
 	{
-		System.out.println("Activating A* search");
 		if (start == null || end == null)
 			return null; //idiot check
 
@@ -29,8 +29,8 @@ public class AStarGraph extends Graph
 		ASTNode astEnd = new ASTNode(end, -1);
 		astStart.f = start.distance(end);
 
-		PriorityQueue<ASTNode> openList = new PriorityQueue<ASTNode>();
-		ArrayList<Node> closedList = new ArrayList<Node>();
+		PriorityQueue<ASTNode> openList = new PriorityQueue<>();
+		ArrayList<Node> closedList = new ArrayList<>();
 		openList.add(astStart);
 
 		boolean complete = false;
@@ -45,11 +45,13 @@ public class AStarGraph extends Graph
 				if (closedList.contains(expTempNode))
 					continue; //Don't explore nodes that have already been explored
 
-				//Straight shot optimization -- if curNode isn't on the same floor as start or end, this node must be
-				//on a different floor than curNode. Otherwise, skip.
-				//if ((curNode.node.getFloor() != start.getFloor() || curNode.node.getFloor() != end.getFloor())
-				//		&& expTempNode.getFloor() == curNode.node.getFloor())
-				//	continue;
+				//Make sure that we're not exploring elevators or stairs when we're not supposed to be
+				if (useStairs && (expTempNode.getType() == NodeTypes.ELEVATOR.val() &&
+									expTempNode != end))
+					continue;
+				if (!useStairs && (expTempNode.getType() == NodeTypes.STAIRWAY.val() &&
+									expTempNode != end))
+					continue;
 
 				//Check to see if we've found the end node yet
 				if (expTempNode == end)
@@ -88,7 +90,7 @@ public class AStarGraph extends Graph
 			return null;
 
 		//Backtrack from the end node, assembling an ordered list as we go
-		ArrayList<Node> path = new ArrayList<Node>();
+		ArrayList<Node> path = new ArrayList<>();
 		for (ASTNode node = astEnd; node != null; node = node.parent)
 			if (filterNode(start, end, node.node))
 				path.add(node.node);

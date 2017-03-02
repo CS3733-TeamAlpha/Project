@@ -1,6 +1,8 @@
 package ui.controller;
 
 import data.Database;
+import data.NodeTypes;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -11,36 +13,15 @@ import ui.*;
 
 import java.io.IOException;
 
-/**
- * Created by Ari on 2/14/17.
- */
 public abstract class BaseController
 {
 	protected static Stage stage;
 	private boolean currentSceneSupportsHC = true;
 	private String[] highContrastBlackList = {Paths.LOGIN_FXML, Paths.DIRECTORY_EDITOR_FXML, Paths.USER_DIRECTORY_FXML};
 	protected static Database database;
-
+	protected static int uiTimeout = 60; //default seconds to revert
+	protected Watchdog watchdog;
 	private static Node searchedFor;
-
-	// Make proxyimages to store floor pictures
-	ProxyImage f1ImageProxy = Paths.f1ImageProxy;
-	ProxyImage f2ImageProxy = Paths.f2ImageProxy;
-	ProxyImage f3ImageProxy = Paths.f3ImageProxy;
-	ProxyImage f4ImageProxy = Paths.f4ImageProxy;
-	ProxyImage f5ImageProxy = Paths.f5ImageProxy;
-	ProxyImage f6ImageProxy = Paths.f6ImageProxy;
-	ProxyImage f7ImageProxy = Paths.f7ImageProxy;
-
-	ProxyImage f1ContrastProxy = Paths.f1ContrastProxy;
-	ProxyImage f2ContrastProxy = Paths.f2ContrastProxy;
-	ProxyImage f3ContrastProxy = Paths.f3ContrastProxy;
-	ProxyImage f4ContrastProxy = Paths.f4ContrastProxy;
-	ProxyImage f5ContrastProxy = Paths.f5ContrastProxy;
-	ProxyImage f6ContrastProxy = Paths.f6ContrastProxy;
-	ProxyImage f7ContrastProxy = Paths.f7ContrastProxy;
-
-	ProxyImage outdoorsProxy = Paths.outdoorImageProxy;
 
 	//default to floor1 of faulkner
 	int FLOORID = 1;
@@ -68,10 +49,7 @@ public abstract class BaseController
 	public BaseController()
 	{
 		if (database == null)
-		{
 			database = new Database("FHAlpha");
-			ProviderBox.database = database;
-		}
 	}
 
 	public abstract void initialize();
@@ -79,10 +57,17 @@ public abstract class BaseController
 	public static void setStage(Stage s)
 	{
 		stage = s;
+		stage.getIcons().add(new javafx.scene.image.Image(Main.class.getResourceAsStream(Paths.ICON)));
 	}
 
 	protected void loadFXML(String path)
 	{
+		if (watchdog != null)
+		{
+			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog.disconnect();
+		}
+
 		Parent root = null;
 		try
 		{
@@ -96,40 +81,8 @@ public abstract class BaseController
 		//Update the high contrast option
 		currentSceneSupportsHC = true;
 		for (int i = 0; i < highContrastBlackList.length; i++)
-		{
 			if (highContrastBlackList[i].equals(path))
-			{
 				currentSceneSupportsHC = false;
-			}
-		}
-		updateCSS();
-	}
-
-	public void updateCSS()
-	{
-		if (currentSceneSupportsHC && Accessibility.isHighContrast())
-		{
-			enableHighContrastCss();
-		} else
-		{
-			disableHighContrastCss();
-		}
-	}
-
-	private void disableHighContrastCss()
-	{
-		if (stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
-		{
-			stage.getScene().getStylesheets().remove(Accessibility.HIGH_CONTRAST_CSS);
-		}
-	}
-
-	private void enableHighContrastCss()
-	{
-		if (!stage.getScene().getStylesheets().contains(Accessibility.HIGH_CONTRAST_CSS))
-		{
-			stage.getScene().getStylesheets().add(Accessibility.HIGH_CONTRAST_CSS);
-		}
 	}
 
 	protected void setSearchedFor(Node n)
@@ -150,35 +103,31 @@ public abstract class BaseController
 	 */
 	protected void setButtonImage(Button b, int type)
 	{
-		if (type == 1)
+		ImageView buttonImage = null;
+		if (type == NodeTypes.DOCTOR_OFFICE.val())
+			buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
+		else if (type == NodeTypes.ELEVATOR.val())
+			buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
+		else if (type == NodeTypes.RESTROOM.val())
+			buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
+		else if (type == NodeTypes.KIOSK.val())
+			buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
+		else if (type == NodeTypes.KIOSK_SELECTED.val())
+			buttonImage = new ImageView(Paths.skioskImageProxy.getFXImage());
+		else if (type == NodeTypes.STAIRWAY.val())
+			buttonImage = new ImageView(Paths.stairwayImageProxy.getFXImage());
+		else if (type == NodeTypes.PARKINGLOT.val())
+			buttonImage = new ImageView(Paths.parkinglotImageProxy.getFXImage());
+		else if (type == 0)
 		{
-			ImageView buttonImage = new ImageView(Paths.doctorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
 			b.setGraphic(buttonImage);
-		} else if (type == 2)
-		{
-			ImageView buttonImage = new ImageView(Paths.elevatorImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 3)
-		{
-			ImageView buttonImage = new ImageView(Paths.restroomImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 4 || type == 5)
-		{
-			ImageView buttonImage = new ImageView(Paths.kioskImageProxy.getFXImage());
-			buttonImage.setScaleX(0.15);
-			buttonImage.setScaleY(0.15);
-			b.setGraphic(buttonImage);
-		} else if (type == 0)
-		{
+			return;
 		}
+		else
+			buttonImage = new ImageView(Paths.doorImageProxy.getFXImage());
+
+		buttonImage.setScaleX(0.15);
+		buttonImage.setScaleY(0.15);
+		b.setGraphic(buttonImage);
 	}
-
-
-
 }

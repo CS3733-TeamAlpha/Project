@@ -1,9 +1,12 @@
 package ui.controller;
 
+import data.Node;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,25 +16,34 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import data.Node;
-import ui.Accessibility;
+import javafx.util.Duration;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class MapEditorToolController extends BaseController
 {
 	//Arraylist of all lines drawn from a node to its neighbors
-	private HashMap<Node, ArrayList<Group>> lineGroups = new HashMap<Node, ArrayList<Group>>();
+	private HashMap<Node, ArrayList<Group>> lineGroups = new HashMap<>();
 
 	//link buttons to node objects
-	private HashMap<Button, Node> nodeButtonLinks = new HashMap<Button, Node>();
+	private HashMap<Button, Node> nodeButtonLinks = new HashMap<>();
+
+	//constants for UUIDs
+	final String FAULKNER_UUID = "00000000-0000-0000-0000-000000000000";
+	final String BELKIN_UUID = "00000000-0000-0000-0000-111111111111";
+	final String OUTSIDE_UUID = "00000000-0000-0000-0000-222222222222";
 
 	//constants to be used for drawing radial contextmenu
 	double CONTEXTWIDTH = 60.0;
@@ -39,20 +51,20 @@ public class MapEditorToolController extends BaseController
 	Group CONTEXTMENU = new Group();
 	Arc SELECTIONWEDGE = new Arc();
 
+	//currently selected node and button
+	private Node currentNode = null;
+	private Button currentButton = null;
 
+	//boolean to prevent choicebox from calling updatenodetype function when it shouldnt be
+	private boolean dontupdate = false;
 
-
-    //currently selected node and button
-    private Node currentNode = null;
-    private Button currentButton = null;
-
-
-    //boolean to determine whether or not to automatically connect newly added nodes
+	//boolean to determine whether or not to automatically connect newly added nodes
 	//to the nearest hallway node
 	private boolean AUTOCONNECT = false;
 
 	//enums to indicate current state
-	private enum editorStates {
+	private enum editorStates
+	{
 		DOINGNOTHING,
 		MAKINGNEWHALLWAY,  //making hallway type node
 		MAKINGNEWOFFICE,   //making office type node
@@ -65,6 +77,7 @@ public class MapEditorToolController extends BaseController
 		SHOWINGEMPTYMENU,  //radial contextmenu, not on node
 		SHOWINGNODEMENU    //radial contextmenu for node options
 	}
+
 	//store current state
 	private editorStates currentState = editorStates.DOINGNOTHING;
 
@@ -80,7 +93,7 @@ public class MapEditorToolController extends BaseController
 	private GraphicsContext gc;
 
 	//eventhandler for when the mouse is clicked on a node button
-	private EventHandler nodebuttonOnAction = (EventHandler<ActionEvent>) event -> showNodeDetails((Button)event.getSource());
+	private EventHandler nodebuttonOnAction = (EventHandler<ActionEvent>) event -> showNodeDetails((Button) event.getSource());
 
 	//drageventhandler for when the mouse is dragged on a node button
 	private EventHandler nodebuttonMouseDrag = new EventHandler<MouseEvent>()
@@ -88,14 +101,11 @@ public class MapEditorToolController extends BaseController
 		@Override
 		public void handle(MouseEvent e)
 		{
-			if(e.isSecondaryButtonDown())
+			if (e.isSecondaryButtonDown())
 			{
-				if(currentButton != e.getSource() && currentButton != null)
-				{
-					System.out.println("dont happen");
+				if (currentButton != e.getSource() && currentButton != null)
 					currentButton.setId("node-button-unselected");
-				}
-				currentButton = (Button)e.getSource();
+				currentButton = (Button) e.getSource();
 				currentButton.setId("node-button-selected");
 				currentNode = nodeButtonLinks.get(currentButton);
 				currentState = editorStates.SHOWINGNODEMENU;
@@ -104,7 +114,7 @@ public class MapEditorToolController extends BaseController
 			else
 			{
 				currentState = editorStates.MOVINGNODE;
-				Button nodeB = (Button)e.getSource();
+				Button nodeB = (Button) e.getSource();
 				//move the node to match changes in the mouse movement
 				//as you drag
 				showNodeDetails(nodeB);
@@ -118,62 +128,50 @@ public class MapEditorToolController extends BaseController
 	};
 
 	//eventhandler for when the mouse is released after having clicked a node button
-	private EventHandler nodebuttonMouseReleased = new EventHandler<MouseEvent>()
-	{
-		@Override
-		public void handle(MouseEvent e)
-		{
-			releaseMouseFromNode(e);
-		}
-	};
+	private EventHandler nodebuttonMouseReleased = (EventHandler<MouseEvent>) e -> releaseMouseFromNode(e);
 
-	public EventHandler nodebuttonMouseMoved = new EventHandler<MouseEvent>()
-	{
-		@Override
-		public void handle(MouseEvent e)
-		{
-			redrawCanvasBugfix(e);
-		}
-	};
+	public EventHandler nodebuttonMouseMoved = (EventHandler<MouseEvent>) e -> redrawCanvasBugfix(e);
 
-	public class ZoomHandler implements EventHandler<ScrollEvent> {
+	public class ZoomHandler implements EventHandler<ScrollEvent>
+	{
 
 		public ZoomHandler()
 		{
 		}
 
 		@Override
-		public void handle(ScrollEvent scrollEvent) {
-				final double scale = calculateScale(scrollEvent);
-				editingFloor.setScaleX(scale);
-				editingFloor.setScaleY(scale);
-				zoomWrapper.setMinWidth(editingFloor.getWidth()*scale);
-				zoomWrapper.setMinHeight(editingFloor.getHeight()*scale);
-				zoomWrapper.setMaxWidth(editingFloor.getWidth()*scale);
-				zoomWrapper.setMaxHeight(editingFloor.getHeight()*scale);
+		public void handle(ScrollEvent scrollEvent)
+		{
+			final double scale = calculateScale(scrollEvent);
+			editingFloor.setScaleX(scale);
+			editingFloor.setScaleY(scale);
+			zoomWrapper.setPrefHeight(editingFloor.getHeight() * scale);
+			zoomWrapper.setPrefWidth(editingFloor.getWidth() * scale);
 
-				editingFloor.setLayoutX((zoomWrapper.getWidth() - editingFloor.getWidth())/2);
-				editingFloor.setLayoutY((zoomWrapper.getHeight() - editingFloor.getHeight())/2);
-				scrollEvent.consume();
+			zoomWrapper.setMinWidth(editingFloor.getWidth() * scale);
+			zoomWrapper.setMinHeight(editingFloor.getHeight() * scale);
+			zoomWrapper.setMaxWidth(editingFloor.getWidth() * scale);
+			zoomWrapper.setMaxHeight(editingFloor.getHeight() * scale);
+
+			editingFloor.setLayoutX((zoomWrapper.getWidth() - floorImage.getImage().getWidth()) / 2);
+			editingFloor.setLayoutY((zoomWrapper.getHeight() - floorImage.getImage().getHeight()) / 2);
+			scrollEvent.consume();
 		}
 
-		private double calculateScale(ScrollEvent scrollEvent) {
+		private double calculateScale(ScrollEvent scrollEvent)
+		{
 			double scale = currentZoom + scrollEvent.getDeltaY() / 5000;
 
-			if (scale <= MINZOOM) {
+			if (scale <= MINZOOM)
+			{
 				scale = MINZOOM;
-			} else if (scale >= MAXZOOM) {
+			} else if (scale >= MAXZOOM)
+			{
 				scale = MAXZOOM;
 			}
 			currentZoom = scale;
 			return scale;
 		}
-	}
-
-	static
-	{
-		//initialize connection and floor/node/provider lists right away
-		//DatabaseController will hold onto these lists
 	}
 
 	public MapEditorToolController()
@@ -184,6 +182,8 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), () -> loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 
 		//load all nodes for a specific floor, default to FLOORID
 		loadNodesFromDatabase();
@@ -191,19 +191,12 @@ public class MapEditorToolController extends BaseController
 		//create canvas and graphicscontext
 		//these will be used later for drawing lines in realtime and drag&drop visuals
 		Group root = new Group();
-		canvas = new Canvas(2200, 1300);
-		canvas.setOnMouseClicked(new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent e){
-				clickFloorImage(e);
-			}
-		});
-		canvas.setOnMousePressed(new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent e){
-				if(e.isSecondaryButtonDown() && currentState == editorStates.CHAINADDING)
-				{
-					currentState = editorStates.DOINGNOTHING;
-				}
-			}
+		canvas = new Canvas(2475, 2475);
+		canvas.setOnMouseClicked(e -> clickFloorImage(e));
+		canvas.setOnMousePressed(e ->
+		{
+			if (e.isSecondaryButtonDown() && currentState == editorStates.CHAINADDING)
+				currentState = editorStates.DOINGNOTHING;
 		});
 		gc = canvas.getGraphicsContext2D();
 		editingFloor.getChildren().add(1, canvas);
@@ -220,18 +213,20 @@ public class MapEditorToolController extends BaseController
 
 		//set up the choicebox for changing buildings
 		ArrayList<String> buildings = database.getBuildings();
-		for(String s: buildings)
+		for (String s : buildings)
 			System.out.println(s);
 		ChoiceBox buildingChoice = new ChoiceBox();
 		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
-		((Pane)currentFloorLabel.getParent()).getChildren().add(buildingChoice);
+		((Pane) currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);
 		buildingChoice.setLayoutY(106);
-		buildingChoice.setOnAction(event ->
-				{
-					changeBuilding((String)buildingChoice.getValue());
-				}
-		);
+		if (BUILDINGID.equals(FAULKNER_UUID))
+			buildingChoice.getSelectionModel().select(0);
+		else if (BUILDINGID.equals(BELKIN_UUID))
+			buildingChoice.getSelectionModel().select(1);
+		else
+			buildingChoice.getSelectionModel().select(2);
+		buildingChoice.setOnAction(event -> changeBuilding((String) buildingChoice.getValue()));
 
 		//add event filter to let scrolling do zoom instead
 		mainScroll.addEventFilter(ScrollEvent.ANY, new ZoomHandler());
@@ -239,10 +234,26 @@ public class MapEditorToolController extends BaseController
 		ArrayList<String> allServices = database.getServices();
 		serviceAddChoiceBox.setItems(FXCollections.observableArrayList(allServices.toArray()));
 
+		//Add list of available node types to the node type scroll box. Choiceboxes always end well, right?
+		typeChoicebox.getItems().add("Hallway");        //0
+		typeChoicebox.getItems().add("Office");         //1
+		typeChoicebox.getItems().add("Elevator");       //2
+		typeChoicebox.getItems().add("Restroom");       //3
+		typeChoicebox.getItems().add("Kiosk");          //4
+		typeChoicebox.getItems().add("Selected Kiosk"); //5
+		typeChoicebox.getItems().add("Stairway");       //6
+		typeChoicebox.getItems().add("Parking lot");    //7
+		typeChoicebox.getItems().add("Entry/Exit Pair");//8
+		typeChoicebox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) ->
+		{
+			if (!dontupdate) //prevent node types from changing when selecting a new node
+				updateNodeType(); //why can't we just directly call this from fxml? don't ask me, ask jfx...
+		});
 	}
 
 	/**
 	 * Change the building that is currently being edited
+	 *
 	 * @param building String name of the buliding to edit
 	 */
 	private void changeBuilding(String building)
@@ -253,15 +264,12 @@ public class MapEditorToolController extends BaseController
 		purgeButtonsAndLines();
 		//default to floor 1 when changing buildings
 		FLOORID = 1;
-		if(BUILDINGID.equals("00000000-0000-0000-0000-000000000000"))//faulkner, max 7 floor
-		{
+		if (BUILDINGID.equals(FAULKNER_UUID))//faulkner, max 7 floor
 			MAXFLOOR = 7;
-		} else if(BUILDINGID.equals("00000000-0000-0000-0000-111111111111"))//faulkner, max 4 floor
-		{
+		else if (BUILDINGID.equals(BELKIN_UUID))//faulkner, max 4 floor
 			MAXFLOOR = 4;
-		} else {
+		else
 			MAXFLOOR = 1;
-		}
 		loadNodesFromDatabase();
 		currentFloorLabel.setText(Integer.toString(FLOORID));
 		setFloorImage(BUILDINGID, FLOORID);
@@ -271,21 +279,28 @@ public class MapEditorToolController extends BaseController
 	 * Set the floorImage imageview object to display the image of
 	 * a specific floor.
 	 * Currently only works based on floor, not building
+	 *
 	 * @param floor The floor to display
 	 */
 	private void setFloorImage(String buildingid, int floor)
 	{
 		//faulkner building
-		if(buildingid.equals("00000000-0000-0000-0000-000000000000"))
+		if (buildingid.equals(FAULKNER_UUID))
 		{
-			floorImage.setImage(Paths.regularFloorImages[floor-1].getFXImage());
+			floorImage.setFitWidth(Paths.regularFloorImages[floor - 1].getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.regularFloorImages[floor - 1].getFXImage().getHeight());
+			floorImage.setImage(Paths.regularFloorImages[floor - 1].getFXImage());
 		}
-		else if(buildingid.equals("00000000-0000-0000-0000-111111111111"))
+		else if (buildingid.equals(BELKIN_UUID))
 		{
-			floorImage.setImage(Paths.belkinFloorImages[floor-1].getFXImage());
+			floorImage.setFitWidth(Paths.belkinFloorImages[floor - 1].getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.belkinFloorImages[floor - 1].getFXImage().getHeight());
+			floorImage.setImage(Paths.belkinFloorImages[floor - 1].getFXImage());
 		}
-		else if (buildingid.equals("00000000-0000-0000-0000-222222222222"))
+		else if (buildingid.equals(OUTSIDE_UUID))
 		{
+			floorImage.setFitWidth(Paths.outdoorImageProxy.getFXImage().getWidth());
+			floorImage.setFitHeight(Paths.outdoorImageProxy.getFXImage().getHeight());
 			floorImage.setImage(Paths.outdoorImageProxy.getFXImage());
 		}
 
@@ -317,21 +332,25 @@ public class MapEditorToolController extends BaseController
 	{
 		//if esc key is pressed, remove contextmenus/canvases and set state to doingnothing
 		//this is a failsafe as well as feature
-		stage.getScene().setOnKeyPressed(e ->{
-			if(e.getCode() == KeyCode.ESCAPE)
+		stage.getScene().setOnKeyPressed(e ->
+		{
+			if (e.getCode() == KeyCode.ESCAPE)
 			{
 				//remove canvas if it exists
 				if (editingFloor.getChildren().contains(canvas))
-				{
 					editingFloor.getChildren().remove(canvas);
-				}
 				//remove context menu if it exists
-				if(editingFloor.getChildren().contains(CONTEXTMENU))
-				{
+				if (editingFloor.getChildren().contains(CONTEXTMENU))
 					editingFloor.getChildren().remove(CONTEXTMENU);
-				}
 				currentState = editorStates.DOINGNOTHING;
 				mainScroll.setPannable(true);
+			} else if (e.getCode() == KeyCode.DELETE)
+			{
+				if (currentNode != null)
+				{
+					deleteNode();
+					currentState = editorStates.DOINGNOTHING;
+				}
 			}
 		});
 
@@ -341,6 +360,7 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Set up all initial settings for the context menu.
 	 * XY position will be initialized based on mouse position
+	 *
 	 * @param x x coord for center of the radial context menu
 	 * @param y y coord same as above
 	 */
@@ -372,21 +392,21 @@ public class MapEditorToolController extends BaseController
 
 		//draw four lines for each section of the menu
 		//lots of ugly numbers indicating start/end positions of lines
-		Line split1 = new Line((CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
-				(CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
-				(CONTEXTRAD/Math.sqrt(2)), (CONTEXTRAD/Math.sqrt(2)));
+		Line split1 = new Line((CONTEXTRAD / Math.sqrt(2)) - (CONTEXTWIDTH / Math.sqrt(2)),
+				(CONTEXTRAD / Math.sqrt(2)) - (CONTEXTWIDTH / Math.sqrt(2)),
+				(CONTEXTRAD / Math.sqrt(2)), (CONTEXTRAD / Math.sqrt(2)));
 		split1.setStrokeWidth(2);
-		Line split2 = new Line((CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
-				-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
-				(CONTEXTRAD/Math.sqrt(2)), -(CONTEXTRAD/Math.sqrt(2)));
+		Line split2 = new Line((CONTEXTRAD / Math.sqrt(2)) - (CONTEXTWIDTH / Math.sqrt(2)),
+				-(CONTEXTRAD / Math.sqrt(2)) + (CONTEXTWIDTH / Math.sqrt(2)),
+				(CONTEXTRAD / Math.sqrt(2)), -(CONTEXTRAD / Math.sqrt(2)));
 		split2.setStrokeWidth(2);
-		Line split3 = new Line(-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
-				(CONTEXTRAD/Math.sqrt(2))-(CONTEXTWIDTH/Math.sqrt(2)),
-				-(CONTEXTRAD/Math.sqrt(2)), (CONTEXTRAD/Math.sqrt(2)));
+		Line split3 = new Line(-(CONTEXTRAD / Math.sqrt(2)) + (CONTEXTWIDTH / Math.sqrt(2)),
+				(CONTEXTRAD / Math.sqrt(2)) - (CONTEXTWIDTH / Math.sqrt(2)),
+				-(CONTEXTRAD / Math.sqrt(2)), (CONTEXTRAD / Math.sqrt(2)));
 		split3.setStrokeWidth(2);
-		Line split4 = new Line(-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
-				-(CONTEXTRAD/Math.sqrt(2))+(CONTEXTWIDTH/Math.sqrt(2)),
-				-(CONTEXTRAD/Math.sqrt(2)), -(CONTEXTRAD/Math.sqrt(2)));
+		Line split4 = new Line(-(CONTEXTRAD / Math.sqrt(2)) + (CONTEXTWIDTH / Math.sqrt(2)),
+				-(CONTEXTRAD / Math.sqrt(2)) + (CONTEXTWIDTH / Math.sqrt(2)),
+				-(CONTEXTRAD / Math.sqrt(2)), -(CONTEXTRAD / Math.sqrt(2)));
 		split4.setStrokeWidth(2);
 
 		//4 options, whose contents will differ based on whether we are showing node menu or not
@@ -399,11 +419,9 @@ public class MapEditorToolController extends BaseController
 		double imageOffsetY = -100;
 		double imageOffsetX = -100;
 
-		switch(currentState)
+		switch (currentState)
 		{
-
 			case SHOWINGEMPTYMENU: //context menu for non-nodes
-
 				option1 = new ImageView(Paths.hallwayImageProxy.getFXImage());
 				option1.setScaleX(0.15);
 				option1.setScaleY(0.15);
@@ -426,9 +444,7 @@ public class MapEditorToolController extends BaseController
 				option4.setY(imageOffsetY - CONTEXTRAD + CONTEXTWIDTH / 2);
 				break;
 			case SHOWINGNODEMENU: //contextmenu for nodes
-
 				//node specific context menu
-
 				option1 = new ImageView(Paths.addNeighborImageProxy.getFXImage());
 				option1.setScaleX(0.15);
 				option1.setScaleY(0.15);
@@ -453,7 +469,6 @@ public class MapEditorToolController extends BaseController
 			default:
 				break;
 		}
-
 
 		//add all elements to the CONTEXTMENU group
 		CONTEXTMENU.getChildren().add(radialMenu);
@@ -490,7 +505,7 @@ public class MapEditorToolController extends BaseController
 	private TextField nameField;
 
 	@FXML
-	private TextField typeField;
+	private ChoiceBox typeChoicebox;
 
 	@FXML
 	private TextField xField;
@@ -531,14 +546,14 @@ public class MapEditorToolController extends BaseController
 	@FXML
 	private ChoiceBox serviceAddChoiceBox;
 
-	@FXML
 	/**
 	 * Calls when a user selects the wanted service in the choicebox and presses the add button
 	 */
+	@FXML
 	private void addService()
 	{
 		String s = serviceAddChoiceBox.getValue().toString();
-		if(!currentNode.getServices().contains(s))
+		if (!currentNode.getServices().contains(s))
 		{
 			if (currentNode != null)
 				currentNode.addService(s);
@@ -556,15 +571,17 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	@FXML
 	/**
 	 * Function is fired when a drop action is detected, i.e. node is being moved or
 	 * new node is being made by drag and drop
-	 * @params x The x position of the node
-	 * @params y The y position of the node
+	 *
+	 * @param x The x position of the node
+	 * @param y The y position of the node
 	 */
-	private void dropNode(Double x, Double y) {
-		switch(currentState)
+	@FXML
+	private void dropNode(Double x, Double y)
+	{
+		switch (currentState)
 		{
 			case MAKINGNEWHALLWAY:
 				//create a new hallway node
@@ -572,7 +589,7 @@ public class MapEditorToolController extends BaseController
 				break;
 			case MAKINGNEWOFFICE:
 				//create a new office node
-				createNewNode(x, y,  1);
+				createNewNode(x, y, 1);
 				break;
 			case MAKINGNEWELEVATOR:
 				//create a new elevator node
@@ -594,17 +611,19 @@ public class MapEditorToolController extends BaseController
 
 	/**
 	 * Floor image is rightclicked, only useful for stopping chain adding
+	 *
 	 * @param event
 	 */
 	@FXML
-	void rightclickFloorImage(ContextMenuEvent event) {
+	void rightclickFloorImage(ContextMenuEvent event)
+	{
 		currentState = editorStates.DOINGNOTHING;
 	}
 
-	@FXML
 	/**
 	 * Floor image clicked, hide node details.
 	 */
+	@FXML
 	void clickFloorImage(MouseEvent e)
 	{
 		switch (currentState)
@@ -634,36 +653,48 @@ public class MapEditorToolController extends BaseController
 
 	}
 
-	@FXML
 	/**
 	 * Change the current floor to increment up by 1.
 	 * Prevent going down if floor is already 1.
 	 */
-	void goDownFloor(ActionEvent event) {
+	@FXML
+	void goDownFloor(ActionEvent event)
+	{
 		//if the state is adding neighbors and the node is an elevator, add neighbor with lower elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
-		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID > 1 &&
-				currentNode != null && currentNode.getType() == 2)
+		if (currentState == editorStates.ADDINGNEIGHBOR && FLOORID > 1 &&
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//find the lower elevator node and connect to it if it exists
 			Node lowerNode = null;
-			lowerNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID-1);
-			if(lowerNode != null)
+			lowerNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID - 1);
+			if (lowerNode != null)
 			{
 				currentNode.addNeighbor(lowerNode);
 				lowerNode.addNeighbor(currentNode);
 				//update currentnode and linked node since both had neighbor added
 				currentState = editorStates.DOINGNOTHING;
-				System.out.println("Connected down");
+
+				//creates popup notifying admin the multifloor connection was made
+				Alert alert = new Alert(Alert.AlertType.NONE);
+				alert.setTitle("Connection Made!");
+				alert.setHeaderText("Multi-floor connection has been created");
+
+				ButtonType ok = new ButtonType("OK");
+
+				alert.getButtonTypes().setAll(ok);
+
+				Optional<ButtonType> result = alert.showAndWait();
 			}
 			currentState = editorStates.DOINGNOTHING;
-		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID > 1 &&
-				currentNode != null && currentNode.getType() == 2)
+		}
+		else if (currentState == editorStates.REMOVINGNEIGHBOR && FLOORID > 1 &&
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//get the lower elevator node and remove it from neighbor if it exists
 			Node lowerNode = null;
-			lowerNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID-1);
-			if(lowerNode != null)
+			lowerNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID - 1);
+			if (lowerNode != null)
 			{
 				currentNode.delNeighbor(lowerNode);
 				//remove neighbor relation from linked node, if valid
@@ -678,7 +709,8 @@ public class MapEditorToolController extends BaseController
 			}
 			currentState = editorStates.DOINGNOTHING;
 		}
-		else if(FLOORID > 1){
+		else if (FLOORID > 1)
+		{
 			//remove all buttons and lines on the current floor
 			purgeButtonsAndLines();
 			FLOORID--;
@@ -688,35 +720,47 @@ public class MapEditorToolController extends BaseController
 		}
 	}
 
-	@FXML
 	/**
 	 * Change the current floor to increment down by 1.
 	 * Prevent going up if floor is already 7.
 	 */
+	@FXML
 	void goUpFloor(ActionEvent event)
 	{
 		//if the state is adding neighbors and the node is an elevator, add neighbor with upper elevator.
 		//WARNING: ELEVATOR NODES MUST BE AT THE SAME XY COORDINATES
-		if(currentState == editorStates.ADDINGNEIGHBOR && FLOORID < MAXFLOOR &&
-				currentNode != null && currentNode.getType() == 2)
+		if (currentState == editorStates.ADDINGNEIGHBOR && FLOORID < MAXFLOOR &&
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//get the upper elevator node and connect if it exists
 			Node upperNode = null;
-			upperNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID+1);
-			if(upperNode != null)
+			upperNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID + 1);
+			if (upperNode != null)
 			{
 				currentNode.addNeighbor(upperNode);
 				upperNode.addNeighbor(currentNode);
-				System.out.println("Connected up");
+
+				//creates popup notifying admin the multifloor connection was made
+				Alert alert = new Alert(Alert.AlertType.NONE);
+				alert.setTitle("Connection Made!");
+				alert.setHeaderText("Multi-floor connection has been created");
+
+				ButtonType ok = new ButtonType("OK");
+
+				alert.getButtonTypes().setAll(ok);
+
+				Optional<ButtonType> result = alert.showAndWait();
+
 			}
 			currentState = editorStates.DOINGNOTHING;
-		} else if(currentState == editorStates.REMOVINGNEIGHBOR && FLOORID  < MAXFLOOR &&
-				currentNode != null && currentNode.getType() == 2)
+		}
+		else if (currentState == editorStates.REMOVINGNEIGHBOR && FLOORID < MAXFLOOR &&
+				currentNode != null && (currentNode.getType() == 2 || currentNode.getType() == 20))
 		{
 			//get the upper elevator node and remove it from neighbor if it exists
 			Node upperNode = null;
-			upperNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID+1);
-			if(upperNode != null)
+			upperNode = database.getElevatorNodeByFloorCoordinates(currentNode.getX(), currentNode.getY(), FLOORID + 1);
+			if (upperNode != null)
 			{
 				currentNode.delNeighbor(upperNode);
 				//remove neighbor relation from linked node, if valid
@@ -730,7 +774,7 @@ public class MapEditorToolController extends BaseController
 			}
 			currentState = editorStates.DOINGNOTHING;
 		}
-		else if(FLOORID < MAXFLOOR)
+		else if (FLOORID < MAXFLOOR)
 		{
 			//remove all buttons and lines on the current floor
 			purgeButtonsAndLines();
@@ -744,6 +788,7 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Create a new node at given xy coordinates.
 	 * Note on node types: 0 is hallway, 1 is doctorsoffice, 2 is elevator, 3 is resetroom
+	 *
 	 * @param x X coordinate of new node
 	 * @param y Y coordinate of new node
 	 */
@@ -762,6 +807,7 @@ public class MapEditorToolController extends BaseController
 		//make a new button to associate with the node
 		Button nodeB = new Button();
 		nodeB.setId("node-button-unselected");
+		nodeB.setFocusTraversable(false);
 
 		//modify xy position with offset so that button is centered on the node's real location
 		nodeB.setLayoutX(x - XOFFSET);
@@ -777,10 +823,8 @@ public class MapEditorToolController extends BaseController
 		nodeB.setOnMouseMoved(nodebuttonMouseMoved);
 
 		currentNode = newNode;
-		if(currentButton != null)
-		{
+		if (currentButton != null)
 			currentButton.setId("node-button-unselected");
-		}
 		currentButton = nodeB;
 		currentButton.setId("node-button-selected");
 		setButtonImage(nodeB, type);
@@ -790,15 +834,15 @@ public class MapEditorToolController extends BaseController
 
 		//reset current state to doingnothing
 		//exception: if we are chainadding, don't set to doingnothing
-		if(currentState != editorStates.CHAINADDING)
+		if (currentState != editorStates.CHAINADDING)
 		{
 			currentState = editorStates.DOINGNOTHING;
 			//auto connect toggled
-			if(AUTOCONNECT)
+			if (AUTOCONNECT)
 			{
 				//find nearest hallway node and add as neighbor
 				Node nearest = database.getNearestHallwayNode(currentNode);
-				if(nearest != null)
+				if (nearest != null)
 				{
 					nearest.addNeighbor(currentNode);
 					currentNode.addNeighbor(nearest);
@@ -817,27 +861,30 @@ public class MapEditorToolController extends BaseController
 	 * This is called whenever the mouse is dragged around on the map.
 	 * We use this function to display and use the radial context menu, if
 	 * the mouse event is a rightclick.
+	 *
 	 * @param e mouse event
 	 */
 	@FXML
-	void displayContextMenu(MouseEvent e){
+	void displayContextMenu(MouseEvent e)
+	{
 
 		//is this a right click?
-		if(e.isSecondaryButtonDown())
+		if (e.isSecondaryButtonDown())
 		{
-			if(currentButton != null){ //radial context menu for node options
+			if (currentButton != null)
+			{ //radial context menu for node options
 				mainScroll.setPannable(false);
-				if(currentState != editorStates.SHOWINGNODEMENU)
-				{
+				if (currentState != editorStates.SHOWINGNODEMENU)
 					currentState = editorStates.SHOWINGEMPTYMENU;
-				}
-			} else { //radial context menu for adding nodes
+			} else
+			{ //radial context menu for adding nodes
 				currentState = editorStates.SHOWINGEMPTYMENU;
 				mainScroll.setPannable(false);
 			}
 		}
 
-		switch(currentState){
+		switch (currentState)
+		{
 			case SHOWINGEMPTYMENU:
 				//update contextmenu based on mouse events
 				contextActions(e);
@@ -854,44 +901,42 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * make the selectionWedge visible and adjust its start angle
 	 * to line up with the area where the mouse is being hovered
+	 *
 	 * @param angle the angle of the mouse position (in degrees) relative to
 	 *              the center of the context menu
 	 */
-	private void modifyRadialSelection(double angle){
+	private void modifyRadialSelection(double angle)
+	{
 
 		//NOTE: angles above the horizontal are negative, from 0 to -180.
 		//		angles below are positive, from 0 to 180.
 		//		in both cases 0 is in the 3 o'clock position
 
-		if(angle < -45 && angle > -135)
+		if (angle < -45 && angle > -135)
 		{
 			//selection indicator for top, new provider
 			SELECTIONWEDGE.setLength(90);
 			SELECTIONWEDGE.setStartAngle(45);
 			contextSelection = 0;
-		}
-		else if(angle > -45 && angle < 45)
+		} else if (angle > -45 && angle < 45)
 		{
 			//selection indicator for right, new node
 			SELECTIONWEDGE.setLength(90);
 			SELECTIONWEDGE.setStartAngle(315);
 			contextSelection = 1;
-		}
-		else if(angle > 45 && angle < 135)
+		} else if (angle > 45 && angle < 135)
 		{
 			//selection indicator for bottom, new elevator
 			SELECTIONWEDGE.setLength(90);
 			SELECTIONWEDGE.setStartAngle(225);
 			contextSelection = 2;
-		}
-		else if(angle > 135 || angle < -135)
+		} else if (angle > 135 || angle < -135)
 		{
 			//selection indicator for left, new restroom
 			SELECTIONWEDGE.setLength(90);
 			SELECTIONWEDGE.setStartAngle(135);
 			contextSelection = 3;
-		}
-		else
+		} else
 		{
 			//make selectionwedge not visible
 			SELECTIONWEDGE.setLength(0);
@@ -902,22 +947,19 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Update views/objects to display the radial context menu.
 	 * This is called whenever the mouse moves while the right click is held down
+	 *
 	 * @param e Mouse event
 	 */
 	void contextActions(MouseEvent e)
 	{
 
 		//add contextmenu if it isn't already contained
-		if(!editingFloor.getChildren().contains(CONTEXTMENU))
+		if (!editingFloor.getChildren().contains(CONTEXTMENU))
 		{
-			if(currentState == editorStates.SHOWINGNODEMENU)
-			{
+			if (currentState == editorStates.SHOWINGNODEMENU)
 				setupContextMenu(currentNode.getX(), currentNode.getY());
-			}
 			else
-			{
 				setupContextMenu(e.getX() - CIRCLEWIDTH / 2, e.getY() - CIRCLEWIDTH / 2);
-			}
 			editingFloor.getChildren().add(1, CONTEXTMENU);
 			CONTEXTMENU.toFront();
 		}
@@ -925,7 +967,7 @@ public class MapEditorToolController extends BaseController
 		//xy distance from center of contextmenu to mouse
 		double xdif = 0;
 		double ydif = 0;
-		if(currentState == editorStates.SHOWINGNODEMENU)
+		if (currentState == editorStates.SHOWINGNODEMENU)
 		{
 			xdif = e.getX();
 			ydif = e.getY();
@@ -938,11 +980,10 @@ public class MapEditorToolController extends BaseController
 		}
 
 		//check that the mouse is far enough away from the center
-		if(Math.pow((xdif), 2) + Math.pow((ydif), 2) >
-				Math.pow(CONTEXTRAD-CONTEXTWIDTH, 2)){
-			//update selection wedge location and contextSelection
+		if (Math.pow((xdif), 2) + Math.pow((ydif), 2) >
+				Math.pow(CONTEXTRAD - CONTEXTWIDTH, 2)) //update selection wedge location and contextSelection
 			modifyRadialSelection(Math.toDegrees(Math.atan2(ydif, xdif)));
-		}
+
 		//mouse isn't far enough away from center, i.e. no selection
 		else
 		{
@@ -954,11 +995,12 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Handle whenever the mouse is released after a node was selected.
 	 * This function is used to help with the node context menu
+	 *
 	 * @param event mouse event
 	 */
 	void releaseMouseFromNode(MouseEvent event)
 	{
-		switch(currentState)
+		switch (currentState)
 		{
 			case SHOWINGNODEMENU:
 				//remove context menu
@@ -968,26 +1010,23 @@ public class MapEditorToolController extends BaseController
 				//switch case for contextSelection.
 				//set currentState to appropriate state based on selection.
 				//if no selection made set to -1
-				switch(contextSelection){
+				switch (contextSelection)
+				{
 					case 0:
 						//top option
-						System.out.println("top");
 						currentState = editorStates.CHAINADDING;
 						break;
 					case 1:
 						//right option
-						System.out.println("right");
 						currentState = editorStates.ADDINGNEIGHBOR;
 						break;
 					case 2:
 						//bottom option
-						System.out.println("bot");
 						currentState = editorStates.REMOVINGNEIGHBOR;
 						break;
 					case 3:
 						//left option
-						System.out.println("left");
-						deleteNode(null);
+						deleteNode();
 						currentState = editorStates.DOINGNOTHING;
 						break;
 					default:
@@ -1000,7 +1039,6 @@ public class MapEditorToolController extends BaseController
 			case MOVINGNODE:
 				currentNode.notifyObservers();
 			default:
-				System.out.println("asdf");
 				currentState = editorStates.DOINGNOTHING;
 				break;
 		}
@@ -1009,12 +1047,13 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Handle whenever the mouse is released.
 	 * This function was made in order to support the radial context menu
+	 *
 	 * @param event mouse event fired when the mouse is released
 	 */
 	@FXML
-	void releaseMouse(MouseEvent event) {
-
-		switch(currentState)
+	void releaseMouse(MouseEvent event)
+	{
+		switch (currentState)
 		{
 			case SHOWINGEMPTYMENU:
 				//remove context menu
@@ -1024,7 +1063,8 @@ public class MapEditorToolController extends BaseController
 				//switch case for contextSelection.
 				//set currentState to appropriate state based on selection.
 				//if no selection made set to -1
-				switch(contextSelection){
+				switch (contextSelection)
+				{
 					case 0:
 						//top option
 						//create new elevator node at location
@@ -1075,16 +1115,13 @@ public class MapEditorToolController extends BaseController
 	 */
 	private void purgeButtonsAndLines()
 	{
-		for(Button b: nodeButtonLinks.keySet())
+		for (Button b : nodeButtonLinks.keySet())
 		{
 			Node linkedNode = nodeButtonLinks.get(b);
-			if(lineGroups.containsKey(linkedNode))
+			if (lineGroups.containsKey(linkedNode))
 			{
-				for (Group g : lineGroups.get(linkedNode))
-				{
-					// Removes all lines from oldLines from the UI
+				for (Group g : lineGroups.get(linkedNode)) // Removes all lines from oldLines from the UI
 					((AnchorPane) g.getParent()).getChildren().remove(g);
-				}
 				lineGroups.remove(linkedNode);
 			}
 			//remove this button from the UI
@@ -1106,6 +1143,7 @@ public class MapEditorToolController extends BaseController
 
 		//experimental style changes to make the button a circle
 		nodeB.setId("node-button-unselected");
+		nodeB.setFocusTraversable(false);
 
 		//set button XY coordinates
 		nodeB.setLayoutX(n.getX() - XOFFSET);
@@ -1145,7 +1183,8 @@ public class MapEditorToolController extends BaseController
 		 * we add/remove the currently clicked node from the original node's neighborlist,
 		 * and then update the lines by calling DrawToNeighbors.
 		 */
-		switch(currentState){
+		switch (currentState)
+		{
 			case ADDINGNEIGHBOR:
 				//add neighbor
 				currentNode.addNeighbor(linkedNode);
@@ -1161,7 +1200,7 @@ public class MapEditorToolController extends BaseController
 				//remove neighbor
 				currentNode.delNeighbor(linkedNode);
 				//remove neighbor relation from linked node, if valid
-				if(linkedNode.getNeighbors().contains(currentNode))
+				if (linkedNode.getNeighbors().contains(currentNode))
 				{
 					linkedNode.delNeighbor(currentNode);
 					drawToNeighbors(linkedNode);
@@ -1172,9 +1211,19 @@ public class MapEditorToolController extends BaseController
 				currentState = editorStates.DOINGNOTHING;
 				break;
 			default:
+				//set dontupdate so that previously selected node doesn't have its type changed
+				dontupdate = true;
 				//modify text fields to display node info
 				nameField.setText(linkedNode.getName());
-				typeField.setText(Integer.toString(linkedNode.getType()));
+				if (linkedNode.getType() < 6)
+					typeChoicebox.getSelectionModel().select(linkedNode.getType());
+				else if (linkedNode.getType() == 20)
+					typeChoicebox.getSelectionModel().select(6);
+				else if (linkedNode.getType() == 21)
+					typeChoicebox.getSelectionModel().select(7);
+				else
+					typeChoicebox.getSelectionModel().select(8);
+				dontupdate = false;
 				xField.setText(Double.toString(linkedNode.getX()));
 				yField.setText(Double.toString(linkedNode.getY()));
 
@@ -1182,10 +1231,8 @@ public class MapEditorToolController extends BaseController
 				//set current node/button
 				currentNode = linkedNode;
 
-				if(currentButton != null)
-				{
+				if (currentButton != null)
 					currentButton.setId("node-button-unselected");
-				}
 				currentButton = nodeB;
 				nodeB.setId("node-button-selected");
 				relatedServicesVbox.getChildren().clear();
@@ -1212,14 +1259,12 @@ public class MapEditorToolController extends BaseController
 	private void hideNodeDetails()
 	{
 		currentNode = null;
-		if(currentButton != null)
-		{
+		if (currentButton != null)
 			currentButton.setId("node-button-unselected");
-		}
 		currentButton = null;
 
 		nameField.setText("");
-		typeField.setText("");
+		typeChoicebox.getSelectionModel().clearSelection();
 		xField.setText("");
 		yField.setText("");
 
@@ -1228,79 +1273,81 @@ public class MapEditorToolController extends BaseController
 
 	/**
 	 * toggle new node auto connection setting
+	 *
 	 * @param event
 	 */
 	@FXML
-	void onToggleAutoConnect(ActionEvent event) {
+	void onToggleAutoConnect(ActionEvent event)
+	{
 		AUTOCONNECT = toggleAutoConnect.isSelected();
 	}
 
+	/**
+	 * update a node's X coordinate, both visually and in the node's properties
+	 */
+	@FXML
+	void updateNodeX()
+	{
+		try
+		{
+			currentButton.setLayoutX(Double.parseDouble(xField.getText()) - XOFFSET);
+			currentNode.setX(Double.parseDouble(xField.getText()));
+
+			//redraw lines for any node that has currentNode as a neighbor
+			//store nodes that need to be redrawn in a list as a workaround
+			//for concurrentmodificationexception
+			ArrayList<Node> toRedraw = new ArrayList<Node>();
+			for (Node n : lineGroups.keySet())
+			{
+				if (n.getNeighbors().contains(currentNode))
+					toRedraw.add(n);
+			}
+
+			for (Node n : toRedraw)
+				drawToNeighbors(n);
+			drawToNeighbors(currentNode);
+		} catch (NumberFormatException e)
+		{
+			System.out.println("Not a double");
+		}
+	}
 
 	/**
-     * update a node's X coordinate, both visually and in the node's properties
-     */
+	 * update a node's Y coordinate, both visually and in the node's properties
+	 */
 	@FXML
-    void updateNodeX(ActionEvent event)
-    {
-        try
-        {
-            currentButton.setLayoutX(Double.parseDouble(xField.getText())-XOFFSET);
-            currentNode.setX(Double.parseDouble(xField.getText()));
+	void updateNodeY()
+	{
+		try
+		{
+			if (currentButton != null && currentNode != null)
+			{
+				currentButton.setLayoutY(Double.parseDouble(yField.getText()) - YOFFSET);
+				currentNode.setY(Double.parseDouble(yField.getText()));
 
-            //redraw lines for any node that has currentNode as a neighbor
-            //store nodes that need to be redrawn in a list as a workaround
-            //for concurrentmodificationexception
-            ArrayList<Node> toRedraw = new ArrayList<Node>();
-            for(Node n: lineGroups.keySet()){
-                if(n.getNeighbors().contains(currentNode))
-                    toRedraw.add(n);
-            }
+				//redraw lines for any node that has currentNode as a neighbor
+				//store nodes that need to be redrawn in a list as a workaround
+				//for concurrentmodificationexception
+				ArrayList<Node> toRedraw = new ArrayList<Node>();
+				for (Node n : lineGroups.keySet())
+					if (n.getNeighbors().contains(currentNode))
+						toRedraw.add(n);
 
-            for(Node n : toRedraw)
-                drawToNeighbors(n);
-            drawToNeighbors(currentNode);
-        }
-        catch (NumberFormatException e)
-        {
-            System.out.println("Not a double");
-        }
-    }
-
-    /**
-     * update a node's Y coordinate, both visually and in the node's properties
-     */
-	@FXML
-    void updateNodeY(ActionEvent event) {
-        try
-        {
-            if(currentButton != null && currentNode != null)
-            {
-                currentButton.setLayoutY(Double.parseDouble(yField.getText())-YOFFSET);
-                currentNode.setY(Double.parseDouble(yField.getText()));
-
-                //redraw lines for any node that has currentNode as a neighbor
-                //store nodes that need to be redrawn in a list as a workaround
-                //for concurrentmodificationexception
-                ArrayList<Node> toRedraw = new ArrayList<Node>();
-                for(Node n: lineGroups.keySet()){
-                    if(n.getNeighbors().contains(currentNode))
-                        toRedraw.add(n);
-                }
-
-                for(Node n: toRedraw)
-                    drawToNeighbors(n);
-                drawToNeighbors(currentNode);
-            }
-        } catch (NumberFormatException e){
-            System.out.println("Not a double");
-        }
-    }
+				for (Node n : toRedraw)
+					drawToNeighbors(n);
+				drawToNeighbors(currentNode);
+			}
+		} catch (NumberFormatException e)
+		{
+			System.out.println("Not a double");
+		}
+	}
 
 	/**
 	 * update a node's Name string
 	 */
 	@FXML
-	void updateNodeData(ActionEvent event)
+	void updateNodeData()
 	{
 		try
 		{
@@ -1315,36 +1362,54 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * update a node's Type and update its corresponding image
 	 * if updating a kiosk to a selected kiosk, set the other selected kiosk to a normal kiosk
-	 * @param event
 	 */
-	@FXML
-	void updateNodeType(ActionEvent event)
+	void updateNodeType()
 	{
 		try
 		{
-			int newType = Integer.parseInt(typeField.getText());
-			if (newType < 20 && newType >= 0)
+			if (currentNode == null)
 			{
-				if (newType == 5) //changing to selected kiosk
+				return;
+			}
+			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
+			if (newType == 6 || newType == 7)
+				newType += 14; //the 6th type is actually a stairway, but we call it #20 because... reasons
+			if (newType == 5) //changing to selected kiosk
+				database.setSelectedKiosk(currentNode);
+			if (newType == 8) //links between buildings
+			{
+				ContextMenu cm = new ContextMenu();
+				for (int i = 6; i < 20; i++)
 				{
-					database.setSelectedKiosk(currentNode);
-				}
-				if (newType > 5 && newType < 20) //links between buildings
-				{
-					database.connectEntrances(currentNode, newType);
-				} else if(currentNode.getType() > 5) //remove links between buildings if changing type to not be a link
-				{
-					database.removeEntranceConnection(currentNode, currentNode.getType());
-				}
-				//update type
-				currentNode.setType(newType);
-				for(Button b: nodeButtonLinks.keySet())
-				{
-					if(nodeButtonLinks.get(b) == currentNode)
+					MenuItem litem = new MenuItem(Integer.toString(i));
+					cm.getItems().add(litem);
+					litem.setOnAction(e ->
 					{
-						setButtonImage(b, newType);
-						break;
-					}
+						currentNode.setType(Integer.parseInt(litem.getText()));
+						database.connectEntrances(currentNode, currentNode.getType());
+						for (Button b : nodeButtonLinks.keySet())
+						{
+							if (nodeButtonLinks.get(b) == currentNode)
+							{
+								setButtonImage(b, currentNode.getType());
+								break;
+							}
+						}
+					});
+				}
+				cm.show(typeChoicebox, Side.BOTTOM, 0, 0);
+				return;
+			}
+			else if (currentNode.getType() > 5 && currentNode.getType() < 20) //remove links between buildings if changing type to not be a link
+				database.removeEntranceConnection(currentNode, currentNode.getType());
+			//update type
+			currentNode.setType(newType);
+			for (Button b : nodeButtonLinks.keySet())
+			{
+				if (nodeButtonLinks.get(b) == currentNode)
+				{
+					setButtonImage(b, newType);
+					break;
 				}
 			}
 		} catch (NumberFormatException e)
@@ -1356,6 +1421,7 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Go through all of the neighbors of a given node and redraw lines to the source,
 	 * as well as the lines from the source to the neighbors
+	 *
 	 * @param source The source node to redraw all lines to/from
 	 */
 	private void redrawAllNeighbors(Node source)
@@ -1364,19 +1430,15 @@ public class MapEditorToolController extends BaseController
 		//store nodes that need to be redrawn in a list as a workaround
 		//for concurrentmodificationexception
 		ArrayList<Node> toRedraw = new ArrayList<Node>();
-		for(Node n: lineGroups.keySet()){
-			boolean has = false;
-			if(n.getNeighbors().contains(source)){
-				has = true;
-			}
-			if(has){
+		for (Node n : lineGroups.keySet())
+		{
+			if (n.getNeighbors().contains(source))
 				toRedraw.add(n);
-			}
 		}
 		//redraw all lines pointing to this node
-		for(Node n: toRedraw){
+		for (Node n : toRedraw)
 			drawToNeighbors(n);
-		}
+
 		//redraw all lines coming out of this node
 		drawToNeighbors(source);
 	}
@@ -1384,7 +1446,7 @@ public class MapEditorToolController extends BaseController
 
 	/**
 	 * Create lines from a node (source) to all of the node's neighbors.
-	 *
+	 * <p>
 	 * This will need to be called many times to properly and fully update drawn lines
 	 * because this only updates lines coming from a Node.
 	 */
@@ -1409,15 +1471,11 @@ public class MapEditorToolController extends BaseController
 		//for each neighbor associated with source Node, draw a line.
 		for (Node neighbor : neighbors)
 		{
-			if(neighbor.getBuilding().equals(source.getBuilding()) &&
+			if (neighbor.getBuilding().equals(source.getBuilding()) &&
 					neighbor.getFloor() == source.getFloor())
 			{
 				Line line = new Line();
 				line.setStrokeWidth(LINEWIDTH);
-				if (Accessibility.isHighContrast())
-				{
-					line.setStroke(Color.WHITE);
-				}
 				line.setStartX(source.getX());
 				line.setStartY(source.getY());
 				line.setEndX(neighbor.getX());
@@ -1465,27 +1523,28 @@ public class MapEditorToolController extends BaseController
 
 	/**
 	 * bugfix function for when moving mouse over node while adding neighbor
+	 *
 	 * @param e
 	 */
 	void redrawCanvasBugfix(MouseEvent e)
 	{
 		//add canvas back if it has previously been removed
-		if(!editingFloor.getChildren().contains(canvas)){
+		if (!editingFloor.getChildren().contains(canvas))
 			editingFloor.getChildren().add(1, canvas);
-		}
 		//clear canvas
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		Button draggedOver = (Button)e.getSource();
+		Button draggedOver = (Button) e.getSource();
 
-		switch(currentState){
+		switch (currentState)
+		{
 			case CHAINADDING:
 			case ADDINGNEIGHBOR:
 				//draw line
 				gc.setStroke(Color.BLACK);
 				gc.setLineWidth(LINEWIDTH);
-				gc.strokeLine(currentNode.getX(), currentNode.getY(), draggedOver.getLayoutX()+e.getX(),
-						draggedOver.getLayoutY()+e.getY());
+				gc.strokeLine(currentNode.getX(), currentNode.getY(), draggedOver.getLayoutX() + e.getX(),
+						draggedOver.getLayoutY() + e.getY());
 				break;
 			case SHOWINGEMPTYMENU:
 				break;
@@ -1494,9 +1553,7 @@ public class MapEditorToolController extends BaseController
 			default:
 				//remove canvas from scene if it is there but unneeded
 				if (editingFloor.getChildren().contains(canvas))
-				{
 					((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
-				}
 				break;
 		}
 	}
@@ -1504,19 +1561,21 @@ public class MapEditorToolController extends BaseController
 	/**
 	 * Continuously draw and update the line on the canvas so that the user can see
 	 * lines as they are adding connections.
+	 *
 	 * @param event mouse event
 	 */
 	@FXML
-	void redrawCanvas(MouseEvent event) {
+	void redrawCanvas(MouseEvent event)
+	{
 
 		//add canvas back if it has previously been removed
-		if(!editingFloor.getChildren().contains(canvas)){
+		if (!editingFloor.getChildren().contains(canvas))
 			editingFloor.getChildren().add(1, canvas);
-		}
 		//clear canvas
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		switch(currentState){
+		switch (currentState)
+		{
 			case CHAINADDING:
 			case ADDINGNEIGHBOR:
 				//draw line
@@ -1528,9 +1587,8 @@ public class MapEditorToolController extends BaseController
 				//draw circle
 				gc.setFill(Color.BLUE);
 				//circle drawing placement offset
-				gc.fillOval(event.getX()-CIRCLEWIDTH/2, event.getY()-CIRCLEWIDTH/2, CIRCLEWIDTH, CIRCLEWIDTH);
+				gc.fillOval(event.getX() - CIRCLEWIDTH / 2, event.getY() - CIRCLEWIDTH / 2, CIRCLEWIDTH, CIRCLEWIDTH);
 				break;
-
 			case SHOWINGEMPTYMENU:
 				break;
 			case SHOWINGNODEMENU:
@@ -1538,9 +1596,7 @@ public class MapEditorToolController extends BaseController
 			default:
 				//remove canvas from scene if it is there but unneeded
 				if (editingFloor.getChildren().contains(canvas))
-				{
 					((AnchorPane) canvas.getParent()).getChildren().remove(canvas);
-				}
 				break;
 		}
 	}
@@ -1549,28 +1605,24 @@ public class MapEditorToolController extends BaseController
 	 * Set controller to addingNeighbor state
 	 */
 	@FXML
-	void addNeighbor(ActionEvent event)
+	void addNeighbor()
 	{
 		if (currentNode != null)//Don't do anything unless a node is selected
-		{
 			currentState = editorStates.ADDINGNEIGHBOR;
-		}
 	}
 
 	/**
 	 * Set controller to removingNeighbor state
 	 */
 	@FXML
-	void removeNeighbor(ActionEvent event)
+	void removeNeighbor()
 	{
 		if (currentNode != null)  //Don't do anything unless a node is selected
-		{
 			currentState = editorStates.REMOVINGNEIGHBOR;
-		}
 	}
 
 	/**
-	 *  Go back to startup screen
+	 * Go back to startup screen
 	 */
 	@FXML
 	void goBack()
@@ -1578,33 +1630,35 @@ public class MapEditorToolController extends BaseController
 		loadFXML(Paths.ADMIN_PAGE_FXML);
 	}
 
-    /**
-     * Add the current node to the deleteNodesList to be deleted from the database
-     */
+	/**
+	 * Add the current node to the deleteNodesList to be deleted from the database
+	 */
 	@FXML
-    void deleteNode(ActionEvent event) {
-        if(currentNode != null)
-        {
-            //if this node had any neighbors remove lines
-            if (lineGroups.containsKey(currentNode))
-            {
-                for (Group g : lineGroups.get(currentNode))
-                    ((AnchorPane) g.getParent()).getChildren().remove(g); //Removes all lines going from the deleted node
-                lineGroups.remove(currentNode); //Remove current Node from lineGroups if it is inside lineGroups
-            }
+	void deleteNode()
+	{
+		if (currentNode != null)
+		{
+			//if this node had any neighbors remove lines
+			if (lineGroups.containsKey(currentNode))
+			{
+				for (Group g : lineGroups.get(currentNode))
+					((AnchorPane) g.getParent()).getChildren().remove(g); //Removes all lines going from the deleted node
+				lineGroups.remove(currentNode); //Remove current Node from lineGroups if it is inside lineGroups
+			}
 
-            //Delete arrows pointing to the deleted node
-            for (Node n : currentNode.getNeighbors()){
-            	//Ugh, say goodbye to the beautiful cascade delete on edges in the database...
+			//Delete arrows pointing to the deleted node
+			for (Node n : currentNode.getNeighbors())
+			{
+				//Ugh, say goodbye to the beautiful cascade delete on edges in the database...
 				n.delNeighbor(currentNode);
 				drawToNeighbors(n);
 			}
 
 			database.deleteNodeByUUID(currentNode.getID());
-        	((AnchorPane)currentButton.getParent()).getChildren().remove(currentButton);
-        	nodeButtonLinks.remove(currentButton);
-        	//hide details view
-        	hideNodeDetails();
-        }
-    }
+			editingFloor.getChildren().remove(currentButton);
+			nodeButtonLinks.remove(currentButton);
+			//hide details view
+			hideNodeDetails();
+		}
+	}
 }
