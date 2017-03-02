@@ -17,7 +17,6 @@ public class EmergencyExitFinder
 	 */
 	public Node findExit(Node start)
 	{
-		System.out.println("Activating breadth first search");
 		ArrayList<Node> result = new ArrayList<Node>();
 		HashMap<Node, Node> parentMap = new HashMap<Node, Node>();
 		parentMap.put(start, null);

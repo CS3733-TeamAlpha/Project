@@ -11,7 +11,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import pathfinding.EmergencyExitFinder;
 import ui.Main;
@@ -80,7 +79,6 @@ public class StartupController extends BaseController
 					else if(result.searchType == SearchType.Location)
 					{
 						setSearchedFor(database.getNodeByUUID(result.id));
-						System.out.println(result.id);
 						loadFXML(Paths.MAP_FXML);
 					}
 				});
@@ -130,7 +128,6 @@ public class StartupController extends BaseController
 		}
 		if (root == null)
 		{
-			System.out.println("Somehow, root is null!");
 			return;
 		}
 		Stage stage = new Stage();
