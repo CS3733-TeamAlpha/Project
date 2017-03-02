@@ -516,8 +516,7 @@ public class MapController extends BaseController
 		//checks if the node has no path associated with it
 		if(path == null)
 		{
-			//put the desired popup below
-			System.out.println("Straight empty son");
+			//creates popup for the error
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: This Node has no connections to it");
