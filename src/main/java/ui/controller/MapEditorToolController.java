@@ -214,6 +214,7 @@ public class MapEditorToolController extends BaseController
 		//set up the choicebox for changing buildings
 		ArrayList<String> buildings = database.getBuildings();
 		for (String s : buildings)
+			System.out.println(s);
 		ChoiceBox buildingChoice = new ChoiceBox();
 		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
 		((Pane) currentFloorLabel.getParent()).getChildren().add(buildingChoice);
@@ -1307,6 +1308,7 @@ public class MapEditorToolController extends BaseController
 			drawToNeighbors(currentNode);
 		} catch (NumberFormatException e)
 		{
+			System.out.println("Not a double");
 		}
 	}
 
@@ -1337,6 +1339,7 @@ public class MapEditorToolController extends BaseController
 			}
 		} catch (NumberFormatException e)
 		{
+			System.out.println("Not a double");
 		}
 	}
 
@@ -1352,6 +1355,7 @@ public class MapEditorToolController extends BaseController
 				currentNode.setName(nameField.getText());
 		} catch (NumberFormatException e)
 		{
+			System.out.println("Not a double");
 		}
 	}
 
@@ -1410,6 +1414,7 @@ public class MapEditorToolController extends BaseController
 			}
 		} catch (NumberFormatException e)
 		{
+			System.out.println("Not an int");
 		}
 	}
 

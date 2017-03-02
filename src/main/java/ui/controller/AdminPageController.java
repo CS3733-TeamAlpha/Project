@@ -92,6 +92,7 @@ public class AdminPageController extends BaseController
 		}
 		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldSelection, newSelection) ->
 		{
+			System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
 			database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
 			kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
 		});
