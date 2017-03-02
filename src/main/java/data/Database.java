@@ -1100,6 +1100,7 @@ public class Database implements Observer
 	{
 		resetStatus = 0;
 		nodeCache.clear();
+		providerCache.clear();
 		resetStatus = .10;
 		try
 		{
