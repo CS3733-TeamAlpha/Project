@@ -209,7 +209,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="useStairsButton" mnemonicParsing="false" onAction="#changeUseStairs" prefHeight="36.0" prefWidth="315.0" text="Use Stairs">
+            <Button fx:id="useStairsButton" mnemonicParsing="false" onAction="#changeUseStairs" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Use Stairs">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>

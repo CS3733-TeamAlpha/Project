@@ -11,6 +11,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import pathfinding.EmergencyExitFinder;
 import ui.Main;
@@ -96,6 +97,21 @@ public class StartupController extends BaseController
 				contextMenu.setMinWidth(searchBox.getWidth());
 			}
 		}));
+		searchBox.setOnKeyPressed(e ->
+		{
+			if (e.getCode() == KeyCode.ENTER)
+			{
+				System.out.println(providerLocationContextMenu.getItems().get(0).getText());
+//				if (providerLocationContextMenu.getItems().size() != 0)
+//				{
+//					providerLocationContextMenu.getItems().get(0).fire();
+//				} else if (contextMenu.getItems().size() != 0)
+//				{
+//					System.out.println(contextMenu.getItems().get(0).getText());
+//					contextMenu.getItems().get(0).fire();
+//				}
+			}
+		});
 	}
 
 	public void showMap()
