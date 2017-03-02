@@ -64,7 +64,7 @@
                                     <Font name="Glacial Indifference Regular" size="96.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="searchBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="646.0" promptText="Enter Location or Provider Search..." GridPane.valignment="CENTER">
+                              <TextField fx:id="searchBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="646.0" promptText="Search by Room or Doctor name" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="33.0" />
                                  </font>
