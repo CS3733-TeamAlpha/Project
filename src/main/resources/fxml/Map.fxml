@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -16,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
+<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <children>
       <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
          <children>
@@ -127,12 +134,12 @@
                   <Pane prefHeight="23.0" prefWidth="200.0" />
                </children>
                 </AnchorPane>
-                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" textAlignment="CENTER" wrapText="true">
+                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" textAlignment="CENTER" wrapText="true">
                     <font>
                         <Font name="Glacial Indifference Regular" size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" textAlignment="CENTER" wrapText="true">
+            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="17.0" />
                </font>
