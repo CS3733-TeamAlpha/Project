@@ -616,6 +616,9 @@ public class MapController extends BaseController
 			BUILDINGID = kiosk.getBuilding();
 			changeBuilding(BUILDINGID);
 			jumpFloor(kiosk.getFloor());
+			stepping = true;
+			focusView(kiosk);
+			stepping = false;
 
 			findingDirections = true;
 			nextStep.setDisable(true);
