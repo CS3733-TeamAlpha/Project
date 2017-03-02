@@ -68,7 +68,6 @@ public class DatabasePathfindingTest
 	{
 		//Lets have a little fun with the database by giving it 100 nodes to manage
 		//Start by initializing and linking 100x100 nodes together
-		System.out.println("Beginning graph creation");
 		Node[][] gridNodes = new Node[10][10];
 		for (int i = 0; i < 10; i++)
 		{
@@ -80,7 +79,6 @@ public class DatabasePathfindingTest
 			}
 		}
 
-		System.out.println("Finished initializing graph");
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)
@@ -95,18 +93,15 @@ public class DatabasePathfindingTest
 					gridNodes[i][j].addNeighbor(gridNodes[i][j+1]);
 			}
 		}
-		System.out.println("Finished constructing graph");
 
 		//Make sure we can find a path between upper left and lower right. If this fails, the below tests will too
 		assertNotNull(graph.findPath(gridNodes[0][0], gridNodes[9][9], false));
 		assertEquals(19, graph.findPath(gridNodes[0][0], gridNodes[9][9], false).size());
-		System.out.println("Finished base test of graph");
 
 		//Now put them all in the database...
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++)
 				database.insertNode(gridNodes[i][j]);
-		System.out.println("Finished inserting nodes into database");
 
 		//Flush cache forcing reload from database (who needs reloadCache anyways?)
 		database.disconnect();
@@ -123,7 +118,6 @@ public class DatabasePathfindingTest
 				assertTrue(dGridNodes[i][j].getNeighbors().size() >= 2);
 			}
 		}
-		System.out.println("Finished retrieving nodes from database");
 		//Now try and find the same path found above using these nodes extracted from the database
 		assertNotNull(graph.findPath(dGridNodes[0][0], dGridNodes[9][9], false));
 		assertEquals(19, graph.findPath(dGridNodes[0][0], dGridNodes[9][9], false).size());

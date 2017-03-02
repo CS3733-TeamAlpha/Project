@@ -31,10 +31,8 @@ public class RealImage implements Image
 		{
 			try
 			{
-				System.out.println(fileName);
 				img = ImageIO.read(getClass().getResource(fileName).openStream());
 			} catch (IOException e) {
-				System.out.println(fileName);
 				e.printStackTrace();
 			}
 		}

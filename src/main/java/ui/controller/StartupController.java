@@ -80,7 +80,6 @@ public class StartupController extends BaseController
 					else if(result.searchType == SearchType.Location)
 					{
 						setSearchedFor(database.getNodeByUUID(result.id));
-						System.out.println(result.id);
 						loadFXML(Paths.MAP_FXML);
 					}
 				});
@@ -101,7 +100,6 @@ public class StartupController extends BaseController
 		{
 			if (e.getCode() == KeyCode.ENTER)
 			{
-				System.out.println(providerLocationContextMenu.getItems().get(0).getText());
 			}
 		});
 	}
@@ -136,7 +134,6 @@ public class StartupController extends BaseController
 		}
 		if (root == null)
 		{
-			System.out.println("Somehow, root is null!");
 			return;
 		}
 		Stage stage = new Stage();
