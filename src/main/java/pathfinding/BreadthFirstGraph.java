@@ -37,9 +37,11 @@ public class BreadthFirstGraph extends Graph
 		while (!nodeQueue.isEmpty())
 		{
 			Node temp = nodeQueue.poll();
-			if (useStairs && temp.getType() == NodeTypes.ELEVATOR.val())
+			if (useStairs && (temp.getType() == NodeTypes.ELEVATOR.val() &&
+					temp != end))
 				continue;
-			if (!useStairs && temp.getType() == NodeTypes.STAIRWAY.val())
+			if (!useStairs && (temp.getType() == NodeTypes.STAIRWAY.val() &&
+					temp != end))
 				continue;
 
 			if (temp == end)

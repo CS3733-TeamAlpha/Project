@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -22,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
+<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <children>
       <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
          <children>
@@ -103,16 +97,25 @@
                 </Tab>
               </tabs>
             </TabPane>
-                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#showStartup" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
                 <VBox alignment="TOP_CENTER" pickOnBounds="false" spacing="5.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="100.0">
                     <children>
-                        <Button fx:id="upFloor" mnemonicParsing="false" onAction="#goUpFloor" styleClass="bh-button" />
+                        <Button fx:id="upFloor" mnemonicParsing="false" onAction="#goUpFloor" styleClass="bh-button">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                         <Label fx:id="currentFloorLabel" text="1">
                             <font>
                                 <Font size="26.0" />
                             </font>
                         </Label>
-                        <Button fx:id="downFloor" mnemonicParsing="false" onAction="#goDownFloor" styleClass="bh-button" />
+                        <Button fx:id="downFloor" mnemonicParsing="false" onAction="#goDownFloor" styleClass="bh-button">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                     </children>
                 </VBox>
          </children>
@@ -124,12 +127,12 @@
                   <Pane prefHeight="23.0" prefWidth="200.0" />
                </children>
                 </AnchorPane>
-                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" wrapText="true">
+                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" textAlignment="CENTER" wrapText="true">
                     <font>
                         <Font name="Glacial Indifference Regular" size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" wrapText="true">
+            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="17.0" />
                </font>
@@ -147,6 +150,9 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <StackPane>
                <children>
@@ -156,8 +162,14 @@
                                   <HBox.margin>
                                       <Insets right="15.0" />
                                   </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                               </Button>
-                              <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step" />
+                              <Button fx:id="nextStep" mnemonicParsing="false" onAction="#goNextStep" prefHeight="52.0" prefWidth="150.0" styleClass="bh-button" text="Next Step">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                           </children>
                           <VBox.margin>
                               <Insets left="20.0" right="20.0" />
@@ -185,16 +197,22 @@
                     <VBox.margin>
                         <Insets left="20.0" right="20.0" />
                     </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <Button mnemonicParsing="false" onAction="#gotoKiosk" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Return to Kiosk">
                <VBox.margin>
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-                <CheckBox fx:id="stairsCheckbox" mnemonicParsing="false" onAction="#changeUseStairs" styleClass="bh-styled-label" text="Use stairs?">
-               <font>
-                  <Font size="19.0" />
-               </font></CheckBox>
+            <Button fx:id="useStairsButton" mnemonicParsing="false" onAction="#changeUseStairs" prefHeight="36.0" prefWidth="315.0" styleClass="bh-button" text="Use Stairs">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
             </children>
          <HBox.margin>
             <Insets />

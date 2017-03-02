@@ -16,7 +16,6 @@ public class Database implements Observer
 	private static final String DB_CREATE_SQL = "/db/DBCreate.sql";
 	private static final String DB_DROP_ALL = "/db/DBDropAll.sql";
 	private static final String DB_INSERT_BUILDING = "/db/APP_BUILDINGS.sql";
-	private static final String DB_INSERT_SQL = "/db/Inserts.sql";
 	private static final String DB_INSERT_NODES = "/db/APP_NODES.sql";
 	private static final String DB_INSERT_EDGES = "/db/APP_EDGES.sql";
 	private static final String DB_INSERT_PROVIDERS = "/db/APP_PROVIDERS.sql";
@@ -1125,13 +1124,11 @@ public class Database implements Observer
 		resetStatus = .50;
 		runScript(DB_INSERT_EDGES, false);
 		resetStatus = .60;
-		runScript(DB_INSERT_SQL, false);
-		resetStatus = .70;
 		runScript(DB_INSERT_PROVIDERS, false);
 		resetStatus = .80;
-		runScript(DB_INSERT_SERVICES, false);
-		resetStatus = .90;
 		runScript(DB_INSERT_PROVIDEROFFICES, false);
+		resetStatus = .90;
+		runScript(DB_INSERT_SERVICES, false);
 		resetStatus = 1.00;
 
 		try
