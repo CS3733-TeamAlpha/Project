@@ -261,13 +261,25 @@ public class AdminPageController extends BaseController
 			progressAlert.initStyle(StageStyle.UNDECORATED);
 			progressAlert.getButtonTypes().remove(ButtonType.OK);
 
-			Platform.runLater(() -> {
-				while (database.getResetProgress() != 1.0)
-					progressBar.setProgress(database.getResetProgress());
-				progressBar.setProgress(1);
-				//this kills the thread
-				progressAlert.getButtonTypes().add(ButtonType.FINISH);
-			});
+			Task updateTask = new Task<Void>()
+			{
+				@Override
+				public Void call() throws InterruptedException //idc
+				{
+					while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
+						progressBar.setProgress(database.getResetProgress());
+					progressBar.setProgress(1);
+					//this kills the thread
+					progressAlert.getButtonTypes().add(ButtonType.FINISH);
+
+					return null;
+				}
+			};
+			thread = new Thread(updateTask);
+			thread.start();
+
+			updateTask.setOnSucceeded(e -> {
+				progressAlert.close();});
 		}
 	}
 
