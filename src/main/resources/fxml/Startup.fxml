@@ -33,15 +33,7 @@
                <bottom>
                   <StackPane BorderPane.alignment="BOTTOM_RIGHT">
                      <children>
-                        <ImageView fx:id="eExitButton" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#emergencyDirections" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/fire.png" />
-                           </image>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </ImageView>
-                        <AnchorPane onMouseClicked="#emergencyDirections">
+                        <AnchorPane>
                            <children>
                               <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="1144.0" layoutY="55.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="96.0">
                                  <image>
@@ -61,9 +53,17 @@
                               </ImageView>
                            </children>
                            <cursor>
-                              <Cursor fx:constant="HAND" />
+                              <Cursor fx:constant="DEFAULT" />
                            </cursor>
                         </AnchorPane>
+                        <ImageView fx:id="eExitButton" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#emergencyDirections" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/fire.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
                      </children>
                   </StackPane>
                </bottom>
