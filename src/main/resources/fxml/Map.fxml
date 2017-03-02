@@ -127,12 +127,12 @@
                   <Pane prefHeight="23.0" prefWidth="200.0" />
                </children>
                 </AnchorPane>
-                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" wrapText="true">
+                <Label fx:id="roomName" alignment="CENTER" styleClass="bh-styled-label" text="Room 212" textAlignment="CENTER" wrapText="true">
                     <font>
                         <Font name="Glacial Indifference Regular" size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" wrapText="true">
+            <Label fx:id="servicesLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="bh-styled-label" text="Services" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="17.0" />
                </font>
