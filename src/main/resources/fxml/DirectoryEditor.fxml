@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
@@ -32,7 +33,46 @@
                            <children>
                               <AnchorPane>
                                  <children>
-                                    <VBox alignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0" />
+                                    <VBox alignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <Label styleClass="bh-styled-label" text="View By">
+                                             <font>
+                                                <Font name="Glacial Indifference Regular" size="26.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="TOP_CENTER" prefWidth="200.0">
+                                             <children>
+                                                <ToggleButton fx:id="providerSelectButton" focusTraversable="false" mnemonicParsing="false" prefHeight="30.0" selected="true" text="Provider">
+                                                   <styleClass>
+                                                      <String fx:value="bh-button" />
+                                                      <String fx:value="bh-left-button" />
+                                                   </styleClass>
+                                                    <font>
+                                                        <Font name="Glacial Indifference Regular" size="15.0" />
+                                                    </font>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ToggleButton>
+                                                <ToggleButton fx:id="locationSelectButton" focusTraversable="false" mnemonicParsing="false" prefHeight="30.0" text="Location">
+                                                   <styleClass>
+                                                      <String fx:value="bh-button" />
+                                                      <String fx:value="bh-right-button" />
+                                                   </styleClass>
+                                                   <font>
+                                                      <Font name="Glacial Indifference Regular" size="15.0" />
+                                                   </font>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ToggleButton>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </AnchorPane>
                               <Label styleClass="bh-styled-label" text="Directory Editor" StackPane.alignment="TOP_CENTER">
@@ -46,11 +86,6 @@
                            <children>
                               <VBox alignment="TOP_CENTER">
                                  <children>
-                                    <Label styleClass="bh-styled-label" text="Providers">
-                                       <font>
-                                          <Font name="Glacial Indifference Regular" size="30.0" />
-                                       </font>
-                                    </Label>
                                     <ListView fx:id="mainListView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
                                        <HBox.margin>
                                           <Insets left="5.0" right="5.0" top="10.0" />
@@ -60,6 +95,9 @@
                                        <VBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                  </children>
                               </VBox>
@@ -122,8 +160,14 @@
                                                       </VBox>
                                                       <VBox alignment="CENTER" spacing="10.0">
                                                          <children>
-                                                            <Button fx:id="providerAddLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="&lt; Add" />
-                                                            <Button fx:id="providerRemoveLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="Remove &gt;" />
+                                                            <Button fx:id="providerAddLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="&lt; Add">
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor></Button>
+                                                            <Button fx:id="providerRemoveLocationButton" disable="true" mnemonicParsing="false" styleClass="bh-button" text="Remove &gt;">
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor></Button>
                                                          </children>
                                                       </VBox>
                                                       <VBox alignment="CENTER_RIGHT">
@@ -146,6 +190,9 @@
                                                    <font>
                                                       <Font name="Glacial Indifference Regular" size="16.0" />
                                                    </font>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
                                                 </Button>
                                              </children>
                                              <VBox.margin>
@@ -168,7 +215,10 @@
                   </VBox>
                </children>
             </StackPane>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButton" styleClass="bh-button" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
          </children>
       </AnchorPane>
     </children>

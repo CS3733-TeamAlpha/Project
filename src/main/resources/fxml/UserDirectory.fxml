@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.UserDirectoryController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.UserDirectoryController">
    <children>
       <VBox layoutX="505.0" layoutY="189.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -36,17 +34,22 @@
                         <TableColumn fx:id="locationsColumn" prefWidth="514.0" text="Locations" />
                     </columns>
                   </TableView>
-                  <Button focusTraversable="false" layoutX="14.0" layoutY="17.0" mnemonicParsing="false" onAction="#backButton" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="17.0" />
+                  <Button focusTraversable="false" layoutX="14.0" layoutY="17.0" mnemonicParsing="false" onAction="#backButton" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="17.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                   <TextField fx:id="searchBar" layoutX="845.0" layoutY="14.0" prefHeight="27.0" prefWidth="355.0" promptText="Search by name..." AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="14.0">
                      <font>
                         <Font size="16.0" />
-                     </font></TextField>
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor></TextField>
                   <Label layoutX="80.0" layoutY="10.0" text="Provider Directory" AnchorPane.leftAnchor="80.0">
                      <font>
                         <Font size="33.0" />
                      </font>
                   </Label>
-                  <Button fx:id="getDirButton" focusTraversable="false" layoutX="650.0" layoutY="17.0" mnemonicParsing="false" onAction="#getProviderDirections" text="Get Directions to Provider" />
                </children>
             </AnchorPane>
          </children>
