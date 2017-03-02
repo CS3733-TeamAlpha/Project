@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -42,14 +41,8 @@
                               <Image url="@../images/oldBadge.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="usernameField" layoutX="429.0" layoutY="223.0">
-                           <cursor>
-                              <Cursor fx:constant="TEXT" />
-                           </cursor></TextField>
-                        <PasswordField fx:id="passwordField" layoutX="429.0" layoutY="262.0" onAction="#login">
-                           <cursor>
-                              <Cursor fx:constant="TEXT" />
-                           </cursor></PasswordField>
+                        <TextField fx:id="usernameField" layoutX="429.0" layoutY="223.0" />
+                        <PasswordField fx:id="passwordField" layoutX="429.0" layoutY="262.0" onAction="#login" />
                         <Label layoutX="319.0" layoutY="223.0" text="Username:">
                            <font>
                               <Font size="20.0" />
@@ -60,14 +53,8 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="loginButton" disable="true" focusTraversable="false" layoutX="515.0" layoutY="303.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
-                        <Button fx:id="cancelButton" focusTraversable="false" layoutX="429.0" layoutY="303.0" mnemonicParsing="false" onAction="#showStartup" text="Cancel" textAlignment="CENTER">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
+                        <Button fx:id="loginButton" disable="true" focusTraversable="false" layoutX="515.0" layoutY="303.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER" />
+                        <Button fx:id="cancelButton" focusTraversable="false" layoutX="429.0" layoutY="303.0" mnemonicParsing="false" onAction="#showStartup" text="Cancel" textAlignment="CENTER" />
                         <Label layoutX="312.0" layoutY="164.0" text="Administrator Login">
                            <font>
                               <Font name="Glacial Indifference Regular" size="34.0" />
