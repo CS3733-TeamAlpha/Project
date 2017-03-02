@@ -229,6 +229,7 @@ public class MapController extends BaseController
 		watchdog.registerScene(stage.getScene(), Event.ANY);
 		initializeTabs();
 
+		System.out.println("MapController.initialize()");
 		hideRoomInfo();
 		kiosk = database.getSelectedKiosk();
 		if (graph == null)
