@@ -102,14 +102,6 @@ public class StartupController extends BaseController
 			if (e.getCode() == KeyCode.ENTER)
 			{
 				System.out.println(providerLocationContextMenu.getItems().get(0).getText());
-//				if (providerLocationContextMenu.getItems().size() != 0)
-//				{
-//					providerLocationContextMenu.getItems().get(0).fire();
-//				} else if (contextMenu.getItems().size() != 0)
-//				{
-//					System.out.println(contextMenu.getItems().get(0).getText());
-//					contextMenu.getItems().get(0).fire();
-//				}
 			}
 		});
 	}
