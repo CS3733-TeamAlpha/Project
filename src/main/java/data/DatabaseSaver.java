@@ -27,9 +27,8 @@ public class DatabaseSaver
 			inserts.addAll(getTableInserts("ProviderOffices", ctx));
 			inserts.addAll(getTableInserts("Services", ctx));
 
-			String pattern = "MM-dd-yyyy hh-mm-ss";
+			String pattern = "MM-dd-yyyy HH-mm-ss";
 			SimpleDateFormat format = new SimpleDateFormat(pattern);
-
 
 			File f = new File("Save_Files");
 			if(!f.exists())
@@ -37,7 +36,7 @@ public class DatabaseSaver
 				f.mkdir();
 			}
 
-			f = new File("Save_Files/" + format.format(new Date()) + ".ddl");
+			f = new File("Save_Files/" + format.format(new Date()) + ".wong");
 			if(!f.exists())
 			{
 				f.createNewFile();

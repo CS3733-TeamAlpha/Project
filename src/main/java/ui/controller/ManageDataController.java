@@ -24,6 +24,7 @@ public class ManageDataController extends BaseController
 	public Button saveDatabaseButton;
 	public Button factoryResetButton;
 	public ProgressIndicator progressIndicator;
+	public Button backButton;
 
 	@Override
 	public void initialize()
@@ -81,6 +82,7 @@ public class ManageDataController extends BaseController
 		factoryResetButton.setDisable(value);
 		listBox.setDisable(value);
 		progressIndicator.setVisible(value);
+		backButton.setDisable(value);
 	}
 
 	private AnchorPane generateSaveBox(String saveName)
@@ -124,7 +126,7 @@ public class ManageDataController extends BaseController
 				}
 				else
 				{
-					System.err.println("COULDN'T FIND SAVE FILE: Save_Files/" + saveName + ".dll");
+					System.err.println("COULDN'T FIND SAVE FILE: Save_Files/" + saveName + ".wong");
 				}
 
 				Platform.runLater(() ->

@@ -1158,11 +1158,16 @@ public class Database implements Observer
 
 		try
 		{
-			runScript(DB_DROP_ALL, true);
+			runScript(DB_DROP_ALL, false);
 			runScript(DB_CREATE_SQL, false);
-			runScript(new FileInputStream(new File(filePath)), true);
+			FileInputStream scriptStream = new FileInputStream(new File(filePath));
+			runScript(scriptStream, false);
+			scriptStream.close();
 		}
 		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
