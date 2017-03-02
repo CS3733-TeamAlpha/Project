@@ -27,7 +27,7 @@ public class DatabaseSaver
 			inserts.addAll(getTableInserts("ProviderOffices", ctx));
 			inserts.addAll(getTableInserts("Services", ctx));
 
-			String pattern = "MM-dd-yyyy hh:mm:ss";
+			String pattern = "MM-dd-yyyy hh-mm-ss";
 			SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 
