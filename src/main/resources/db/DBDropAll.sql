@@ -4,4 +4,3 @@ DROP TABLE Edges;
 DROP TABLE Services;
 DROP TABLE Nodes;
 DROP TABLE Buildings;
-DROP TABLE Logins;

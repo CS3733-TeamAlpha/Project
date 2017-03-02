@@ -1,5 +1,6 @@
 package ui.controller;
 
+import data.DatabaseSaver;
 import data.Node;
 import data.NodeTypes;
 import javafx.application.Platform;
@@ -216,71 +217,7 @@ public class AdminPageController extends BaseController
 
 	public void factoryReset(ActionEvent actionEvent)
 	{
-		Alert alert = new Alert(Alert.AlertType.WARNING);
-		alert.setTitle("Warning");
-		alert.setHeaderText("Warning: Factory Reset");
-		alert.setContentText("All directory and map data will be reset to factory settings. This operation cannot be undone.");
-
-		ButtonType ok = new ButtonType("OK");
-		ButtonType cancel = new ButtonType("Cancel");
-		alert.getButtonTypes().setAll(ok, cancel);
-
-		Optional<ButtonType> result = alert.showAndWait();
-		if(result.isPresent() && result.get() == ok)
-		{
-			//Reset the database in the background. Can't use runLater as this is a much more complex task (or it will be soon)
-			Task resetTask = new Task<Void>()
-			{
-				@Override
-				protected Void call()
-				{
-					database.resetDatabase();
-					return null;
-				}
-			};
-			Thread thread = new Thread(resetTask);
-			thread.start();
-
-			Alert progressAlert = new Alert(Alert.AlertType.INFORMATION);
-			ProgressBar progressBar = new ProgressBar();
-
-			GridPane grid = new GridPane();
-			grid.setPrefWidth(350);
-			grid.setHgap(10);
-			grid.setVgap(10);
-			grid.setPadding(new Insets(20, 0, 10, 30));
-			grid.add(progressBar, 0, 0);
-
-			progressAlert.getDialogPane().setContent(grid);
-			progressBar.setProgress(0);
-			progressBar.setPrefWidth(300);
-			progressAlert.setTitle("Reset Progress");
-			progressAlert.setHeaderText("Reset Progress");
-			Platform.runLater(progressAlert::show);
-
-			progressAlert.initStyle(StageStyle.UNDECORATED);
-			progressAlert.getButtonTypes().remove(ButtonType.OK);
-
-			Task updateTask = new Task<Void>()
-			{
-				@Override
-				public Void call() throws InterruptedException //idc
-				{
-					while (database.getResetProgress() != 1.0) //Yes, this freezes the main window. Yes, this is what we want.
-						progressBar.setProgress(database.getResetProgress());
-					progressBar.setProgress(1);
-					//this kills the thread
-					progressAlert.getButtonTypes().add(ButtonType.FINISH);
-
-					return null;
-				}
-			};
-			thread = new Thread(updateTask);
-			thread.start();
-
-			updateTask.setOnSucceeded(e -> {
-				progressAlert.close();});
-		}
+		loadFXML(Paths.MANAGE_DATA_FXML);
 	}
 
 	public void logout(ActionEvent actionEvent)
