@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -36,7 +37,7 @@
                   </ScrollPane>
                   <Pane pickOnBounds="false" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back">
+                        <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" styleClass="bh-button" stylesheets="@../css/normal.css" text="&lt; Back">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>
@@ -57,81 +58,139 @@
                   </Pane>
                </children>
             </StackPane>
-                  <AnchorPane fx:id="nodeDetails" minHeight="0.0" minWidth="240.0" prefHeight="160.0" prefWidth="100.0" styleClass="pane">
-                     <children>
-                        <Label layoutX="4.0" layoutY="4.0" text="Selected Node Name" />
-                        <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0">
-                     <cursor>
-                        <Cursor fx:constant="TEXT" />
-                     </cursor></TextField>
-                        <Label layoutX="2.0" layoutY="61.0" text="Selected Node Type" />
-                  	    <ChoiceBox fx:id="typeChoicebox" layoutY="77.0" prefWidth="150.0">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></ChoiceBox>
-                        <Label layoutX="5.0" layoutY="113.0" text="Node X Coordinate" />
-                        <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField">
-                     <cursor>
-                        <Cursor fx:constant="TEXT" />
-                     </cursor></TextField>
-                        <Label layoutX="5.0" layoutY="169.0" text="Node Y Coordinate" />
-                        <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0">
-                     <cursor>
-                        <Cursor fx:constant="TEXT" />
-                     </cursor></TextField>
-                        <Button fx:id="addConnectionButton" layoutX="5.0" layoutY="265.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-                        <Button fx:id="removeConnectionButton" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-                        <Button fx:id="deleteNodeButton" layoutX="5.0" layoutY="226.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-                  <VBox layoutY="345.0" prefHeight="375.0" prefWidth="244.0">
-                     <children>
-                        <HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="bh-background-pane">
+               <children>
+                        <AnchorPane fx:id="nodeDetails" minHeight="0.0" minWidth="240.0" prefHeight="160.0" prefWidth="100.0" styleClass="bh-background-pane">
                            <children>
-                              <ChoiceBox fx:id="serviceAddChoiceBox" prefWidth="150.0">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor></ChoiceBox>
-                              <Separator opacity="0.0" prefWidth="20.0" />
-                              <Button mnemonicParsing="false" onAction="#addService" text="Add">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor></Button>
-                           </children>
-                        </HBox>
-                        <VBox fx:id="relatedServicesVbox" prefWidth="100.0" />
-                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="15.0" />
-                        <ScrollPane layoutX="4.0" layoutY="490.0" prefHeight="324.0" prefWidth="184.0">
-                           <content>
-                              <VBox prefHeight="316.0" prefWidth="226.0">
+                              <Label layoutX="4.0" layoutY="4.0" styleClass="bh-styled-label" text="Selected Node Name">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding></Label>
+                              <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" styleClass="bh-button">
+                           <cursor>
+                              <Cursor fx:constant="TEXT" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </TextField>
+                              <Label layoutX="2.0" layoutY="61.0" styleClass="bh-styled-label" text="Selected Node Type">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding></Label>
+                        	    <ChoiceBox fx:id="typeChoicebox" layoutX="5.0" layoutY="77.0" prefWidth="170.0" styleClass="bh-button" stylesheets="@../css/normal.css">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </ChoiceBox>
+                              <Label layoutX="5.0" layoutY="113.0" styleClass="bh-styled-label" text="Node X Coordinate">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding></Label>
+                              <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" styleClass="bh-button" fx:id="xField">
+                           <cursor>
+                              <Cursor fx:constant="TEXT" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </TextField>
+                              <Label layoutX="5.0" layoutY="169.0" styleClass="bh-styled-label" text="Node Y Coordinate">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding></Label>
+                              <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0" styleClass="bh-button">
+                           <cursor>
+                              <Cursor fx:constant="TEXT" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </TextField>
+                              <Button fx:id="addConnectionButton" layoutX="5.0" layoutY="265.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="Add Connection">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Button>
+                              <Button fx:id="removeConnectionButton" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="Remove Connection">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Button>
+                              <Button fx:id="deleteNodeButton" layoutX="5.0" layoutY="226.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" styleClass="bh-button" stylesheets="@../css/normal.css" text="Delete Selected Node">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Button>
+                        <VBox layoutY="345.0" prefHeight="375.0" prefWidth="244.0">
+                           <children>
+                              <HBox>
                                  <children>
-                                    <Label text="Creating Nodes" underline="true" />
-                                    <Label prefHeight="156.0" prefWidth="212.0" text="Right click the map, hold, and drag to pick a node option:" wrapText="true" />
-                                    <Label text="    up:      Elevators" />
-                                    <Label text="    right:   Hallways" />
-                                    <Label text="    down:  Provider/Service" />
-                                    <Label text="    left:      Bathrooms" />
-                                    <Label text="Creating Connections" underline="true" />
-                                    <Label prefHeight="172.0" prefWidth="222.0" text="Click on a node, right click, hold and drag to pick an action:" wrapText="true" />
-                                    <Label prefHeight="35.0" prefWidth="212.0" text="    up:      Continuous Nodes" wrapText="true" />
-                                    <Label text="    right:   Add Connection" />
-                                    <Label text="    down:  Remove Connection" />
-                                    <Label text="    left:      Delete Node" />
+                                    <ChoiceBox fx:id="serviceAddChoiceBox" prefWidth="150.0" styleClass="bh-button" stylesheets="@../css/normal.css">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </ChoiceBox>
+                                    <Separator opacity="0.0" prefWidth="20.0" />
+                                    <Button mnemonicParsing="false" onAction="#addService" styleClass="bh-button" stylesheets="@../css/normal.css" text="Add">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
                                  </children>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </VBox>
-                     </children>
-                  </AnchorPane>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </HBox>
+                              <VBox fx:id="relatedServicesVbox" prefWidth="100.0" />
+                              <Separator opacity="0.0" orientation="VERTICAL" prefHeight="15.0" />
+                              <ScrollPane layoutX="4.0" layoutY="490.0" prefHeight="324.0" prefWidth="184.0">
+                                 <content>
+                                    <VBox prefHeight="316.0" prefWidth="226.0">
+                                       <children>
+                                          <Label text="Creating Nodes" underline="true" />
+                                          <Label prefHeight="156.0" prefWidth="212.0" text="Right click the map, hold, and drag to pick a node option:" wrapText="true" />
+                                          <Label text="    up:      Elevators" />
+                                          <Label text="    right:   Hallways" />
+                                          <Label text="    down:  Provider/Service" />
+                                          <Label text="    left:      Bathrooms" />
+                                          <Label text="Creating Connections" underline="true" />
+                                          <Label prefHeight="172.0" prefWidth="222.0" text="Click on a node, right click, hold and drag to pick an action:" wrapText="true" />
+                                          <Label prefHeight="35.0" prefWidth="212.0" text="    up:      Continuous Nodes" wrapText="true" />
+                                          <Label text="    right:   Add Connection" />
+                                          <Label text="    down:  Remove Connection" />
+                                          <Label text="    left:      Delete Node" />
+                                       </children>
+                                       <padding>
+                                          <Insets top="5.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+                           </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                        </AnchorPane>
+               </children>
+            </VBox>
          </children>
       </HBox>
    </children>

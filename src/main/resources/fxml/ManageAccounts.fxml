@@ -19,7 +19,7 @@
             <children>
                 <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../images/BWHlogo.gif" />
+                        <Image url="@../images/BWHlogo.jpg" />
                     </image>
                 </ImageView>
             </children>
@@ -29,16 +29,16 @@
          <children>
             <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <VBox alignment="CENTER" styleClass="fake-list-view" StackPane.alignment="CENTER">
+                  <VBox alignment="CENTER" styleClass="bh-background-pane" StackPane.alignment="CENTER">
                      <children>
-                        <Label text="Account Management">
+                        <Label styleClass="bh-styled-label" text="Account Management">
                            <font>
                               <Font size="41.0" />
                            </font>
                         </Label>
-                        <StackPane>
+                        <StackPane styleClass="bh-background-pane">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#addAccount" text="Add Account">
+                              <Button mnemonicParsing="false" onAction="#addAccount" styleClass="bh-button" stylesheets="@../css/normal.css" text="Add Account">
                                  <StackPane.margin>
                                     <Insets bottom="5.0" top="5.0" />
                                  </StackPane.margin>
@@ -48,9 +48,9 @@
                               </Button>
                            </children>
                         </StackPane>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" prefViewportHeight="593.0" prefViewportWidth="1280.0" styleClass="fake-list-view" StackPane.alignment="CENTER" VBox.vgrow="SOMETIMES">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" prefViewportHeight="593.0" prefViewportWidth="1280.0" styleClass="bh-background-pane" StackPane.alignment="CENTER" VBox.vgrow="SOMETIMES">
                            <content>
-                              <VBox fx:id="listBox" alignment="TOP_CENTER" styleClass="fake-list-view" StackPane.alignment="CENTER">
+                              <VBox fx:id="listBox" alignment="TOP_CENTER" StackPane.alignment="CENTER">
                                  <padding>
                                     <Insets top="15.0" />
                                  </padding></VBox>
@@ -60,7 +60,7 @@
                   </VBox>
                </children>
             </StackPane>
-            <Button mnemonicParsing="false" onAction="#backButton" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <Button mnemonicParsing="false" onAction="#backButton" styleClass="bh-button" stylesheets="@../css/normal.css" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>

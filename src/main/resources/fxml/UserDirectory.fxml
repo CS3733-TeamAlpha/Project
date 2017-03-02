@@ -21,15 +21,15 @@
                  <children>
                      <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                          <image>
-                             <Image url="@../images/BWHlogo.gif" />
+                             <Image url="@../images/BWHlogo.jpg" />
                          </image>
                      </ImageView>
                  </children>
              </Pane>
              <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
-            <AnchorPane VBox.vgrow="SOMETIMES">
+            <AnchorPane styleClass="bh-background-pane" VBox.vgrow="SOMETIMES">
                <children>
-                  <TableView fx:id="tableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="60.0" VBox.vgrow="SOMETIMES">
+                  <TableView fx:id="tableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="60.0" VBox.vgrow="SOMETIMES" styleClass="bh-button" stylesheets="@../css/normal.css">
                     <columns>
                         <TableColumn fx:id="firstNameColumn" prefWidth="201.0" text="First Name" />
                         <TableColumn fx:id="lastNameColumn" editable="false" prefWidth="364.0" resizable="false" text="Last Name" />
@@ -37,7 +37,7 @@
                         <TableColumn fx:id="locationsColumn" prefWidth="514.0" text="Locations" />
                     </columns>
                   </TableView>
-                  <Button focusTraversable="false" layoutX="14.0" layoutY="17.0" mnemonicParsing="false" onAction="#backButton" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="17.0">
+                  <Button focusTraversable="false" layoutX="14.0" layoutY="17.0" mnemonicParsing="false" onAction="#backButton" styleClass="bh-button" stylesheets="@../css/normal.css" text="&lt; Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="17.0">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Button>
@@ -48,12 +48,12 @@
                      <cursor>
                         <Cursor fx:constant="TEXT" />
                      </cursor></TextField>
-                  <Label layoutX="80.0" layoutY="10.0" text="Provider Directory" AnchorPane.leftAnchor="80.0">
+                  <Label layoutX="80.0" layoutY="10.0" styleClass="bh-styled-label" text="Provider Directory" AnchorPane.leftAnchor="80.0">
                      <font>
                         <Font size="33.0" />
                      </font>
                   </Label>
-                  <Button fx:id="getDirButton" focusTraversable="false" layoutX="650.0" layoutY="17.0" mnemonicParsing="false" onAction="#getProviderDirections" text="Get Directions to Provider">
+                  <Button fx:id="getDirButton" focusTraversable="false" layoutX="650.0" layoutY="17.0" mnemonicParsing="false" onAction="#getProviderDirections" styleClass="bh-button" stylesheets="@../css/normal.css" text="Get Directions to Provider">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Button>
