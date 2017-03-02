@@ -199,7 +199,7 @@ public class MapController extends BaseController
 	private Tab outdoorsTab;
 
 	@FXML
-	private CheckBox stairsCheckbox;
+	private Button useStairsButton;
 
 	ScrollPane scroller = faulknerScroller;
 	ImageView floorImage = faulknerFloorImage;
@@ -301,7 +301,7 @@ public class MapController extends BaseController
 			}).start();
 		}
 
-		stairsCheckbox.setSelected(usingStairs);
+
 	}
 
 	/**
@@ -1279,7 +1279,18 @@ public class MapController extends BaseController
 	@FXML
 	private void changeUseStairs()
 	{
-		usingStairs = stairsCheckbox.isSelected();
+		usingStairs = !usingStairs; // Invert use stairs
+
+		// Set text of button based on whether stairs are being used
+		if(usingStairs) {
+			useStairsButton.setText("Use Elevator");
+		} else {
+			useStairsButton.setText("Use Stairs");
+		}
+
+		// Redraw path if a node other than the kiosk is selected
+		if(selected != kiosk)
+			findDirectionsTo();
 	}
 
 	class LabelThingy

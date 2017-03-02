@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -22,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
+<HBox prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.MapController">
    <children>
       <AnchorPane styleClass="bh-background-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="SOMETIMES">
          <children>
@@ -191,10 +184,7 @@
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
             </Button>
-                <CheckBox fx:id="stairsCheckbox" mnemonicParsing="false" onAction="#changeUseStairs" styleClass="bh-styled-label" text="Use stairs?">
-               <font>
-                  <Font size="19.0" />
-               </font></CheckBox>
+            <Button fx:id="useStairsButton" mnemonicParsing="false" onAction="#changeUseStairs" prefHeight="36.0" prefWidth="315.0" text="Use Stairs" />
             </children>
          <HBox.margin>
             <Insets />
