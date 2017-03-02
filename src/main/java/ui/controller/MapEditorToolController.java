@@ -674,14 +674,13 @@ public class MapEditorToolController extends BaseController
 				lowerNode.addNeighbor(currentNode);
 				//update currentnode and linked node since both had neighbor added
 				currentState = editorStates.DOINGNOTHING;
-				System.out.println("Connected down");
 
 				//creates popup notifying admin the multifloor connection was made
 				Alert alert = new Alert(Alert.AlertType.NONE);
 				alert.setTitle("Connection Made!");
-				alert.setHeaderText("Your multi-floor connection has been created");
+				alert.setHeaderText("Multi-floor connection has been created");
 
-				ButtonType ok = new ButtonType("Drew is Awesome");
+				ButtonType ok = new ButtonType("OK");
 
 				alert.getButtonTypes().setAll(ok);
 
@@ -740,14 +739,13 @@ public class MapEditorToolController extends BaseController
 			{
 				currentNode.addNeighbor(upperNode);
 				upperNode.addNeighbor(currentNode);
-				System.out.println("Connected up");
 
 				//creates popup notifying admin the multifloor connection was made
 				Alert alert = new Alert(Alert.AlertType.NONE);
 				alert.setTitle("Connection Made!");
-				alert.setHeaderText("Your multi-floor connection has been created");
+				alert.setHeaderText("Multi-floor connection has been created");
 
-				ButtonType ok = new ButtonType("Drew is Awesome");
+				ButtonType ok = new ButtonType("OK");
 
 				alert.getButtonTypes().setAll(ok);
 
@@ -1371,7 +1369,6 @@ public class MapEditorToolController extends BaseController
 		{
 			if (currentNode == null)
 			{
-				System.out.println("AHH! Cthulhu!");
 				return;
 			}
 			int newType = typeChoicebox.getSelectionModel().getSelectedIndex();
