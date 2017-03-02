@@ -12,6 +12,8 @@ public class Paths
 	public static final String USER_DIRECTORY_FXML = "/fxml/UserDirectory.fxml";
 	public static final String ACCOUNT_BOX_FXML = "/fxml/AccountBox.fxml";
 	public static final String MANAGE_ACCOUNTS_FXML = "/fxml/ManageAccounts.fxml";
+	public static final String MANAGE_DATA_FXML = "/fxml/ManageData.fxml";
+	public static final String SAVE_BOX_FXML = "/fxml/SaveFileBox.fxml";
 
 	//CSS files
 	public static final String NORMAL_CSS = "css/normal.css";
