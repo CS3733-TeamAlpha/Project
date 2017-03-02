@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -35,9 +36,18 @@
                   </ScrollPane>
                   <Pane pickOnBounds="false" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back" />
-                        <Button fx:id="upFloor" layoutX="23.0" layoutY="77.0" mnemonicParsing="false" onAction="#goUpFloor" />
-                        <Button fx:id="downFloor" layoutX="23.0" layoutY="134.0" mnemonicParsing="false" onAction="#goDownFloor" />
+                        <Button layoutX="17.0" layoutY="11.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
+                        <Button fx:id="upFloor" layoutX="23.0" layoutY="77.0" mnemonicParsing="false" onAction="#goUpFloor">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
+                        <Button fx:id="downFloor" layoutX="23.0" layoutY="134.0" mnemonicParsing="false" onAction="#goDownFloor">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                         <Label fx:id="currentFloorLabel" layoutX="24.0" layoutY="103.0" text="1">
                            <font>
                               <Font size="26.0" />
@@ -50,23 +60,50 @@
                   <AnchorPane fx:id="nodeDetails" minHeight="0.0" minWidth="240.0" prefHeight="160.0" prefWidth="100.0" styleClass="pane">
                      <children>
                         <Label layoutX="4.0" layoutY="4.0" text="Selected Node Name" />
-                        <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0" />
+                        <TextField fx:id="nameField" layoutX="4.0" layoutY="30.0" onAction="#updateNodeData" prefHeight="26.0" prefWidth="220.0">
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor></TextField>
                         <Label layoutX="2.0" layoutY="61.0" text="Selected Node Type" />
-                  	    <ChoiceBox fx:id="typeChoicebox" layoutY="77.0" prefWidth="150.0" />
+                  	    <ChoiceBox fx:id="typeChoicebox" layoutY="77.0" prefWidth="150.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></ChoiceBox>
                         <Label layoutX="5.0" layoutY="113.0" text="Node X Coordinate" />
-                        <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField" />
+                        <TextField layoutX="4.0" layoutY="138.0" onAction="#updateNodeX" onInputMethodTextChanged="#updateNodeX" prefHeight="26.0" prefWidth="90.0" fx:id="xField">
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor></TextField>
                         <Label layoutX="5.0" layoutY="169.0" text="Node Y Coordinate" />
-                        <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0" />
-                        <Button fx:id="addConnectionButton" layoutX="5.0" layoutY="265.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection" />
-                        <Button fx:id="removeConnectionButton" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection" />
-                        <Button fx:id="deleteNodeButton" layoutX="5.0" layoutY="226.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node" />
+                        <TextField fx:id="yField" layoutX="4.0" layoutY="190.0" onAction="#updateNodeY" onInputMethodTextChanged="#updateNodeY" prefHeight="26.0" prefWidth="90.0">
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor></TextField>
+                        <Button fx:id="addConnectionButton" layoutX="5.0" layoutY="265.0" mnemonicParsing="false" onAction="#addNeighbor" prefHeight="31.0" prefWidth="194.0" text="Add Connection">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                        <Button fx:id="removeConnectionButton" layoutX="5.0" layoutY="305.0" mnemonicParsing="false" onAction="#removeNeighbor" prefHeight="31.0" prefWidth="194.0" text="Remove Connection">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                        <Button fx:id="deleteNodeButton" layoutX="5.0" layoutY="226.0" mnemonicParsing="false" onAction="#deleteNode" prefHeight="31.0" prefWidth="194.0" text="Delete Selected Node">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                   <VBox layoutY="345.0" prefHeight="375.0" prefWidth="244.0">
                      <children>
                         <HBox>
                            <children>
-                              <ChoiceBox fx:id="serviceAddChoiceBox" prefWidth="150.0" />
+                              <ChoiceBox fx:id="serviceAddChoiceBox" prefWidth="150.0">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ChoiceBox>
                               <Separator opacity="0.0" prefWidth="20.0" />
-                              <Button mnemonicParsing="false" onAction="#addService" text="Add" />
+                              <Button mnemonicParsing="false" onAction="#addService" text="Add">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
                            </children>
                         </HBox>
                         <VBox fx:id="relatedServicesVbox" prefWidth="100.0" />
