@@ -30,25 +30,29 @@
          <children>
             <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="bh-startup-frame" VBox.vgrow="ALWAYS">
                <bottom>
-                  <AnchorPane BorderPane.alignment="BOTTOM_RIGHT">
+                  <StackPane BorderPane.alignment="BOTTOM_RIGHT">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="490.0" layoutY="92.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="490.0" AnchorPane.rightAnchor="690.0">
-                           <image>
-                              <Image url="@../images/info.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="eExitButton" fitHeight="100.0" fitWidth="100.0" layoutX="590.0" layoutY="92.0" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="eExitButton" fitHeight="100.0" fitWidth="100.0" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/fire.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="lockImage" fitHeight="100.0" fitWidth="100.0" layoutX="690.0" layoutY="92.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true" styleClass="bh-lock-icon">
-                           <image>
-                              <Image url="@../images/ic_lock.png" />
-                           </image>
-                        </ImageView>
+                        <AnchorPane>
+                           <children>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="1153.0" layoutY="55.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="87.0">
+                                 <image>
+                                    <Image url="@../images/info.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="lockImage" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true" styleClass="bh-lock-icon" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="47.0">
+                                 <image>
+                                    <Image url="@../images/ic_lock.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </AnchorPane>
                      </children>
-                  </AnchorPane>
+                  </StackPane>
                </bottom>
                <center>
                   <StackPane BorderPane.alignment="CENTER">
