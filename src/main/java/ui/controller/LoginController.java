@@ -1,25 +1,22 @@
 package ui.controller;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import ui.Paths;
+import ui.Watchdog;
 
-/**
- * Created by Ari on 2/7/17.
- */
 public class LoginController extends BaseController
 {
 	public Label resultText;
 	public ProgressIndicator progressIndicator;
 	public Button cancelButton;
 	public Button loginButton;
-	public Pane thinBar;
-	public Pane thickBar;
 	@FXML
 	private TextField usernameField;
 
@@ -33,7 +30,8 @@ public class LoginController extends BaseController
 	public void initialize()
 	{
 		Platform.runLater(() -> usernameField.requestFocus());
-
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.unregisterScene(stage.getScene(), Event.ANY);
 		usernameField.textProperty().addListener((observable, oldValue, newValue) ->
 				loginButton.setDisable(newValue.isEmpty()));
 
@@ -52,18 +50,15 @@ public class LoginController extends BaseController
 		loginButton.setDisable(true);
 		cancelButton.setDisable(true);
 
-		boolean success;
 		boolean wrongUser = false;
 		String storedHash = "";
 		// Keeps null pointer from showing up if incorrect username
-		if(database.getHashedPassword(usernameField.getText()) != null) {
+		if(database.getHashedPassword(usernameField.getText()) != null)
 			storedHash = database.getHashedPassword(usernameField.getText());
-		} else {
+		else
 			wrongUser = true;
-		}
-		success = !storedHash.isEmpty() && BCrypt.checkpw(passwordField.getText(), storedHash);
 
-		if (success)
+		if (!storedHash.isEmpty() && BCrypt.checkpw(passwordField.getText(), storedHash))
 		{
 			progressIndicator.setVisible(true);
 			resultText.setText("Logging in...");
@@ -76,11 +71,11 @@ public class LoginController extends BaseController
 		}
 		else
 		{
-			if(wrongUser) { // Tell them username is wrong only if user isn't recognized
+			if(wrongUser) // Tell them username is wrong only if user isn't recognized
 				resultText.setText("Unrecognized Username");
-			} else { // Tell them password is wrong if user is correct
+			else // Tell them password is wrong if user is correct
 				resultText.setText("Incorrect Password");
-			}
+
 			resultText.setTextFill(Color.RED);
 			resultText.setVisible(true);
 

@@ -4,23 +4,24 @@ import com.sun.javafx.scene.control.skin.ListViewSkin;
 import data.Node;
 import data.Provider;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import ui.Paths;
+import ui.Watchdog;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AdminDirectoryController extends BaseController
 {
 	public Button backButton;
-	public ToggleButton providerSelectButton;
-	public ToggleButton locationSelectButton;
 	public ListView<Provider> mainListView;
 	public TextField firstNameField;
 	public TextField lastNameField;
@@ -38,6 +39,9 @@ public class AdminDirectoryController extends BaseController
 	@Override
 	public void initialize()
 	{
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog.registerScene(stage.getScene(), Event.ANY);
+
 		List<Provider> providers = database.getProviders();
 		providers = providers.stream().sorted(Comparator.comparing(Provider::getLastName)).collect(Collectors.toList());
 
@@ -49,25 +53,19 @@ public class AdminDirectoryController extends BaseController
 		providerUnusedLocationsList.getFocusModel().focusedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
-			{
 				providerUsedLocationsList.getSelectionModel().clearSelection();
-			}
 		});
 		providerUsedLocationsList.getFocusModel().focusedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
-			{
 				providerUnusedLocationsList.getSelectionModel().clearSelection();
-			}
 		});
 
 		providerUnusedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
-			{
 				providerAddLocationButton.setDisable(false);
 				providerRemoveLocationButton.setDisable(true);
-			}
 		});
 
 		providerUsedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
@@ -90,7 +88,6 @@ public class AdminDirectoryController extends BaseController
 			if(newValue != null)
 			{
 				providerEditorPane.setDisable(false);
-
 				providerEditorPane.setVisible(true);
 
 				selectedProvider = newValue;
@@ -109,7 +106,6 @@ public class AdminDirectoryController extends BaseController
 						.collect(Collectors.toList());
 
 				providerUnusedLocationsList.setItems(FXCollections.observableList(unassignedLocations));
-
 				providerUsedLocationsList.getItems().sort(alphabeticalNodeComparator);
 				providerUnusedLocationsList.getItems().sort(alphabeticalNodeComparator);
 			}
@@ -156,7 +152,7 @@ public class AdminDirectoryController extends BaseController
 			deleteWarning.getButtonTypes().setAll(ButtonType.CANCEL, delete);
 
 			Optional<ButtonType> result = deleteWarning.showAndWait();
-			if(result.isPresent())
+			if (result.isPresent())
 			{
 				if(result.get() == delete)
 				{
@@ -173,16 +169,12 @@ public class AdminDirectoryController extends BaseController
 		ChangeListener<Boolean> textFocusListener = (observable, oldValue, newValue) ->
 		{
 			selectedProvider.setAll(firstNameField.getText(), lastNameField.getText(), titleField.getText());
-
 			((MyRefreshSkin)mainListView.getSkin()).refresh();
 		};
 
 		firstNameField.focusedProperty().addListener(textFocusListener);
 		lastNameField.focusedProperty().addListener(textFocusListener);
 		titleField.focusedProperty().addListener(textFocusListener);
-
-		providerSelectButton.setOnAction(event -> locationSelectButton.setSelected(!providerSelectButton.isSelected()));
-		locationSelectButton.setOnAction(event -> providerSelectButton.setSelected(!locationSelectButton.isSelected()));
 
 		addProviderButton.setOnAction(event ->
 		{

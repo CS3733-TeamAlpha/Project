@@ -1,24 +1,25 @@
 package ui.controller;
 
 import data.Node;
+import data.NodeTypes;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import misc.LoginState;
 import org.mindrot.jbcrypt.BCrypt;
 import pathfinding.AStarGraph;
 import pathfinding.BreadthFirstGraph;
-import pathfinding.DepthFirstGraph;
 import ui.Paths;
+import ui.Watchdog;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 
 public class AdminPageController extends BaseController
@@ -29,27 +30,31 @@ public class AdminPageController extends BaseController
 	@FXML
 	ChoiceBox kioskNodeSelector;
 
+	@FXML
+	Spinner<Integer> timeoutSpinner;
+
 	public Button changePasswordButton;
 
 	public void initialize()
 	{
+		//UI watchdog
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->{
+			loadFXML(Paths.STARTUP_FXML);
+			LoginState.logout();
+		});
+		watchdog.registerScene(stage.getScene(), Event.ANY);
 		if(LoginState.isAdminLoggedIn())
-		{
 			changePasswordButton.setText("Manage Accounts");
-		}
 
+		//Path algorithm selector
 		algorithmSelector.getItems().add("A*");
 		algorithmSelector.getItems().add("Breadth First");
-		algorithmSelector.getItems().add("Depth First");
 		if (MapController.graph == null || MapController.graph.getClass().equals(AStarGraph.class))
 			algorithmSelector.getSelectionModel().selectFirst();
 		else if (MapController.graph.getClass().equals(BreadthFirstGraph.class))
 			algorithmSelector.getSelectionModel().select(1);
-		else if (MapController.graph.getClass().equals(DepthFirstGraph.class))
-			algorithmSelector.getSelectionModel().select(2);
 		algorithmSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldValue, newValue) ->
 		{
-			System.out.println("Switching from " + oldValue + " to " + newValue);
 			switch ((int)newValue)
 			{
 				case 0:
@@ -58,51 +63,66 @@ public class AdminPageController extends BaseController
 				case 1:
 					MapController.graph = new BreadthFirstGraph();
 					break;
-				case 2:
-					MapController.graph = new DepthFirstGraph();
-					break; //lol
 			}
 		});
 
+		//Kiosk selector
 		ArrayList<Node> kiosks = new ArrayList<>();
 		database.getAllNodes().forEach((node) ->
 		{
-			if (node.getType() == 4 || node.getType() == 5)
+			if (node.getType() == NodeTypes.KIOSK.val() || node.getType() == NodeTypes.KIOSK_SELECTED.val())
 			{
 				kiosks.add(node);
 				kioskNodeSelector.getItems().add(node.getName());
 			}
 		});
-		kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
-		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
-		{
-			@Override
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldSelection, Number newSelection)
+		Node kiosk = database.getSelectedKiosk();
+		if (kiosk != null)
+			kioskNodeSelector.getSelectionModel().select(kiosks.indexOf(database.getSelectedKiosk()));
+		else
+		{	//if no kiosk is currently set as selected, select the first entry in the choicebox and set
+			//it as the selected kiosk... only if there ARE any kiosks
+			if (!kiosks.isEmpty())
 			{
-				System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
-				database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
-				kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
+				kioskNodeSelector.getSelectionModel().select(kiosks.get(0));
+				database.setSelectedKiosk(kiosks.get(0));
 			}
+		}
+		kioskNodeSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldSelection, newSelection) ->
+		{
+			System.out.println("Switching from kiosk " + kiosks.get(oldSelection.intValue()).getName() + " to " + kiosks.get(newSelection.intValue()).getName());
+			database.setSelectedKiosk(kiosks.get(newSelection.intValue()));
+			kioskNodeSelector.getSelectionModel().select(newSelection.intValue());
 		});
 
+		//Timeout spinner
+		SpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(15, 3600, uiTimeout, 5);
+		valueFactory.valueProperty().addListener((observableValue, integer, t1) ->
+		{
+			uiTimeout = timeoutSpinner.getValue();
+			//Make timeout apply to the current UI
+			watchdog.unregisterScene(stage.getScene(), Event.ANY);
+			watchdog.disconnect();
+			watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+			watchdog.registerScene(stage.getScene(), Event.ANY);
+		});
+		timeoutSpinner.setValueFactory(valueFactory);
 	}
 
-	public void editDirectory(ActionEvent actionEvent)
+	public void editDirectory()
 	{
 		loadFXML(Paths.DIRECTORY_EDITOR_FXML);
 	}
 
-	public void editMap(ActionEvent actionEvent)
+	public void editMap()
 	{
 		loadFXML(Paths.MAP_EDITOR_FXML);
 	}
 
-	public void changePassword(ActionEvent actionEvent)
+	public void changePassword()
 	{
 		if(LoginState.isAdminLoggedIn())
-		{
 			loadFXML(Paths.MANAGE_ACCOUNTS_FXML);
-		}
 		else
 		{
 			Alert alert = new Alert(Alert.AlertType.NONE);
@@ -192,35 +212,12 @@ public class AdminPageController extends BaseController
 		}
 	}
 
-	public void factoryReset(ActionEvent actionEvent)
+	public void factoryReset()
 	{
-		Alert alert = new Alert(Alert.AlertType.WARNING);
-		alert.setTitle("Warning");
-		alert.setHeaderText("Warning: Factory Reset");
-		alert.setContentText("All directory and map data will be reset to factory settings. This operation cannot be undone.");
-
-		ButtonType ok = new ButtonType("OK");
-		ButtonType cancel = new ButtonType("Cancel");
-
-		alert.getButtonTypes().setAll(ok, cancel);
-
-		Optional<ButtonType> result = alert.showAndWait();
-		if(result.isPresent() && result.get() == ok)
-		{
-			database.resetDatabase();
-
-			Alert cleared = new Alert(Alert.AlertType.INFORMATION);
-			cleared.setTitle("Data Reset");
-			cleared.setHeaderText("Data Reset Successfully");
-			cleared.show();
-		}
-		else
-		{
-			//Nothing to do here, user canceled
-		}
+		loadFXML(Paths.MANAGE_DATA_FXML);
 	}
 
-	public void logout(ActionEvent actionEvent)
+	public void logout()
 	{
 		loadFXML(Paths.STARTUP_FXML);
 	}

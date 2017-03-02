@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -9,10 +9,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -31,25 +29,43 @@
       <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" />
       <StackPane VBox.vgrow="ALWAYS">
          <children>
-            <ImageView fitHeight="593.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true" styleClass="hc-invisible">
-               <image>
-                  <Image url="@../images/Network2.jpg" />
-               </image>
-               <viewport>
-                  <Rectangle2D height="593.0" width="1280.0" />
-               </viewport>
-            </ImageView>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="bh-startup-frame" VBox.vgrow="ALWAYS">
                <bottom>
-                  <AnchorPane prefHeight="40.0" BorderPane.alignment="BOTTOM_RIGHT">
+                  <StackPane BorderPane.alignment="BOTTOM_RIGHT">
                      <children>
-                        <ImageView fx:id="lockImage" fitHeight="37.0" fitWidth="31.0" layoutX="1199.0" layoutY="5.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="50.0">
+                        <AnchorPane>
+                           <children>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="1144.0" layoutY="55.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="96.0">
+                                 <image>
+                                    <Image url="@../images/info.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                              <ImageView fx:id="lockImage" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showLogin" pickOnBounds="true" preserveRatio="true" styleClass="bh-lock-icon" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="47.0">
+                                 <image>
+                                    <Image url="@../images/ic_lock.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                        </AnchorPane>
+                        <ImageView fx:id="eExitButton" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#emergencyDirections" onMousePressed="#emergencyDirections" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/ic_lock.png" />
+                              <Image url="@../images/fire.png" />
                            </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                      </children>
-                  </AnchorPane>
+                  </StackPane>
                </bottom>
                <center>
                   <StackPane BorderPane.alignment="CENTER">
@@ -61,29 +77,14 @@
                                     <Font name="Glacial Indifference Regular" size="96.0" />
                                  </font>
                               </Label>
-                              <GridPane prefHeight="60.0" prefWidth="706.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints maxHeight="58.0" minHeight="0.0" prefHeight="42.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <TextField fx:id="searchBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="646.0" promptText="Enter Location or Provider Search..." GridPane.valignment="CENTER">
-                                       <font>
-                                          <Font size="33.0" />
-                                       </font>
-                                    </TextField>
-                                    <ImageView fx:id="searchImage" fitHeight="59.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
-                                       <image>
-                                          <Image url="@../images/magnifyingGlass.png" />
-                                       </image>
-                                    </ImageView>
-                                 </children>
-                              </GridPane>
+                              <TextField fx:id="searchBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="646.0" promptText="Search by Room or Doctor name" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="33.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="TEXT" />
+                                 </cursor>
+                              </TextField>
                               <Button mnemonicParsing="false" onAction="#showMap" styleClass="bh-button" stylesheets="@../css/normal.css" text="View Map">
                                  <font>
                                     <Font name="Glacial Indifference Regular" size="33.0" />

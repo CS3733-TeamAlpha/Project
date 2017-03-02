@@ -15,7 +15,7 @@ public class Node extends Observable
 	String building;
 	double x;
 	double y;
-	int type; //TODO: Create a better type field, probably an enum
+	int type;
 	int floor;
 
 	public Node()

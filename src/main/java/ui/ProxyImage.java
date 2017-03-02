@@ -17,18 +17,9 @@ public class ProxyImage implements Image
 		return this.realImage.getFXImage();
 	}
 
-	// Display image from associated file, create object for RealImage if necessary
-	@Override
-	public void display() {
-		lazyLoad();
-		realImage.display();
-	}
-
 	private void lazyLoad()
 	{
 		if(realImage == null)
-		{
 			realImage = new RealImage(fileName);
-		}
 	}
 }
