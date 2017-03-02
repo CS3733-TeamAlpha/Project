@@ -603,6 +603,7 @@ public class MapController extends BaseController
 	public void showStartup()
 	{
 		loadFXML(Paths.STARTUP_FXML);
+		usingStairs = false;
 	}
 
 	public void findDirectionsTo()
