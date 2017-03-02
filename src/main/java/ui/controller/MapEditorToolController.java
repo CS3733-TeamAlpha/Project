@@ -30,6 +30,7 @@ import ui.Watchdog;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class MapEditorToolController extends BaseController
 {
@@ -674,6 +675,17 @@ public class MapEditorToolController extends BaseController
 				//update currentnode and linked node since both had neighbor added
 				currentState = editorStates.DOINGNOTHING;
 				System.out.println("Connected down");
+
+				//creates popup notifying admin the multifloor connection was made
+				Alert alert = new Alert(Alert.AlertType.NONE);
+				alert.setTitle("Connection Made!");
+				alert.setHeaderText("Your multi-floor connection has been created");
+
+				ButtonType ok = new ButtonType("Drew is Awesome");
+
+				alert.getButtonTypes().setAll(ok);
+
+				Optional<ButtonType> result = alert.showAndWait();
 			}
 			currentState = editorStates.DOINGNOTHING;
 		}
@@ -729,6 +741,18 @@ public class MapEditorToolController extends BaseController
 				currentNode.addNeighbor(upperNode);
 				upperNode.addNeighbor(currentNode);
 				System.out.println("Connected up");
+
+				//creates popup notifying admin the multifloor connection was made
+				Alert alert = new Alert(Alert.AlertType.NONE);
+				alert.setTitle("Connection Made!");
+				alert.setHeaderText("Your multi-floor connection has been created");
+
+				ButtonType ok = new ButtonType("Drew is Awesome");
+
+				alert.getButtonTypes().setAll(ok);
+
+				Optional<ButtonType> result = alert.showAndWait();
+
 			}
 			currentState = editorStates.DOINGNOTHING;
 		}
