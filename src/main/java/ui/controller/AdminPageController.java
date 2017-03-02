@@ -262,11 +262,11 @@ public class AdminPageController extends BaseController
 			progressAlert.getButtonTypes().remove(ButtonType.OK);
 
 			Platform.runLater(() -> {
-					while (database.getResetProgress() != 1.0)
-						progressBar.setProgress(database.getResetProgress());
-					progressBar.setProgress(1);
-					//this kills the thread
-					progressAlert.getButtonTypes().add(ButtonType.FINISH);
+				while (database.getResetProgress() != 1.0)
+					progressBar.setProgress(database.getResetProgress());
+				progressBar.setProgress(1);
+				//this kills the thread
+				progressAlert.getButtonTypes().add(ButtonType.FINISH);
 			});
 		}
 	}
