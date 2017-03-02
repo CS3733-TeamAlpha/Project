@@ -1126,9 +1126,9 @@ public class Database implements Observer
 		resetStatus = .60;
 		runScript(DB_INSERT_PROVIDERS, false);
 		resetStatus = .80;
-		runScript(DB_INSERT_PROVIDEROFFICES, true);
+		runScript(DB_INSERT_PROVIDEROFFICES, false);
 		resetStatus = .90;
-		runScript(DB_INSERT_SERVICES, true);
+		runScript(DB_INSERT_SERVICES, false);
 		resetStatus = 1.00;
 
 		try
