@@ -51,7 +51,7 @@
                               </Label>
                            </children>
                         </StackPane>
-                        <HBox spacing="30.0" VBox.vgrow="SOMETIMES">
+                        <HBox alignment="CENTER" spacing="30.0" VBox.vgrow="SOMETIMES">
                            <children>
                               <VBox>
                                  <children>
@@ -75,7 +75,7 @@
                                     </Button>
                                  </children>
                               </VBox>
-                              <VBox fx:id="providerEditorPane" alignment="BASELINE_LEFT" fillWidth="false" prefWidth="726.0" spacing="10.0">
+                              <VBox fx:id="providerEditorPane" alignment="BASELINE_LEFT" fillWidth="false" prefHeight="473.0" prefWidth="526.0" spacing="10.0">
                                  <children>
                                     <Label styleClass="bh-styled-label" text="Edit Provider">
                                        <font>
