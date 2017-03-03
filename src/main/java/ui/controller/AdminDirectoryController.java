@@ -67,8 +67,10 @@ public class AdminDirectoryController extends BaseController
 		providerUnusedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if(newValue != null)
+			{
 				providerAddLocationButton.setDisable(false);
 				providerRemoveLocationButton.setDisable(true);
+			}
 		});
 
 		providerUsedLocationsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
@@ -95,6 +97,9 @@ public class AdminDirectoryController extends BaseController
 					providerEditorPane.getChildren().get(i).setDisable(false);
 				}
 				providerEditorPane.setVisible(true);
+
+				providerAddLocationButton.setDisable(true);
+				providerRemoveLocationButton.setDisable(true);
 
 				selectedProvider = newValue;
 				firstNameField.setText(newValue.getFirstName());
