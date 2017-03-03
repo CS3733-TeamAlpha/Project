@@ -50,7 +50,7 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" style="-fx-background-color: white;" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <ScrollPane fx:id="outdoorsScroller" hbarPolicy="ALWAYS" pannable="true" prefHeight="592.0" prefWidth="936.0" style="-fx-background-color: #939393;" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
                                     <AnchorPane fx:id="outdoorsZoomWrapper">
                                        <children>
