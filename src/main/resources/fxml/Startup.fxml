@@ -20,7 +20,7 @@
    <children>
       <Pane prefHeight="115.0" prefWidth="1280.0" styleClass="bh-white">
          <children>
-            <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="104.0" fitWidth="612.0" layoutX="14.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/BWHlogo.jpg" />
                </image>
