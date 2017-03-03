@@ -75,7 +75,7 @@
                                     </Button>
                                  </children>
                               </VBox>
-                              <VBox alignment="BASELINE_LEFT" fillWidth="false" prefWidth="726.0" spacing="10.0">
+                              <VBox fx:id="providerEditorPane" alignment="BASELINE_LEFT" fillWidth="false" prefWidth="726.0" spacing="10.0">
                                  <children>
                                     <Label styleClass="bh-styled-label" text="Edit Provider">
                                        <font>
