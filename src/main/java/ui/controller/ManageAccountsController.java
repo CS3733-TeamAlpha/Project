@@ -21,11 +21,20 @@ import java.util.Optional;
 public class ManageAccountsController extends BaseController
 {
 	public VBox listBox;
+	private Alert alert;
 
 	@Override
 	public void initialize()
 	{
-		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->loadFXML(Paths.STARTUP_FXML));
+		watchdog = new Watchdog(Duration.seconds(uiTimeout), ()->
+		{
+			if(alert != null)
+			{
+				Button cancelButton = ( Button ) alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+				cancelButton.fire();
+			}
+			loadFXML(Paths.STARTUP_FXML);
+		});
 		watchdog.registerScene(stage.getScene(), Event.ANY);
 		reloadList();
 	}
@@ -100,7 +109,7 @@ public class ManageAccountsController extends BaseController
 		Button changePasswordButton = (Button) root.lookup("#changePasswordButton");
 		changePasswordButton.setOnAction(event ->
 		{
-			Alert alert = new Alert(Alert.AlertType.NONE);
+			alert = new Alert(Alert.AlertType.NONE);
 			alert.setTitle("Change Password");
 			alert.setHeaderText("Change Password");
 
@@ -171,7 +180,7 @@ public class ManageAccountsController extends BaseController
 
 	public void addAccount(ActionEvent actionEvent)
 	{
-		Alert alert = new Alert(Alert.AlertType.NONE);
+		alert = new Alert(Alert.AlertType.NONE);
 		alert.setTitle("Add account");
 		alert.setHeaderText("Add New Account");
 
