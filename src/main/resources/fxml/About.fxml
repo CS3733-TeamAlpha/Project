@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="279.0" prefWidth="557.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.AboutController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="279.0" prefWidth="557.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.AboutController">
    <children>
       <Pane prefHeight="59.0" prefWidth="487.0">
          <children>
@@ -45,7 +49,7 @@
                      </font>
                   </Label>
                   <Label layoutX="6.0" layoutY="4.0" text="Project Manager: Michael Prindle " />
-                  <Label layoutX="15.0" layoutY="20.0" prefHeight="16.0" prefWidth="211.0" text="Product Owner: Andrew Gelinas " />
+                  <Label layoutX="11.0" layoutY="19.0" prefHeight="21.0" prefWidth="221.0" text="Product Owner: Andrew Gelinas " />
                   <Label layoutX="24.0" layoutY="37.0" prefWidth="241.0" text="Docs. Analyst: Adam White" />
                   <Label layoutX="318.0" layoutY="4.0" text="Lead Engineer: Christopher Myers" />
                   <Label layoutX="272.0" layoutY="22.0" text="Assist. Lead Enginner: Colin Willoughby" />
@@ -57,7 +61,8 @@
                   <Button fx:id="closeButton" layoutX="492.0" layoutY="153.0" mnemonicParsing="false" onMouseClicked="#close" text="Close">
                      <cursor>
                         <Cursor fx:constant="HAND" />
-                     </cursor></Button>
+                     </cursor>
+                  </Button>
                   <Label layoutX="35.0" layoutY="53.0" />
                </children>
             </Pane>
