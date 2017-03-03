@@ -36,7 +36,7 @@ public class DatabaseSaver
 				f.mkdir();
 			}
 
-			f = new File("Save_Files/" + format.format(new Date()) + ".wong");
+			f = new File("Save_Files/" + format.format(new Date()) + ".ddl");
 			if(!f.exists())
 			{
 				f.createNewFile();

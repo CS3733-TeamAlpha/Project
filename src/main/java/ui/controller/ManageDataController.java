@@ -126,7 +126,7 @@ public class ManageDataController extends BaseController
 				}
 				else
 				{
-					System.err.println("COULDN'T FIND SAVE FILE: Save_Files/" + saveName + ".wong");
+					System.err.println("COULDN'T FIND SAVE FILE: Save_Files/" + saveName + ".ddl");
 				}
 
 				Platform.runLater(() ->
