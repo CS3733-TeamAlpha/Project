@@ -15,19 +15,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.LoginController">
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.LoginController">
    <children>
       <Pane prefHeight="115.0" styleClass="bh-white" VBox.vgrow="NEVER">
          <children>
             <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../images/BWHlogo.gif" />
+                  <Image url="@../images/BWHlogo.jpg" />
                </image>
             </ImageView>
          </children>
       </Pane>
       <Pane prefHeight="12.0" styleClass="bh-accent" stylesheets="@../css/normal.css" VBox.vgrow="NEVER" />
-      <AnchorPane VBox.vgrow="SOMETIMES">
+      <AnchorPane styleClass="bh-background-pane" VBox.vgrow="SOMETIMES">
          <children>
             <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -56,7 +56,7 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="loginButton" disable="true" focusTraversable="false" layoutX="515.0" layoutY="303.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER">
+                        <Button fx:id="loginButton" disable="true" focusTraversable="false" layoutX="497.0" layoutY="302.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="81.0" text="Login" textAlignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor></Button>

@@ -216,6 +216,7 @@ public class MapEditorToolController extends BaseController
 		for (String s : buildings)
 			System.out.println(s);
 		ChoiceBox buildingChoice = new ChoiceBox();
+		buildingChoice.getStyleClass().add("bh-button");
 		buildingChoice.setItems(FXCollections.observableArrayList(buildings.toArray()));
 		((Pane) currentFloorLabel.getParent()).getChildren().add(buildingChoice);
 		buildingChoice.setLayoutX(49);

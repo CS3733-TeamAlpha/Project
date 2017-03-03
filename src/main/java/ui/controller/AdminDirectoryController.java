@@ -9,6 +9,7 @@ import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import ui.Paths;
 import ui.Watchdog;
@@ -31,7 +32,7 @@ public class AdminDirectoryController extends BaseController
 	public Button providerRemoveLocationButton;
 	public ListView<Node> providerUnusedLocationsList;
 	public Button deleteProviderButton;
-	public StackPane providerEditorPane;
+	public VBox providerEditorPane;
 	public Button addProviderButton;
 
 	private Provider selectedProvider = null;
@@ -46,6 +47,8 @@ public class AdminDirectoryController extends BaseController
 		providers = providers.stream().sorted(Comparator.comparing(Provider::getLastName)).collect(Collectors.toList());
 
 		List<Node> allLocations = database.getAllServices();
+
+		disableEditorView();
 
 		providerUsedLocationsList.setCellFactory(param -> new ServiceCell());
 		providerUnusedLocationsList.setCellFactory(param -> new ServiceCell());
@@ -87,7 +90,10 @@ public class AdminDirectoryController extends BaseController
 		{
 			if(newValue != null)
 			{
-				providerEditorPane.setDisable(false);
+				for(int i=0; i< providerEditorPane.getChildren().size(); i++)
+				{
+					providerEditorPane.getChildren().get(i).setDisable(false);
+				}
 				providerEditorPane.setVisible(true);
 
 				selectedProvider = newValue;
@@ -187,7 +193,10 @@ public class AdminDirectoryController extends BaseController
 
 	private void disableEditorView()
 	{
-		providerEditorPane.setDisable(true);
+		for(int i=0; i< providerEditorPane.getChildren().size(); i++)
+		{
+			providerEditorPane.getChildren().get(i).setDisable(true);
+		}
 		firstNameField.clear();
 		lastNameField.clear();
 		titleField.clear();

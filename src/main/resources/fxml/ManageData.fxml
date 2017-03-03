@@ -21,7 +21,7 @@
             <children>
                 <ImageView fitHeight="136.0" fitWidth="432.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../images/BWHlogo.gif" />
+                        <Image url="@../images/BWHlogo.jpg" />
                     </image>
                 </ImageView>
             </children>
