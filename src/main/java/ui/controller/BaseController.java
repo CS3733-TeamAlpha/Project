@@ -49,7 +49,14 @@ public abstract class BaseController
 	public BaseController()
 	{
 		if (database == null)
+		{
 			database = new Database("FHAlpha");
+			if (database.getAllNodes().isEmpty())
+			{
+				System.out.println("Performing first-launch factory reset!");
+				database.resetDatabase();
+			}
+		}
 	}
 
 	public abstract void initialize();
